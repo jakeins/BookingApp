@@ -14,5 +14,10 @@ namespace BookingApp.Models
         {
         }
 
+
+        public virtual DbSet<Bookings> Bookings { get; set; }
+        public virtual DbSet<Resources> Resources { get; set; }
+        public virtual DbSet<Rules> Rules { get; set; }
+        public virtual DbSet<TreeGroups> TreeGroups { get; set; }
     }
 }
