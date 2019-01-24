@@ -1,7 +1,7 @@
 using BookingApp.Models;
+using BookingApp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -27,7 +27,7 @@ namespace BookingApp
 
             services.AddDbContext<ApplicationDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentityCore<AppUser>(options =>
+            services.AddIdentityCore<ApplicationUser>(options =>
             {
 
             }).AddRoles<IdentityRole>()

@@ -36,12 +36,30 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20190123123332_AddDbData.cs" />
-    <Compile Remove="Migrations\20190123123332_AddDbData.Designer.cs" />
+    <Compile Remove="Migrations\20190124174210_Initial.cs" />
+    <Compile Remove="Migrations\20190124174210_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20190124180246_Initial.cs" />
+    <Compile Remove="Migrations\20190124180246_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20190124182656_Initial.cs" />
+    <Compile Remove="Migrations\20190124182656_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20190124183050_Initial.cs" />
+    <Compile Remove="Migrations\20190124183050_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20190124183800_Initial.cs" />
+    <Compile Remove="Migrations\20190124183800_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20190124184711_Initial.cs" />
+    <Compile Remove="Migrations\20190124184711_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20190124185239_Initial.cs" />
+    <Compile Remove="Migrations\20190124185239_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20190124190117_Initial.cs" />
+    <Compile Remove="Migrations\20190124190117_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20190124191542_Initial.cs" />
+    <Compile Remove="Migrations\20190124191542_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20190124192340_Initial.cs" />
+    <Compile Remove="Migrations\20190124192340_Initial.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Migrations\20190123164708_SeedInitial.cs.sql">
+    <None Update="Migrations\20190124194552_InitialDummyData.cs.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -4,12 +4,12 @@ using System.IO;
 
 namespace BookingApp.Migrations
 {
-    public partial class SeedInitial : Migration
+    public partial class InitialDummyData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             //Feeding raw SQL from a file; gets copied into output folder by File Properties.
-            var seedingSqlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Migrations\20190123164708_SeedInitial.cs.sql");
+            var seedingSqlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Migrations\20190124194552_InitialDummyData.cs.sql");
             migrationBuilder.Sql(File.ReadAllText(seedingSqlPath));
         }
 
