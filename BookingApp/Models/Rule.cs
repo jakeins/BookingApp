@@ -16,6 +16,7 @@ namespace BookingApp.Models
         public int RuleId { get; set; }
 
         [Required]
+        [MaxLength(64)]
         public string Title { get; set; }
 
         //The time properties are nullable for having database default behaviour

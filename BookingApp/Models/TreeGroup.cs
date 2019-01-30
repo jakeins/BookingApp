@@ -18,6 +18,7 @@ namespace BookingApp.Models
         public int TreeGroupId { get; set; }
 
         [Required]
+        [MaxLength(64)]
         public string Title { get; set; }
 
         public int? ParentTreeGroupId { get; set; }
