@@ -27,21 +27,29 @@ namespace BookingApp
 
             services.AddDbContext<ApplicationDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddIdentityCore<ApplicationUser>(options =>
             {
-
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 6;
             }).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddScoped<DbInitializer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, DbInitializer initializer, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -76,6 +84,8 @@ namespace BookingApp
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+
+            initializer.Initialize().Wait();
         }
     }
 }
