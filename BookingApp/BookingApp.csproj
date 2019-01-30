@@ -58,12 +58,6 @@
     <Compile Remove="Migrations\20190124192340_Initial.Designer.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Migrations\20190124194552_InitialDummyData.cs.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
