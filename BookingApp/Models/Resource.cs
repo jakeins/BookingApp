@@ -17,9 +17,12 @@ namespace BookingApp.Models
         public int ResourceId { get; set; }
 
         [Required]
+        [MaxLength(64)]
         public string Title { get; set; }
 
+        [MaxLength(512)]
         public string Description { get; set; }
+
         public int? TreeGroupId { get; set; }
 
         [Required]

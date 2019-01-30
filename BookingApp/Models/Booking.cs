@@ -14,7 +14,8 @@ namespace BookingApp.Models
         [Required]
         public int ResourceId { get; set; }
 
-        public string Description { get; set; }
+        [MaxLength(128)]
+        public string Note { get; set; }
 
         [Required]
         public DateTime StartTime { get; set; }
@@ -23,7 +24,7 @@ namespace BookingApp.Models
         public DateTime EndTime { get; set; }
 
         [DefaultValue(false)]
-        public bool IsCancelled { get; set; }
+        public bool? IsCancelled { get; set; }
 
         #region Navigation Properties
         public Resource Resource { get; set; }
