@@ -30,14 +30,16 @@ namespace BookingApp
 
             services.AddIdentityCore<ApplicationUser>(options =>
             {
+                // Temporary mild password policy: to be strictened
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredLength = 6;
+                options.Password.RequiredLength = 3;
+                options.Password.RequiredUniqueChars = 0;
             }).AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+              .AddEntityFrameworkStores<ApplicationDbContext>()
+              .AddDefaultTokenProviders();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
