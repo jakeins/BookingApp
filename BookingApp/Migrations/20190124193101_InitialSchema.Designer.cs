@@ -4,14 +4,16 @@ using BookingApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookingApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190124193101_InitialSchema")]
+    partial class InitialSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,14 +94,11 @@ namespace BookingApp.Migrations
                         .IsRequired()
                         .HasMaxLength(450);
 
+                    b.Property<string>("Description");
+
                     b.Property<DateTime>("EndTime");
 
-                    b.Property<bool?>("IsCancelled")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Note")
-                        .HasMaxLength(128);
+                    b.Property<bool>("IsCancelled");
 
                     b.Property<int>("ResourceId");
 
@@ -138,14 +137,12 @@ namespace BookingApp.Migrations
                         .IsRequired()
                         .HasMaxLength(450);
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(512);
+                    b.Property<string>("Description");
 
                     b.Property<int>("RuleId");
 
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(64);
+                        .IsRequired();
 
                     b.Property<int?>("TreeGroupId");
 
@@ -209,8 +206,7 @@ namespace BookingApp.Migrations
                         .HasDefaultValue(1);
 
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(64);
+                        .IsRequired();
 
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
@@ -248,8 +244,7 @@ namespace BookingApp.Migrations
                     b.Property<int?>("ParentTreeGroupId");
 
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(64);
+                        .IsRequired();
 
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
