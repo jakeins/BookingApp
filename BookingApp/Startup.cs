@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace BookingApp
@@ -42,6 +45,22 @@ namespace BookingApp
               .AddEntityFrameworkStores<ApplicationDbContext>()
               .AddDefaultTokenProviders();
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Jwt:Issuer"],
+                        ValidAudience = Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                    };
+                });
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -69,6 +88,7 @@ namespace BookingApp
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+            app.UseAuthentication();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
