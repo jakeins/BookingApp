@@ -10,10 +10,10 @@ namespace BookingApp.Services
     {
         IEnumerable<TModel> GetList();
         TModel Get(TKey id);
-        void Create(TModel model);
-        void Update(TModel model);
+        //void Create(TModel model);
+        //void Update(TModel model);
         void Delete(TKey id);
-        void Save();
+        //void Save();
     }
 
     public interface IRepositoryAsync<TModel, TKey>
