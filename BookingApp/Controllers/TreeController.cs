@@ -19,7 +19,7 @@ namespace BookingApp.Controllers
 
         [HttpGet]
         [Route("api/tree/index")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             List<TreeGroup> trees = service.GetThree();
             return new OkObjectResult(trees);
@@ -27,7 +27,7 @@ namespace BookingApp.Controllers
 
         [HttpGet]
         [Route("api/tree/detail/{id}")]
-        public async Task<IActionResult> Detail(int id)
+        public IActionResult Detail(int id)
         {
             TreeGroup tree = service.GetDetail(id);
             return new OkObjectResult(tree);
@@ -35,7 +35,7 @@ namespace BookingApp.Controllers
 
         [HttpDelete]
         [Route("api/tree/delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
             service.Delete(id);
             return new OkObjectResult("Delete ok");
