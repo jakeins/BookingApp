@@ -1,4 +1,6 @@
-﻿using BookingApp.Models;
+﻿using BookingApp.Data;
+using BookingApp.Models;
+using BookingApp.Models.Dto;
 using BookingApp.Models.Repositories;
 using System;
 using System.Collections.Generic;
@@ -10,23 +12,16 @@ namespace BookingApp.Services
     public class TreeService
     {
         TreeRepository repository;
+        ApplicationDbContext context;
 
-        public TreeService(TreeRepository r)
+        public TreeService(TreeRepository r, ApplicationDbContext c)
         {
             repository = r;
+            context = c;
         }
 
         public List<TreeGroup> GetThree()
         {
-            /*
-            TreeGroup tr = new TreeGroup { TreeGroupId = 1, Title = "aas" };
-            TreeGroup tr2 = new TreeGroup { TreeGroupId = 2, Title = "dddd", ParentTreeGroupId = 1 };
-            List<TreeGroup> ll = new List<TreeGroup>();
-            ll.Add(tr);
-            ll.Add(tr2);
-
-            return ll;
-            */
             return (repository.GetList()).ToList();
         }
 
@@ -35,9 +30,44 @@ namespace BookingApp.Services
             return repository.Get(id);
         }
 
-        public void Delete(int id)
+        public void Create(CreateTree t)
         {
-            repository.Delete(id);
+            TreeGroup tree = new TreeGroup
+            {
+                Title = t.Title,
+                ParentTreeGroupId = t.Parent,
+                DefaultRuleId = t.Rule,
+                CreatedUserId = t.UserCreate,
+                UpdatedUserId = t.UserUpdate
+            };
+            repository.Create(tree);
+        }
+
+        public void Update(UpdateTree t)
+        {
+            TreeGroup tree = context.TreeGroups.FirstOrDefault(p => p.TreeGroupId == t.Id);
+            if (tree != null)
+            {
+                tree.Title = t.Title;
+                tree.ParentTreeGroupId = t.Parent;
+                tree.DefaultRuleId = t.Rule;
+                tree.CreatedUserId = t.UserCreate;
+                tree.UpdatedUserId = t.UserUpdate;
+                repository.Update(tree);
+            }
+        }
+
+        public bool Delete(int id)
+        {
+            TreeGroup tree = context.TreeGroups.FirstOrDefault(p => p.TreeGroupId == id);
+            if (tree != null)
+            {
+                repository.Delete(id);
+                return true;
+            } else
+            {
+                return false;
+            }
         }
 
 

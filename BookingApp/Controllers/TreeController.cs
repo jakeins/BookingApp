@@ -1,4 +1,5 @@
 ﻿using BookingApp.Models;
+using BookingApp.Models.Dto;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -33,12 +34,39 @@ namespace BookingApp.Controllers
             return new OkObjectResult(tree);
         }
 
+        [HttpPost]
+        [Route("api/tree/create")]
+        public IActionResult Create([FromBody]CreateTree tree)
+        {
+            //if (ModelState.IsValid)
+            //{
+                //return BadRequest();
+            //}
+            service.Create(tree);
+            return new OkObjectResult("Create ok");
+        }
+
+        [HttpPut]
+        [Route("api/tree/update")]
+        public IActionResult Update([FromBody]UpdateTree tree)
+        {
+            //if (ModelState.IsValid)
+            //{
+                //return BadRequest();
+            //}
+            service.Update(tree);
+            return new OkObjectResult("Update ok");
+        }
+
         [HttpDelete]
         [Route("api/tree/delete/{id}")]
         public IActionResult Delete(int id)
         {
-            service.Delete(id);
-            return new OkObjectResult("Delete ok");
+            if(service.Delete(id))
+            {
+                return new OkObjectResult("Delete ok");
+            }
+            return NotFound();
         }
 
 
