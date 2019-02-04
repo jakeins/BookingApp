@@ -10,13 +10,11 @@ namespace BookingApp.Services
     public class ResourcesService
     {
         readonly ResourcesRepository repository;
-        readonly ApplicationDbContext dbContext;
         readonly UserManager<ApplicationUser> userManager;
 
         public ResourcesService(ResourcesRepository repository, ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
         {
             this.repository = repository;
-            this.dbContext = dbContext;
             this.userManager = userManager;
         }
 
@@ -39,6 +37,8 @@ namespace BookingApp.Services
         }
 
         public async Task Delete(int id) => await repository.Delete(id);
+
+        public async Task<double> GetOccupancy(int resourceId) => await repository.GetOccupancy(resourceId);
 
         async Task<ApplicationUser> GetCurrentUser()
         {

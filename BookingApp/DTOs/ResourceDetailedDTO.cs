@@ -2,7 +2,7 @@
 
 namespace BookingApp.DTOs
 {
-    public partial class ResourceDetailedDTO : ResourceBriefDTO
+    public partial class ResourceDetailedDTO : ResourceMinimalDTO
     {
         [MaxLength(512, ErrorMessage = "Description is too long.")]
         public string Description { get; set; }

@@ -1,6 +1,7 @@
 ﻿using BookingApp.Data;
 using BookingApp.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,5 +43,33 @@ namespace BookingApp.Repositories
         }
 
         public async Task Save() => await dbContext.SaveChangesAsync();
+
+
+        public async Task<double> GetOccupancy(int resourceId)
+        {
+            var now = DateTime.Now;
+
+            double occupiedMinutes = await dbContext.Bookings.Include(b=>b.Resource).ThenInclude(b=>b.Rule)
+            .Where(booking => 
+                booking.ResourceId == resourceId &&
+                booking.EndTime + TimeSpan.FromMinutes( booking.Resource.Rule.ServiceTime ?? 0 ) > now
+            )
+            .Select(booking => 
+                (booking.EndTime + TimeSpan.FromMinutes(booking.Resource.Rule.ServiceTime ?? 0) - new[]{ booking.StartTime, now }.Max() )
+                .TotalMinutes 
+            )
+            .SumAsync();
+
+            var first = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
+                .Where(booking => booking.ResourceId == resourceId)
+                .FirstOrDefaultAsync();
+
+            if (first == null)
+                return 0;
+
+            int totalMinutes = first.Resource.Rule.PreOrderTimeLimit ?? throw new Exception("DB error: Resource's rule MaxTime is null.");
+
+            return occupiedMinutes / totalMinutes;
+        }
     }
 }

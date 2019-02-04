@@ -5,6 +5,7 @@ using BookingApp.Models;
 using BookingApp.Services;
 using AutoMapper;
 using BookingApp.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookingApp.Controllers
 {
@@ -28,7 +29,15 @@ namespace BookingApp.Controllers
 
         // GET: api/Resources
         [HttpGet]
-        public async Task<IActionResult> Index() => Ok(mapper.Map<IEnumerable<ResourceBriefDTO>>(await service.GetList()));
+        public async Task<IActionResult> Index()
+        {
+            var result = mapper.Map<IEnumerable<ResourceBriefDTO>>(await service.GetList());
+
+            foreach (var item in result)
+                item.Occupancy = await service.GetOccupancy(item.ResourceId);
+
+            return Ok(result);
+        }
 
         // GET: api/Resources/5
         [HttpGet("{id}")]
@@ -42,6 +51,7 @@ namespace BookingApp.Controllers
         
         // POST: api/Resources
         [HttpPost]
+        //[Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Create([FromBody] ResourceDetailedDTO item)
         {
             if (!ModelState.IsValid)
@@ -52,11 +62,12 @@ namespace BookingApp.Controllers
 
             await service.Create(itemModel);
 
-            return Ok();
+            return Ok("Resource created successfully.");
         }
         
         // PUT: api/Resources/5
         [HttpPut("{id}")]
+        //[Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ResourceDetailedDTO item)
         {
             if (!ModelState.IsValid)
@@ -65,17 +76,25 @@ namespace BookingApp.Controllers
             if (id != item.ResourceId)
                 return BadRequest();
 
-            await service.Update(mapper.Map<Resource>(item));
-
-            return Ok();
+            try
+            {
+                await service.Update(mapper.Map<Resource>(item));
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
+                
+            return Ok("Resource updated successfully.");
         }
 
         // DELETE: api/Resources/5
         [HttpDelete("{id}")]
+        //[Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             await service.Delete(id);
-            return Ok();
+            return Ok("Resource deleted.");
         }
     }
 }
