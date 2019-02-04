@@ -46,7 +46,7 @@ namespace BookingApp.Controllers
             if(mapper.Map<ResourceDetailedDTO>(await service.Get(id)) is ResourceDetailedDTO item)
                 return Ok(item);
             else
-                return NotFound(); 
+                return NotFound("Requested resource not found."); 
         }
         
         // POST: api/Resources
@@ -74,7 +74,7 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
 
             if (id != item.ResourceId)
-                return BadRequest();
+                return BadRequest("Resource identifiers inconsistency.");
 
             try
             {
@@ -82,7 +82,7 @@ namespace BookingApp.Controllers
             }
             catch(DbUpdateConcurrencyException)
             {
-                return BadRequest();
+                return BadRequest("Cannot update this resource.");
             }
                 
             return Ok("Resource updated successfully.");
@@ -93,7 +93,15 @@ namespace BookingApp.Controllers
         //[Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            await service.Delete(id);
+            try
+            {
+                await service.Delete(id);
+            }
+            catch(DbUpdateException)
+            {
+                return BadRequest("Cannot delete this resource. Some bookings may rely on it.");
+            }
+            
             return Ok("Resource deleted.");
         }
     }
