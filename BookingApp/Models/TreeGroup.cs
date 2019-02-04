@@ -5,54 +5,92 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookingApp.Models
 {
-    public partial class TreeGroup
+    /// <summary>
+    /// Visual nesting entity, provides ability to *visually* group resources in a form of a nested set (tree).
+    /// </summary>
+    public class TreeGroup
     {
-        public TreeGroup()
-        {
-            ChildGroups = new List<TreeGroup>();
-            Resources = new List<Resource>();
-        }
-
+        /// <summary>
+        /// Primary identity key for the tree group.
+        /// </summary>
         [Key]
         [Required]
         public int TreeGroupId { get; set; }
 
+        /// <summary>
+        /// Short designation of the tree group. Required.
+        /// </summary>
         [Required]
         [MaxLength(64)]
         public string Title { get; set; }
 
+        /// <summary>
+        /// Identifier of the parent tree group, where current tree group should be *visually* nested in. Optional: null means this tree group is being shown at the root level.
+        /// </summary>
         public int? ParentTreeGroupId { get; set; }
         public int? DefaultRuleId { get; set; }
 
         #region Navigation Properties
+        /// <summary>
+        /// Get passed as a default booking rule for the nested resources during their creation. Nullity means this tree group is being shown at the root level.
+        /// </summary>
         public Rule DefaultRule { get; set; }
+
+        /// <summary>
+        /// Parent tree group, where current tree group should be *visually* nested in. Nullity means this tree group is being shown at the root level.
+        /// </summary>
         public TreeGroup ParentTreeGroup { get; set; }
 
+        /// <summary>
+        /// Reverse-navigation list of all tree groups that are child relative to the current one.
+        /// </summary>
         [ForeignKey("ParentTreeGroupId")]
-        public IList<TreeGroup> ChildGroups { get; set; }
+        public IList<TreeGroup> ChildGroups { get; set; } = new List<TreeGroup>();
 
-        public IList<Resource> Resources { get; set; }
+        /// <summary>
+        /// Reverse-navigation list of all resources that are child relative to the current tree group.
+        /// </summary>
+        public IList<Resource> Resources { get; set; } = new List<Resource>();
         #endregion
 
-        #region User/Date modifications tracking Properties 
+        #region User-Time tracking Properties 
         // Repeating declaration to overcome current EF Core column ordering inability
-        [Required]
-        public DateTime CreatedDate { get; set; }
 
+        /// <summary>
+        /// Time of the current entry creation. Gets set automatically by the persistent storage.
+        /// </summary>
         [Required]
-        public DateTime UpdatedDate { get; set; }
+        public DateTime CreatedTime { get; set; }
 
+        /// <summary>
+        /// Time of the current entry creation. Gets set automatically by the persistent storage.
+        /// </summary>
+        [Required]
+        public DateTime UpdatedTime { get; set; }
+
+        /// <summary>
+        /// Identifier of the user who created current entry. Required.
+        /// </summary>
         [Required]
         [MaxLength(450)]
         public string CreatedUserId { get; set; }
 
+        /// <summary>
+        /// Identifier of the user who updated current entry. Required.
+        /// </summary>
         [Required]
         [MaxLength(450)]
         public string UpdatedUserId { get; set; }
 
+        /// <summary>
+        /// User who created current entry.
+        /// </summary>
         [ForeignKey("CreatedUserId")]
         public virtual ApplicationUser Creator { get; set; }
 
+        /// <summary>
+        /// User who updated current entry.
+        /// </summary>
         [ForeignKey("UpdatedUserId")]
         public virtual ApplicationUser Updater { get; set; }
         #endregion
