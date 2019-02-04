@@ -21,9 +21,9 @@ namespace BookingApp.Services
     {
         Task<IEnumerable<TModel>> GetListAsync();
         Task<TModel> GetAsync(TKey id);
-        void CreateAsync(TModel model);
-        void UpdateAsync(TModel model);
-        void DeleteAsync(TKey id);
-        void SaveAsync();
+        Task CreateAsync(TModel model);
+        Task UpdateAsync(TModel model);
+        Task DeleteAsync(TKey id);
+        Task SaveAsync();
     }
 }
