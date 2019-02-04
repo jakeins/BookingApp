@@ -23,8 +23,7 @@ namespace BookingApp.Models
         [Required]
         public DateTime EndTime { get; set; }
 
-        [DefaultValue(false)]
-        public bool? IsCancelled { get; set; }
+        public DateTime? TerminationTime { get; set; }
 
         #region Navigation Properties
         public Resource Resource { get; set; }
