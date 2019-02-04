@@ -107,7 +107,7 @@ namespace BookingApp.Data
                     users.Add(user.UserName, user);
                 }
                 #endregion
-                
+
                 #region Rules
                 var rules = new Dictionary<string, Rule> {
                     { "Defaultest",      new Rule() { Title = "Defaultest",    MinTime = 1,  MaxTime = 1440, } },
@@ -121,7 +121,7 @@ namespace BookingApp.Data
                 //pushing into EF
                 context.Rules.AddRange(rules.Select(e => e.Value));
                 #endregion
-                
+
                 #region TreeGroups
                 var treeGroups = new Dictionary<string, TreeGroup> {
                     { "Town Hall", new TreeGroup() { Title = "Town Hall" } },
@@ -135,7 +135,7 @@ namespace BookingApp.Data
 
                 context.TreeGroups.AddRange(treeGroups.Select(e => e.Value));
                 #endregion
-                
+
                 #region Resources
                 var resources = new Dictionary<int, Resource> {
                     {  1, new Resource() { Title = "Nothern View",          TreeGroup = treeGroups["Spire Balcony"], Rule = rules["Defaultest"] } },
@@ -171,33 +171,42 @@ namespace BookingApp.Data
                 //pushing into EF
                 context.Resources.AddRange(resources.Select(e => e.Value));
                 #endregion
-                
+
                 #region Bookings
-                for (int i = 0; i < 50; i++)
-                {
-                    var booking = new Booking
-                    {
-                        Note = loremIpsum.Substring(rand.Next(loremIpsum.Length - 200), rand.Next(0, 64)).Trim(),
-                        Resource = resources[rand.Next(1, resources.Count)],
-                        StartTime = DateTime.Now + TimeSpan.FromMinutes(rand.Next(-1440 * 3, +1440 * 2)),
-                        Creator = users.OrderBy(e => rand.Next()).First().Value
-                    };
-                    booking.EndTime = booking.StartTime + TimeSpan.FromMinutes(rand.Next(booking.Resource.Rule.MinTime ?? 1, booking.Resource.Rule.MaxTime ?? 1440));
-                    booking.Updater = booking.Creator;
-
-                    //pushing into EF rightaway: we won't reference bookings
-                    context.Bookings.Add(booking);
-                }
-
-                //cancel out some bookings
-                context.Bookings.OrderBy(b => rand.Next()).Take(context.Bookings.Count() / 10).ToList().ForEach(b => b.IsCancelled = true);
+                SeedBookingsSimple(rand, loremIpsum, users, resources);
                 #endregion
-                
+
                 //saving changes to DB
                 context.SaveChanges();
             }
             #endregion
 #endif
         }
+
+        private void SeedBookingsSimple(Random rand, string loremIpsum, Dictionary<string, ApplicationUser> users, Dictionary<int, Resource> resources)
+        {
+            for (int i = 0; i < 50; i++)
+            {
+                var booking = new Booking
+                {
+                    Note = loremIpsum.Substring(rand.Next(loremIpsum.Length - 200), rand.Next(0, 64)).Trim(),
+                    Resource = resources[rand.Next(1, resources.Count)],
+                    StartTime = DateTime.Now + TimeSpan.FromMinutes(rand.Next(-1440 * 3, +1440 * 2)),
+                    Creator = users.OrderBy(e => rand.Next()).First().Value
+                };
+                booking.EndTime = booking.StartTime + TimeSpan.FromMinutes(rand.Next(booking.Resource.Rule.MinTime ?? 1, booking.Resource.Rule.MaxTime ?? 1440));
+                booking.Updater = booking.Creator;
+
+                //pushing into EF rightaway: we won't reference bookings
+                context.Bookings.Add(booking);
+            }
+
+            //cancel out some bookings
+            context.Bookings.OrderBy(b => rand.Next())
+                .Take(context.Bookings.Count() / 5)
+                .ToList().ForEach(booking => booking.TerminationTime = booking.StartTime + TimeSpan.FromMinutes(rand.Next(-booking.Resource.Rule.MaxTime ?? -360, booking.Resource.Rule.MaxTime ?? +360)));
+        }
+
+
     }
 }
