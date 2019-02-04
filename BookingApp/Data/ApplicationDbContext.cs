@@ -24,11 +24,11 @@ namespace BookingApp.Data
 
             //setting default date autofill for all modification dates
             foreach (var entity in modelBuilder.Model.GetEntityTypes()
-                .Where(et => et.FindProperty("CreatedDate") != null && et.FindProperty("UpdatedDate") != null)
+                .Where(et => et.FindProperty("CreatedTime") != null && et.FindProperty("UpdatedTime") != null)
                 .Select(et => modelBuilder.Entity(et.ClrType)))
             {
-                entity.Property("CreatedDate").HasDefaultValueSql("getdate()");
-                entity.Property("UpdatedDate").HasDefaultValueSql("getdate()");
+                entity.Property("CreatedTime").HasDefaultValueSql("getdate()");
+                entity.Property("UpdatedTime").HasDefaultValueSql("getdate()");
             }
 
             //setting default values

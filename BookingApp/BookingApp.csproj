@@ -60,6 +60,8 @@
     <Compile Remove="Migrations\20190124191542_Initial.Designer.cs" />
     <Compile Remove="Migrations\20190124192340_Initial.cs" />
     <Compile Remove="Migrations\20190124192340_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20190204190030_ModelsDate2TimeRefinement.cs" />
+    <Compile Remove="Migrations\20190204190030_ModelsDate2TimeRefinement.Designer.cs" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

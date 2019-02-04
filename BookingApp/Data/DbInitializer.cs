@@ -14,8 +14,7 @@ namespace BookingApp.Data
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
 
-        public DbInitializer(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+        public DbInitializer(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             this.context = context;
             this.userManager = userManager;
@@ -172,9 +171,7 @@ namespace BookingApp.Data
                 context.Resources.AddRange(resources.Select(e => e.Value));
                 #endregion
 
-                #region Bookings
                 SeedBookingsSimple(rand, loremIpsum, users, resources);
-                #endregion
 
                 //saving changes to DB
                 context.SaveChanges();
@@ -183,8 +180,12 @@ namespace BookingApp.Data
 #endif
         }
 
+        /// <summary>
+        /// Seeds booking in a simple manner. The bookings do not follow the booking rules and may overlap, causing same-time booking conflict.
+        /// </summary>
         private void SeedBookingsSimple(Random rand, string loremIpsum, Dictionary<string, ApplicationUser> users, Dictionary<int, Resource> resources)
         {
+            var bookings = new List<Booking>();
             for (int i = 0; i < 50; i++)
             {
                 var booking = new Booking
@@ -197,16 +198,19 @@ namespace BookingApp.Data
                 booking.EndTime = booking.StartTime + TimeSpan.FromMinutes(rand.Next(booking.Resource.Rule.MinTime ?? 1, booking.Resource.Rule.MaxTime ?? 1440));
                 booking.Updater = booking.Creator;
 
-                //pushing into EF rightaway: we won't reference bookings
-                context.Bookings.Add(booking);
+                bookings.Add(booking);
             }
 
             //cancel out some bookings
-            context.Bookings.OrderBy(b => rand.Next())
-                .Take(context.Bookings.Count() / 5)
-                .ToList().ForEach(booking => booking.TerminationTime = booking.StartTime + TimeSpan.FromMinutes(rand.Next(-booking.Resource.Rule.MaxTime ?? -360, booking.Resource.Rule.MaxTime ?? +360)));
+            foreach (var booking in bookings.OrderBy(b => rand.Next()).Take(bookings.Count() / 5).ToList())
+            {
+                var deviationMagnitude = booking.Resource.Rule.MaxTime ?? 360;
+                var deviation = TimeSpan.FromMinutes(rand.Next(-deviationMagnitude, +deviationMagnitude));
+                booking.TerminationTime = booking.StartTime + deviation;
+            }
+
+            //pushing into EF
+            context.Bookings.AddRange(bookings);
         }
-
-
     }
 }
