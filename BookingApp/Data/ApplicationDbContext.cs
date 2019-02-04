@@ -39,8 +39,6 @@ namespace BookingApp.Data
             ruleEntity.Property("ServiceTime").HasDefaultValue(0);
             ruleEntity.Property("ReuseTimeout").HasDefaultValue(0);
             ruleEntity.Property("PreOrderTimeLimit").HasDefaultValue(1440);
-
-            modelBuilder.Entity<Booking>().Property("IsCancelled").HasDefaultValue(false);
             
             var userEntity = modelBuilder.Entity<ApplicationUser>();
             userEntity.Property("IsApproved").HasDefaultValue(false);
