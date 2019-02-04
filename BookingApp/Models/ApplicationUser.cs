@@ -1,12 +1,20 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel;
 
 namespace BookingApp.Models
 {
+    /// <summary>
+    /// The extension of the standard IdentityUser, adds signup approval and banning capabilities.
+    /// </summary>
     public class ApplicationUser : IdentityUser
     {
-        //hooked up properties; have to be nullable to overcome CLR default issue, thus be able to have real defaults in DB
+        /// <summary>
+        /// Defines whether user is approved by the administrator after sign up. Is false by default at the persistent storage.
+        /// </summary>
         public bool? IsApproved { get; set; }
+
+        /// <summary>
+        /// Provides ban or suspension functionality. Is true by default at the persistent storage.
+        /// </summary>
         public bool? IsActive { get; set; }
     }
 }
