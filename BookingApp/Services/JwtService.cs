@@ -1,4 +1,4 @@
-﻿using BookingApp.Models;
+﻿using BookingApp.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

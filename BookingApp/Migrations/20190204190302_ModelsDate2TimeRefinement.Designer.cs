@@ -4,14 +4,16 @@ using BookingApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookingApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190204190302_ModelsDate2TimeRefinement")]
+    partial class ModelsDate2TimeRefinement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,7 +21,7 @@ namespace BookingApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("BookingApp.Data.Models.ApplicationUser", b =>
+            modelBuilder.Entity("BookingApp.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -78,7 +80,7 @@ namespace BookingApp.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("BookingApp.Data.Models.Booking", b =>
+            modelBuilder.Entity("BookingApp.Models.Booking", b =>
                 {
                     b.Property<int>("BookingId")
                         .ValueGeneratedOnAdd()
@@ -122,7 +124,7 @@ namespace BookingApp.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("BookingApp.Data.Models.Resource", b =>
+            modelBuilder.Entity("BookingApp.Models.Resource", b =>
                 {
                     b.Property<int>("ResourceId")
                         .ValueGeneratedOnAdd()
@@ -138,10 +140,6 @@ namespace BookingApp.Migrations
 
                     b.Property<string>("Description")
                         .HasMaxLength(512);
-
-                    b.Property<bool?>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(true);
 
                     b.Property<int>("RuleId");
 
@@ -172,7 +170,7 @@ namespace BookingApp.Migrations
                     b.ToTable("Resources");
                 });
 
-            modelBuilder.Entity("BookingApp.Data.Models.Rule", b =>
+            modelBuilder.Entity("BookingApp.Models.Rule", b =>
                 {
                     b.Property<int>("RuleId")
                         .ValueGeneratedOnAdd()
@@ -185,10 +183,6 @@ namespace BookingApp.Migrations
                     b.Property<string>("CreatedUserId")
                         .IsRequired()
                         .HasMaxLength(450);
-
-                    b.Property<bool?>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(true);
 
                     b.Property<int?>("MaxTime")
                         .ValueGeneratedOnAdd()
@@ -235,7 +229,7 @@ namespace BookingApp.Migrations
                     b.ToTable("Rules");
                 });
 
-            modelBuilder.Entity("BookingApp.Data.Models.TreeGroup", b =>
+            modelBuilder.Entity("BookingApp.Models.TreeGroup", b =>
                 {
                     b.Property<int>("TreeGroupId")
                         .ValueGeneratedOnAdd()
@@ -250,10 +244,6 @@ namespace BookingApp.Migrations
                         .HasMaxLength(450);
 
                     b.Property<int?>("DefaultRuleId");
-
-                    b.Property<bool?>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(true);
 
                     b.Property<int?>("ParentTreeGroupId");
 
@@ -392,78 +382,78 @@ namespace BookingApp.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("BookingApp.Data.Models.Booking", b =>
+            modelBuilder.Entity("BookingApp.Models.Booking", b =>
                 {
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser", "Creator")
+                    b.HasOne("BookingApp.Models.ApplicationUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatedUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BookingApp.Data.Models.Resource", "Resource")
+                    b.HasOne("BookingApp.Models.Resource", "Resource")
                         .WithMany("Bookings")
                         .HasForeignKey("ResourceId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser", "Updater")
+                    b.HasOne("BookingApp.Models.ApplicationUser", "Updater")
                         .WithMany()
                         .HasForeignKey("UpdatedUserId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("BookingApp.Data.Models.Resource", b =>
+            modelBuilder.Entity("BookingApp.Models.Resource", b =>
                 {
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser", "Creator")
+                    b.HasOne("BookingApp.Models.ApplicationUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatedUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BookingApp.Data.Models.Rule", "Rule")
+                    b.HasOne("BookingApp.Models.Rule", "Rule")
                         .WithMany()
                         .HasForeignKey("RuleId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BookingApp.Data.Models.TreeGroup", "TreeGroup")
+                    b.HasOne("BookingApp.Models.TreeGroup", "TreeGroup")
                         .WithMany("Resources")
                         .HasForeignKey("TreeGroupId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser", "Updater")
+                    b.HasOne("BookingApp.Models.ApplicationUser", "Updater")
                         .WithMany()
                         .HasForeignKey("UpdatedUserId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("BookingApp.Data.Models.Rule", b =>
+            modelBuilder.Entity("BookingApp.Models.Rule", b =>
                 {
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser", "Creator")
+                    b.HasOne("BookingApp.Models.ApplicationUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatedUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser", "Updater")
+                    b.HasOne("BookingApp.Models.ApplicationUser", "Updater")
                         .WithMany()
                         .HasForeignKey("UpdatedUserId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("BookingApp.Data.Models.TreeGroup", b =>
+            modelBuilder.Entity("BookingApp.Models.TreeGroup", b =>
                 {
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser", "Creator")
+                    b.HasOne("BookingApp.Models.ApplicationUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatedUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BookingApp.Data.Models.Rule", "DefaultRule")
+                    b.HasOne("BookingApp.Models.Rule", "DefaultRule")
                         .WithMany()
                         .HasForeignKey("DefaultRuleId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BookingApp.Data.Models.TreeGroup", "ParentTreeGroup")
+                    b.HasOne("BookingApp.Models.TreeGroup", "ParentTreeGroup")
                         .WithMany("ChildGroups")
                         .HasForeignKey("ParentTreeGroupId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser", "Updater")
+                    b.HasOne("BookingApp.Models.ApplicationUser", "Updater")
                         .WithMany()
                         .HasForeignKey("UpdatedUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -479,7 +469,7 @@ namespace BookingApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser")
+                    b.HasOne("BookingApp.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -487,7 +477,7 @@ namespace BookingApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser")
+                    b.HasOne("BookingApp.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -500,7 +490,7 @@ namespace BookingApp.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser")
+                    b.HasOne("BookingApp.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -508,7 +498,7 @@ namespace BookingApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("BookingApp.Data.Models.ApplicationUser")
+                    b.HasOne("BookingApp.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
