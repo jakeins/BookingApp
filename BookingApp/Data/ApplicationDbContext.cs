@@ -40,9 +40,15 @@ namespace BookingApp.Data
             ruleEntity.Property("ReuseTimeout").HasDefaultValue(0);
             ruleEntity.Property("PreOrderTimeLimit").HasDefaultValue(1440);
             
-            var userEntity = modelBuilder.Entity<ApplicationUser>();
-            userEntity.Property("IsApproved").HasDefaultValue(false);
-            userEntity.Property("IsActive").HasDefaultValue(true);
+            modelBuilder.Entity<ApplicationUser>().Property("IsApproved").HasDefaultValue(false);
+
+            //setting default active state for all applicable entities
+            foreach (var entity in modelBuilder.Model.GetEntityTypes()
+                .Where(et => et.FindProperty("IsActive") != null)
+                .Select(et => modelBuilder.Entity(et.ClrType)))
+            {
+                entity.Property("IsActive").HasDefaultValue(true);
+            }
 
             //resetting the default Delete behavior from Cascade to Restricted (i.e. No Action)
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

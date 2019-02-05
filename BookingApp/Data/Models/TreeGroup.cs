@@ -28,11 +28,20 @@ namespace BookingApp.Data.Models
         /// Identifier of the parent tree group, where current tree group should be *visually* nested in. Optional: null means this tree group is being shown at the root level.
         /// </summary>
         public int? ParentTreeGroupId { get; set; }
+
+        /// <summary>
+        /// Identifier of a default booking rule for the nested resources during their creation. Optional: null means this tree group offers no rule as default.
+        /// </summary>
         public int? DefaultRuleId { get; set; }
+
+        /// <summary>
+        /// Provides deactivation functionality. Is true by default at the persistent storage.
+        /// </summary>
+        public bool? IsActive { get; set; }
 
         #region Navigation Properties
         /// <summary>
-        /// Get passed as a default booking rule for the nested resources during their creation. Nullity means this tree group is being shown at the root level.
+        /// Get passed as a default booking rule for the nested resources during their creation. Nullity means this tree group offers no rule as default.
         /// </summary>
         public Rule DefaultRule { get; set; }
 
