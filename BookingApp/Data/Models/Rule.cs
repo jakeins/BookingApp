@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BookingApp.Models
+namespace BookingApp.Data.Models
 {
     /// <summary>
     /// Resource booking policy.
@@ -52,6 +52,11 @@ namespace BookingApp.Models
         /// Time range (minutes) used to determine how early can user book a resource, relative to the start of its usage; "Pre-Order countdown". Default 24h at the persistent storage.
         /// </summary>
         public int? PreOrderTimeLimit { get; set; }
+
+        /// <summary>
+        /// Provides deactivation functionality. Is true by default at the persistent storage.
+        /// </summary>
+        public bool? IsActive { get; set; }
 
         #region User-Time tracking Properties 
         // Repeating declaration to overcome current EF Core column ordering inability

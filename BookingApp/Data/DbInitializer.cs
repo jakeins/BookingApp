@@ -1,5 +1,5 @@
 ﻿using BookingApp.Helpers;
-using BookingApp.Models;
+using BookingApp.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -39,9 +39,14 @@ namespace BookingApp.Data
             if (context.Database.EnsureCreated())
             {
                 //If not exist before than create store procedures
-                CreateStoreProceduresInDb();
-            }
+                await CreateStoreProceduresInDb();
+                //And populate seed data
+                await SeedAllData();
+            }    
+        }
 
+        private async Task SeedAllData()
+        {
             #region SuperAdmin 
             //make sure we have basic roles
             if (!await roleManager.RoleExistsAsync(RoleTypes.Admin))
@@ -76,7 +81,6 @@ namespace BookingApp.Data
             superAdmin.IsActive = superAdmin.IsApproved = true;
             await userManager.UpdateAsync(superAdmin);
             #endregion
-
 #if DEBUG
             #region Dummy Data
             if (!startedWithUsers)//fill with dummy data only if there were no users at start
@@ -224,7 +228,7 @@ namespace BookingApp.Data
         /// Search store procedures code as embeded ressources in 
         /// namespace <c>Data.StoredProcedures</c> and must be with extension sql
         /// </summary>
-        private void CreateStoreProceduresInDb()
+        private async Task CreateStoreProceduresInDb()
         {
             var assembly = Assembly.GetExecutingAssembly();
 
@@ -237,7 +241,7 @@ namespace BookingApp.Data
                 using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                 using (StreamReader reader = new StreamReader(stream))
                 {
-                    context.Database.ExecuteSqlCommand(reader.ReadToEnd());
+                    await context.Database.ExecuteSqlCommandAsync(reader.ReadToEnd());
                 }
             }
         }

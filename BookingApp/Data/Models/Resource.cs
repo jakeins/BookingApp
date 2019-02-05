@@ -3,54 +3,64 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BookingApp.Models
+namespace BookingApp.Data.Models
 {
     /// <summary>
-    /// Visual nesting entity, provides ability to *visually* group resources in a form of a nested set (tree).
+    /// Valuable rentable entity that is being booked (and used) by the users over time.
     /// </summary>
-    public class TreeGroup
+    public class Resource
     {
         /// <summary>
-        /// Primary identity key for the tree group.
+        /// Primary identity key for the resource.
         /// </summary>
         [Key]
         [Required]
-        public int TreeGroupId { get; set; }
+        public int ResourceId { get; set; }
 
         /// <summary>
-        /// Short designation of the tree group. Required.
+        /// Short designation of the resource. Required.
         /// </summary>
         [Required]
         [MaxLength(64)]
         public string Title { get; set; }
 
         /// <summary>
-        /// Identifier of the parent tree group, where current tree group should be *visually* nested in. Optional: null means this tree group is being shown at the root level.
+        /// Detailed description of the resource. Optional.
         /// </summary>
-        public int? ParentTreeGroupId { get; set; }
-        public int? DefaultRuleId { get; set; }
+        [MaxLength(512)]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// The identifier of the TreeGroup at which current resource should be *visually* nested. Optional: null means this resource is being shown at the root level.
+        /// </summary>
+        public int? TreeGroupId { get; set; }
+
+        /// <summary>
+        /// The identifier of the booking rule that is used to define booking policy of the current resource. Required.
+        /// </summary>
+        [Required]
+        public int RuleId { get; set; }
+
+        /// <summary>
+        /// Provides deactivation functionality. Is true by default at the persistent storage.
+        /// </summary>
+        public bool? IsActive { get; set; }
 
         #region Navigation Properties
         /// <summary>
-        /// Get passed as a default booking rule for the nested resources during their creation. Nullity means this tree group is being shown at the root level.
+        /// The booking rule that is used to define booking policy of the current resource. Required.
         /// </summary>
-        public Rule DefaultRule { get; set; }
+        public Rule Rule { get; set; }
 
         /// <summary>
-        /// Parent tree group, where current tree group should be *visually* nested in. Nullity means this tree group is being shown at the root level.
+        /// The TreeGroup at which current resource should be *visually* nested. Nullity means this resource is being shown at the root level.
         /// </summary>
-        public TreeGroup ParentTreeGroup { get; set; }
+        public TreeGroup TreeGroup { get; set; }
 
         /// <summary>
-        /// Reverse-navigation list of all tree groups that are child relative to the current one.
+        /// The reverse-navigation list of all bookings of the current resource.
         /// </summary>
-        [ForeignKey("ParentTreeGroupId")]
-        public IList<TreeGroup> ChildGroups { get; set; } = new List<TreeGroup>();
-
-        /// <summary>
-        /// Reverse-navigation list of all resources that are child relative to the current tree group.
-        /// </summary>
-        public IList<Resource> Resources { get; set; } = new List<Resource>();
+        public IList<Booking> Bookings { get; set; } = new List<Booking>();
         #endregion
 
         #region User-Time tracking Properties 
