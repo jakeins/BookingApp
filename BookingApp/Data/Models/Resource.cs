@@ -1,60 +1,61 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BookingApp.Models
+namespace BookingApp.Data.Models
 {
     /// <summary>
-    /// Single booking occasion of a resource by the user in the specific time range. 
+    /// Valuable rentable entity that is being booked (and used) by the users over time.
     /// </summary>
-    public class Booking
+    public class Resource
     {
         /// <summary>
-        /// Primary identity key for the booking.
+        /// Primary identity key for the resource.
         /// </summary>
         [Key]
-        [Required]
-        public int BookingId { get; set; }
-
-        /// <summary>
-        /// Identifier of the resource being booked. Required.
-        /// </summary>
         [Required]
         public int ResourceId { get; set; }
 
         /// <summary>
-        /// Optional mid-length information about the booking. Is used to mark and differentiate alike bookings.
-        /// </summary>
-        [MaxLength(128)]
-        public string Note { get; set; }
-
-        /// <summary>
-        /// Time of the actual resource usage start. The first usage moment. Required.
-        /// See <seealso cref="CreatedTime"></seealso> for booking entry creation time.
+        /// Short designation of the resource. Required.
         /// </summary>
         [Required]
-        public DateTime StartTime { get; set; }
+        [MaxLength(64)]
+        public string Title { get; set; }
 
         /// <summary>
-        /// Planned resource usage end. Specifically, the first moment when booking is *planned* to be non-valid. Required.
-        /// <para>Can be used as a factual usage end in case of <see cref="TerminationTime"></see> nullity.</para>
+        /// Detailed description of the resource. Optional.
+        /// </summary>
+        [MaxLength(512)]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// The identifier of the TreeGroup at which current resource should be *visually* nested. Optional: null means this resource is being shown at the root level.
+        /// </summary>
+        public int? TreeGroupId { get; set; }
+
+        /// <summary>
+        /// The identifier of the booking rule that is used to define booking policy of the current resource. Required.
         /// </summary>
         [Required]
-        public DateTime EndTime { get; set; }
-
-        /// <summary>
-        /// Indication of the early booking termination moment. Specifically, the first moment when booking is actually no longer valid.
-        /// <para>Value less or equal to <see cref="StartTime"></see> means that booking was preliminary cancelled.</para>
-        /// <para>Value within <see cref="StartTime"></see> and <see cref="EndTime"></see> means that resource is freed before planned time.</para>
-        /// <para>Value greater or equal to <see cref="EndTime"></see> makes no effective sense.</para>
-        /// </summary>
-        public DateTime? TerminationTime { get; set; }
+        public int RuleId { get; set; }
 
         #region Navigation Properties
         /// <summary>
-        /// The resource being booked.
+        /// The booking rule that is used to define booking policy of the current resource. Required.
         /// </summary>
-        public Resource Resource { get; set; }
+        public Rule Rule { get; set; }
+
+        /// <summary>
+        /// The TreeGroup at which current resource should be *visually* nested. Nullity means this resource is being shown at the root level.
+        /// </summary>
+        public TreeGroup TreeGroup { get; set; }
+
+        /// <summary>
+        /// The reverse-navigation list of all bookings of the current resource.
+        /// </summary>
+        public IList<Booking> Bookings { get; set; } = new List<Booking>();
         #endregion
 
         #region User-Time tracking Properties 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BookingApp.Models
+namespace BookingApp.Data.Models
 {
     /// <summary>
     /// The extension of the standard IdentityUser, adds signup approval and banning capabilities.

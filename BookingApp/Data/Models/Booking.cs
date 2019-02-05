@@ -1,56 +1,60 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BookingApp.Models
+namespace BookingApp.Data.Models
 {
     /// <summary>
-    /// Visual nesting entity, provides ability to *visually* group resources in a form of a nested set (tree).
+    /// Single booking occasion of a resource by the user in the specific time range. 
     /// </summary>
-    public class TreeGroup
+    public class Booking
     {
         /// <summary>
-        /// Primary identity key for the tree group.
+        /// Primary identity key for the booking.
         /// </summary>
         [Key]
         [Required]
-        public int TreeGroupId { get; set; }
+        public int BookingId { get; set; }
 
         /// <summary>
-        /// Short designation of the tree group. Required.
+        /// Identifier of the resource being booked. Required.
         /// </summary>
         [Required]
-        [MaxLength(64)]
-        public string Title { get; set; }
+        public int ResourceId { get; set; }
 
         /// <summary>
-        /// Identifier of the parent tree group, where current tree group should be *visually* nested in. Optional: null means this tree group is being shown at the root level.
+        /// Optional mid-length information about the booking. Is used to mark and differentiate alike bookings.
         /// </summary>
-        public int? ParentTreeGroupId { get; set; }
-        public int? DefaultRuleId { get; set; }
+        [MaxLength(128)]
+        public string Note { get; set; }
+
+        /// <summary>
+        /// Time of the actual resource usage start. The first usage moment. Required.
+        /// See <seealso cref="CreatedTime"></seealso> for booking entry creation time.
+        /// </summary>
+        [Required]
+        public DateTime StartTime { get; set; }
+
+        /// <summary>
+        /// Planned resource usage end. Specifically, the first moment when booking is *planned* to be non-valid. Required.
+        /// <para>Can be used as a factual usage end in case of <see cref="TerminationTime"></see> nullity.</para>
+        /// </summary>
+        [Required]
+        public DateTime EndTime { get; set; }
+
+        /// <summary>
+        /// Indication of the early booking termination moment. Specifically, the first moment when booking is actually no longer valid.
+        /// <para>Value less or equal to <see cref="StartTime"></see> means that booking was preliminary cancelled.</para>
+        /// <para>Value within <see cref="StartTime"></see> and <see cref="EndTime"></see> means that resource is freed before planned time.</para>
+        /// <para>Value greater or equal to <see cref="EndTime"></see> makes no effective sense.</para>
+        /// </summary>
+        public DateTime? TerminationTime { get; set; }
 
         #region Navigation Properties
         /// <summary>
-        /// Get passed as a default booking rule for the nested resources during their creation. Nullity means this tree group is being shown at the root level.
+        /// The resource being booked.
         /// </summary>
-        public Rule DefaultRule { get; set; }
-
-        /// <summary>
-        /// Parent tree group, where current tree group should be *visually* nested in. Nullity means this tree group is being shown at the root level.
-        /// </summary>
-        public TreeGroup ParentTreeGroup { get; set; }
-
-        /// <summary>
-        /// Reverse-navigation list of all tree groups that are child relative to the current one.
-        /// </summary>
-        [ForeignKey("ParentTreeGroupId")]
-        public IList<TreeGroup> ChildGroups { get; set; } = new List<TreeGroup>();
-
-        /// <summary>
-        /// Reverse-navigation list of all resources that are child relative to the current tree group.
-        /// </summary>
-        public IList<Resource> Resources { get; set; } = new List<Resource>();
+        public Resource Resource { get; set; }
         #endregion
 
         #region User-Time tracking Properties 
