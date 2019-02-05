@@ -8,12 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookingApp.Controllers
 {
-    public class AuthController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthController : ControllerBase
     {
         [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login([FromBody]LoginDto dto)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             //TODO: getting user
 
             return Ok();
@@ -23,6 +29,10 @@ namespace BookingApp.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody]RegisterDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             //TODO: creating user
 
             return Ok();
