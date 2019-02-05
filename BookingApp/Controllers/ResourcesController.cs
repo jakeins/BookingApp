@@ -5,7 +5,9 @@ using BookingApp.Data.Models;
 using BookingApp.Services;
 using AutoMapper;
 using BookingApp.DTOs;
-using Microsoft.EntityFrameworkCore;
+using BookingApp.Exceptions;
+using Microsoft.AspNetCore.Identity;
+using BookingApp.Helpers;
 
 namespace BookingApp.Controllers
 {
@@ -13,42 +15,51 @@ namespace BookingApp.Controllers
     [ApiController]
     public class ResourcesController : ControllerBase
     {
-        readonly ResourcesService service;
-        readonly IMapper mapper;
+        readonly ResourcesService resourcesService;
+        readonly UserManager<ApplicationUser> userManager;
+        readonly RoleManager<IdentityRole> roleManager;
+        readonly IMapper dtoMapper;
 
-        public ResourcesController(ResourcesService service)
+        public ResourcesController(ResourcesService resourcesService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            this.service = service;
+            this.resourcesService = resourcesService;
+            this.userManager = userManager;
+            this.roleManager = roleManager;
 
-            mapper = new Mapper(new MapperConfiguration(cfg =>
+            dtoMapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Resource, ResourceBriefDto>();
+                cfg.CreateMap<Resource, ResourceMinimalDto>();
                 cfg.CreateMap<Resource, ResourceDetailedDto>().ReverseMap();
             }));
         }
 
+        #region CRUD actions
         // GET: api/Resources
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var result = mapper.Map<IEnumerable<ResourceBriefDto>>(await service.GetList());
+            var modelsList = await resourcesService.GetList(includeInactives: await IsCurrentUserAdmin());
 
-            foreach (var item in result)
-                item.Occupancy = await service.GetOccupancy(item.ResourceId);
+            var dtosList = dtoMapper.Map<IEnumerable<ResourceMinimalDto>>(modelsList);
 
-            return Ok(result);
+            return Ok(dtosList);
         }
 
+
+
         // GET: api/Resources/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Details([FromRoute] int id)
+        [HttpGet("{resourceId}")]
+        public async Task<IActionResult> Details([FromRoute] int resourceId)
         {
-            if(mapper.Map<ResourceDetailedDto>(await service.Get(id)) is ResourceDetailedDto item)
-                return Ok(item);
+            if (await AreActivesAllowed(resourceId) && await resourcesService.Get(resourceId) is Resource resourceModel)
+            {
+                var resourceDTO = dtoMapper.Map<ResourceDetailedDto>(resourceModel);
+                return Ok(resourceDTO);
+            }
             else
                 return NotFound("Requested resource not found."); 
         }
-        
+
         // POST: api/Resources
         [HttpPost]
         //[Authorize(Roles = RoleTypes.Admin)]
@@ -57,14 +68,14 @@ namespace BookingApp.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var itemModel = mapper.Map<Resource>(item);
+            var itemModel = dtoMapper.Map<Resource>(item);
             itemModel.ResourceId = 0;
 
-            await service.Create(itemModel);
+            await resourcesService.Create(itemModel, await GetCurrentUserMOCK());
 
             return Ok("Resource created successfully.");
         }
-        
+
         // PUT: api/Resources/5
         [HttpPut("{id}")]
         //[Authorize(Roles = RoleTypes.Admin)]
@@ -74,17 +85,17 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
 
             if (id != item.ResourceId)
-                return BadRequest("Resource identifiers inconsistency.");
+                return BadRequest("Resource identifiers inconsistent.");
 
             try
             {
-                await service.Update(mapper.Map<Resource>(item));
+                await resourcesService.Update(dtoMapper.Map<Resource>(item), await GetCurrentUserMOCK());
             }
-            catch(DbUpdateConcurrencyException)
+            catch (UpdateFailedException)
             {
-                return BadRequest("Cannot update this resource.");
+                return BadRequest("Cannot update this resource. Specified resource identifier could be improper.");
             }
-                
+
             return Ok("Resource updated successfully.");
         }
 
@@ -95,14 +106,60 @@ namespace BookingApp.Controllers
         {
             try
             {
-                await service.Delete(id);
+                await resourcesService.Delete(id);
             }
-            catch(DbUpdateException)
+            catch (DeletionResctrictedException)
             {
-                return BadRequest("Cannot delete this resource. Some bookings may rely on it.");
+                return BadRequest("Cannot delete this resource. Some bookings rely on it.");
             }
-            
+
             return Ok("Resource deleted.");
         }
+
+        #endregion
+
+        #region Extended actions
+        // GET: api/Resources/Occupancy
+        [HttpGet("Occupancy")]
+        public async Task<IActionResult> IndexOccupancies()
+        {
+            return Ok(await resourcesService.GetOccupancies(includeIncatives: await IsCurrentUserAdmin()));
+        }
+
+
+        // GET: api/Resources/5/Occupancy
+        [HttpGet("{id}/Occupancy")]
+        public async Task<IActionResult> SingleOccupancy([FromRoute] int id)
+        {
+            try
+            {
+                if (!await AreActivesAllowed(id))
+                    throw new KeyNotFoundException();
+
+                return Ok(await resourcesService.GetOccupancy(id));
+            }
+            catch(KeyNotFoundException)
+            {
+                return NotFound("Requested resource not found.");
+            }
+            catch(AbsurdFieldValueException)
+            {
+                return BadRequest("There is a problem with the resource booking policy.");
+            }
+        }
+        #endregion
+
+        #region Private utilities
+        /// <summary>
+        /// User mock.
+        /// </summary>
+        async Task<ApplicationUser> GetCurrentUserMOCK() => await userManager.FindByNameAsync("SuperAdmin");//stub
+
+        async Task<bool> IsCurrentUserAdmin() => await userManager.IsInRoleAsync(await GetCurrentUserMOCK(), RoleTypes.Admin);
+
+        async Task<bool> AreActivesAllowed(int resourceId) => await resourcesService.IsResourceActive(resourceId) || await IsCurrentUserAdmin();
+
+
+        #endregion
     }
 }
