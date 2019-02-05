@@ -19,21 +19,21 @@ namespace BookingApp.Services
         #region CRUD operations
         public async Task<IEnumerable<Resource>> GetList(bool includeInactives) => await resourcesRepo.GetList(includeInactives);
 
-        public async Task<Resource> Get(int id) => await resourcesRepo.Get(id);
+        public async Task<Resource> Get(int id) => await resourcesRepo.GetAsync(id);
 
         public async Task Create(Resource item, ApplicationUser creator)
         {
             item.Creator = item.Updater = creator;
-            await resourcesRepo.Create(item);
+            await resourcesRepo.CreateAsync(item);
         }
 
         public async Task Update(Resource item, ApplicationUser updater)
         {
             item.Creator = item.Updater = updater;
-            await resourcesRepo.Update(item);
+            await resourcesRepo.UpdateAsync(item);
         }
 
-        public async Task Delete(int id) => await resourcesRepo.Delete(id);
+        public async Task Delete(int id) => await resourcesRepo.DeleteAsync(id);
         #endregion
 
         #region Extended operations

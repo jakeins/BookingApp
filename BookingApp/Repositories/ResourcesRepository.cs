@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Repositories
 {
-    public class ResourcesRepository //: IRepository<Resource, int>
+    public class ResourcesRepository : IRepositoryAsync<Resource, int>
     {
         ApplicationDbContext dbContext;
 
@@ -19,25 +19,25 @@ namespace BookingApp.Repositories
             this.dbContext = dbContext;
         }
 
-        #region IRepository implementation
+        #region IRepositoryAsync implementation
 
-        public async Task<IEnumerable<Resource>> GetList() => await dbContext.Resources.ToListAsync();
+        public async Task<IEnumerable<Resource>> GetListAsync() => await dbContext.Resources.ToListAsync();
 
-        public async Task<Resource> Get(int id) => await dbContext.Resources.FirstOrDefaultAsync(p => p.ResourceId == id);
+        public async Task<Resource> GetAsync(int id) => await dbContext.Resources.FirstOrDefaultAsync(p => p.ResourceId == id);
 
-        public async Task Create(Resource item)
+        public async Task CreateAsync(Resource item)
         {
             dbContext.Resources.Add(item);
-            await Save();
+            await SaveAsync();
         }
 
-        public async Task Update(Resource item)
+        public async Task UpdateAsync(Resource item)
         {
             dbContext.Resources.Update(item);
 
             try
             {
-                await Save();
+                await SaveAsync();
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -50,7 +50,7 @@ namespace BookingApp.Repositories
             }
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             if (await dbContext.Resources.FirstOrDefaultAsync(p => p.ResourceId == id) is Resource item)
             {
@@ -58,7 +58,7 @@ namespace BookingApp.Repositories
 
                 try
                 {
-                    await Save();
+                    await SaveAsync();
                 }
                 catch (DbUpdateException dbuException)
                 {
@@ -70,7 +70,7 @@ namespace BookingApp.Repositories
             }
         }
 
-        public async Task Save() => await dbContext.SaveChangesAsync();
+        public async Task SaveAsync() => await dbContext.SaveChangesAsync();
 
         #endregion
 
@@ -87,7 +87,7 @@ namespace BookingApp.Repositories
         public async Task<IEnumerable<Resource>> GetList(bool showIncatives)
         {
             if (showIncatives)
-                return await GetList();
+                return await GetListAsync();
             else
                 return await Actives().ToListAsync();
         }
