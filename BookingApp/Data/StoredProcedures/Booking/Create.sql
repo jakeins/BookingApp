@@ -3,7 +3,7 @@
 -- Create date: 03-02-2019
 -- Description:	Verify args and create booking if time window free
 -- =============================================
-CREATE PROCEDURE [dbo].[CreateBooking]
+CREATE PROCEDURE [dbo].[Booking.Create]
 	-- Add the parameters for the stored procedure here
 	@ResourceID int,
 	@StartTime DateTime,

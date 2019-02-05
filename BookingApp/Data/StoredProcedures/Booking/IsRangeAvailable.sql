@@ -4,7 +4,7 @@
 -- Description:	Check is booking range available,
 --              return 1 if not applicable and 0 if applicable
 -- ============================================================
-CREATE PROCEDURE [dbo].[IsRangeAvailable]
+CREATE PROCEDURE [dbo].[Booking.IsRangeAvailable]
 	@RequestStartTime datetime,
 	@RequestEndTime datetime,
 	@BookingStartTime datetime,

@@ -64,12 +64,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Data\StoredProcedures\Booking\CreateBooking.sql" />
-    <None Remove="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Data\StoredProcedures\Booking\CreateBooking.sql" />
+    <EmbeddedResource Include="Data\StoredProcedures\Booking\Create.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
   </ItemGroup>
 
