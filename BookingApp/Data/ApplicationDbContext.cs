@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using BookingApp.Models;
+using BookingApp.Data.Models;
 using System.Linq;
 
 namespace BookingApp.Data

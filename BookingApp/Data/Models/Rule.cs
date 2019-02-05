@@ -1,62 +1,57 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BookingApp.Models
+namespace BookingApp.Data.Models
 {
     /// <summary>
-    /// Valuable rentable entity that is being booked (and used) by the users over time.
+    /// Resource booking policy.
     /// </summary>
-    public class Resource
+    public class Rule
     {
         /// <summary>
-        /// Primary identity key for the resource.
+        /// Primary identity key for the rule.
         /// </summary>
         [Key]
         [Required]
-        public int ResourceId { get; set; }
+        public int RuleId { get; set; }
 
         /// <summary>
-        /// Short designation of the resource. Required.
+        /// Short designation of the rule. Required.
         /// </summary>
         [Required]
         [MaxLength(64)]
         public string Title { get; set; }
 
         /// <summary>
-        /// Detailed description of the resource. Optional.
+        /// Minimal usage time of a resource (minutes). Default 1m at the persistent storage.
         /// </summary>
-        [MaxLength(512)]
-        public string Description { get; set; }
+        public int? MinTime { get; set; }
 
         /// <summary>
-        /// The identifier of the TreeGroup at which current resource should be *visually* nested. Optional: null means this resource is being shown at the root level.
+        /// Maximum usage time of a resource (minutes). Default 24h at the persistent storage.
         /// </summary>
-        public int? TreeGroupId { get; set; }
+        public int? MaxTime { get; set; }
 
         /// <summary>
-        /// The identifier of the booking rule that is used to define booking policy of the current resource. Required.
+        /// Minimal step of booking time (minutes). Default 1m at the persistent storage.
         /// </summary>
-        [Required]
-        public int RuleId { get; set; }
-
-        #region Navigation Properties
-        /// <summary>
-        /// The booking rule that is used to define booking policy of the current resource. Required.
-        /// </summary>
-        public Rule Rule { get; set; }
+        public int? StepTime { get; set; }
 
         /// <summary>
-        /// The TreeGroup at which current resource should be *visually* nested. Nullity means this resource is being shown at the root level.
+        /// Time after the end of resource usage (minutes), during which the specific resource is not available for booking by anyone; "Recharge time". Default 0 at the persistent storage.
         /// </summary>
-        public TreeGroup TreeGroup { get; set; }
+        public int? ServiceTime { get; set; }
 
         /// <summary>
-        /// The reverse-navigation list of all bookings of the current resource.
+        /// Time from the usage start (minutes), during which booking of this resource is prohibited for the current user; "Speculation timeout". Default 0 at the persistent storage.
         /// </summary>
-        public IList<Booking> Bookings { get; set; } = new List<Booking>();
-        #endregion
+        public int? ReuseTimeout { get; set; }
+
+        /// <summary>
+        /// Time range (minutes) used to determine how early can user book a resource, relative to the start of its usage; "Pre-Order countdown". Default 24h at the persistent storage.
+        /// </summary>
+        public int? PreOrderTimeLimit { get; set; }
 
         #region User-Time tracking Properties 
         // Repeating declaration to overcome current EF Core column ordering inability

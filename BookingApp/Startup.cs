@@ -1,4 +1,4 @@
-using BookingApp.Models;
+using BookingApp.Data.Models;
 using BookingApp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

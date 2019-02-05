@@ -1,57 +1,57 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BookingApp.Models
+namespace BookingApp.Data.Models
 {
     /// <summary>
-    /// Resource booking policy.
+    /// Visual nesting entity, provides ability to *visually* group resources in a form of a nested set (tree).
     /// </summary>
-    public class Rule
+    public class TreeGroup
     {
         /// <summary>
-        /// Primary identity key for the rule.
+        /// Primary identity key for the tree group.
         /// </summary>
         [Key]
         [Required]
-        public int RuleId { get; set; }
+        public int TreeGroupId { get; set; }
 
         /// <summary>
-        /// Short designation of the rule. Required.
+        /// Short designation of the tree group. Required.
         /// </summary>
         [Required]
         [MaxLength(64)]
         public string Title { get; set; }
 
         /// <summary>
-        /// Minimal usage time of a resource (minutes). Default 1m at the persistent storage.
+        /// Identifier of the parent tree group, where current tree group should be *visually* nested in. Optional: null means this tree group is being shown at the root level.
         /// </summary>
-        public int? MinTime { get; set; }
+        public int? ParentTreeGroupId { get; set; }
+        public int? DefaultRuleId { get; set; }
+
+        #region Navigation Properties
+        /// <summary>
+        /// Get passed as a default booking rule for the nested resources during their creation. Nullity means this tree group is being shown at the root level.
+        /// </summary>
+        public Rule DefaultRule { get; set; }
 
         /// <summary>
-        /// Maximum usage time of a resource (minutes). Default 24h at the persistent storage.
+        /// Parent tree group, where current tree group should be *visually* nested in. Nullity means this tree group is being shown at the root level.
         /// </summary>
-        public int? MaxTime { get; set; }
+        public TreeGroup ParentTreeGroup { get; set; }
 
         /// <summary>
-        /// Minimal step of booking time (minutes). Default 1m at the persistent storage.
+        /// Reverse-navigation list of all tree groups that are child relative to the current one.
         /// </summary>
-        public int? StepTime { get; set; }
+        [ForeignKey("ParentTreeGroupId")]
+        public IList<TreeGroup> ChildGroups { get; set; } = new List<TreeGroup>();
 
         /// <summary>
-        /// Time after the end of resource usage (minutes), during which the specific resource is not available for booking by anyone; "Recharge time". Default 0 at the persistent storage.
+        /// Reverse-navigation list of all resources that are child relative to the current tree group.
         /// </summary>
-        public int? ServiceTime { get; set; }
-
-        /// <summary>
-        /// Time from the usage start (minutes), during which booking of this resource is prohibited for the current user; "Speculation timeout". Default 0 at the persistent storage.
-        /// </summary>
-        public int? ReuseTimeout { get; set; }
-
-        /// <summary>
-        /// Time range (minutes) used to determine how early can user book a resource, relative to the start of its usage; "Pre-Order countdown". Default 24h at the persistent storage.
-        /// </summary>
-        public int? PreOrderTimeLimit { get; set; }
+        public IList<Resource> Resources { get; set; } = new List<Resource>();
+        #endregion
 
         #region User-Time tracking Properties 
         // Repeating declaration to overcome current EF Core column ordering inability

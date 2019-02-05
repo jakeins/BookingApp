@@ -1,5 +1,5 @@
 ﻿using BookingApp.Helpers;
-using BookingApp.Models;
+using BookingApp.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -34,7 +34,11 @@ namespace BookingApp.Data
 #endif
             //make sure DB is created
             context.Database.EnsureCreated();
+            await SeedAllData();
+        }
 
+        private async Task SeedAllData()
+        {
             #region SuperAdmin 
             //make sure we have basic roles
             if (!await roleManager.RoleExistsAsync(RoleTypes.Admin))
@@ -69,7 +73,6 @@ namespace BookingApp.Data
             superAdmin.IsActive = superAdmin.IsApproved = true;
             await userManager.UpdateAsync(superAdmin);
             #endregion
-
 #if DEBUG
             #region Dummy Data
             if (!startedWithUsers)//fill with dummy data only if there were no users at start

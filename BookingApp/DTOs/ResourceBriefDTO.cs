@@ -1,6 +1,6 @@
 ﻿namespace BookingApp.DTOs
 {
-    public partial class ResourceBriefDTO : ResourceMinimalDTO
+    public class ResourceBriefDto : ResourceMinimalDto
     {
         public double Occupancy { get; set; }
     }

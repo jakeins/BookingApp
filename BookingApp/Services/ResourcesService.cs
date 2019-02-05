@@ -1,5 +1,5 @@
 ﻿using BookingApp.Data;
-using BookingApp.Models;
+using BookingApp.Data.Models;
 using BookingApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;

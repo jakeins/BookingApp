@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using BookingApp.Models;
+using BookingApp.Data.Models;
 using BookingApp.Services;
 using AutoMapper;
 using BookingApp.DTOs;
@@ -22,8 +22,8 @@ namespace BookingApp.Controllers
 
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Resource, ResourceBriefDTO>();
-                cfg.CreateMap<Resource, ResourceDetailedDTO>().ReverseMap();
+                cfg.CreateMap<Resource, ResourceBriefDto>();
+                cfg.CreateMap<Resource, ResourceDetailedDto>().ReverseMap();
             }));
         }
 
@@ -31,7 +31,7 @@ namespace BookingApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var result = mapper.Map<IEnumerable<ResourceBriefDTO>>(await service.GetList());
+            var result = mapper.Map<IEnumerable<ResourceBriefDto>>(await service.GetList());
 
             foreach (var item in result)
                 item.Occupancy = await service.GetOccupancy(item.ResourceId);
@@ -43,7 +43,7 @@ namespace BookingApp.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Details([FromRoute] int id)
         {
-            if(mapper.Map<ResourceDetailedDTO>(await service.Get(id)) is ResourceDetailedDTO item)
+            if(mapper.Map<ResourceDetailedDto>(await service.Get(id)) is ResourceDetailedDto item)
                 return Ok(item);
             else
                 return NotFound("Requested resource not found."); 
@@ -52,7 +52,7 @@ namespace BookingApp.Controllers
         // POST: api/Resources
         [HttpPost]
         //[Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Create([FromBody] ResourceDetailedDTO item)
+        public async Task<IActionResult> Create([FromBody] ResourceDetailedDto item)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -68,7 +68,7 @@ namespace BookingApp.Controllers
         // PUT: api/Resources/5
         [HttpPut("{id}")]
         //[Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ResourceDetailedDTO item)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ResourceDetailedDto item)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

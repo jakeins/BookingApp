@@ -2,7 +2,7 @@
 
 namespace BookingApp.DTOs
 {
-    public partial class ResourceMinimalDTO
+    public class ResourceMinimalDto
     {
         public int ResourceId { get; set; }
 

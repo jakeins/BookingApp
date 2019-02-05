@@ -1,5 +1,5 @@
 ﻿using BookingApp.Data;
-using BookingApp.Models;
+using BookingApp.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
