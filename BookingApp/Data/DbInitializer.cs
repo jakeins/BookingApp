@@ -1,9 +1,12 @@
 ﻿using BookingApp.Helpers;
 using BookingApp.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace BookingApp.Data
@@ -33,7 +36,11 @@ namespace BookingApp.Data
             //context.Database.EnsureDeleted();
 #endif
             //make sure DB is created
-            context.Database.EnsureCreated();
+            if (context.Database.EnsureCreated())
+            {
+                //If not exist before than create store procedures
+                CreateStoreProceduresInDb();
+            }
 
             #region SuperAdmin 
             //make sure we have basic roles
@@ -211,6 +218,28 @@ namespace BookingApp.Data
 
             //pushing into EF
             context.Bookings.AddRange(bookings);
+        }
+
+        /// <summary>
+        /// Search store procedures code as embeded ressources in 
+        /// namespace <c>Data.StoredProcedures</c> and must be with extension sql
+        /// </summary>
+        private void CreateStoreProceduresInDb()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+
+            var storedProcedureResourceList = assembly.GetManifestResourceNames().Where(
+                str => str.Contains("Data.StoredProcedures") && str.EndsWith(".sql")
+                );
+
+            foreach (var resourceName in storedProcedureResourceList)
+            {
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    context.Database.ExecuteSqlCommand(reader.ReadToEnd());
+                }
+            }
         }
     }
 }

@@ -63,6 +63,16 @@
     <Compile Remove="Migrations\20190204190030_ModelsDate2TimeRefinement.Designer.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Data\StoredProcedures\Booking\CreateBooking.sql" />
+    <None Remove="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\StoredProcedures\Booking\CreateBooking.sql" />
+    <EmbeddedResource Include="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
+  </ItemGroup>
+
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
