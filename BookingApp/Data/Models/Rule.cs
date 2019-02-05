@@ -53,6 +53,11 @@ namespace BookingApp.Data.Models
         /// </summary>
         public int? PreOrderTimeLimit { get; set; }
 
+        /// <summary>
+        /// Provides deactivation functionality. Is true by default at the persistent storage.
+        /// </summary>
+        public bool? IsActive { get; set; }
+
         #region User-Time tracking Properties 
         // Repeating declaration to overcome current EF Core column ordering inability
 

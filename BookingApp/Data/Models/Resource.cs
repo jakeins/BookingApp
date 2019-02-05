@@ -41,6 +41,11 @@ namespace BookingApp.Data.Models
         [Required]
         public int RuleId { get; set; }
 
+        /// <summary>
+        /// Provides deactivation functionality. Is true by default at the persistent storage.
+        /// </summary>
+        public bool? IsActive { get; set; }
+
         #region Navigation Properties
         /// <summary>
         /// The booking rule that is used to define booking policy of the current resource. Required.
