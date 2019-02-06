@@ -8,6 +8,7 @@ using BookingApp.DTOs;
 using BookingApp.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using BookingApp.Helpers;
+using System.Linq;
 
 namespace BookingApp.Controllers
 {
@@ -15,14 +16,14 @@ namespace BookingApp.Controllers
     [ApiController]
     public class ResourcesController : ControllerBase
     {
-        readonly ResourcesService resourcesService;
+        readonly ResourcesService resService;
         readonly UserManager<ApplicationUser> userManager;
         readonly RoleManager<IdentityRole> roleManager;
         readonly IMapper dtoMapper;
 
-        public ResourcesController(ResourcesService resourcesService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public ResourcesController(ResourcesService resService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            this.resourcesService = resourcesService;
+            this.resService = resService;
             this.userManager = userManager;
             this.roleManager = roleManager;
 
@@ -35,21 +36,27 @@ namespace BookingApp.Controllers
 
         #region CRUD actions
         // GET: api/Resources
+        // Filtered access: Guest/Admin. 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var modelsList = await resourcesService.GetList(includeInactives: await IsCurrentUserAdmin());
+            bool adminAccess = await CurrentUserHasRole(RoleTypes.Admin);
 
-            var dtosList = dtoMapper.Map<IEnumerable<ResourceMinimalDto>>(modelsList);
+            var models = await resService.ListResources(includeInactives: adminAccess == true);
 
-            return Ok(dtosList);
+            var dtos = dtoMapper.Map<IEnumerable<ResourceMinimalDto>>(models);
+
+            return Ok(dtos);
         }
 
         // GET: api/Resources/5
+        // Filtered access: Guest/Admin. 
         [HttpGet("{resourceId}")]
         public async Task<IActionResult> Details([FromRoute] int resourceId)
         {
-            if (await AreActivesAllowed(resourceId) && await resourcesService.Get(resourceId) is Resource resourceModel)
+            bool isAuthorized = await CurrentUserHasRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
+
+            if (isAuthorized && await resService.SingleResource(resourceId) is Resource resourceModel)
             {
                 var resourceDTO = dtoMapper.Map<ResourceDetailedDto>(resourceModel);
                 return Ok(resourceDTO);
@@ -68,72 +75,90 @@ namespace BookingApp.Controllers
 
             var itemModel = dtoMapper.Map<Resource>(item);
             itemModel.ResourceId = 0;
+            itemModel.UpdatedUserId = itemModel.CreatedUserId = await GetCurrentUserId();
 
-            await resourcesService.Create(itemModel, await GetCurrentUserMOCK());
+            await resService.Create(itemModel);
 
             return Ok("Resource created successfully.");
         }
 
         // PUT: api/Resources/5
-        [HttpPut("{id}")]
+        [HttpPut("{resourceId}")]
         //[Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ResourceDetailedDto item)
+        public async Task<IActionResult> Update([FromRoute] int resourceId, [FromBody] ResourceDetailedDto item)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (id != item.ResourceId)
+            if (resourceId != item.ResourceId)
                 return BadRequest("Resource identifiers inconsistent.");
 
             try
             {
-                await resourcesService.Update(dtoMapper.Map<Resource>(item), await GetCurrentUserMOCK());
-            }
-            catch (OperationFailedException)
-            {
-                return BadRequest("Cannot update this resource. Specified resource identifier could be improper.");
-            }
+                var model = dtoMapper.Map<Resource>(item);
+                model.UpdatedUserId = await GetCurrentUserId();
 
-            return Ok("Resource updated successfully.");
+                await resService.Update(model);
+                return Ok("Resource updated successfully.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Requested resource not found.");
+            }
+            catch (OperationFailedException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Resources/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{resourceId}")]
         //[Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int resourceId)
         {
             try
             {
-                await resourcesService.Delete(id);
+                await resService.Delete(resourceId);
+                return Ok("Resource deleted.");
+            }
+            catch (EntryNotFoundException)
+            {
+                return NotFound("Requested resource not found.");
             }
             catch (OperationRestrictedException)
             {
                 return BadRequest("Cannot delete this resource. Some bookings rely on it.");
             }
-
-            return Ok("Resource deleted.");
         }
         #endregion
 
         #region Extended actions
         // GET: api/Resources/Occupancy
+        // Filtered access: Guest/Admin.
         [HttpGet("Occupancy")]
-        public async Task<IActionResult> IndexOccupancies()
+        public async Task<IActionResult> OccupancyList()
         {
-            return Ok(await resourcesService.GetOccupancies(includeIncatives: await IsCurrentUserAdmin()));
+            bool adminAccess = await CurrentUserHasRole(RoleTypes.Admin);
+
+            var result = await resService.ListOccupancies(includeIncatives: adminAccess == true);
+
+            return Ok(result);
         }
 
 
         // GET: api/Resources/5/Occupancy
-        [HttpGet("{id}/Occupancy")]
-        public async Task<IActionResult> SingleOccupancy([FromRoute] int id)
+        // Filtered access: Guest/Admin.
+        [HttpGet("{resourceId}/Occupancy")]
+        public async Task<IActionResult> OccupancySingle([FromRoute] int resourceId)
         {
             try
             {
-                if (!await AreActivesAllowed(id))
+                bool isAuthorized = await CurrentUserHasRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
+
+                if (!isAuthorized)
                     throw new KeyNotFoundException();
 
-                return Ok(await resourcesService.GetOccupancy(id));
+                return Ok(await resService.SingleOccupancy(resourceId));
             }
             catch(KeyNotFoundException)
             {
@@ -147,16 +172,21 @@ namespace BookingApp.Controllers
         #endregion
 
         #region Private utilities
-        /// <summary>
-        /// User mock.
-        /// </summary>
-        async Task<ApplicationUser> GetCurrentUserMOCK() => await userManager.FindByNameAsync("SuperAdmin");//stub
+        async Task<ApplicationUser> GetCurrentUserMOCK() => await userManager.FindByNameAsync("SuperAdmin");
 
-        async Task<bool> IsCurrentUserAdmin() => await userManager.IsInRoleAsync(await GetCurrentUserMOCK(), RoleTypes.Admin);
+        async Task<string> GetCurrentUserId() => (await GetCurrentUserMOCK()).Id;
+        async Task<IEnumerable<string>> GetCurrentUserRoles()
+        {
+            var result = new List<string>();
+            var currentUser = await GetCurrentUserMOCK();
 
-        async Task<bool> AreActivesAllowed(int resourceId) => await resourcesService.IsResourceActive(resourceId) || await IsCurrentUserAdmin();
+            foreach (var roleName in new[] { RoleTypes.User, RoleTypes.Admin })
+                if (await userManager.IsInRoleAsync(currentUser, roleName))
+                    result.Add(roleName);
 
-
+            return result;
+        }
+        async Task<bool> CurrentUserHasRole(string role) => (await GetCurrentUserRoles()).Contains(role);
         #endregion
     }
 }

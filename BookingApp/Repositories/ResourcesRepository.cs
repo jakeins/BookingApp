@@ -1,5 +1,6 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
+using BookingApp.DTOs;
 using BookingApp.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,16 +15,28 @@ namespace BookingApp.Repositories
     {
         ApplicationDbContext dbContext;
 
+        /// <summary>
+        /// IQueryable shorthand for ApplicationDbContext.Resources
+        /// </summary>
+        readonly IQueryable<Resource> Resources;
+
+        /// <summary>
+        /// IQueryable shorthand for only active ApplicationDbContext.Resources
+        /// </summary>
+        readonly IQueryable<Resource> ActiveResources;
+
         public ResourcesRepository(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
+            Resources = dbContext.Resources;
+            ActiveResources = Resources.Where(r => r.IsActive == true);
         }
 
         #region CRUD operations
 
-        public async Task<IEnumerable<Resource>> GetListAsync() => await dbContext.Resources.ToListAsync();
+        public async Task<IEnumerable<Resource>> GetListAsync() => await Resources.ToListAsync();
 
-        public async Task<Resource> GetAsync(int id) => await dbContext.Resources.FirstOrDefaultAsync(p => p.ResourceId == id);
+        public async Task<Resource> GetAsync(int id) => await Resources.FirstOrDefaultAsync(p => p.ResourceId == id);
 
         public async Task CreateAsync(Resource item)
         {
@@ -33,26 +46,37 @@ namespace BookingApp.Repositories
 
         public async Task UpdateAsync(Resource item)
         {
-            dbContext.Resources.Update(item);
-
-            try
+            if (await ResourceExistsAsync(item))
             {
-                await SaveAsync();
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                string errorMessageTemplate = "Database operation expected to affect 1 row(s) but actually affected 0 row(s).";
+                var propsToModify = typeof(ResourceDetailedDto).GetProperties()
+                    .Where(prop => prop.Name != "ResourceId")
+                    .Select(prop => prop.Name)
+                    .Concat(new[] { "UpdatedUserId" });
 
-                if (ex.Message.Substring(0, errorMessageTemplate.Length) == errorMessageTemplate)
-                    throw new OperationFailedException("Resource update failed because of missing entry or some concurrency issue.", ex);
-                else
-                    throw;
+                foreach (var propName in propsToModify)
+                    dbContext.Entry(item).Property(propName).IsModified = true;
+
+                try
+                {
+                    await SaveAsync();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    string errorMessageTemplate = "Database operation expected to affect 1 row(s) but actually affected 0 row(s).";
+
+                    if (ex.Message.Substring(0, errorMessageTemplate.Length) == errorMessageTemplate)
+                        throw new OperationFailedException("Resource update failed due to concurrency issue.", ex);
+                    else
+                        throw;
+                }
             }
+            else
+                throw new EntryNotFoundException();
         }
 
         public async Task DeleteAsync(int id)
         {
-            if (await dbContext.Resources.FirstOrDefaultAsync(p => p.ResourceId == id) is Resource item)
+            if (await GetAsync(id) is Resource item)
             {
                 dbContext.Resources.Remove(item);
 
@@ -68,6 +92,8 @@ namespace BookingApp.Repositories
                         throw;
                 }
             }
+            else
+                throw new EntryNotFoundException();
         }
 
         public async Task SaveAsync() => await dbContext.SaveChangesAsync();
@@ -76,33 +102,22 @@ namespace BookingApp.Repositories
 
         #region Public Extensions
 
-        public async Task<bool> IsResourceActive(int id)
+        public async Task<bool> IsActiveAsync(int id)
         {
-            return (await Alls().Where(r => r.ResourceId == id).Select(r => r.IsActive).SingleOrDefaultAsync()) == true;
+            return (await Resources.Where(r => r.ResourceId == id).Select(r => r.IsActive).SingleOrDefaultAsync()) == true;
         }
 
-        /// <summary>
-        /// Gets resources list filtered by their active status.
-        /// </summary>
-        public async Task<IEnumerable<Resource>> GetList(bool showIncatives)
-        {
-            if (showIncatives)
-                return await GetListAsync();
-            else
-                return await Actives().ToListAsync();
-        }
+        public async Task<IEnumerable<Resource>> GetActiveListAsync() => await ActiveResources.ToListAsync();
 
-        public async Task<IEnumerable<int>> GetIDsList(bool includeInactives)
-        {
-            return await ( includeInactives ? Alls() : Actives() ).Select(r => r.ResourceId).ToListAsync();
-        }
+        public async Task<IEnumerable<int>> ListIDsAsync() =>        await Resources.Select(r => r.ResourceId).ToListAsync();
+        public async Task<IEnumerable<int>> ListActiveIDsAsync() =>  await ActiveResources.Select(r => r.ResourceId).ToListAsync();
 
         /// <summary>
         /// Calculates current approximate resource occupancy.
         /// </summary>
-        public async Task<double?> GetResourceOccupancy(int resourceId)
+        public async Task<double?> CalculateSingleOccupancyAsync(int resourceId)
         {
-            if (!await ResourceExists(resourceId))
+            if (!await ResourceExistsAsync(resourceId))
                 throw new KeyNotFoundException("Specified resource doesn't exist.");
 
             var firstEntry = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
@@ -142,17 +157,8 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Checks whether resource exists in database.
         /// </summary>
-        async Task<bool> ResourceExists(int id) => await dbContext.Resources.AnyAsync(e => e.ResourceId == id);
-
-        /// <summary>
-        /// IQueryable preselect of all resources.
-        /// </summary>
-        IQueryable<Resource> Alls() => dbContext.Resources;
-
-        /// <summary>
-        /// IQueryable preselect of all active resources.
-        /// </summary>
-        IQueryable<Resource> Actives() => dbContext.Resources.Where(r => r.IsActive == true);
+        async Task<bool> ResourceExistsAsync(int id) => await dbContext.Resources.AnyAsync(e => e.ResourceId == id);
+        async Task<bool> ResourceExistsAsync(Resource resource) => await dbContext.Resources.AnyAsync(e => e.ResourceId == resource.ResourceId);
         #endregion
     }
 }

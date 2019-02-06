@@ -6,7 +6,15 @@ namespace BookingApp.Exceptions
     [Serializable]
     public class FieldValueException : StorageException
     {
-        public FieldValueException(string message, Exception innerException = null) : base(message, innerException)
+        public FieldValueException() : base()
+        {
+        }
+
+        public FieldValueException(string message) : base(message)
+        {
+        }
+
+        public FieldValueException(string message, Exception innerException) : base(message, innerException)
         {
         }
 

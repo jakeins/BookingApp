@@ -6,7 +6,15 @@ namespace BookingApp.Exceptions
     [Serializable]
     public class EntryNotFoundException : OperationFailedException
     {
-        public EntryNotFoundException(string message, Exception innerException = null) : base(message, innerException)
+        public EntryNotFoundException() : base()
+        {
+        }
+
+        public EntryNotFoundException(string message) : base(message)
+        {
+        }
+
+        public EntryNotFoundException(string message, Exception innerException) : base(message, innerException)
         {
         }
 

@@ -6,7 +6,15 @@ namespace BookingApp.Exceptions
     [Serializable]
     public class OperationRestrictedException : OperationFailedException
     {
-        public OperationRestrictedException(string message, Exception innerException = null) : base(message, innerException)
+        public OperationRestrictedException() : base()
+        {
+        }
+
+        public OperationRestrictedException(string message) : base(message)
+        {
+        }
+
+        public OperationRestrictedException(string message, Exception innerException) : base(message, innerException)
         {
         }
 

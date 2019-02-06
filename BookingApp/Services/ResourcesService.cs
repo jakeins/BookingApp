@@ -17,34 +17,32 @@ namespace BookingApp.Services
         }
 
         #region CRUD operations
-        public async Task<IEnumerable<Resource>> GetList(bool includeInactives) => await resourcesRepo.GetList(includeInactives);
-
-        public async Task<Resource> Get(int id) => await resourcesRepo.GetAsync(id);
-
-        public async Task Create(Resource item, ApplicationUser creator)
+        public async Task<IEnumerable<Resource>> ListResources(bool includeInactives)
         {
-            item.Creator = item.Updater = creator;
-            await resourcesRepo.CreateAsync(item);
+            if(includeInactives)
+                return await resourcesRepo.GetListAsync();
+            else
+                return await resourcesRepo.GetActiveListAsync();
         }
 
-        public async Task Update(Resource item, ApplicationUser updater)
-        {
-            item.Creator = item.Updater = updater;
-            await resourcesRepo.UpdateAsync(item);
-        }
+        public async Task<Resource> SingleResource(int id) => await resourcesRepo.GetAsync(id);
+
+        public async Task Create(Resource item) => await resourcesRepo.CreateAsync(item);
+
+        public async Task Update(Resource item) => await resourcesRepo.UpdateAsync(item);
 
         public async Task Delete(int id) => await resourcesRepo.DeleteAsync(id);
         #endregion
 
         #region Extended operations
 
-        public async Task<bool> IsResourceActive(int id) => await resourcesRepo.IsResourceActive(id);
+        public async Task<bool> IsActive(int id) => await resourcesRepo.IsActiveAsync(id);
 
-        public async Task<double?> GetOccupancy(int resourceId) => await resourcesRepo.GetResourceOccupancy(resourceId);
+        public async Task<double?> SingleOccupancy(int resourceId) => await resourcesRepo.CalculateSingleOccupancyAsync(resourceId);
 
-        public async Task<Dictionary<int, double?>> GetOccupancies(bool includeIncatives)
+        public async Task<Dictionary<int, double?>> ListOccupancies(bool includeIncatives)
         {
-            var idsList = await resourcesRepo.GetIDsList(includeIncatives);
+            var idsList = includeIncatives ? await resourcesRepo.ListIDsAsync() : await resourcesRepo.ListActiveIDsAsync();
             var map = new Dictionary<int, double?>();
 
             foreach (int resourceId in idsList)
@@ -53,7 +51,7 @@ namespace BookingApp.Services
 
                 try
                 {
-                    map[resourceId] = await resourcesRepo.GetResourceOccupancy(resourceId);
+                    map[resourceId] = await SingleOccupancy(resourceId);
                 }
                 catch (KeyNotFoundException)
                 {

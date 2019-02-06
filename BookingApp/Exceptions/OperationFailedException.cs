@@ -6,7 +6,15 @@ namespace BookingApp.Exceptions
     [Serializable]
     public class OperationFailedException : StorageException
     {
-        public OperationFailedException(string message, Exception innerException = null) : base(message, innerException)
+        public OperationFailedException() : base()
+        {
+        }
+
+        public OperationFailedException(string message) : base(message)
+        {
+        }
+
+        public OperationFailedException(string message, Exception innerException) : base(message, innerException)
         {
         }
 

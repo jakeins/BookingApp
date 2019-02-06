@@ -6,7 +6,15 @@ namespace BookingApp.Exceptions
     [Serializable]
     public class CurrentEntryNotFoundException : EntryNotFoundException
     {
-        public CurrentEntryNotFoundException(string message, Exception innerException = null) : base(message, innerException)
+        public CurrentEntryNotFoundException() : base()
+        {
+        }
+
+        public CurrentEntryNotFoundException(string message) : base(message)
+        {
+        }
+
+        public CurrentEntryNotFoundException(string message, Exception innerException) : base(message, innerException)
         {
         }
 

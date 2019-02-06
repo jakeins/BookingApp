@@ -6,7 +6,15 @@ namespace BookingApp.Exceptions
     [Serializable]
     public class FieldValueAbsurdException : FieldValueException
     {
-        public FieldValueAbsurdException(string message, Exception innerException = null) : base(message, innerException)
+        public FieldValueAbsurdException() : base()
+        {
+        }
+
+        public FieldValueAbsurdException(string message) : base(message)
+        {
+        }
+
+        public FieldValueAbsurdException(string message, Exception innerException) : base(message, innerException)
         {
         }
 

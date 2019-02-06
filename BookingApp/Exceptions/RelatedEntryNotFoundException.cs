@@ -6,7 +6,15 @@ namespace BookingApp.Exceptions
     [Serializable]
     public class RelatedEntryNotFoundException : EntryNotFoundException
     {
-        public RelatedEntryNotFoundException(string message, Exception innerException = null) : base(message, innerException)
+        public RelatedEntryNotFoundException() : base()
+        {
+        }
+
+        public RelatedEntryNotFoundException(string message) : base(message)
+        {
+        }
+
+        public RelatedEntryNotFoundException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
