@@ -33,7 +33,7 @@ namespace BookingApp.Data
         {
 #if DEBUG
             // WARNING! Wipes the entire database.
-            //context.Database.EnsureDeleted();
+            context.Database.EnsureDeleted();
 #endif
             //make sure DB is created
             if (context.Database.EnsureCreated())

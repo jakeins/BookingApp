@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using BookingApp.Models;
+using BookingApp.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookingApp.Repositories
 {
-    public class BookingRepository : Services.IRepositoryAsync<Models.Booking, int>
+    public class BookingRepository : IRepositoryAsync<Booking, int>
     {
         Data.ApplicationDbContext dbContext;
 
