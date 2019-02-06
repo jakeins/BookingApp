@@ -31,7 +31,7 @@ namespace BookingApp.Repositories
                 return tree;
             } else
             {
-                throw new IndexOutOfRangeException("TreeGroup not isset");
+                throw new IndexOutOfRangeException("This TreeGroup does't isset.");
             }
         }
 

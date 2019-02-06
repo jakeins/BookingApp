@@ -3,6 +3,7 @@ using BookingApp.Data.Models;
 using BookingApp.DTOs.TreeGroup;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -69,9 +70,16 @@ namespace BookingApp.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            await service.Update(id, mapper.Map<TreeGroup>(tree));
-            return Ok("TreeGroup updated successfully.");
+            try
+            {
+                await service.Update(id, mapper.Map<TreeGroup>(tree));
+                return Ok("TreeGroup updated successfully.");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest("This TreeGroup does't isset.");
+            }
+            
         }
 
         [HttpDelete]
