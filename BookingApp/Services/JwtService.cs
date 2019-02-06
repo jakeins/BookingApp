@@ -14,10 +14,12 @@ namespace BookingApp.Services
 {
     public class JwtService
     {
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly IConfiguration configuration;
 
-        public JwtService(IConfiguration configuration)
+        public JwtService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
+            this.userManager = userManager;
             this.configuration = configuration;
         }
 
@@ -36,8 +38,7 @@ namespace BookingApp.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<Claim[]> GetClaimsAsync(UserManager<ApplicationUser> userManager,
-            ApplicationUser userInfo)
+        public async Task<Claim[]> GetClaimsAsync(ApplicationUser userInfo)
         {
             var roles = await userManager.GetRolesAsync(userInfo);
 
