@@ -41,16 +41,7 @@ namespace BookingApp.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            List<TreeGroup> children = await context.TreeGroups.Where(t => t.ParentTreeGroupId == id).ToListAsync();
-            if (children != null)
-            {
-                foreach (TreeGroup child in children)
-                {
-                    child.ParentTreeGroupId = null;
-                    context.TreeGroups.Update(child);
-                    await SaveAsync();
-                }
-            }    
+            await ChangeChildren(id);
 
             TreeGroup tree = await context.TreeGroups.FirstOrDefaultAsync(p => p.TreeGroupId == id);
             if (tree != null)
@@ -61,6 +52,21 @@ namespace BookingApp.Repositories
         }
 
         public async Task SaveAsync() => await context.SaveChangesAsync();
+
+
+        public async Task ChangeChildren(int id)
+        {
+            List<TreeGroup> children = await context.TreeGroups.Where(t => t.ParentTreeGroupId == id).ToListAsync();
+            if (children != null)
+            {
+                foreach (TreeGroup child in children)
+                {
+                    child.ParentTreeGroupId = null;
+                    context.TreeGroups.Update(child);
+                    await SaveAsync();
+                }
+            }
+        }
 
     }
 }
