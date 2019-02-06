@@ -11,7 +11,7 @@ namespace BookingApp.Repositories
         void Create(TModel model);
         void Update(TModel model);
         void Delete(TKey id);
-        //void Save();
+        void Save();
     }
 
     public interface IRepositoryAsync<TModel, TKey>
