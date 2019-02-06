@@ -1,6 +1,7 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,7 +25,14 @@ namespace BookingApp.Repositories
 
         public async Task<TreeGroup> GetAsync(int id)
         {
-            return await context.TreeGroups.FirstOrDefaultAsync(t => t.TreeGroupId == id);
+            TreeGroup tree = await context.TreeGroups.FirstOrDefaultAsync(t => t.TreeGroupId == id);
+            if (tree != null)
+            {
+                return tree;
+            } else
+            {
+                throw new IndexOutOfRangeException("TreeGroup not isset");
+            }
         }
 
         public async Task CreateAsync(TreeGroup tree)
@@ -36,19 +44,17 @@ namespace BookingApp.Repositories
         public async Task UpdateAsync(TreeGroup tree)
         {
             context.TreeGroups.Update(tree);
-            await SaveAsync();
+            await SaveAsync(); 
         }
 
         public async Task DeleteAsync(int id)
         {
             await ChangeChildren(id);
 
-            TreeGroup tree = await context.TreeGroups.FirstOrDefaultAsync(p => p.TreeGroupId == id);
-            if (tree != null)
-            {
-                context.TreeGroups.Remove(tree);
-                await SaveAsync();
-            }
+            TreeGroup tree = await GetAsync(id);
+            context.TreeGroups.Remove(tree);
+            await SaveAsync();
+            
         }
 
         public async Task SaveAsync() => await context.SaveChangesAsync();

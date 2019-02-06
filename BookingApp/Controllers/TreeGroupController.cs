@@ -3,6 +3,7 @@ using BookingApp.Data.Models;
 using BookingApp.DTOs.TreeGroup;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace BookingApp.Controllers
             service = s;
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<TreeGroup, TreeGroupListTdo>();
+                cfg.CreateMap<TreeGroup, TreeGroupListDto>();
                 cfg.CreateMap<TreeGroup, CreateUpdateDto>().ReverseMap(); ;
             }));
         }
@@ -28,7 +29,7 @@ namespace BookingApp.Controllers
         [Route("api/tree-group")]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<TreeGroupListTdo> trees = mapper.Map<IEnumerable<TreeGroupListTdo>>(await service.GetThree());
+            IEnumerable<TreeGroupListDto> trees = mapper.Map<IEnumerable<TreeGroupListDto>>(await service.GetThree());
             return Ok(trees);
         }
 
@@ -36,8 +37,15 @@ namespace BookingApp.Controllers
         [Route("api/tree-group/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
-            TreeGroupListTdo tree = mapper.Map<TreeGroupListTdo>(await service.GetDetail(id));
-            return Ok(tree);
+            try
+            {
+                TreeGroupListDto tree = mapper.Map<TreeGroupListDto>(await service.GetDetail(id));
+                return Ok(tree);
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost]
@@ -70,8 +78,15 @@ namespace BookingApp.Controllers
         [Route("api/tree-group/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await service.Delete(id);
-            return Ok("TreeGroup deleted.");
+            try
+            {
+                await service.Delete(id);
+                return Ok("TreeGroup deleted.");
+            } catch(IndexOutOfRangeException e)
+            {
+                return BadRequest(e.Message);
+            }
+            
         }
 
 

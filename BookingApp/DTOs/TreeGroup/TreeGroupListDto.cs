@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookingApp.DTOs.TreeGroup
 {
-    public class TreeGroupListTdo
+    public class TreeGroupListDto
     {
         [Range(1, int.MaxValue, ErrorMessage = "Invalid TreeGroupId identifier.")]
         public int TreeGroupId { get; set; }
