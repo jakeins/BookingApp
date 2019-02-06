@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace BookingApp.Exceptions
 {
     [Serializable]
-    public class UpdateFailedException : Exception
+    public class UpdateFailedException : UpdateException
     {
         public UpdateFailedException(string message, Exception innerException) : base(message, innerException)
         {

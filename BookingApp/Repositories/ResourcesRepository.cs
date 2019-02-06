@@ -19,7 +19,7 @@ namespace BookingApp.Repositories
             this.dbContext = dbContext;
         }
 
-        #region IRepositoryAsync implementation
+        #region CRUD operations
 
         public async Task<IEnumerable<Resource>> GetListAsync() => await dbContext.Resources.ToListAsync();
 
@@ -63,7 +63,7 @@ namespace BookingApp.Repositories
                 catch (DbUpdateException dbuException)
                 {
                     if (dbuException.InnerException is SqlException sqlException && sqlException.Number == 547)
-                        throw new DeletionResctrictedException("Deletion cancelled because Resource has Bookings related upon it.", dbuException);
+                        throw new DeleteResctrictedException("Deletion cancelled because Resource has Bookings related upon it.", dbuException);
                     else
                         throw;
                 }
@@ -114,9 +114,9 @@ namespace BookingApp.Repositories
                 return 0;
 
             if (firstEntry.PreOrderTimeLimit == null)
-                throw new AbsurdFieldValueException("Resource's rule PreOrderTimeLimit not set.");
+                throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit not set.");
             else if (firstEntry.PreOrderTimeLimit < 0)
-                throw new AbsurdFieldValueException("Resource's rule PreOrderTimeLimit cannot be negative.");
+                throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit cannot be negative.");
             else if (firstEntry.PreOrderTimeLimit == 0)
                 return null;
 

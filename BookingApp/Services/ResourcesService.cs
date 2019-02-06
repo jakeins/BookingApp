@@ -58,7 +58,7 @@ namespace BookingApp.Services
                 catch (KeyNotFoundException)
                 {
                 }
-                catch(AbsurdFieldValueException)
+                catch(FieldValueAbsurdException)
                 {
                 }
             }

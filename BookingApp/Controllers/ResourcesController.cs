@@ -45,8 +45,6 @@ namespace BookingApp.Controllers
             return Ok(dtosList);
         }
 
-
-
         // GET: api/Resources/5
         [HttpGet("{resourceId}")]
         public async Task<IActionResult> Details([FromRoute] int resourceId)
@@ -108,14 +106,13 @@ namespace BookingApp.Controllers
             {
                 await resourcesService.Delete(id);
             }
-            catch (DeletionResctrictedException)
+            catch (DeleteResctrictedException)
             {
                 return BadRequest("Cannot delete this resource. Some bookings rely on it.");
             }
 
             return Ok("Resource deleted.");
         }
-
         #endregion
 
         #region Extended actions
@@ -142,7 +139,7 @@ namespace BookingApp.Controllers
             {
                 return NotFound("Requested resource not found.");
             }
-            catch(AbsurdFieldValueException)
+            catch(FieldValueAbsurdException)
             {
                 return BadRequest("There is a problem with the resource booking policy.");
             }
