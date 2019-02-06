@@ -4,9 +4,9 @@ using System.Runtime.Serialization;
 namespace BookingApp.Exceptions
 {
     [Serializable]
-    public class FieldValueException : Exception
+    public class FieldValueException : StorageException
     {
-        public FieldValueException(string message) : base(message)
+        public FieldValueException(string message, Exception innerException = null) : base(message, innerException)
         {
         }
 

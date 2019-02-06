@@ -44,7 +44,7 @@ namespace BookingApp.Repositories
                 string errorMessageTemplate = "Database operation expected to affect 1 row(s) but actually affected 0 row(s).";
 
                 if (ex.Message.Substring(0, errorMessageTemplate.Length) == errorMessageTemplate)
-                    throw new UpdateFailedException("Resource update failed because of missing entry or some concurrency issue.", ex);
+                    throw new OperationFailedException("Resource update failed because of missing entry or some concurrency issue.", ex);
                 else
                     throw;
             }
@@ -63,7 +63,7 @@ namespace BookingApp.Repositories
                 catch (DbUpdateException dbuException)
                 {
                     if (dbuException.InnerException is SqlException sqlException && sqlException.Number == 547)
-                        throw new DeleteResctrictedException("Deletion cancelled because Resource has Bookings related upon it.", dbuException);
+                        throw new OperationRestrictedException("Deletion cancelled because Resource has Bookings related upon it.", dbuException);
                     else
                         throw;
                 }

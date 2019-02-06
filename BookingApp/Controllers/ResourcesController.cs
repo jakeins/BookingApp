@@ -89,7 +89,7 @@ namespace BookingApp.Controllers
             {
                 await resourcesService.Update(dtoMapper.Map<Resource>(item), await GetCurrentUserMOCK());
             }
-            catch (UpdateFailedException)
+            catch (OperationFailedException)
             {
                 return BadRequest("Cannot update this resource. Specified resource identifier could be improper.");
             }
@@ -106,7 +106,7 @@ namespace BookingApp.Controllers
             {
                 await resourcesService.Delete(id);
             }
-            catch (DeleteResctrictedException)
+            catch (OperationRestrictedException)
             {
                 return BadRequest("Cannot delete this resource. Some bookings rely on it.");
             }
