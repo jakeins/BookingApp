@@ -50,7 +50,7 @@ namespace BookingApp.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            await ChangeChildren(id);
+            //await ChangeChildren(id);
 
             TreeGroup tree = await GetAsync(id);
             context.TreeGroups.Remove(tree);
