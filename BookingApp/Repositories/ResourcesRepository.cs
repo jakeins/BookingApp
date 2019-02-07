@@ -138,14 +138,11 @@ namespace BookingApp.Repositories
             TimeSpan serviceTime = TimeSpan.FromMinutes(firstEntry.ServiceTime ?? 0);
             var now = DateTime.Now;
 
-            double occupiedMinutes = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
-            .Where(booking =>
-                booking.ResourceId == resourceId &&
-                booking.EndTime + serviceTime > now
-            )
-            .Select(booking =>
-                (booking.EndTime + serviceTime - new[] { booking.StartTime, now }.Max())
-                .TotalMinutes
+            double occupiedMinutes = await dbContext.Bookings
+            .Select(b => (
+                (b.TerminationTime <= b.EndTime) &&
+                ( (b.TerminationTime ?? b.EndTime) - (b.StartTime > now ? b.StartTime : now)  )
+                ).TotalMinutes
             )
             .SumAsync();
 
