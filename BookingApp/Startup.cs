@@ -15,6 +15,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using BookingApp.Services;
 using BookingApp.Repositories;
 
+
 namespace BookingApp
 {
     public class Startup
@@ -31,6 +32,8 @@ namespace BookingApp
         {
             services.AddTransient<ResourcesService>();
             services.AddTransient<ResourcesRepository>();
+            services.AddTransient<TreeGroupService>();
+            services.AddTransient<TreeGroupRepository>();
 
             services.AddTransient<BookingsService>();
             services.AddTransient<BookingsRepository>();
