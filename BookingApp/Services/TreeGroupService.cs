@@ -24,6 +24,13 @@ namespace BookingApp.Services
             return await repository.GetListAsync();
         }
 
+        public async Task<IEnumerable<TreeGroup>> GetWithChild()
+        {
+            return await repository.GetListWithChildAsync();
+        }
+
+        
+
         public async Task<TreeGroup> GetDetail(int id)
         {
             return await repository.GetAsync(id);

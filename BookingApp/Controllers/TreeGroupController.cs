@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookingApp.Data.Models;
-using BookingApp.DTOs.TreeGroup;
+using BookingApp.DTOs;
+using BookingApp.Exceptions;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace BookingApp.Controllers
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<TreeGroup, TreeGroupListDto>();
-                cfg.CreateMap<TreeGroup, CreateUpdateDto>().ReverseMap(); ;
+                cfg.CreateMap<TreeGroup, TreeGroupCrUpDto>().ReverseMap(); ;
             }));
         }
 
@@ -35,6 +36,14 @@ namespace BookingApp.Controllers
         }
 
         [HttpGet]
+        [Route("api/tree-group-child")]
+        public async Task<IActionResult> GetWithChild()
+        {
+            IEnumerable<TreeGroupListDto> trees = mapper.Map<IEnumerable<TreeGroupListDto>>(await service.GetWithChild());
+            return Ok(trees);
+        }
+
+        [HttpGet]
         [Route("api/tree-group/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
@@ -43,7 +52,7 @@ namespace BookingApp.Controllers
                 TreeGroupListDto tree = mapper.Map<TreeGroupListDto>(await service.GetDetail(id));
                 return Ok(tree);
             }
-            catch (IndexOutOfRangeException e)
+            catch (NotIssetTreeGroupException e)
             {
                 return BadRequest(e.Message);
             }
@@ -51,7 +60,7 @@ namespace BookingApp.Controllers
 
         [HttpPost]
         [Route("api/tree-group")]
-        public async Task<IActionResult> Create([FromBody]CreateUpdateDto tree)
+        public async Task<IActionResult> Create([FromBody]TreeGroupCrUpDto tree)
         {
             if (!ModelState.IsValid)
             {
@@ -64,7 +73,7 @@ namespace BookingApp.Controllers
 
         [HttpPut]
         [Route("api/tree-group/{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]CreateUpdateDto tree)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupCrUpDto tree)
         {
             if (!ModelState.IsValid)
             {
@@ -90,7 +99,7 @@ namespace BookingApp.Controllers
             {
                 await service.Delete(id);
                 return Ok("TreeGroup deleted.");
-            } catch(IndexOutOfRangeException e)
+            } catch(NotIssetTreeGroupException e)
             {
                 return BadRequest(e.Message);
             }

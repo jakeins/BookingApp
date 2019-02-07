@@ -1,5 +1,6 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
+using BookingApp.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace BookingApp.Repositories
                 return tree;
             } else
             {
-                throw new IndexOutOfRangeException("This TreeGroup does't isset.");
+                throw new NotIssetTreeGroupException("This TreeGroup does't isset.");
             }
         }
 
@@ -59,6 +60,10 @@ namespace BookingApp.Repositories
 
         public async Task SaveAsync() => await context.SaveChangesAsync();
 
+        public async Task<IEnumerable<TreeGroup>> GetListWithChildAsync()
+        {
+            return await context.TreeGroups.Include("ChildGroups").ToListAsync();
+        }
 
         public async Task ChangeChildren(int id)
         {
