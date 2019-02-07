@@ -1,7 +1,7 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
+using BookingApp.Exceptions;
 using BookingApp.Repositories;
-using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,40 +9,60 @@ namespace BookingApp.Services
 {
     public class ResourcesService
     {
-        readonly ResourcesRepository repository;
-        readonly UserManager<ApplicationUser> userManager;
+        readonly ResourcesRepository resourcesRepo;
 
-        public ResourcesService(ResourcesRepository repository, ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
+        public ResourcesService(ResourcesRepository resourcesRepo, ApplicationDbContext dbContext)
         {
-            this.repository = repository;
-            this.userManager = userManager;
+            this.resourcesRepo = resourcesRepo;
         }
 
-        public async Task<IEnumerable<Resource>> GetList() => await repository.GetList();
-
-        public async Task<Resource> Get(int id) => await repository.Get(id);
-
-        public async Task Create(Resource item)
+        #region CRUD operations
+        public async Task<IEnumerable<Resource>> ListResources(bool includeInactives)
         {
-            item.Creator = item.Updater = await GetCurrentUser();
-
-            await repository.Create(item);
+            if(includeInactives)
+                return await resourcesRepo.GetListAsync();
+            else
+                return await resourcesRepo.GetActiveListAsync();
         }
 
-        public async Task Update(Resource item)
-        {
-            item.Creator = item.Updater = await GetCurrentUser();
+        public async Task<Resource> SingleResource(int id) => await resourcesRepo.GetAsync(id);
 
-            await repository.Update(item);
+        public async Task Create(Resource item) => await resourcesRepo.CreateAsync(item);
+
+        public async Task Update(Resource item) => await resourcesRepo.UpdateAsync(item);
+
+        public async Task Delete(int id) => await resourcesRepo.DeleteAsync(id);
+        #endregion
+
+        #region Extended operations
+
+        public async Task<bool> IsActive(int id) => await resourcesRepo.IsActiveAsync(id);
+
+        public async Task<double?> SingleOccupancy(int resourceId) => await resourcesRepo.CalculateSingleOccupancyAsync(resourceId);
+
+        public async Task<Dictionary<int, double?>> ListOccupancies(bool includeIncatives)
+        {
+            var idsList = includeIncatives ? await resourcesRepo.ListIDsAsync() : await resourcesRepo.ListActiveIDsAsync();
+            var map = new Dictionary<int, double?>();
+
+            foreach (int resourceId in idsList)
+            {
+                map.Add(resourceId, null);
+
+                try
+                {
+                    map[resourceId] = await SingleOccupancy(resourceId);
+                }
+                catch (KeyNotFoundException)
+                {
+                }
+                catch(FieldValueAbsurdException)
+                {
+                }
+            }
+            return map;
         }
 
-        public async Task Delete(int id) => await repository.Delete(id);
-
-        public async Task<double> GetOccupancy(int resourceId) => await repository.GetOccupancy(resourceId);
-
-        async Task<ApplicationUser> GetCurrentUser()
-        {
-            return await userManager.FindByNameAsync("SuperAdmin");//stub
-        }
+        #endregion
     }
 }
