@@ -55,6 +55,15 @@ namespace BookingApp.Helpers
                     case 12:
                         //Invalid BookingID
                         throw new Exceptions.CurrentEntryNotFoundException(ex.Message + " " + Message);
+                    case 13:
+                        //Can not edit termіnated booking
+                        throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
+                    case 14:
+                        //Can not edit ended booking
+                        throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
+                    case 15:
+                        //Can not change starttime of alredy started booking
+                        throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
                     default:
                         //If exception uknown to throw InvalidProgramException with this exception
                         throw new InvalidProgramException("Uknown SQL Exception catched " + Message, ex);

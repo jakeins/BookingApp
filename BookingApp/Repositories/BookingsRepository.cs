@@ -20,22 +20,22 @@ namespace BookingApp.Repositories
         /// <summary>
         /// IQueryable shorthand for only active ApplicationDbContext.Bookings
         /// </summary>
-        readonly IQueryable<Booking> ActiveBookings;
+        readonly IQueryable<Booking> ActualBookings;
 
 
         public BookingsRepository(Data.ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
             Bookings = dbContext.Bookings;
-            ActiveBookings = dbContext.Bookings.Where(b => b.TerminationTime != b.EndTime);
+            ActualBookings = dbContext.Bookings.Where(b => b.TerminationTime >= b.EndTime || b.TerminationTime == null);
         }
 
         #region CRUD operations
 
         /// <summary>
-        /// Creating new booking using store procedure Booking.Create
+        /// Creating new <see cref="Booking"></see> using store procedure Booking.Create
         /// </summary>
-        /// <param name="model">new booking data</param>
+        /// <param name="model">new <see cref="Booking"></see> data</param>
         /// <returns></returns>
         public async Task CreateAsync(Booking model)
         {
@@ -57,6 +57,11 @@ namespace BookingApp.Repositories
             }
         }
 
+        /// <summary>
+        /// Delete exist <see cref="Booking"></see>
+        /// </summary>
+        /// <param name="id"><see cref="Booking.BookingId"></see> of exist <see cref="Booking"></see></param>
+        /// <returns></returns>
         public async Task DeleteAsync(int id)
         {
             if(await GetAsync(id) is Booking item){
@@ -66,19 +71,32 @@ namespace BookingApp.Repositories
             }
         }
 
+        /// <summary>
+        /// Return <see cref="Booking"></see> from Db
+        /// </summary>
+        /// <param name="id"><see cref="Booking.BookingId"></see> of exis <see cref="Booking"></see></param>
+        /// <returns></returns>
         public async Task<Booking> GetAsync(int id) => await dbContext.Bookings.FindAsync(id);
 
+        /// <summary>
+        /// Return list of all <see cref="Booking"></see>
+        /// </summary>
+        /// <returns>List of all <see cref="Booking"></see></returns>
         public async Task<IEnumerable<Booking>> GetListAsync() => await Bookings.ToListAsync();
 
+        /// <summary>
+        /// Save all <see cref="Booking"></see> data
+        /// </summary>
+        /// <returns></returns>
         public async Task SaveAsync()
         {
             await dbContext.SaveChangesAsync();
         }
 
         /// <summary>
-        /// Update using strore procedure Booking.Edit
+        /// Update <see cref="Booking"></see> using strore procedure Booking.Edit
         /// </summary>
-        /// <param name="model">booking new data</param>
+        /// <param name="model"><see cref="Booking"></see> new data</param>
         /// <returns></returns>
         public async Task UpdateAsync(Booking model)
         {
@@ -104,44 +122,15 @@ namespace BookingApp.Repositories
         #region Public Extensions
 
         /// <summary>
-        /// Creating new booking by setting fields
+        /// Update exist <see cref="Booking"></see> data
         /// </summary>
-        /// <param name="resource">Booking resource, must be enabled</param>
-        /// <param name="startTime">StartTime of booking, must be in future and lower EndTime</param>
-        /// <param name="endTime">EndTime of booking, must be in future</param>
-        /// <param name="createdBy">User who book</param>
-        /// <param name="note">Additional note</param>
+        /// <param name="id">Id of exist <see cref="Booking"></see></param>
+        /// <param name="startTime">Optional new <see cref="Booking.StartTime"></see>, if set than must date in future</param>
+        /// <param name="endTime">Optional new <see cref="Booking.EndTime"></see>, if set than must date in future, stored as TerminationTime</param>
+        /// <param name="editUserId">Editor user id, store as <see cref="Booking.UpdatedUserId"></see></param>
+        /// <param name="note">Optional new <see cref="Booking.Note"></see></param>
         /// <returns></returns>
-        public async Task CreateAsync(Resource resource, DateTime startTime, DateTime endTime, ApplicationUser createdBy, string note)
-        {
-            try
-            {
-                await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC BookingCreate",
-                    new SqlParameter("@ResourceID", resource.ResourceId),
-                    new SqlParameter("@StartTime", startTime),
-                    new SqlParameter("@EntTime", endTime),
-                    new SqlParameter("@UserID", createdBy.Id),
-                    new SqlParameter("@Note", note)
-                    );
-
-            }
-            catch (SqlException ex)
-            {
-                Helpers.SqlExceptionTranslator.ReThrow(ex, "on creating booking");
-            }
-        }
-
-        /// <summary>
-        /// Update booking data
-        /// </summary>
-        /// <param name="id">Id of exist booking</param>
-        /// <param name="startTime">Optional new StartTime, if set than must date in future</param>
-        /// <param name="endTime">Optional new EndTime, if set than must date in future, stored as TerminationTime</param>
-        /// <param name="editUserId">Id of user, store as UpdateUserID</param>
-        /// <param name="note">Optional booking description</param>
-        /// <returns></returns>
-        public async Task UpdateAsync(int id, DateTime startTime, DateTime endTime, ApplicationUser editUser, string note)
+        public async Task UpdateAsync(int id, DateTime startTime, DateTime endTime, string editUser, string note)
         {
             try
             {
@@ -150,7 +139,7 @@ namespace BookingApp.Repositories
                     new SqlParameter("@BookingID", id),
                     new SqlParameter("@StartTime", startTime),
                     new SqlParameter("@EndTime", endTime),
-                    new SqlParameter("@EditUseID", editUser.Id),
+                    new SqlParameter("@EditUseID", editUser),
                     new SqlParameter("@Note", note)
                     );
             }
@@ -161,40 +150,65 @@ namespace BookingApp.Repositories
         }
 
         /// <summary>
-        /// Get booking created by specified user and active now or in future
+        /// Get <see cref="Booking"></see> created by specified <see cref="ApplicationUser"></see> and active now or in future
         /// </summary>
-        /// <param name="user">Which books required</param>
+        /// <param name="user"><see cref="Booking.CreatedUserId"></see></param>
         /// <returns>List of active books</returns>
-        public async Task<IEnumerable<Booking>> GetActiveBookingsOfUserFromCurrentTime(ApplicationUser user) => await ActiveBookings
+        public async Task<IEnumerable<Booking>> GetActiveBookingsOfUserFromCurrentTime(ApplicationUser user) => await ActualBookings
                 .Where(b => b.CreatedUserId == user.Id && (b.TerminationTime ?? b.EndTime) < DateTime.Now)
                 .ToListAsync();
 
         /// <summary>
-        /// Get all books for specific user
+        /// Get all <see cref="Booking"></see> for specific <see cref="ApplicationUser"></see>
         /// </summary>
         /// <param name="user">Which books required</param>
         /// <returns>List of all books</returns>
-        public async Task<IEnumerable<Booking>> GetBookingsOfUser(ApplicationUser user) => await ActiveBookings
+        public async Task<IEnumerable<Booking>> GetBookingsOfUser(ApplicationUser user) => await ActualBookings
             .Where(b => b.CreatedUserId == user.Id)
             .ToListAsync();
 
         /// <summary>
-        /// Get booking of specified resource and active now or in future
+        /// Get <see cref="Booking"></see> of specified <see cref="Resource"></see> and active now or in future
         /// </summary>
-        /// <param name="resource">Booking resource</param>
-        /// <returns>List of active bookings</returns>
-        public async Task<IEnumerable<Booking>> GetActiveBookingsOfResourceFromCurrentTime(int resourceId) => await ActiveBookings
+        /// <param name="resource">Booking <see cref="Resource"></see></param>
+        /// <returns>List of active <see cref="Booking"></see></returns>
+        public async Task<IEnumerable<Booking>> GetActiveBookingsOfResourceFromCurrentTime(int resourceId) => await ActualBookings
             .Where(b => b.ResourceId == resourceId && (b.TerminationTime ?? b.EndTime) < DateTime.Now)
             .ToListAsync();
 
         /// <summary>
-        /// Get all booking of specific resource
+        /// Get all <see cref="Booking"></see> of specific <see cref="Resource"></see>
         /// </summary>
-        /// <param name="resource"></param>
-        /// <returns>List of all bookings</returns>
+        /// <param name="resource">Exist <see cref="Resource.ResourceId"></see></param>
+        /// <returns>List of all <see cref="Booking"></see> of specific <see cref="Resource"></see></returns>
         public async Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId) => await Bookings
             .Where(b => b.ResourceId == resourceId)
             .ToListAsync();
+
+        /// <summary>
+        /// Terminate specific <see cref="Booking"></see>
+        /// </summary>
+        /// <param name="id"><see cref="Booking.BookingId"></see> of exist <see cref="Booking"></see></param>
+        /// <param name="user">ID of <see cref="ApplicationUser"> which terminate booking</see></param>
+        /// <returns></returns>
+        public async Task Terminate(int id, string userId)
+        {
+            if(await GetAsync(id) is Booking item)
+            {
+                try
+                {
+                    await dbContext.Database.ExecuteSqlCommandAsync(
+                        $"EXEC Booking.Terminate",
+                        new SqlParameter("@BookingID", id),
+                        new SqlParameter("@UseID", userId)
+                        );
+                }
+                catch (SqlException ex)
+                {
+                    Helpers.SqlExceptionTranslator.ReThrow(ex, "on terminate booking");
+                }
+            }
+        }
 
         #endregion
     }
