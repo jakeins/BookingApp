@@ -1,3 +1,4 @@
+using BookingApp.Data.Models;
 using BookingApp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,7 +14,7 @@ using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
 using BookingApp.Services;
 using BookingApp.Repositories;
-using BookingApp.Data.Models;
+
 
 namespace BookingApp
 {
