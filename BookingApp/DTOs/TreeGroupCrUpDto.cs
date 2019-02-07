@@ -16,11 +16,12 @@ namespace BookingApp.DTOs
 
         [Range(1, int.MaxValue, ErrorMessage = "Invalid rule identifier.")]
         public int? DefaultRuleId { get; set; }
-        
-        
+
+        [Required]
         [MaxLength(450, ErrorMessage = "No data about User.")]
         public string CreatedUserId { get; set; }
-        
+
+        [Required]
         [MaxLength(450, ErrorMessage = "No data about User.")]
         public string UpdatedUserId { get; set; }
         
