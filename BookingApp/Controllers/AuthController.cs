@@ -28,13 +28,13 @@ namespace BookingApp.Controllers
 
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<ApplicationUser, RegisterDto>().ReverseMap();
+                cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap();
             }));
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]LoginDto dto)
+        public async Task<IActionResult> Login([FromBody]AuthLoginDto dto)
         {
             if(!ModelState.IsValid)
             {
@@ -57,7 +57,7 @@ namespace BookingApp.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody]RegisterDto dto)
+        public async Task<IActionResult> Register([FromBody]AuthRegisterDto dto)
         {
             if (!ModelState.IsValid)
             {
