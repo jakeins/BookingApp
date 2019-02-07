@@ -31,6 +31,7 @@ namespace BookingApp.Data
                 entity.Property("UpdatedTime").HasDefaultValueSql("getdate()");
             }
 
+
             //setting default values
             var ruleEntity = modelBuilder.Entity<Rule>();
             ruleEntity.Property("MinTime").HasDefaultValue(1);

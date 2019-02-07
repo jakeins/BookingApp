@@ -15,14 +15,14 @@ namespace BookingApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookingsControler : ControllerBase
+    public class BookingsController : ControllerBase
     {
         readonly BookingsService bookingService;
         readonly UserManager<ApplicationUser> userManager;
         readonly RoleManager<IdentityRole> roleManager;
         readonly IMapper dtoMapper;
 
-        public BookingsControler(BookingsService bookingService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public BookingsController(BookingsService bookingService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             this.bookingService = bookingService;
             this.userManager = userManager;
