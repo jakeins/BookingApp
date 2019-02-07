@@ -26,10 +26,8 @@ namespace BookingApp.Controllers
                 cfg.CreateMap<ApplicationUser, UserMinimalDto>().ReverseMap();
                 cfg.CreateMap<UserGetMinimalDTO, ApplicationUser>();
                 cfg.CreateMap<UserGetMinimalDTO, ApplicationUser>().ReverseMap();
-
             }));
         }
-
         [HttpPost("Create")]
         public async Task<IActionResult> CreateUser([FromBody] UserMinimalDto user)
         {
@@ -49,7 +47,7 @@ namespace BookingApp.Controllers
             return BadRequest("Error valid");
         }
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserById([FromRoute] string userId)
+        public async Task<IActionResult> GetUserById([FromRoute]string userId)
         {
             try
             {
@@ -106,7 +104,7 @@ namespace BookingApp.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [HttpGet("{userId}")]
+        [HttpGet("GetUserRoleById/{userId}")]
         public async Task<IActionResult> GetUserRoleById([FromRoute]string userId)
         {
             try
