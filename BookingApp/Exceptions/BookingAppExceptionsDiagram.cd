@@ -15,7 +15,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="BookingApp.Exceptions.FieldValueAbsurdException" Collapsed="true">
-    <Position X="18.75" Y="4" Width="2.5" />
+    <Position X="17.75" Y="4" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Exceptions\FieldValueAbsurdException.cs</FileName>
@@ -54,6 +54,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Exceptions\OperationRestrictedException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BookingApp.Exceptions.InvalidTimeFieldException" Collapsed="true">
+    <Position X="21" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\InvalidTimeFieldException.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
