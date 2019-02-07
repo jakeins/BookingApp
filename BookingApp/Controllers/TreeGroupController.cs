@@ -23,7 +23,7 @@ namespace BookingApp.Controllers
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<TreeGroup, TreeGroupListDto>();
-                cfg.CreateMap<TreeGroup, TreeGroupCrUpDto>().ReverseMap(); ;
+                cfg.CreateMap<TreeGroup, TreeGroupCrUpDto>().ReverseMap();
             }));
         }
 
@@ -39,7 +39,7 @@ namespace BookingApp.Controllers
         [Route("api/tree-group-child")]
         public async Task<IActionResult> GetWithChild()
         {
-            IEnumerable<TreeGroupListDto> trees = mapper.Map<IEnumerable<TreeGroupListDto>>(await service.GetWithChild());
+            IEnumerable<TreeGroup> trees = await service.GetWithChild();
             return Ok(trees);
         }
 
@@ -88,7 +88,6 @@ namespace BookingApp.Controllers
             {
                 return BadRequest("This TreeGroup does't isset.");
             }
-            
         }
 
         [HttpDelete]
@@ -102,12 +101,8 @@ namespace BookingApp.Controllers
             } catch(NotIssetTreeGroupException e)
             {
                 return BadRequest(e.Message);
-            }
-            
+            } 
         }
-
-
-
 
     }
 }

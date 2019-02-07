@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using BookingApp.Data.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,5 +23,6 @@ namespace BookingApp.DTOs
 
         [Column(TypeName = "bit")]
         public bool? IsActive { get; set; }
+
     }
 }

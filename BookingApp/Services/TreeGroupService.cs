@@ -11,12 +11,10 @@ namespace BookingApp.Services
     public class TreeGroupService
     {
         TreeGroupRepository repository;
-        readonly UserManager<ApplicationUser> userManager;
 
-        public TreeGroupService(TreeGroupRepository r, UserManager<ApplicationUser> userManager)
+        public TreeGroupService(TreeGroupRepository r)
         {
             repository = r;
-            this.userManager = userManager;
         }
 
         public async Task<IEnumerable<TreeGroup>> GetThree()
@@ -28,8 +26,6 @@ namespace BookingApp.Services
         {
             return await repository.GetListWithChildAsync();
         }
-
-        
 
         public async Task<TreeGroup> GetDetail(int id)
         {
@@ -47,6 +43,8 @@ namespace BookingApp.Services
             await repository.UpdateAsync(tree);
         }
 
-        public async Task Delete(int id) => await repository.DeleteAsync(id);
+        public async Task Delete(int id) {
+            await repository.DeleteAsync(id);
+        }
     }
 }

@@ -62,7 +62,15 @@ namespace BookingApp.Repositories
 
         public async Task<IEnumerable<TreeGroup>> GetListWithChildAsync()
         {
-            return await context.TreeGroups.Include("ChildGroups").ToListAsync();
+            return await context.TreeGroups.Select(t => new TreeGroup
+            {
+                TreeGroupId = t.TreeGroupId,
+                Title = t.Title,
+                ParentTreeGroupId = t.ParentTreeGroupId,
+                DefaultRuleId = t.DefaultRuleId,
+                IsActive = t.IsActive,
+                ChildGroups = t.ChildGroups
+            }).ToListAsync();
         }
 
         public async Task ChangeChildren(int id)
