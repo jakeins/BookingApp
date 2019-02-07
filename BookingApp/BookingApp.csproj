@@ -65,7 +65,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Exceptions\" />
+    <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\StoredProcedures\Booking\Create.sql" />
+    <EmbeddedResource Include="Data\StoredProcedures\Booking\Edit.sql" />
+    <EmbeddedResource Include="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
