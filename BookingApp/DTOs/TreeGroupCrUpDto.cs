@@ -24,6 +24,7 @@ namespace BookingApp.DTOs
         [Required]
         [MaxLength(450, ErrorMessage = "No data about User.")]
         public string UpdatedUserId { get; set; }
-
+        
+        
     }
 }
