@@ -79,7 +79,8 @@ namespace BookingApp
             });
 
             services.AddScoped<DbInitializer>();
-
+            services.AddScoped<UserService>();
+            services.AddScoped<UserRepository>();
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
