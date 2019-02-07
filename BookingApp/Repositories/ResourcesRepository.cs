@@ -122,7 +122,7 @@ namespace BookingApp.Repositories
 
             var firstEntry = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
                 .Where(booking => booking.ResourceId == resourceId)
-                .Select(booking => new { booking.Resource.Rule.PreOrderTimeLimit })
+                .Select(booking => new { booking.Resource.Rule.PreOrderTimeLimit, booking.Resource.Rule.ServiceTime })
                 .FirstOrDefaultAsync();
 
             if (firstEntry == null)//no booking => resource is completely free
@@ -135,15 +135,16 @@ namespace BookingApp.Repositories
             else if (firstEntry.PreOrderTimeLimit == 0)
                 return null;
 
+            TimeSpan serviceTime = TimeSpan.FromMinutes(firstEntry.ServiceTime ?? 0);
             var now = DateTime.Now;
 
             double occupiedMinutes = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
             .Where(booking =>
                 booking.ResourceId == resourceId &&
-                booking.EndTime + TimeSpan.FromMinutes(booking.Resource.Rule.ServiceTime ?? 0) > now
+                booking.EndTime + serviceTime > now
             )
             .Select(booking =>
-                (booking.EndTime + TimeSpan.FromMinutes(booking.Resource.Rule.ServiceTime ?? 0) - new[] { booking.StartTime, now }.Max())
+                (booking.EndTime + serviceTime - new[] { booking.StartTime, now }.Max())
                 .TotalMinutes
             )
             .SumAsync();
@@ -153,12 +154,15 @@ namespace BookingApp.Repositories
         #endregion
 
         #region Private Utilities
+        /// <summary>
+        /// Checks whether resource exists in database.
+        /// </summary>
+        async Task<bool> ResourceExistsAsync(int id) => await Resources.AnyAsync(e => e.ResourceId == id);
 
         /// <summary>
         /// Checks whether resource exists in database.
         /// </summary>
-        async Task<bool> ResourceExistsAsync(int id) => await dbContext.Resources.AnyAsync(e => e.ResourceId == id);
-        async Task<bool> ResourceExistsAsync(Resource resource) => await dbContext.Resources.AnyAsync(e => e.ResourceId == resource.ResourceId);
+        async Task<bool> ResourceExistsAsync(Resource resource) => await ResourceExistsAsync(resource.ResourceId);
         #endregion
     }
 }
