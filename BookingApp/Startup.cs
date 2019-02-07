@@ -32,6 +32,8 @@ namespace BookingApp
             services.AddTransient<ResourcesService>();
             services.AddTransient<ResourcesRepository>();
 
+            services.AddScoped<JwtService>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDbContext<ApplicationDbContext>(options =>
