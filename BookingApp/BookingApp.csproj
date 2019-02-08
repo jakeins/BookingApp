@@ -67,6 +67,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
     <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
     <None Remove="Data\StoredProcedures\Booking\Terminate.sql" />
   </ItemGroup>
@@ -79,6 +80,7 @@
     <EmbeddedResource Include="Data\StoredProcedures\Booking\Create.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\Edit.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
+    <EmbeddedResource Include="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
   </ItemGroup>
 
   <ItemGroup>

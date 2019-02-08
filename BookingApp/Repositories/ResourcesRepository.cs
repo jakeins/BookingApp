@@ -5,6 +5,7 @@ using BookingApp.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -116,7 +117,36 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Calculates current approximate resource occupancy.
         /// </summary>
+        public async Task<double?> CalculateSingleOccupancyProcedureAsync(int resourceId)
+        {
+            SqlParameter param = new SqlParameter
+            {
+                ParameterName = "@retVal",
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output,
+                Value = 0
+            };
+
+            await dbContext.Database.ExecuteSqlCommandAsync(
+                $"EXEC @retVal = [Resource.Occupancy] {resourceId}",
+                param);
+
+            return (double)(int)param.Value / 100;
+        }
+
+        /// <summary>
+        /// Calculates current approximate resource occupancy using stored procedure.
+        /// </summary>
         public async Task<double?> CalculateSingleOccupancyAsync(int resourceId)
+        {
+            return await CalculateSingleOccupancyProcedureAsync(resourceId);
+            //return await CalculateSingleOccupancyEFAsync(resourceId);
+        }
+
+        /// <summary>
+        /// Calculates current approximate resource occupancy using EF Core.
+        /// </summary>
+        public async Task<double?> CalculateSingleOccupancyEFAsync(int resourceId)
         {
             if (!await ResourceExistsAsync(resourceId))
                 throw new KeyNotFoundException("Specified resource doesn't exist.");
