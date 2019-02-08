@@ -38,31 +38,10 @@ namespace BookingApp.Services
 
         public async Task<bool> IsActive(int id) => await resourcesRepo.IsActiveAsync(id);
 
-        public async Task<double?> SingleOccupancy(int resourceId) => await resourcesRepo.CalculateSingleOccupancyAsync(resourceId);
-
-        public async Task<Dictionary<int, double?>> ListOccupancies(bool includeIncatives)
+        public async Task<IEnumerable<int>> ListIDsAsync(bool includeIncatives)
         {
-            var idsList = includeIncatives ? await resourcesRepo.ListIDsAsync() : await resourcesRepo.ListActiveIDsAsync();
-            var map = new Dictionary<int, double?>();
-
-            foreach (int resourceId in idsList)
-            {
-                map.Add(resourceId, null);
-
-                try
-                {
-                    map[resourceId] = await SingleOccupancy(resourceId);
-                }
-                catch (KeyNotFoundException)
-                {
-                }
-                catch(FieldValueAbsurdException)
-                {
-                }
-            }
-            return map;
+            return includeIncatives ? await resourcesRepo.ListIDsAsync() : await resourcesRepo.ListActiveIDsAsync();
         }
-
         #endregion
     }
 }

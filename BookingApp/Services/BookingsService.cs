@@ -91,7 +91,11 @@ namespace BookingApp.Services
 
         #endregion
 
-        #region Public Extensions
+        #region Extensions 
+
+        #region Occupancy
+        public async Task<double?> OccupancyByResource(int resourceId) => await bookingsRepo.OccupancyByResourceAsync(resourceId);
+        #endregion
 
         /// <summary>
         /// Terminate specific <see cref="Booking"></see>

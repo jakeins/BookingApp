@@ -1,10 +1,12 @@
-﻿CREATE PROCEDURE [dbo].[Resource.Occupancy]
-	@resourceId int
+﻿-- Determines the occupancy percents for the specified resource.
+CREATE PROCEDURE [dbo].[Resource.OccupancyPercents]	@resourceId int
 AS
 BEGIN
+	-- Check resource existence
 	if NOT EXISTS (SELECT 1 FROM [Resources] WHERE [ResourceId] = @resourceId)
 		Throw 50001, 'Current entry (Resource) not found.',  1;
 
+	-- Determining basic rule properties
 	DECLARE @serviceMinutes int;
 	DECLARE @preOrderTimeLimit int;
 	DECLARE @ruleId int;
@@ -57,9 +59,9 @@ BEGIN
 		WHERE BookingDuration > 0 AND IsWierd = 0  
 	)
 
-	-- Not found meaninful bookings durations means resource is free.
+	-- No apt bookings means resource is free.
 	if @sumDuration IS NULL
 		 return 0
 	
-	return 100 * CAST(@sumDuration AS float) / CAST(@preOrderTimeLimit AS float)
+	return 100 * ( CAST(@sumDuration AS float) / CAST(@preOrderTimeLimit AS float) )
 END

@@ -12,18 +12,20 @@ using System.Linq;
 
 namespace BookingApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/resources")]
     [ApiController]
     public class ResourcesController : ControllerBase
     {
         readonly ResourcesService resService;
+        readonly BookingsService bookService;
         readonly UserManager<ApplicationUser> userManager;
         readonly RoleManager<IdentityRole> roleManager;
         readonly IMapper dtoMapper;
 
-        public ResourcesController(ResourcesService resService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public ResourcesController(ResourcesService resService, BookingsService bookService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             this.resService = resService;
+            this.bookService = bookService;
             this.userManager = userManager;
             this.roleManager = roleManager;
 
@@ -34,11 +36,11 @@ namespace BookingApp.Controllers
             }));
         }
 
-        #region CRUD actions
+        #region GETs
         // GET: api/Resources
         // Filtered access: Guest/Admin. 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> List()
         {
             bool adminAccess = await CurrentUserHasRole(RoleTypes.Admin);
 
@@ -49,10 +51,40 @@ namespace BookingApp.Controllers
             return Ok(dtos);
         }
 
+        // GET: api/Resources/Occupancy
+        // Filtered access: Guest/Admin.
+        [HttpGet("occupancy")]
+        public async Task<IActionResult> ListOccupancy()
+        {
+            bool adminAccess = await CurrentUserHasRole(RoleTypes.Admin);
+
+            var idsList = await resService.ListIDsAsync(includeIncatives: adminAccess == true);
+
+            var map = new Dictionary<int, double?>();
+
+            foreach (int resourceId in idsList)
+            {
+                map.Add(resourceId, null);
+
+                try
+                {
+                    map[resourceId] = await bookService.OccupancyByResource(resourceId);
+                }
+                catch (KeyNotFoundException)
+                {
+                }
+                catch (FieldValueAbsurdException)
+                {
+                }
+            }
+
+            return Ok(map);
+        }
+
         // GET: api/Resources/5
         // Filtered access: Guest/Admin. 
         [HttpGet("{resourceId}")]
-        public async Task<IActionResult> Details([FromRoute] int resourceId)
+        public async Task<IActionResult> Single([FromRoute] int resourceId)
         {
             bool isAuthorized = await CurrentUserHasRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
 
@@ -65,6 +97,32 @@ namespace BookingApp.Controllers
                 return NotFound("Requested resource not found."); 
         }
 
+        // GET: api/Resources/5/Occupancy
+        // Filtered access: Guest/Admin.
+        [HttpGet("{resourceId}/occupancy")]
+        public async Task<IActionResult> SingleOccupancy([FromRoute] int resourceId)
+        {
+            try
+            {
+                bool isAuthorized = await CurrentUserHasRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
+
+                if (!isAuthorized)
+                    throw new KeyNotFoundException();// fake excuse for keeping security of inactive resources
+
+                return Ok(await bookService.OccupancyByResource(resourceId));
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Requested resource not found.");
+            }
+            catch (FieldValueAbsurdException)
+            {
+                return BadRequest("There is a problem with the resource booking policy.");
+            }
+        }
+        #endregion
+
+        #region POST / PUT / DELETE
         // POST: api/Resources
         [HttpPost]
         //[Authorize(Roles = RoleTypes.Admin)]
@@ -132,46 +190,7 @@ namespace BookingApp.Controllers
         }
         #endregion
 
-        #region Extended actions
-        // GET: api/Resources/Occupancy
-        // Filtered access: Guest/Admin.
-        [HttpGet("Occupancy")]
-        public async Task<IActionResult> OccupancyList()
-        {
-            bool adminAccess = await CurrentUserHasRole(RoleTypes.Admin);
-
-            var result = await resService.ListOccupancies(includeIncatives: adminAccess == true);
-
-            return Ok(result);
-        }
-
-
-        // GET: api/Resources/5/Occupancy
-        // Filtered access: Guest/Admin.
-        [HttpGet("{resourceId}/Occupancy")]
-        public async Task<IActionResult> OccupancySingle([FromRoute] int resourceId)
-        {
-            try
-            {
-                bool isAuthorized = await CurrentUserHasRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
-
-                if (!isAuthorized)
-                    throw new KeyNotFoundException();
-
-                return Ok(await resService.SingleOccupancy(resourceId));
-            }
-            catch(KeyNotFoundException)
-            {
-                return NotFound("Requested resource not found.");
-            }
-            catch(FieldValueAbsurdException)
-            {
-                return BadRequest("There is a problem with the resource booking policy.");
-            }
-        }
-        #endregion
-
-        #region Private utilities
+        #region Utilities
         async Task<ApplicationUser> GetCurrentUserMOCK() => await userManager.FindByNameAsync("SuperAdmin");
 
         async Task<string> GetCurrentUserId() => (await GetCurrentUserMOCK()).Id;
