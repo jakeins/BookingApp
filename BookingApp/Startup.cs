@@ -41,6 +41,9 @@ namespace BookingApp
 
             services.AddScoped<JwtService>();
 
+            services.AddTransient<UserService>();
+            services.AddTransient<UserRepository>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -82,7 +85,8 @@ namespace BookingApp
             });
 
             services.AddScoped<DbInitializer>();
-
+            services.AddScoped<UserService>();
+            services.AddScoped<UserRepository>();
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
