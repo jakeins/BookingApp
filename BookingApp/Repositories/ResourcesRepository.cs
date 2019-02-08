@@ -118,9 +118,6 @@ namespace BookingApp.Repositories
         /// </summary>
         public async Task<double?> CalculateSingleOccupancyAsync(int resourceId)
         {
-            var x = await dbContext.Resources.FromSql("exec [dbo].[Resource.Occupancy] @resourceId = " + resourceId).SingleOrDefaultAsync();
-            return x.Occupancy;
-
             if (!await ResourceExistsAsync(resourceId))
                 throw new KeyNotFoundException("Specified resource doesn't exist.");
 
