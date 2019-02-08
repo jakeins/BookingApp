@@ -23,7 +23,7 @@ namespace BookingApp.Controllers
         readonly RoleManager<IdentityRole> roleManager;
         readonly IMapper dtoMapper;
 
-        string UserId => User.Claims.Single(c => c.Type == "jti").Value;
+        string UserId => User.Claims.Single(c => c.Type == "uid").Value;
 
         public ResourcesController(ResourcesService resService, BookingsService bookService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -140,7 +140,7 @@ namespace BookingApp.Controllers
 
             await resService.Create(itemModel);
 
-            return Ok("Resource created successfully.");
+            return Ok(itemModel.ResourceId);
         }
 
         // PUT: api/Resources/5

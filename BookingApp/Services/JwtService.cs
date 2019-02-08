@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +44,8 @@ namespace BookingApp.Services
             var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Sub, userInfo.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("uid", userInfo.Id)
             };
 
             foreach (var role in roles)
