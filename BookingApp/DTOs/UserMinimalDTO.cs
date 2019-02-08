@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BookingApp.DTOs
 {
-    public class UserGetMinimalDTO
+    public class UserMinimalDto
     {
         public string Email { get; set; }
         public string UserName { get; set; }

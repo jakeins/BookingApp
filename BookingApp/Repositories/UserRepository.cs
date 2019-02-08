@@ -25,7 +25,7 @@ namespace BookingApp.Services
             IdentityResult result = await userManager.CreateAsync(user);
             if (!result.Succeeded)
             {
-                await GetExceptionIdentityResult(result);
+                GetExceptionIdentityResult(result);
             }
         }
         public async Task CreateAsync(ApplicationUser user, string password)
@@ -33,7 +33,7 @@ namespace BookingApp.Services
             IdentityResult result = await userManager.CreateAsync(user, password);
             if (!result.Succeeded)
             {
-                await GetExceptionIdentityResult(result);
+                GetExceptionIdentityResult(result);
             }
         }
         public async Task DeleteAsync(string id)
@@ -45,14 +45,14 @@ namespace BookingApp.Services
             {
                 IdentityResult result = await userManager.DeleteAsync(applicationUser);
                 if (!result.Succeeded)
-                    await GetExceptionIdentityResult(result);
+                    GetExceptionIdentityResult(result);
             }
         }
         public async Task DeleteAsync(ApplicationUser user)
         {
             IdentityResult result = await userManager.DeleteAsync(user);
             if (!result.Succeeded)
-                await GetExceptionIdentityResult(result);
+                GetExceptionIdentityResult(result);
         }
         public async Task<ApplicationUser> GetAsync(string userid)
         {
@@ -74,13 +74,13 @@ namespace BookingApp.Services
         {
             IdentityResult result = await userManager.UpdateAsync(user);
             if (!result.Succeeded)
-                await GetExceptionIdentityResult(result);
+                GetExceptionIdentityResult(result);
         }
         public async Task<bool> CheckPassword(ApplicationUser user, string password)
         {
             return await userManager.CheckPasswordAsync(user, password);
         }
-        private async Task GetExceptionIdentityResult(IdentityResult identityResult)
+        private void GetExceptionIdentityResult(IdentityResult identityResult)
         {
             foreach (IdentityError item in identityResult.Errors)
             {
