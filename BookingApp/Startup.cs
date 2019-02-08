@@ -14,7 +14,8 @@ using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
 using BookingApp.Services;
 using BookingApp.Repositories;
-
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BookingApp
 {
@@ -37,6 +38,8 @@ namespace BookingApp
 
             services.AddTransient<BookingsService>();
             services.AddTransient<BookingsRepository>();
+
+            services.AddScoped<JwtService>();
 
             services.AddTransient<UserService>();
             services.AddTransient<UserRepository>();
@@ -88,6 +91,10 @@ namespace BookingApp
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Please enter JWT with Bearer into field", Name = "Authorization", Type = "apiKey" });
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
+                { "Bearer", Enumerable.Empty<string>() },
+            });
             });
         }
 
