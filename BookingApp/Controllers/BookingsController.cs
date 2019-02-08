@@ -39,26 +39,47 @@ namespace BookingApp.Controllers
 
         #region CRUD actions
 
-        // POST: api/BookingsControler
+        /// <summary>
+        /// Create new booking. POST: api/BookingsControler
+        /// </summary>
+        /// <param name="item">New <see cref="Booking"/> data</param>
+        /// <returns>Http response code</returns>
+        /// <response code="201">Success created</response>
+        /// <response code="400">Invalid argument</response>
+        /// <response code="404">Resources or rule not found</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
         //[Authorize(Roles = RoleTypes.User)]
-        public async Task<IActionResult> Create([FromBody] BookingOwnerDTO item)
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> Create([FromBody] BookingCreateDTO item)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var itemModel = dtoMapper.Map<Booking>(item);
-            itemModel.BookingId = 0;
-            itemModel.UpdatedUserId = itemModel.CreatedUserId = await GetCurrentUserId();
-
-            await bookingService.CreateAsync(itemModel);
-
-            return Ok("Booking created successfully.");
+            int newBookingId = await bookingService.CreateAsync(item, await GetCurrentUserMOCK());
+            
+            return new CreatedResult(
+                $"api/BookingControler/{newBookingId}", 
+                dtoMapper.Map<BookingOwnerDTO>(await bookingService.GetAsync(newBookingId))
+                );
         }
 
-        // GET: api/BookingsControler/5
         // Filtered access: Guest/User/Admin
+        /// <summary>
+        /// Get <see cref="Booking"/> info. GET: api/BookingControler/{bookingId}
+        /// </summary>
+        /// <param name="bookingId">Id of exist <see cref="Booking"/></param>
+        /// <returns>Status code</returns>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not found</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("{bookingId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Details([FromRoute] int bookingId)
         {
             bool adminAccess = await CurrentUserHasRole(RoleTypes.Admin);
@@ -67,7 +88,6 @@ namespace BookingApp.Controllers
             var models = await bookingService.GetAsync(bookingId);
 
             bool onwerAcess = 
-                await CurrentUserHasRole(RoleTypes.User) && 
                 await GetCurrentUserId() == models.CreatedUserId;
 
             if (adminAccess)
@@ -87,15 +107,26 @@ namespace BookingApp.Controllers
             }
         }
 
-        // PUT: api/Booking/5
+        /// <summary>
+        /// Update exist <see cref="Booking"/> PUT: api/BookingControler/{bookingId}
+        /// </summary>
+        /// <param name="bookingId">Id of exist <see cref="Booking"/></param>
+        /// <param name="item">New <see cref="Booking"/> data</param>
+        /// <returns>Http response code</returns>
+        /// <response code="200">Success update</response>
+        /// <response code="401">Error. Only admin and owner can update booking data</response>
+        /// <respomse code="404">Error. Non exist booking id passed</respomse>
+        /// <response code="500">Internal server error</response>
         [HttpPut("{bookingId}")]
         //[Authorize(Roles = RoleTypes.User)]
-        public async Task<IActionResult> Update([FromRoute] int bookingId, [FromBody] BookingOwnerDTO item)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> Update([FromRoute] int bookingId, [FromBody] BookingUpdateDTO item)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            var itemModel = dtoMapper.Map<Booking>(item);
 
             var bookingData = await bookingService.GetAsync(bookingId);
 
@@ -110,9 +141,21 @@ namespace BookingApp.Controllers
             }
         }
 
-        // DELETE: api/Booking/5
+        /// <summary>
+        /// Delete exist <see cref="Booking"/>. DELETE: api/Booking/5
+        /// </summary>
+        /// <param name="bookingId">Id of exist <see cref="Booking"/> which delete</param>
+        /// <returns>Http status code</returns>
+        /// <response code="200">Success deleted</response>
+        /// <response code="401">Error. Only admin and owner can update booking data</response>
+        /// <respomse code="404">Error. Non exist booking id passed</respomse>
+        /// <response code="500">Error. Internal server</response>
         [HttpDelete("{bookingId}")]
         //[Authorize(Roles = RoleTypes.Admin)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Delete([FromRoute] int bookingId)
         {
             var bookingData = await bookingService.GetAsync(bookingId);
@@ -132,9 +175,21 @@ namespace BookingApp.Controllers
 
         #region Public Extensions
 
-        // DELETE: api/Booking/5
-        [HttpDelete("{bookingId}")]
+        /// <summary>
+        /// Terminate exist <see cref="Booking"/>. DELETE: api/Booking/terminate/5
+        /// </summary>
+        /// <param name="bookingId">Id of exist <see cref="Booking"/> which terminate</param>
+        /// <returns>Http status code</returns>
+        /// <response code="200">Success terminate booking</response>
+        /// <response code="401">Error. Only admin and owner can update booking data</response>
+        /// <respomse code="404">Error. Non exist booking id passed</respomse>
+        /// <response code="500">Error. Internal server</response>
+        [HttpDelete("terminate/{bookingId}")]
         //[Authorize(Roles = RoleTypes.Admin)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Terminate([FromRoute] int bookingId)
         {
             var bookingData = await bookingService.GetAsync(bookingId);

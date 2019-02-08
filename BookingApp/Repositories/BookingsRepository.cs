@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using BookingApp.Data.Models;
+using BookingApp.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookingApp.Repositories
@@ -33,28 +35,52 @@ namespace BookingApp.Repositories
         #region CRUD operations
 
         /// <summary>
-        /// Creating new <see cref="Booking"></see> using store procedure Booking.Create
+        /// Not implemented because Create must return id of newly created booking
         /// </summary>
-        /// <param name="model">new <see cref="Booking"></see> data</param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        public async Task CreateAsync(Booking model)
+        async Task IRepositoryAsync<Booking, int>.CreateAsync(Booking model)
         {
             try
             {
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC BookingCreate",
-                    new SqlParameter("@ResourceID", model.ResourceId),
-                    new SqlParameter("@StartTime", model.StartTime),
-                    new SqlParameter("@EntTime", model.EndTime),
-                    new SqlParameter("@UserID", model.CreatedUserId),
-                    new SqlParameter("@Note", model.Note)
-                    );
-
+                    $"EXEC [Booking.Create] {model.ResourceId}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.CreatedUserId}', '{model.Note}'");
             }
             catch (SqlException ex)
             {
                 Helpers.SqlExceptionTranslator.ReThrow(ex, "on creating booking");
             }
+        }
+
+        /// <summary>
+        /// Creating new <see cref="Booking"></see> using store procedure Booking.Create
+        /// </summary>
+        /// <param name="model">New <see cref="Booking"></see> data</param>
+        /// <param name="user">User who create booking</param>
+        /// <returns>Id of <see cref="Booking"/></returns>
+        public async Task<int> CreateAsync(BookingCreateDTO model, ApplicationUser user)
+        {
+            try
+            {
+                SqlParameter param = new SqlParameter
+                {
+                    ParameterName = "@retVal",
+                    SqlDbType = SqlDbType.Int,
+                    Direction = ParameterDirection.Output,
+                    Value = -1
+                };
+
+                await dbContext.Database.ExecuteSqlCommandAsync(
+                    $"EXEC @retVal = [Booking.Create] {model.ResourceID}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{user.Id}', '{model.Note}'",
+                    param);
+                return param.Value as int? ?? -1;
+            }
+            catch (SqlException ex)
+            {
+                Helpers.SqlExceptionTranslator.ReThrow(ex, "on creating booking");
+            }
+            //Dummy throw. Unreachable code because ReThow not return
+            throw new NullReferenceException();
         }
 
         /// <summary>
@@ -64,11 +90,13 @@ namespace BookingApp.Repositories
         /// <returns></returns>
         public async Task DeleteAsync(int id)
         {
-            if(await GetAsync(id) is Booking item){
+            if (await GetAsync(id) is Booking item)
+            {
                 dbContext.Bookings.Remove(item);
 
                 await SaveAsync();
             }
+            else throw new Exceptions.EntryNotFoundException();
         }
 
         /// <summary>
@@ -103,12 +131,7 @@ namespace BookingApp.Repositories
             try
             {
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC Booking.Edit",
-                    new SqlParameter("@BookingID", model.BookingId),
-                    new SqlParameter("@StartTime", model.StartTime),
-                    new SqlParameter("@EndTime", model.EndTime),
-                    new SqlParameter("@EditUseID", model.UpdatedUserId),
-                    new SqlParameter("@Note", model.Note)
+                    $"EXEC [Booking.Edit] {model.BookingId}, {model.StartTime}, {model.EndTime}, {model.UpdatedUserId}, {model.Note}"
                     );
             }
             catch(SqlException ex)
@@ -130,17 +153,12 @@ namespace BookingApp.Repositories
         /// <param name="editUserId">Editor user id, store as <see cref="Booking.UpdatedUserId"></see></param>
         /// <param name="note">Optional new <see cref="Booking.Note"></see></param>
         /// <returns></returns>
-        public async Task UpdateAsync(int id, DateTime startTime, DateTime endTime, string editUser, string note)
+        public async Task UpdateAsync(int id, DateTime? startTime, DateTime? endTime, string editUser, string note)
         {
             try
             {
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC Booking.Edit",
-                    new SqlParameter("@BookingID", id),
-                    new SqlParameter("@StartTime", startTime),
-                    new SqlParameter("@EndTime", endTime),
-                    new SqlParameter("@EditUseID", editUser),
-                    new SqlParameter("@Note", note)
+                    $"EXEC [Booking.Edit] {id}, {startTime}, {endTime}, {editUser}, {note}"
                     );
             }
             catch (SqlException ex)
@@ -193,14 +211,12 @@ namespace BookingApp.Repositories
         /// <returns></returns>
         public async Task Terminate(int id, string userId)
         {
-            if(await GetAsync(id) is Booking item)
+            if (await GetAsync(id) is Booking item)
             {
                 try
                 {
                     await dbContext.Database.ExecuteSqlCommandAsync(
-                        $"EXEC Booking.Terminate",
-                        new SqlParameter("@BookingID", id),
-                        new SqlParameter("@UseID", userId)
+                        $"EXEC [Booking.Terminate] {id}, {userId}"
                         );
                 }
                 catch (SqlException ex)
@@ -208,6 +224,8 @@ namespace BookingApp.Repositories
                     Helpers.SqlExceptionTranslator.ReThrow(ex, "on terminate booking");
                 }
             }
+            else
+                throw new Exceptions.EntryNotFoundException("Can not terminate not exist booking");
         }
 
         #endregion

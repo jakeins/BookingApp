@@ -9,9 +9,9 @@ namespace BookingApp.DTOs
     public class BookingMinimalDTO
     {
         [Range(1, int.MaxValue, ErrorMessage = "Invalid resource identifier.")]
-        int ResourceID { get; set; }
+        public int ResourceID { get; set; }
 
-        DateTime StartTime { get; set; }
-        DateTime EndTime { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
     }
 }

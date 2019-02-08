@@ -1,4 +1,5 @@
 ﻿using BookingApp.Data.Models;
+using BookingApp.DTOs;
 using BookingApp.Repositories;
 using System;
 using System.Collections.Generic;
@@ -22,10 +23,11 @@ namespace BookingApp.Services
         /// Create new <see cref="Booking"></see>
         /// </summary>
         /// <param name="booking">New <see cref="Booking"></see> data</param>
-        /// <returns></returns>
-        public async Task CreateAsync(Booking booking)
+        /// <param name="user">User who create booking</param>
+        /// <returns>Id of <see cref="Booking"/></returns>
+        public async Task<int> CreateAsync(BookingCreateDTO booking, ApplicationUser user)
         {
-            await bookingsRepo.CreateAsync(booking);
+            return await bookingsRepo.CreateAsync(booking, user);
         }
 
         /// <summary>
@@ -72,7 +74,7 @@ namespace BookingApp.Services
         /// <param name="editUser">User id who edit resource</param>
         /// <param name="note">Optional <see cref="Booking.Note"></see></param>
         /// <returns></returns>
-        public async Task Update(int id, DateTime startTime, DateTime endTime, string editUser, string note)
+        public async Task Update(int id, DateTime? startTime, DateTime? endTime, string editUser, string note)
         {
             await bookingsRepo.UpdateAsync(id, startTime, endTime, editUser, note);
         }

@@ -34,7 +34,7 @@ BEGIN
 			Throw 50001, 'Invalid BookingID',  12;
 
 		--verify that booking not terminated
-		If (Select Bookings.TerminationTime From Bookings Where Bookings.BookingId = @BookingID) Is Null
+		If (Select Bookings.TerminationTime From Bookings Where Bookings.BookingId = @BookingID) Is Not Null
 			Throw 50001, 'Can not terminate termіnated booking',  13;
 
 		-- verify that booking not ended

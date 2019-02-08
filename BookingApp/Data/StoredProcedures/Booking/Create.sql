@@ -84,6 +84,9 @@ BEGIN
 	if DATEADD(minute, @PreOrderTimeLimit, @BookingTimeStamp) < @StartTime
 		Throw 50000, 'Booking time is too early', 10;
 
+	-- declare variable for storing newly created bookin id
+	Declare @BookingID int;
+
 	-- create transaction for booking
 	Begin Transaction Booking
 	Begin
@@ -108,13 +111,17 @@ BEGIN
 							Bookings.CreatedUserId) AS Result 
 						)= 1
 				);
-		-- verify is no booking in same time
-		if (@CountBooksInSameTime > 0)
-			Throw 50001, 'Time range alredy booked', 11;
-		-- insert booking to bookings table
+		-- declare temp table variable for store insert result
+		Declare @InsertResult table(Id int);
+		-- insert booking to bookings table and get his id
 		Insert Into Bookings(ResourceID, StartTime, EndTime, CreatedTime, UpdatedTime, CreatedUserID, UpdatedUserID, Note)
+		Output INSERTED.BookingId Into @InsertResult
 		Values(@ResourceID, @StartTime, @EndTime, @BookingTimeStamp, @BookingTimeStamp, @UserID, @UserID, @Note);
+		-- extract id from temp result table
+		Set @BookingID = (Select Top 1 Id From @InsertResult);
 		-- commit changes
 	End;
 	Commit Transaction Booking;
+	-- return id of newly created booking
+	Return Select Top 1 * From Bookings Where Bookings.BookingId = @BookingID
 END
