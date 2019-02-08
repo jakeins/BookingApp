@@ -10,6 +10,8 @@ namespace BookingApp.Data.Models
     /// </summary>
     public class Resource
     {
+        public double Occupancy { get; set; }
+
         /// <summary>
         /// Primary identity key for the resource.
         /// </summary>

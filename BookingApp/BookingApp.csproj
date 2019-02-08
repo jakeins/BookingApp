@@ -66,12 +66,14 @@
 
   <ItemGroup>
     <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
+    <None Remove="Data\StoredProcedures\Resource.Occupancy.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Data\StoredProcedures\Booking\Create.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\Edit.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
+    <EmbeddedResource Include="Data\StoredProcedures\Resource.Occupancy.sql" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
