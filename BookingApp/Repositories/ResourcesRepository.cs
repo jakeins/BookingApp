@@ -72,7 +72,7 @@ namespace BookingApp.Repositories
                 }
             }
             else
-                throw new EntryNotFoundException();
+                throw new CurrentEntryNotFoundException("Specified resource not found.");
         }
 
         public async Task DeleteAsync(int id)
