@@ -49,7 +49,6 @@ namespace BookingApp.Controllers
         /// <response code="404">Resources or rule not found</response>
         /// <response code="500">Internal server error</response>
         [HttpPost]
-        //[Authorize(Roles = RoleTypes.User)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -118,7 +117,6 @@ namespace BookingApp.Controllers
         /// <respomse code="404">Error. Non exist booking id passed</respomse>
         /// <response code="500">Internal server error</response>
         [HttpPut("{bookingId}")]
-        //[Authorize(Roles = RoleTypes.User)]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
@@ -151,7 +149,6 @@ namespace BookingApp.Controllers
         /// <respomse code="404">Error. Non exist booking id passed</respomse>
         /// <response code="500">Error. Internal server</response>
         [HttpDelete("{bookingId}")]
-        //[Authorize(Roles = RoleTypes.Admin)]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
@@ -181,12 +178,13 @@ namespace BookingApp.Controllers
         /// <param name="bookingId">Id of exist <see cref="Booking"/> which terminate</param>
         /// <returns>Http status code</returns>
         /// <response code="200">Success terminate booking</response>
+        /// <response code="400">Error. Invalid booking passed</response>
         /// <response code="401">Error. Only admin and owner can update booking data</response>
         /// <respomse code="404">Error. Non exist booking id passed</respomse>
         /// <response code="500">Error. Internal server</response>
         [HttpDelete("terminate/{bookingId}")]
-        //[Authorize(Roles = RoleTypes.Admin)]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
