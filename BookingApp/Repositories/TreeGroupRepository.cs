@@ -32,7 +32,7 @@ namespace BookingApp.Repositories
                 return tree;
             } else
             {
-                throw new NotIssetTreeGroupException("This TreeGroup does't isset.");
+                throw new CurrentEntryNotFoundException("This TreeGroup does't isset.");
             }
         }
 

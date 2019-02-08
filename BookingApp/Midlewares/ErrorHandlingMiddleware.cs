@@ -33,7 +33,7 @@ namespace BookingApp.Midlewares
         {
             var code = HttpStatusCode.InternalServerError;
 
-            if (exception is Exceptions.InvalidTimeFieldException)
+            if (exception is Exceptions.FieldValueTimeInvalidException)
             {
                 code = HttpStatusCode.BadRequest;
             }

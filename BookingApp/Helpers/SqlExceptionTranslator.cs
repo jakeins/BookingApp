@@ -21,13 +21,13 @@ namespace BookingApp.Helpers
                 {
                     case 1:
                         //Can not book when StartTime in past
-                        throw new Exceptions.InvalidTimeFieldException(ex.Message + " " + Message);
+                        throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
                     case 2:
                         //Invalid user id
                         throw new Exceptions.RelatedEntryNotFoundException(ex.Message + " " + Message);
                     case 3:
                         //StartTime must be lower than EndTime
-                        throw new Exceptions.InvalidTimeFieldException(ex.Message + " " + Message);
+                        throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
                     case 4:
                         //Invalid resource id passed
                         throw new Exceptions.RelatedEntryNotFoundException(ex.Message + " " + Message);
@@ -39,13 +39,13 @@ namespace BookingApp.Helpers
                         throw new Exceptions.RelatedEntryNotFoundException(ex.Message + " " + Message);
                     case 7:
                         //Booking duration less than min valid for this resource
-                        throw new Exceptions.InvalidTimeFieldException(ex.Message + " " + Message);
+                        throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
                     case 8:
                         //Booking duration more than max valid for this resource
-                        throw new Exceptions.InvalidTimeFieldException(ex.Message + " " + Message);
+                        throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
                     case 9:
                         //The duration of the reservation must be a multiple step of the booking for this resource
-                        throw new Exceptions.InvalidTimeFieldException(ex.Message + " " + Message);
+                        throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
                     case 10:
                         //Booking time is too early
                         throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
