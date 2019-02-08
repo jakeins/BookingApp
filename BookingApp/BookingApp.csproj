@@ -66,6 +66,11 @@
 
   <ItemGroup>
     <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
+    <None Remove="Data\StoredProcedures\Booking\Terminate.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\StoredProcedures\Booking\Terminate.sql" />
   </ItemGroup>
 
   <ItemGroup>

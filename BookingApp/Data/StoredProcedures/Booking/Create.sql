@@ -13,7 +13,8 @@ AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
+	-- SET XACT_ABORT ON rollback transaction when exception throwed
+	SET XACT_ABORT, NOCOUNT ON;
 
 	-- declare variable for tamestamping
 	Declare @BookingTimeStamp datetime;
@@ -41,15 +42,15 @@ BEGIN
 
 	-- get resource book rule
 	Declare @Rule Table(MaxTime int, MinTime int, StepTime int, ServiceTime int, ReuseTimeout int, PreOrderTimeLimit int);
-	INSERT INTO @Rule
-		SELECT Rules.MaxTime, Rules.MinTime, Rules.StepTime, Rules.ServiceTime, Rules.ReuseTimeout, Rules.PreOrderTimeLimit
+	Insert Into @Rule
+		Select Rules.MaxTime, Rules.MinTime, Rules.StepTime, Rules.ServiceTime, Rules.ReuseTimeout, Rules.PreOrderTimeLimit
 			From Rules Where Rules.IsActive = 1 AND Rules.RuleId = 
 				(Select Resources.RuleID From Resources 
 					Where Resources.ResourceId = @ResourceID);
 
 	-- verify that rule is active
-	IF NOT EXISTS (SELECT 1 FROM @Rule)
-		THROW 50001, 'Rule is disabled for this resource', 6;
+	If Not Exists (Select 1 From @Rule)
+		Throw 50001, 'Rule is disabled for this resource', 6;
 
 	-- declare variables for rule options
 	Declare @MaxValidTime int;
@@ -83,38 +84,44 @@ BEGIN
 	if DATEADD(minute, @PreOrderTimeLimit, @BookingTimeStamp) < @StartTime
 		Throw 50000, 'Booking time is too early', 10;
 
+	-- declare variable for storing newly created bookin id
+	Declare @BookingID int;
+
 	-- create transaction for booking
 	Begin Transaction Booking
-	-- declare counter
-	DECLARE @CountBooksInSameTime int;
-	-- calculate count bookings in same time using dbo.Booking.IsRangeAvailable function
-	-- notes: weigh that the creator is a customer	
-	SET @CountBooksInSameTime =(
-		Select Count(Bookings.BookingId)
-					From Bookings 
-					Where Bookings.ResourceId = @ResourceID 
-					AND
-					(SELECT [dbo].[Booking.IsRangeAvailable](
-						@StartTime, 
-						@EndTime, 
-						@UserID,
-						Bookings.StartTime, 
-						Bookings.EndTime, 
-						Bookings.TerminationTime,
-						@ServiceTime,
-						@ReuseTimeoutPerUser,
-						Bookings.CreatedUserId) AS Result 
-					)= 1
-			);
-	-- verify is no booking in same time
-	if (@CountBooksInSameTime > 0)
-		Begin;
-		ROLLBACK TRANSACTION Booking;
-		THROW 50001, 'Time range alredy booked', 11;
-		End;
-	-- insert booking to bookings table
-	Insert Into Bookings(ResourceID, StartTime, EndTime, CreatedTime, UpdatedTime, CreatedUserID, UpdatedUserID, Note)
-	Values(@ResourceID, @StartTime, @EndTime, @BookingTimeStamp, @BookingTimeStamp, @UserID, @UserID, @Note);
-	-- commit changes
+	Begin
+		-- declare counter
+		DECLARE @CountBooksInSameTime int;
+		-- calculate count bookings in same time using dbo.Booking.IsRangeAvailable function
+		-- notes: weigh that the creator is a customer	
+		SET @CountBooksInSameTime =(
+			Select Count(Bookings.BookingId)
+						From Bookings 
+						Where Bookings.ResourceId = @ResourceID 
+						AND
+						(SELECT [dbo].[Booking.IsRangeAvailable](
+							@StartTime, 
+							@EndTime, 
+							@UserID,
+							Bookings.StartTime, 
+							Bookings.EndTime, 
+							Bookings.TerminationTime,
+							@ServiceTime,
+							@ReuseTimeoutPerUser,
+							Bookings.CreatedUserId) AS Result 
+						)= 1
+				);
+		-- declare temp table variable for store insert result
+		Declare @InsertResult table(Id int);
+		-- insert booking to bookings table and get his id
+		Insert Into Bookings(ResourceID, StartTime, EndTime, CreatedTime, UpdatedTime, CreatedUserID, UpdatedUserID, Note)
+		Output INSERTED.BookingId Into @InsertResult
+		Values(@ResourceID, @StartTime, @EndTime, @BookingTimeStamp, @BookingTimeStamp, @UserID, @UserID, @Note);
+		-- extract id from temp result table
+		Set @BookingID = (Select Top 1 Id From @InsertResult);
+		-- commit changes
+	End;
 	Commit Transaction Booking;
+	-- return id of newly created booking
+	Return Select Top 1 * From Bookings Where Bookings.BookingId = @BookingID
 END
