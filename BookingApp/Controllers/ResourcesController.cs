@@ -9,6 +9,7 @@ using BookingApp.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using BookingApp.Helpers;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookingApp.Controllers
 {
@@ -21,6 +22,8 @@ namespace BookingApp.Controllers
         readonly UserManager<ApplicationUser> userManager;
         readonly RoleManager<IdentityRole> roleManager;
         readonly IMapper dtoMapper;
+
+        string UserId => User.Claims.Single(c => c.Type == "jti").Value;
 
         public ResourcesController(ResourcesService resService, BookingsService bookService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -42,7 +45,7 @@ namespace BookingApp.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            bool adminAccess = await CurrentUserHasRole(RoleTypes.Admin);
+            bool adminAccess = User.IsInRole(RoleTypes.Admin);
 
             var models = await resService.ListResources(includeInactives: adminAccess == true);
 
@@ -56,7 +59,7 @@ namespace BookingApp.Controllers
         [HttpGet("occupancy")]
         public async Task<IActionResult> ListOccupancy()
         {
-            bool adminAccess = await CurrentUserHasRole(RoleTypes.Admin);
+            bool adminAccess = User.IsInRole(RoleTypes.Admin);
 
             var idsList = await resService.ListIDsAsync(includeIncatives: adminAccess == true);
 
@@ -86,7 +89,7 @@ namespace BookingApp.Controllers
         [HttpGet("{resourceId}")]
         public async Task<IActionResult> Single([FromRoute] int resourceId)
         {
-            bool isAuthorized = await CurrentUserHasRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
+            bool isAuthorized = User.IsInRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
 
             if (isAuthorized && await resService.SingleResource(resourceId) is Resource resourceModel)
             {
@@ -104,7 +107,7 @@ namespace BookingApp.Controllers
         {
             try
             {
-                bool isAuthorized = await CurrentUserHasRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
+                bool isAuthorized = User.IsInRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
 
                 if (!isAuthorized)
                     throw new KeyNotFoundException();// fake excuse for keeping security of inactive resources
@@ -125,7 +128,7 @@ namespace BookingApp.Controllers
         #region POST / PUT / DELETE
         // POST: api/Resources
         [HttpPost]
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Create([FromBody] ResourceDetailedDto item)
         {
             if (!ModelState.IsValid)
@@ -133,7 +136,7 @@ namespace BookingApp.Controllers
 
             var itemModel = dtoMapper.Map<Resource>(item);
             itemModel.ResourceId = 0;
-            itemModel.UpdatedUserId = itemModel.CreatedUserId = await GetCurrentUserId();
+            itemModel.UpdatedUserId = itemModel.CreatedUserId = UserId;
 
             await resService.Create(itemModel);
 
@@ -142,7 +145,7 @@ namespace BookingApp.Controllers
 
         // PUT: api/Resources/5
         [HttpPut("{resourceId}")]
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Update([FromRoute] int resourceId, [FromBody] ResourceDetailedDto item)
         {
             if (!ModelState.IsValid)
@@ -154,7 +157,7 @@ namespace BookingApp.Controllers
             try
             {
                 var model = dtoMapper.Map<Resource>(item);
-                model.UpdatedUserId = await GetCurrentUserId();
+                model.UpdatedUserId = UserId;
 
                 await resService.Update(model);
                 return Ok("Resource updated successfully.");
@@ -171,7 +174,7 @@ namespace BookingApp.Controllers
 
         // DELETE: api/Resources/5
         [HttpDelete("{resourceId}")]
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Delete([FromRoute] int resourceId)
         {
             try
@@ -188,24 +191,6 @@ namespace BookingApp.Controllers
                 return BadRequest("Cannot delete this resource. Some bookings rely on it.");
             }
         }
-        #endregion
-
-        #region Utilities
-        async Task<ApplicationUser> GetCurrentUserMOCK() => await userManager.FindByNameAsync("SuperAdmin");
-
-        async Task<string> GetCurrentUserId() => (await GetCurrentUserMOCK()).Id;
-        async Task<IEnumerable<string>> GetCurrentUserRoles()
-        {
-            var result = new List<string>();
-            var currentUser = await GetCurrentUserMOCK();
-
-            foreach (var roleName in new[] { RoleTypes.User, RoleTypes.Admin })
-                if (await userManager.IsInRoleAsync(currentUser, roleName))
-                    result.Add(roleName);
-
-            return result;
-        }
-        async Task<bool> CurrentUserHasRole(string role) => (await GetCurrentUserRoles()).Contains(role);
         #endregion
     }
 }
