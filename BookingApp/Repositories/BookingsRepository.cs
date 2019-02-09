@@ -155,18 +155,30 @@ namespace BookingApp.Repositories
         public async Task<double?> OccupancyByResourceAsync(int resourceId) => await OccupancyByResourceAsyncProc(resourceId);
 
         /// <summary>
-        /// Calculates single resource approx occupancy using stored procedure.
+        /// Calculates single resource approx occupancy using procedure.
         /// </summary>
         async Task<double?> OccupancyByResourceAsyncProc(int resourceId)
         {
             SqlParameter occupancyPercentsParam = new SqlParameter { ParameterName = "@occupancyPercents", SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output };
 
-            await dbContext.Database.ExecuteSqlCommandAsync(
-                $"EXEC @occupancyPercents = [Resource.OccupancyPercents] {resourceId}",
-                occupancyPercentsParam
-            );
+            try
+            { 
+                await dbContext.Database.ExecuteSqlCommandAsync(
+                    $"EXEC @occupancyPercents = [Resource.OccupancyPercents] {resourceId}",
+                    occupancyPercentsParam
+                );
+            }
+            catch (SqlException ex)
+            {
+                Helpers.SqlExceptionTranslator.ReThrow(ex, "Resource Occupancy Calculation");
+            }
 
-            return (double)(int)occupancyPercentsParam.Value / 100F;
+            double procedureAnswer = (int)occupancyPercentsParam.Value;
+
+            if (procedureAnswer < 0)
+                return null;
+            else
+                return procedureAnswer / 100F;
         }
 
         /// <summary>
@@ -182,7 +194,7 @@ namespace BookingApp.Repositories
                 .Select(booking => new { booking.Resource.Rule.PreOrderTimeLimit, booking.Resource.Rule.ServiceTime })
                 .FirstOrDefaultAsync();
 
-            if (firstEntry == null)//no booking => resource is completely free
+            if (firstEntry == null)//actual bookings absense means that resource is completely free
                 return 0;
 
             if (firstEntry.PreOrderTimeLimit == null)
@@ -293,7 +305,7 @@ namespace BookingApp.Repositories
             else
                 throw new Exceptions.EntryNotFoundException("Can not terminate not exist booking");
         }
-
+        
         #endregion
     }
 }

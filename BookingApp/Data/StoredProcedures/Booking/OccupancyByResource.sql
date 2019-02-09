@@ -4,7 +4,7 @@ AS
 BEGIN
 	-- Check resource existence
 	if NOT EXISTS (SELECT 1 FROM [Resources] WHERE [ResourceId] = @resourceId)
-		Throw 50001, 'Current entry (Resource) not found.',  1;
+		Throw 50001, 'Current entry (Resource) not found.',  12;
 
 	-- Determining basic rule properties
 	DECLARE @serviceMinutes int;
@@ -23,13 +23,13 @@ BEGIN
 		Throw 50001, 'Related entry (Rule) not found.',  2;
 
 	if @preOrderTimeLimit IS NULL
-		Throw 50001, 'Absurd Field Value: Preorder Limit is NULL.',  3;
+		Throw 50001, 'Absurd Field Value: Preorder Limit is NULL.',  16;
+
+	-- Zero preorder limit means available timeframe is infinity, thus occupancy is undefined
+	if @preOrderTimeLimit = 0
+		 return -1
 
 	DECLARE @now datetime2 = GETDATE()
-
-	-- Zero preorder limit means available timeframe is infinity, so resource is virtually free.
-	if @preOrderTimeLimit = 0
-		 return 0
 
 	-- Calculate mutual duration of all applicable booking ranges.
 	DECLARE @sumDuration int = (

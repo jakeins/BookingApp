@@ -10,20 +10,19 @@ using Microsoft.AspNetCore.Identity;
 using BookingApp.Helpers;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace BookingApp.Controllers
 {
     [Route("api/resources")]
     [ApiController]
-    public class ResourcesController : ControllerBase
+    public partial class ResourcesController : ControllerBase
     {
         readonly ResourcesService resService;
         readonly BookingsService bookService;
         readonly UserManager<ApplicationUser> userManager;
         readonly RoleManager<IdentityRole> roleManager;
         readonly IMapper dtoMapper;
-
-        string UserId => User.Claims.Single(c => c.Type == "uid").Value;
 
         public ResourcesController(ResourcesService resService, BookingsService bookService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -45,12 +44,8 @@ namespace BookingApp.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            bool adminAccess = User.IsInRole(RoleTypes.Admin);
-
-            var models = await resService.ListResources(includeInactives: adminAccess == true);
-
+            var models = await resService.List(includeInactiveResources: AdminAccess == true);
             var dtos = dtoMapper.Map<IEnumerable<ResourceMinimalDto>>(models);
-
             return Ok(dtos);
         }
 
@@ -59,9 +54,7 @@ namespace BookingApp.Controllers
         [HttpGet("occupancy")]
         public async Task<IActionResult> ListOccupancy()
         {
-            bool adminAccess = User.IsInRole(RoleTypes.Admin);
-
-            var idsList = await resService.ListIDsAsync(includeIncatives: adminAccess == true);
+            var idsList = await resService.ListIDs(includeIncativeResources: AdminAccess == true);
 
             var map = new Dictionary<int, double?>();
 
@@ -73,11 +66,9 @@ namespace BookingApp.Controllers
                 {
                     map[resourceId] = await bookService.OccupancyByResource(resourceId);
                 }
-                catch (KeyNotFoundException)
+                catch (Exception ex) when (ex is KeyNotFoundException || ex is FieldValueAbsurdException)
                 {
-                }
-                catch (FieldValueAbsurdException)
-                {
+                    //silently swallowing disjoint values
                 }
             }
 
@@ -89,15 +80,11 @@ namespace BookingApp.Controllers
         [HttpGet("{resourceId}")]
         public async Task<IActionResult> Single([FromRoute] int resourceId)
         {
-            bool isAuthorized = User.IsInRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
+            await AuthorizeForSingleResource(resourceId);
 
-            if (isAuthorized && await resService.SingleResource(resourceId) is Resource resourceModel)
-            {
-                var resourceDTO = dtoMapper.Map<ResourceDetailedDto>(resourceModel);
-                return Ok(resourceDTO);
-            }
-            else
-                return NotFound("Requested resource not found."); 
+            var resourceModel = await resService.Single(resourceId);
+            var resourceDTO = dtoMapper.Map<ResourceDetailedDto>(resourceModel);
+            return Ok(resourceDTO);
         }
 
         // GET: api/Resources/5/Occupancy
@@ -105,23 +92,8 @@ namespace BookingApp.Controllers
         [HttpGet("{resourceId}/occupancy")]
         public async Task<IActionResult> SingleOccupancy([FromRoute] int resourceId)
         {
-            try
-            {
-                bool isAuthorized = User.IsInRole(RoleTypes.Admin) || await resService.IsActive(resourceId);
-
-                if (!isAuthorized)
-                    throw new KeyNotFoundException();// fake excuse for keeping security of inactive resources
-
-                return Ok(await bookService.OccupancyByResource(resourceId));
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound("Requested resource not found.");
-            }
-            catch (FieldValueAbsurdException)
-            {
-                return BadRequest("There is a problem with the resource booking policy.");
-            }
+            await AuthorizeForSingleResource(resourceId);
+            return Ok(await bookService.OccupancyByResource(resourceId));
         }
         #endregion
 
@@ -151,25 +123,12 @@ namespace BookingApp.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (resourceId != item.ResourceId)
-                return BadRequest("Resource identifiers inconsistent.");
+            var model = dtoMapper.Map<Resource>(item);
+            model.ResourceId = resourceId;
+            model.UpdatedUserId = UserId;
 
-            try
-            {
-                var model = dtoMapper.Map<Resource>(item);
-                model.UpdatedUserId = UserId;
-
-                await resService.Update(model);
-                return Ok("Resource updated successfully.");
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound("Requested resource not found.");
-            }
-            catch (OperationFailedException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await resService.Update(model);
+            return Ok("Resource updated successfully");
         }
 
         // DELETE: api/Resources/5
@@ -177,19 +136,37 @@ namespace BookingApp.Controllers
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Delete([FromRoute] int resourceId)
         {
-            try
-            {
-                await resService.Delete(resourceId);
-                return Ok("Resource deleted.");
-            }
-            catch (EntryNotFoundException)
-            {
-                return NotFound("Requested resource not found.");
-            }
-            catch (OperationRestrictedException)
-            {
-                return BadRequest("Cannot delete this resource. Some bookings rely on it.");
-            }
+            await resService.Delete(resourceId);
+            return Ok("Resource deleted");
+        }
+        #endregion
+
+
+        #region Helpers
+        /// <summary>
+        /// Current user identifier
+        /// </summary>
+        string UserId => User.Claims.Single(c => c.Type == "uid").Value;
+
+        /// <summary>
+        /// Not found exception factory
+        /// </summary>
+        CurrentEntryNotFoundException NewNotFoundException => new CurrentEntryNotFoundException("Specified resource not found");
+
+        /// <summary>
+        /// Shorthand for checking if current user has admin access level
+        /// </summary>
+        bool AdminAccess => User.IsInRole(RoleTypes.Admin);
+
+        /// <summary>
+        /// Gateway for the single resource. Throws Not Found if current user hasn't enough rights for viewing the specified resource.
+        /// </summary>
+        async Task AuthorizeForSingleResource(int resourceId)
+        {
+            bool isAuthorized = AdminAccess || await resService.IsActive(resourceId);
+
+            if (!isAuthorized)
+                throw NewNotFoundException;// Excuse
         }
         #endregion
     }
