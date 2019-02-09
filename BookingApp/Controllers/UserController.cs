@@ -8,6 +8,8 @@ using BookingApp.Services;
 using BookingApp.Data.Models;
 using AutoMapper;
 using BookingApp.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using BookingApp.Helpers;
 
 namespace BookingApp.Controllers
 {
@@ -28,6 +30,7 @@ namespace BookingApp.Controllers
                 cfg.CreateMap<UserGetMinimalDTO, ApplicationUser>().ReverseMap();
             }));
         }
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPost("Create")]
         public async Task<IActionResult> CreateUser([FromBody] UserMinimalDto user)
         {
@@ -46,6 +49,7 @@ namespace BookingApp.Controllers
             }
             return BadRequest("Error valid");
         }
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserById([FromRoute]string userId)
         {
@@ -60,6 +64,7 @@ namespace BookingApp.Controllers
                 return BadRequest(e.Message);
             }
         }
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -75,6 +80,7 @@ namespace BookingApp.Controllers
             }
 
         }
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpDelete("{userId}")]
         public async Task<IActionResult> DeleteUserById([FromRoute] string userId)
         {
@@ -88,6 +94,7 @@ namespace BookingApp.Controllers
                 return BadRequest(e.Message);
             }
         }
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("UpdateUser")]
         public async Task<IActionResult> UpdateUser()
         {
@@ -104,6 +111,7 @@ namespace BookingApp.Controllers
                 return BadRequest(e.Message);
             }
         }
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("GetUserRoleById/{userId}")]
         public async Task<IActionResult> GetUserRoleById([FromRoute]string userId)
         {
