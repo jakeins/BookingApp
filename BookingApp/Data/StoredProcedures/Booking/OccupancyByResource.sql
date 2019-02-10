@@ -9,11 +9,13 @@ BEGIN
 	-- Determining basic rule properties
 	DECLARE @serviceMinutes int;
 	DECLARE @preOrderTimeLimit int;
+	DECLARE @maxTime int;
 	DECLARE @ruleId int;
 
 	SELECT TOP(1) 
 		@ruleId = [Rule].[RuleId],
 		@preOrderTimeLimit = [Rule].[PreOrderTimeLimit],
+		@maxTime = [Rule].[MaxTime],
 		@serviceMinutes = COALESCE([Rule].[ServiceTime],0)
 	FROM [Resources]
 	INNER JOIN [Rules] AS [Rule] ON [Resources].[RuleId] = [Rule].[RuleId]
@@ -24,6 +26,9 @@ BEGIN
 
 	if @preOrderTimeLimit IS NULL
 		Throw 50001, 'Absurd Field Value: Preorder Limit is NULL.',  16;
+
+	if @maxTime IS NULL
+		Throw 50001, 'Absurd Field Value: Max Time is NULL.',  16;
 
 	-- Zero preorder limit means available timeframe is infinity, thus occupancy is undefined
 	if @preOrderTimeLimit = 0
@@ -63,5 +68,5 @@ BEGIN
 	if @sumDuration IS NULL
 		 return 0
 	
-	return 100 * ( CAST(@sumDuration AS float) / CAST(@preOrderTimeLimit AS float) )
+	return 100 * ( CAST(@sumDuration AS float) / CAST(@preOrderTimeLimit+@maxTime AS float) )
 END

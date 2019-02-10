@@ -191,7 +191,7 @@ namespace BookingApp.Repositories
 
             var firstEntry = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
                 .Where(booking => booking.ResourceId == resourceId)
-                .Select(booking => new { booking.Resource.Rule.PreOrderTimeLimit, booking.Resource.Rule.ServiceTime })
+                .Select(booking => new { booking.Resource.Rule.PreOrderTimeLimit, booking.Resource.Rule.MaxTime, booking.Resource.Rule.ServiceTime })
                 .FirstOrDefaultAsync();
 
             if (firstEntry == null)//actual bookings absense means that resource is completely free
@@ -203,6 +203,11 @@ namespace BookingApp.Repositories
                 throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit cannot be negative.");
             else if (firstEntry.PreOrderTimeLimit == 0)
                 return null;
+
+            if (firstEntry.MaxTime == null)
+                throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit not set.");
+            else if (firstEntry.MaxTime < 0)
+                throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit cannot be negative.");
 
             TimeSpan serviceTime = TimeSpan.FromMinutes(firstEntry.ServiceTime ?? 0);
             DateTime now = DateTime.Now;
@@ -218,7 +223,7 @@ namespace BookingApp.Repositories
             )
             .SumAsync();
 
-            return occupiedMinutes / firstEntry.PreOrderTimeLimit;
+            return occupiedMinutes / (firstEntry.PreOrderTimeLimit+firstEntry.MaxTime);
         }
         #endregion
 
