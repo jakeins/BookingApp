@@ -188,7 +188,11 @@ namespace BookingApp.Data
             context.Resources.AddRange(resources.Select(e => e.Value));
             #endregion
 
-            SeedBookingsSimple(rand, loremIpsum, users, resources);
+            //saving changes to DB before seeding booking, so the rules have default storage values.
+            context.SaveChanges();
+
+            //SeedBookingsSimple(rand, loremIpsum, users, resources);
+            SeedBookingsNonOverlapping(rand, loremIpsum, users, resources);
 
             //saving changes to DB
             context.SaveChanges();
@@ -225,6 +229,96 @@ namespace BookingApp.Data
 
             //pushing into EF
             context.Bookings.AddRange(bookings);
+        }
+
+        /// <summary>
+        /// Seeds bookings without overlaps. For each resource, fill bookings from the end.
+        /// </summary>
+        private void SeedBookingsNonOverlapping(Random rand, string loremIpsum, Dictionary<string, ApplicationUser> users, Dictionary<int, Resource> resources)
+        {
+            const int day = 60 * 24;
+            const int historyWriteMinutesLimit = -day;
+            const double terminationChance = 0.2;
+
+            foreach (var entry in resources)
+            {
+                Resource r = entry.Value;
+
+                #region Per-resource variables
+                int stepMinutes = (int)r.Rule.StepTime;
+                int preOrderLimit = r.Rule.PreOrderTimeLimit < 1 ? day : (int)r.Rule.PreOrderTimeLimit;
+
+                int maxMinutes =  (int)r.Rule.MaxTime;
+                int maxSteps = maxMinutes / stepMinutes;
+
+                int minMinutes = (int)r.Rule.MinTime;
+                int minSteps = minMinutes / stepMinutes;
+
+                int serviceMinutes = (int)r.Rule.ServiceTime;
+
+                int postUsageDelayMinutesLimit = rand.Next(maxMinutes, day);
+                #endregion
+
+                // The value used in a loop, for correct time determination
+                int earliestOccupiedMinute = preOrderLimit + maxMinutes;
+
+                var perResourceBookings = new List<Booking>();
+
+                while(earliestOccupiedMinute > historyWriteMinutesLimit)
+                {
+                    int busyPlanMinutes = rand.Next(minSteps, maxSteps + 1) * stepMinutes;
+                    int postUsageMinutesDelay = rand.Next(postUsageDelayMinutesLimit);
+
+                    int plannedEndMinutes = earliestOccupiedMinute - serviceMinutes - postUsageMinutesDelay;
+                    int? factualEndMinutes = plannedEndMinutes;
+
+                    int plannedStartMinutes = plannedEndMinutes - busyPlanMinutes;
+                    int? factualStartMinutes = plannedStartMinutes;
+
+                    bool terminationHappened = rand.Next((int)(1/terminationChance)) == 0;
+                    int? terminatedAtMinutes = null;
+
+                    if (terminationHappened)
+                    {
+                        terminatedAtMinutes = plannedEndMinutes - rand.Next(preOrderLimit / 2);
+
+                        bool isPreCancelled = terminatedAtMinutes <= plannedStartMinutes;
+
+                        if (isPreCancelled)
+                            factualStartMinutes = factualEndMinutes = null;
+                        else
+                            factualEndMinutes = terminatedAtMinutes; 
+                    }
+
+                    earliestOccupiedMinute = factualStartMinutes ?? earliestOccupiedMinute;
+
+                    DateTime now = DateTime.Now;
+                    var creator = users.OrderBy(e => rand.Next()).First().Value;
+                    var startTime = now + TimeSpan.FromMinutes(plannedStartMinutes);
+                    var terminationTime = terminatedAtMinutes == null ? (DateTime?)null : now + TimeSpan.FromMinutes((int)terminatedAtMinutes);
+                    var createdTime = startTime - TimeSpan.FromMinutes(preOrderLimit * rand.Next(100) / 100);
+                    var updatedTime = terminationTime ?? createdTime;
+
+                    perResourceBookings.Add(
+                        new Booking
+                        {
+                            Note = loremIpsum.Substring(rand.Next(loremIpsum.Length - 200), rand.Next(0, 64)).Trim(),
+                            Resource = r,
+                            StartTime = startTime,
+                            EndTime = now + TimeSpan.FromMinutes(plannedEndMinutes),
+                            TerminationTime = terminationTime,
+                            Creator = creator,
+                            Updater = new[] { creator, users.First().Value }[rand.Next(2)],
+                            CreatedTime = createdTime,
+                            UpdatedTime = updatedTime
+                        }
+                    );
+                }
+
+                //pushing into EF
+                perResourceBookings.Reverse();
+                context.Bookings.AddRange(perResourceBookings);
+            }
         }
 
         /// <summary>
