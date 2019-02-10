@@ -3,10 +3,7 @@ using BookingApp.Data.Models;
 using BookingApp.DTOs;
 using BookingApp.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,14 +14,19 @@ namespace BookingApp.Repositories
         ApplicationDbContext dbContext;
 
         /// <summary>
-        /// IQueryable shorthand for ApplicationDbContext.Resources
+        /// IQueryable shorthand for DbContext.Resources
         /// </summary>
         readonly IQueryable<Resource> Resources;
 
         /// <summary>
-        /// IQueryable shorthand for only active ApplicationDbContext.Resources
+        /// IQueryable shorthand for only active DbContext.Resources
         /// </summary>
         readonly IQueryable<Resource> ActiveResources;
+
+        /// <summary>
+        /// Not found exception factory
+        /// </summary>
+        CurrentEntryNotFoundException NewNotFoundException => new CurrentEntryNotFoundException("Specified resource not found");
 
         public ResourcesRepository(ApplicationDbContext dbContext)
         {
@@ -33,21 +35,29 @@ namespace BookingApp.Repositories
             ActiveResources = Resources.Where(r => r.IsActive == true);
         }
 
-        #region CRUD operations
-
+        #region Standard repository operations
         public async Task<IEnumerable<Resource>> GetListAsync() => await Resources.ToListAsync();
 
-        public async Task<Resource> GetAsync(int id) => await Resources.FirstOrDefaultAsync(p => p.ResourceId == id);
-
-        public async Task CreateAsync(Resource item)
+        public async Task<Resource> GetAsync(int resourceId)
         {
-            dbContext.Resources.Add(item);
+            if (await Resources.SingleOrDefaultAsync(p => p.ResourceId == resourceId) is Resource resource)
+                return resource;
+            else
+                throw NewNotFoundException;
+        }
+
+        public async Task CreateAsync(Resource resource)
+        {
+            dbContext.Resources.Add(resource);
             await SaveAsync();
         }
 
-        public async Task UpdateAsync(Resource item)
+        public async Task UpdateAsync(Resource resource)
         {
-            if (await ResourceExistsAsync(item))
+            if (! await ExistsAsync(resource))
+                throw NewNotFoundException;
+
+            try
             {
                 var propsToModify = typeof(ResourceDetailedDto).GetProperties()
                     .Where(prop => prop.Name != "ResourceId")
@@ -55,31 +65,21 @@ namespace BookingApp.Repositories
                     .Concat(new[] { "UpdatedUserId" });
 
                 foreach (var propName in propsToModify)
-                    dbContext.Entry(item).Property(propName).IsModified = true;
+                    dbContext.Entry(resource).Property(propName).IsModified = true;
 
-                try
-                {
-                    await SaveAsync();
-                }
-                catch (DbUpdateConcurrencyException ex)
-                {
-                    string errorMessageTemplate = "Database operation expected to affect 1 row(s) but actually affected 0 row(s).";
-
-                    if (ex.Message.Substring(0, errorMessageTemplate.Length) == errorMessageTemplate)
-                        throw new OperationFailedException("Resource update failed due to concurrency issue.", ex);
-                    else
-                        throw;
-                }
+                await SaveAsync();
             }
-            else
-                throw new EntryNotFoundException();
+            catch (DbUpdateException ex)
+            {
+                Helpers.DbUpdateExceptionTranslator.ReThrow(ex, "Resource Update");
+            }
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int resourceId)
         {
-            if (await GetAsync(id) is Resource item)
+            if (await GetAsync(resourceId) is Resource resource)
             {
-                dbContext.Resources.Remove(item);
+                dbContext.Resources.Remove(resource);
 
                 try
                 {
@@ -87,113 +87,64 @@ namespace BookingApp.Repositories
                 }
                 catch (DbUpdateException dbuException)
                 {
-                    if (dbuException.InnerException is SqlException sqlException && sqlException.Number == 547)
-                        throw new OperationRestrictedException("Deletion cancelled because Resource has Bookings related upon it.", dbuException);
-                    else
-                        throw;
+                    Helpers.DbUpdateExceptionTranslator.ReThrow(dbuException, "Resource Delete");
                 }
             }
             else
-                throw new EntryNotFoundException();
+                throw NewNotFoundException;
         }
 
         public async Task SaveAsync() => await dbContext.SaveChangesAsync();
-
         #endregion
 
-        #region Public Extensions
-
-        public async Task<bool> IsActiveAsync(int id)
+        #region Extensions
+        /// <summary>
+        /// Checks whether sepcified resource is active.
+        /// </summary>
+        public async Task<bool> IsActiveAsync(int resourceId)
         {
-            return (await Resources.Where(r => r.ResourceId == id).Select(r => r.IsActive).SingleOrDefaultAsync()) == true;
+            var result = await Resources.Where(r => r.ResourceId == resourceId).Select(r => new { r.IsActive }).SingleOrDefaultAsync();
+
+            if (result != null)
+                return result.IsActive == true;
+            else
+                throw NewNotFoundException;
         }
 
-        public async Task<IEnumerable<Resource>> GetActiveListAsync() => await ActiveResources.ToListAsync();
+        /// <summary>
+        /// Lists active resources.
+        /// </summary>
+        public async Task<IEnumerable<Resource>> ListActiveAsync() => await ActiveResources.ToListAsync();
 
+        /// <summary>
+        /// Lists identifiers of all resources.
+        /// </summary>
         public async Task<IEnumerable<int>> ListIDsAsync() =>        await Resources.Select(r => r.ResourceId).ToListAsync();
+
+        /// <summary>
+        /// Lists identifiers of all active resources.
+        /// </summary>
         public async Task<IEnumerable<int>> ListActiveIDsAsync() =>  await ActiveResources.Select(r => r.ResourceId).ToListAsync();
 
+        /// <summary>
+        /// Lists all resources adhering to the specified rule.
+        /// </summary>
+        public async Task<IEnumerable<Resource>> ListByRuleAsync(int ruleId) => await Resources.Where(r => r.RuleId == ruleId).ToListAsync();
 
         /// <summary>
-        /// Calculates current approximate resource occupancy.
+        /// Lists all resources which have the specified user as a creator or updater.
         /// </summary>
-        public async Task<double?> CalculateSingleOccupancyProcedureAsync(int resourceId)
-        {
-            SqlParameter param = new SqlParameter
-            {
-                ParameterName = "@retVal",
-                SqlDbType = SqlDbType.Int,
-                Direction = ParameterDirection.Output,
-                Value = 0
-            };
-
-            await dbContext.Database.ExecuteSqlCommandAsync(
-                $"EXEC @retVal = [Resource.Occupancy] {resourceId}",
-                param);
-
-            return (double)(int)param.Value / 100;
-        }
+        public async Task<IEnumerable<Resource>> ListByAssociatedUser(string userId) => await Resources.Where(r => r.CreatedUserId == userId || r.UpdatedUserId == userId).ToListAsync();
 
         /// <summary>
-        /// Calculates current approximate resource occupancy using stored procedure.
+        /// Checks whether specified resource exists.
         /// </summary>
-        public async Task<double?> CalculateSingleOccupancyAsync(int resourceId)
-        {
-            return await CalculateSingleOccupancyProcedureAsync(resourceId);
-            //return await CalculateSingleOccupancyEFAsync(resourceId);
-        }
+        public async Task<bool> ExistsAsync(int resourceId) => await Resources.AnyAsync(e => e.ResourceId == resourceId);
 
         /// <summary>
-        /// Calculates current approximate resource occupancy using EF Core.
+        /// Checks whether specified resource exists.
         /// </summary>
-        public async Task<double?> CalculateSingleOccupancyEFAsync(int resourceId)
-        {
-            if (!await ResourceExistsAsync(resourceId))
-                throw new KeyNotFoundException("Specified resource doesn't exist.");
-
-            var firstEntry = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
-                .Where(booking => booking.ResourceId == resourceId)
-                .Select(booking => new { booking.Resource.Rule.PreOrderTimeLimit, booking.Resource.Rule.ServiceTime })
-                .FirstOrDefaultAsync();
-
-            if (firstEntry == null)//no booking => resource is completely free
-                return 0;
-
-            if (firstEntry.PreOrderTimeLimit == null)
-                throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit not set.");
-            else if (firstEntry.PreOrderTimeLimit < 0)
-                throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit cannot be negative.");
-            else if (firstEntry.PreOrderTimeLimit == 0)
-                return null;
-
-            TimeSpan serviceTime = TimeSpan.FromMinutes(firstEntry.ServiceTime ?? 0);
-            DateTime now = DateTime.Now;
-
-            double occupiedMinutes = await dbContext.Bookings
-                .Where(booking => booking.ResourceId == resourceId)
-                .Select(b => (
-                ((b.TerminationTime == null || b.TerminationTime <= b.EndTime) ? 1 : 0 ) * //absurdity check
-                ((b.TerminationTime ?? b.EndTime).Subtract(b.StartTime > now ? b.StartTime : now) > new TimeSpan() ? // if calculated value is positive
-                    (b.TerminationTime ?? b.EndTime).Subtract(b.StartTime > now ? b.StartTime : now) + serviceTime // then return it + service time
-                    : new TimeSpan()) // else 0
-                ).TotalMinutes
-            )
-            .SumAsync();
-
-            return occupiedMinutes / firstEntry.PreOrderTimeLimit;
-        }
-        #endregion
-
-        #region Private Utilities
-        /// <summary>
-        /// Checks whether resource exists in database.
-        /// </summary>
-        async Task<bool> ResourceExistsAsync(int id) => await Resources.AnyAsync(e => e.ResourceId == id);
-
-        /// <summary>
-        /// Checks whether resource exists in database.
-        /// </summary>
-        async Task<bool> ResourceExistsAsync(Resource resource) => await ResourceExistsAsync(resource.ResourceId);
+        public async Task<bool> ExistsAsync(Resource resource) => await ExistsAsync(resource.ResourceId);
         #endregion
     }
 }

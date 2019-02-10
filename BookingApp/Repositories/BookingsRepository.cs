@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookingApp.Repositories
@@ -142,7 +143,89 @@ namespace BookingApp.Repositories
 
         #endregion
 
-        #region Public Extensions
+
+
+
+        #region Extensions
+
+        #region Occupancy
+        /// <summary>
+        /// Calculates single resource approx occupancy using the best way procedure.
+        /// </summary>
+        public async Task<double?> OccupancyByResourceAsync(int resourceId) => await OccupancyByResourceAsyncProc(resourceId);
+
+        /// <summary>
+        /// Calculates single resource approx occupancy using procedure.
+        /// </summary>
+        async Task<double?> OccupancyByResourceAsyncProc(int resourceId)
+        {
+            SqlParameter occupancyPercentsParam = new SqlParameter { ParameterName = "@occupancyPercents", SqlDbType = SqlDbType.Int, Direction = ParameterDirection.Output };
+
+            try
+            { 
+                await dbContext.Database.ExecuteSqlCommandAsync(
+                    $"EXEC @occupancyPercents = [Resource.OccupancyPercents] {resourceId}",
+                    occupancyPercentsParam
+                );
+            }
+            catch (SqlException ex)
+            {
+                Helpers.SqlExceptionTranslator.ReThrow(ex, "Resource Occupancy Calculation");
+            }
+
+            double procedureAnswer = (int)occupancyPercentsParam.Value;
+
+            if (procedureAnswer < 0)
+                return null;
+            else
+                return procedureAnswer / 100F;
+        }
+
+        /// <summary>
+        /// Calculates single resource approx occupancy using EF Core.
+        /// </summary>
+        async Task<double?> OccupancyByResourceAsyncEF(int resourceId)
+        {
+            if (!await dbContext.Resources.AnyAsync(e => e.ResourceId == resourceId))
+                throw new KeyNotFoundException("Specified resource doesn't exist.");
+
+            var firstEntry = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
+                .Where(booking => booking.ResourceId == resourceId)
+                .Select(booking => new { booking.Resource.Rule.PreOrderTimeLimit, booking.Resource.Rule.MaxTime, booking.Resource.Rule.ServiceTime })
+                .FirstOrDefaultAsync();
+
+            if (firstEntry == null)//actual bookings absense means that resource is completely free
+                return 0;
+
+            if (firstEntry.PreOrderTimeLimit == null)
+                throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit not set.");
+            else if (firstEntry.PreOrderTimeLimit < 0)
+                throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit cannot be negative.");
+            else if (firstEntry.PreOrderTimeLimit == 0)
+                return null;
+
+            if (firstEntry.MaxTime == null)
+                throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit not set.");
+            else if (firstEntry.MaxTime < 0)
+                throw new FieldValueAbsurdException("Resource's rule PreOrderTimeLimit cannot be negative.");
+
+            TimeSpan serviceTime = TimeSpan.FromMinutes(firstEntry.ServiceTime ?? 0);
+            DateTime now = DateTime.Now;
+
+            double occupiedMinutes = await dbContext.Bookings
+                .Where(booking => booking.ResourceId == resourceId)
+                .Select(b => (
+                ((b.TerminationTime == null || b.TerminationTime <= b.EndTime) ? 1 : 0) * //absurdity check
+                ((b.TerminationTime ?? b.EndTime).Subtract(b.StartTime > now ? b.StartTime : now) > new TimeSpan() ? // if calculated value is positive
+                    (b.TerminationTime ?? b.EndTime).Subtract(b.StartTime > now ? b.StartTime : now) + serviceTime // then return it + service time
+                    : new TimeSpan()) // else 0
+                ).TotalMinutes
+            )
+            .SumAsync();
+
+            return occupiedMinutes / (firstEntry.PreOrderTimeLimit+firstEntry.MaxTime);
+        }
+        #endregion
 
         /// <summary>
         /// Update exist <see cref="Booking"></see> data
@@ -227,7 +310,7 @@ namespace BookingApp.Repositories
             else
                 throw new Exceptions.EntryNotFoundException("Can not terminate not exist booking");
         }
-
+        
         #endregion
     }
 }
