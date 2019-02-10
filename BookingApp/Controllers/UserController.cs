@@ -24,21 +24,21 @@ namespace BookingApp.Controllers
             this.userService = userService;
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<ApplicationUser, UserMinimalDto>();
-                cfg.CreateMap<ApplicationUser, UserMinimalDto>().ReverseMap();
+                cfg.CreateMap<ApplicationUser, AuthRegisterDto>();
+                cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap();
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>();
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
             }));
         }
         //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPost("Create")]
-        public async Task<IActionResult> CreateUser([FromBody] UserMinimalDto user)
+        public async Task<IActionResult> CreateUser([FromBody] AuthRegisterDto user)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    ApplicationUser appUser = mapper.Map<UserMinimalDto, ApplicationUser>(user);
+                    ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
                     await userService.CreateUser(appUser);
                     return Ok("User created");
                 }
