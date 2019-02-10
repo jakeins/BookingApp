@@ -8,12 +8,9 @@ namespace BookingApp.DTOs
 {
     public class UserMinimalDto
     {
-        public string UserName { get; set; }
-        [EmailAddress]
         public string Email { get; set; }
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-        [Compare("Password", ErrorMessage = "Passwords don't match")]
-        public string ConfirmPassword { get; set; }
+        public string UserName { get; set; }
+        public bool? IsApproved { get; set; }
+        public bool? IsActive { get; set; }
     }
 }
