@@ -3,14 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookingApp.DTOs
 {
-    public class BookingOwnerDTO : BookingMinimalDTO
+    public class BookingUpdateDTO
     {
-        public int BookingID { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
 
         [MaxLength(512, ErrorMessage = "Description is too long.")]
         public string Note { get; set; }
-
-        public DateTime CreatedTime { get; set; }
-        public DateTime UpdatedTime { get; set; }
     }
 }

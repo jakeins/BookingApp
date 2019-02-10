@@ -62,16 +62,29 @@
     <Compile Remove="Migrations\20190124192340_Initial.Designer.cs" />
     <Compile Remove="Migrations\20190204190030_ModelsDate2TimeRefinement.cs" />
     <Compile Remove="Migrations\20190204190030_ModelsDate2TimeRefinement.Designer.cs" />
+    <Compile Remove="Migrations\20190208084114_Init.cs" />
+    <Compile Remove="Migrations\20190208084114_Init.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
     <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
+    <None Remove="Data\StoredProcedures\Booking\Terminate.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\StoredProcedures\Booking\Terminate.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Data\StoredProcedures\Booking\Create.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\Edit.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
+    <EmbeddedResource Include="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

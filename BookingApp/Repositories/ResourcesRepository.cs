@@ -5,6 +5,7 @@ using BookingApp.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -112,17 +113,47 @@ namespace BookingApp.Repositories
         public async Task<IEnumerable<int>> ListIDsAsync() =>        await Resources.Select(r => r.ResourceId).ToListAsync();
         public async Task<IEnumerable<int>> ListActiveIDsAsync() =>  await ActiveResources.Select(r => r.ResourceId).ToListAsync();
 
+
         /// <summary>
         /// Calculates current approximate resource occupancy.
         /// </summary>
+        public async Task<double?> CalculateSingleOccupancyProcedureAsync(int resourceId)
+        {
+            SqlParameter param = new SqlParameter
+            {
+                ParameterName = "@retVal",
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output,
+                Value = 0
+            };
+
+            await dbContext.Database.ExecuteSqlCommandAsync(
+                $"EXEC @retVal = [Resource.Occupancy] {resourceId}",
+                param);
+
+            return (double)(int)param.Value / 100;
+        }
+
+        /// <summary>
+        /// Calculates current approximate resource occupancy using stored procedure.
+        /// </summary>
         public async Task<double?> CalculateSingleOccupancyAsync(int resourceId)
+        {
+            return await CalculateSingleOccupancyProcedureAsync(resourceId);
+            //return await CalculateSingleOccupancyEFAsync(resourceId);
+        }
+
+        /// <summary>
+        /// Calculates current approximate resource occupancy using EF Core.
+        /// </summary>
+        public async Task<double?> CalculateSingleOccupancyEFAsync(int resourceId)
         {
             if (!await ResourceExistsAsync(resourceId))
                 throw new KeyNotFoundException("Specified resource doesn't exist.");
 
             var firstEntry = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
                 .Where(booking => booking.ResourceId == resourceId)
-                .Select(booking => new { booking.Resource.Rule.PreOrderTimeLimit })
+                .Select(booking => new { booking.Resource.Rule.PreOrderTimeLimit, booking.Resource.Rule.ServiceTime })
                 .FirstOrDefaultAsync();
 
             if (firstEntry == null)//no booking => resource is completely free
@@ -135,16 +166,17 @@ namespace BookingApp.Repositories
             else if (firstEntry.PreOrderTimeLimit == 0)
                 return null;
 
-            var now = DateTime.Now;
+            TimeSpan serviceTime = TimeSpan.FromMinutes(firstEntry.ServiceTime ?? 0);
+            DateTime now = DateTime.Now;
 
-            double occupiedMinutes = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
-            .Where(booking =>
-                booking.ResourceId == resourceId &&
-                booking.EndTime + TimeSpan.FromMinutes(booking.Resource.Rule.ServiceTime ?? 0) > now
-            )
-            .Select(booking =>
-                (booking.EndTime + TimeSpan.FromMinutes(booking.Resource.Rule.ServiceTime ?? 0) - new[] { booking.StartTime, now }.Max())
-                .TotalMinutes
+            double occupiedMinutes = await dbContext.Bookings
+                .Where(booking => booking.ResourceId == resourceId)
+                .Select(b => (
+                ((b.TerminationTime == null || b.TerminationTime <= b.EndTime) ? 1 : 0 ) * //absurdity check
+                ((b.TerminationTime ?? b.EndTime).Subtract(b.StartTime > now ? b.StartTime : now) > new TimeSpan() ? // if calculated value is positive
+                    (b.TerminationTime ?? b.EndTime).Subtract(b.StartTime > now ? b.StartTime : now) + serviceTime // then return it + service time
+                    : new TimeSpan()) // else 0
+                ).TotalMinutes
             )
             .SumAsync();
 
@@ -153,12 +185,15 @@ namespace BookingApp.Repositories
         #endregion
 
         #region Private Utilities
+        /// <summary>
+        /// Checks whether resource exists in database.
+        /// </summary>
+        async Task<bool> ResourceExistsAsync(int id) => await Resources.AnyAsync(e => e.ResourceId == id);
 
         /// <summary>
         /// Checks whether resource exists in database.
         /// </summary>
-        async Task<bool> ResourceExistsAsync(int id) => await dbContext.Resources.AnyAsync(e => e.ResourceId == id);
-        async Task<bool> ResourceExistsAsync(Resource resource) => await dbContext.Resources.AnyAsync(e => e.ResourceId == resource.ResourceId);
+        async Task<bool> ResourceExistsAsync(Resource resource) => await ResourceExistsAsync(resource.ResourceId);
         #endregion
     }
 }

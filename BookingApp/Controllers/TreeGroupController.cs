@@ -51,7 +51,7 @@ namespace BookingApp.Controllers
                 TreeGroupListDto tree = mapper.Map<TreeGroupListDto>(await service.GetDetail(id));
                 return Ok(tree);
             }
-            catch (NotIssetTreeGroupException e)
+            catch (CurrentEntryNotFoundException e)
             {
                 return BadRequest(e.Message);
             }
@@ -96,10 +96,10 @@ namespace BookingApp.Controllers
             {
                 await service.Delete(id);
                 return Ok("TreeGroup deleted.");
-            } catch(DbUpdateException e)
+            } catch(DbUpdateException)
             {
                 return BadRequest("This category has children");
-            } catch(NotIssetTreeGroupException e)
+            } catch(CurrentEntryNotFoundException e)
             {
                 return BadRequest(e.Message);
             } 

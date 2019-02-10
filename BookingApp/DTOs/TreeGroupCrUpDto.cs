@@ -1,12 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BookingApp.DTOs
 {
     public class TreeGroupCrUpDto
     {
-
         [Required]
         [StringLength(64, MinimumLength = 3, ErrorMessage = "Title should be no more 64 characters")]
         public string Title { get; set; }
@@ -24,7 +21,5 @@ namespace BookingApp.DTOs
         [Required]
         [MaxLength(450, ErrorMessage = "No data about User.")]
         public string UpdatedUserId { get; set; }
-        
-        
     }
 }

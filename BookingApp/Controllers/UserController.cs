@@ -26,8 +26,8 @@ namespace BookingApp.Controllers
             {
                 cfg.CreateMap<ApplicationUser, UserMinimalDto>();
                 cfg.CreateMap<ApplicationUser, UserMinimalDto>().ReverseMap();
-                cfg.CreateMap<UserGetMinimalDTO, ApplicationUser>();
-                cfg.CreateMap<UserGetMinimalDTO, ApplicationUser>().ReverseMap();
+                cfg.CreateMap<UserMinimalDto, ApplicationUser>();
+                cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
             }));
         }
         //[Authorize(Roles = RoleTypes.Admin)]
@@ -39,7 +39,7 @@ namespace BookingApp.Controllers
                 try
                 {
                     ApplicationUser appUser = mapper.Map<UserMinimalDto, ApplicationUser>(user);
-                    await userService.CreateUser(appUser, user.Password);
+                    await userService.CreateUser(appUser);
                     return Ok("User created");
                 }
                 catch (Exception e)
@@ -56,7 +56,7 @@ namespace BookingApp.Controllers
             try
             {
                 ApplicationUser appuser = await userService.GetUserById(userId);
-                UserGetMinimalDTO user = mapper.Map<ApplicationUser, UserGetMinimalDTO>(appuser);
+                UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
                 return new OkObjectResult(user);
             }
             catch (Exception e)
@@ -71,7 +71,7 @@ namespace BookingApp.Controllers
             try
             {
                 IEnumerable<ApplicationUser> appusers = await userService.GetUsersList();
-                IEnumerable<UserGetMinimalDTO> users = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserGetMinimalDTO>>(appusers);
+                IEnumerable<UserMinimalDto> users = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserMinimalDto>>(appusers);
                 return new OkObjectResult(users);
             }
             catch (Exception e)
