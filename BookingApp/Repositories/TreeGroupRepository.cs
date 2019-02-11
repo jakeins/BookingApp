@@ -24,6 +24,11 @@ namespace BookingApp.Repositories
             return await context.TreeGroups.ToListAsync();
         }
 
+        public async Task<IEnumerable<TreeGroup>> GetListForUserAsync()
+        {
+            return await context.TreeGroups.Where(t => t.IsActive == true).ToListAsync();
+        }
+
         public async Task<TreeGroup> GetAsync(int id)
         {
             TreeGroup tree = await context.TreeGroups.FirstOrDefaultAsync(t => t.TreeGroupId == id);
@@ -50,8 +55,6 @@ namespace BookingApp.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            //await ChangeChildren(id);
-
             TreeGroup tree = await GetAsync(id);
             context.TreeGroups.Remove(tree);
             await SaveAsync();
@@ -59,33 +62,5 @@ namespace BookingApp.Repositories
         }
 
         public async Task SaveAsync() => await context.SaveChangesAsync();
-
-        public async Task<IEnumerable<TreeGroup>> GetListWithChildAsync()
-        {
-            return await context.TreeGroups.Select(t => new TreeGroup
-            {
-                TreeGroupId = t.TreeGroupId,
-                Title = t.Title,
-                ParentTreeGroupId = t.ParentTreeGroupId,
-                DefaultRuleId = t.DefaultRuleId,
-                IsActive = t.IsActive,
-                ChildGroups = t.ChildGroups
-            }).ToListAsync();
-        }
-
-        public async Task ChangeChildren(int id)
-        {
-            List<TreeGroup> children = await context.TreeGroups.Where(t => t.ParentTreeGroupId == id).ToListAsync();
-            if (children != null)
-            {
-                foreach (TreeGroup child in children)
-                {
-                    child.ParentTreeGroupId = null;
-                    context.TreeGroups.Update(child);
-                    await SaveAsync();
-                }
-            }
-        }
-
     }
 }
