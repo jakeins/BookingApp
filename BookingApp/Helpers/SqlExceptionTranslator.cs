@@ -16,70 +16,39 @@ namespace BookingApp.Helpers
         /// <param name="Message">Addtitional message contactane to default</param>
         public static void ReThrow(SqlException ex, string Message = "")
         {
-            if(ex.Number == 50001)
+            switch (ex.Number)
             {
-                switch(ex.State)
-                {
-                    case 1:
-                        //Can not book when StartTime in past
-                        throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
-                    case 2:
-                        //Invalid user id OR rule
-                        throw new Exceptions.RelatedEntryNotFoundException(ex.Message + " " + Message);
-                    case 3:
-                        //StartTime must be lower than EndTime
-                        throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
-                    case 4:
-                        //Invalid resource id passed
-                        throw new Exceptions.RelatedEntryNotFoundException(ex.Message + " " + Message);
-                    case 5:
-                        //Resorce is disable and can not book
-                        throw new Exceptions.RelatedEntryNotFoundException(ex.Message + " " + Message);
-                    case 6:
-                        //Rule is disabled for this resource
-                        throw new Exceptions.RelatedEntryNotFoundException(ex.Message + " " + Message);
-                    case 7:
-                        //Booking duration less than min valid for this resource
-                        throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
-                    case 8:
-                        //Booking duration more than max valid for this resource
-                        throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
-                    case 9:
-                        //The duration of the reservation must be a multiple step of the booking for this resource
-                        throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
-                    case 10:
-                        //Booking time is too early
-                        throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
-                    case 11:
-                        //Time range alredy booked
-                        throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
-                    case 12:
-                        //Invalid BookingID or ResourceId
-                        throw new Exceptions.CurrentEntryNotFoundException(ex.Message + " " + Message);
-                    case 13:
-                        //Can not edit termіnated booking
-                        throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
-                    case 14:
-                        //Can not edit ended booking
-                        throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
-                    case 15:
-                        //Can not change starttime of alredy started booking
-                        throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
-                    case 16:// any Absurd Field Value
-                        throw new FieldValueAbsurdException(ex.Message + " " + Message);
-                    default:
-                        //If exception uknown to throw InvalidProgramException with this exception
-                        throw new InvalidProgramException("Uknown SQL Exception catched " + Message, ex);
-                }
+                case 50001:
+                    switch (ex.State)
+                    {
+                        case 1:
+                        case 3:
+                        case 7:
+                        case 8:
+                        case 9:
+                            throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
+                        case 2:
+                        case 4:
+                        case 6:
+                            throw new Exceptions.RelatedEntryNotFoundException(ex.Message + " " + Message);
+                        case 10:
+                        case 11:
+                        case 13:
+                        case 14:
+                        case 15:
+                            throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
+                        case 12:
+                            throw new Exceptions.CurrentEntryNotFoundException(ex.Message + " " + Message);
+                        case 16:
+                            throw new Exceptions.FieldValueAbsurdException(ex.Message + " " + Message);
+                        default:
+                            throw new InvalidProgramException("Uknown SQL Exception catched " + Message, ex);
+                    }
+                case 547:
+                    throw new Exceptions.OperationRestrictedException("Relation block this operation: " + Message);
+                default:
+                    throw new InvalidProgramException("Uknown SQL Exception catched ", ex);
             }
-            else if(ex.Number == 547)
-            {
-                //Relations block deleting
-                throw new Exceptions.OperationRestrictedException("Relation block this operation: " + Message);
-            }
-
-            //If exception uknown to throw InvalidProgramException with this exception
-            throw new InvalidProgramException("Uknown SQL Exception catched ", ex);
         }
     }
 }
