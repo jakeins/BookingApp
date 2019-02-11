@@ -19,6 +19,7 @@ namespace BookingApp.Helpers
             switch (ex.Number)
             {
                 case 50001:
+                    var exceptionDescription = ex.Message + " " + Message;
                     switch (ex.State)
                     {
                         case 1:
@@ -26,21 +27,21 @@ namespace BookingApp.Helpers
                         case 7:
                         case 8:
                         case 9:
-                            throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
+                            throw new Exceptions.FieldValueTimeInvalidException(exceptionDescription);
                         case 2:
                         case 4:
                         case 6:
-                            throw new Exceptions.RelatedEntryNotFoundException(ex.Message + " " + Message);
+                            throw new Exceptions.RelatedEntryNotFoundException(exceptionDescription);
                         case 10:
                         case 11:
                         case 13:
                         case 14:
                         case 15:
-                            throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
+                            throw new Exceptions.OperationFailedException(exceptionDescription);
                         case 12:
-                            throw new Exceptions.CurrentEntryNotFoundException(ex.Message + " " + Message);
+                            throw new Exceptions.CurrentEntryNotFoundException(exceptionDescription);
                         case 16:
-                            throw new Exceptions.FieldValueAbsurdException(ex.Message + " " + Message);
+                            throw new Exceptions.FieldValueAbsurdException(exceptionDescription);
                         default:
                             throw new InvalidProgramException("Uknown SQL Exception catched " + Message, ex);
                     }
