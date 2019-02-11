@@ -40,16 +40,9 @@ namespace BookingApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
-                    await userService.CreateUser(appUser);
-                    return Ok("User created");
-                }
-                catch (Exception e)
-                {
-                    return BadRequest(e.Message);
-                }
+                ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
+                await userService.CreateUser(appUser);
+                return Ok("User created");
             }
             return BadRequest("Error valid");
         }
@@ -57,82 +50,46 @@ namespace BookingApp.Controllers
         [HttpGet("api/user/{userId}")]
         public async Task<IActionResult> GetUserById([FromRoute]string userId)
         {
-            try
-            {
-                ApplicationUser appuser = await userService.GetUserById(userId);
-                UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
-                return new OkObjectResult(user);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            ApplicationUser appuser = await userService.GetUserById(userId);
+            UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
+            return new OkObjectResult(user);
         }
         //[Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("api/users")]
         public async Task<IActionResult> GetAllUsers()
         {
-            try
-            {
-                IEnumerable<ApplicationUser> appusers = await userService.GetUsersList();
-                IEnumerable<UserMinimalDto> users = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserMinimalDto>>(appusers);
-                return new OkObjectResult(users);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-
+            IEnumerable<ApplicationUser> appusers = await userService.GetUsersList();
+            IEnumerable<UserMinimalDto> users = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserMinimalDto>>(appusers);
+            return new OkObjectResult(users);
         }
         //[Authorize(Roles = RoleTypes.Admin)]
         [HttpDelete("api/user/{userId}")]
         public async Task<IActionResult> DeleteUserById([FromRoute] string userId)
         {
-            try
-            {
-                await userService.DeleteUser(userId);
-                return new OkObjectResult("User deleted");
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            await userService.DeleteUser(userId);
+            return new OkObjectResult("User deleted");
         }
         //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user")]
         public async Task<IActionResult> UpdateUser(UserUpdateDTO user)
         {
-            try
-            {
-                ApplicationUser appuser = await userService.GetUserById(user.Id);
-                mapper.Map<UserUpdateDTO, ApplicationUser>(user,appuser);    
-                await userService.UpdateUser(appuser);
-                return new OkObjectResult("User updated");
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            ApplicationUser appuser = await userService.GetUserById(user.Id);
+            mapper.Map<UserUpdateDTO, ApplicationUser>(user,appuser);    
+            await userService.UpdateUser(appuser);
+            return new OkObjectResult("User updated");     
         }
         //[Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("api/user-roles/{userId}")]
         public async Task<IActionResult> GetUserRoleById([FromRoute]string userId)
         {
-            try
-            {
-                var userRoles = await userService.GetUserRolesById(userId);
-                return Ok(userRoles);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            var userRoles = await userService.GetUserRolesById(userId);
+            return Ok(userRoles);
         }
         [HttpGet("api/user-resources/{userId}")]
         public async Task<IActionResult> GetResources([FromRoute]string userId)
         { 
-             var userResources = await resourcesService.ListByAssociatedUser(userId);
-             return Ok(userResources);
+            var userResources = await resourcesService.ListByAssociatedUser(userId);
+            return Ok(userResources);
         }
     }
 }
