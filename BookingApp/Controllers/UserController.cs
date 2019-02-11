@@ -26,16 +26,14 @@ namespace BookingApp.Controllers
             this.resourcesService = resourcesService;
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<ApplicationUser, AuthRegisterDto>();
                 cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap();
-                cfg.CreateMap<UserMinimalDto, ApplicationUser>();
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
-                cfg.CreateMap<UserUpdateDTO, ApplicationUser>();
                 cfg.CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
+                cfg.CreateMap<Resource, ResourceMinimalDto>().ReverseMap();
             }));
         }
         //[Authorize(Roles = RoleTypes.Admin)]
-        [HttpPost("api/сreate")]
+        [HttpPost("api/user")]
         public async Task<IActionResult> CreateUser([FromBody] AuthRegisterDto user)
         {
             if (ModelState.IsValid)
@@ -70,25 +68,26 @@ namespace BookingApp.Controllers
             return new OkObjectResult("User deleted");
         }
         //[Authorize(Roles = RoleTypes.Admin)]
-        [HttpPut("api/user")]
-        public async Task<IActionResult> UpdateUser(UserUpdateDTO user)
+        [HttpPut("api/user/{userId}")]
+        public async Task<IActionResult> UpdateUser(UserUpdateDTO user,string userId)
         {
-            ApplicationUser appuser = await userService.GetUserById(user.Id);
+            ApplicationUser appuser = await userService.GetUserById(userId);
             mapper.Map<UserUpdateDTO, ApplicationUser>(user,appuser);    
             await userService.UpdateUser(appuser);
             return new OkObjectResult("User updated");     
         }
         //[Authorize(Roles = RoleTypes.Admin)]
-        [HttpGet("api/user-roles/{userId}")]
+        [HttpGet("api/user/{userId}/roles")]
         public async Task<IActionResult> GetUserRoleById([FromRoute]string userId)
         {
             var userRoles = await userService.GetUserRolesById(userId);
             return Ok(userRoles);
         }
-        [HttpGet("api/user-resources/{userId}")]
+        [HttpGet("api/user/{userId}/resources")]
         public async Task<IActionResult> GetResources([FromRoute]string userId)
         { 
-            var userResources = await resourcesService.ListByAssociatedUser(userId);
+            var resources = await resourcesService.ListByAssociatedUser(userId);
+            var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMinimalDto>>(resources);
             return Ok(userResources);
         }
     }

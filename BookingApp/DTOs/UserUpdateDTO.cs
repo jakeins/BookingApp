@@ -7,7 +7,6 @@ namespace BookingApp.DTOs
 {
     public class UserUpdateDTO :UserMinimalDto
     {
-        public string Id { get; set; }
         public bool EmailConfirmed { get; set; }
     }
 }
