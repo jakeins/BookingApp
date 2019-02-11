@@ -53,12 +53,13 @@ namespace BookingApp.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
+        [Authorize(Roles = RoleTypes.User)]
         public async Task<IActionResult> Create([FromBody] BookingCreateDTO item)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            int newBookingId = await bookingService.CreateAsync(item, await GetCurrentUserMOCK());
+            int newBookingId = await bookingService.CreateAsync(item, UserId);
             
             return new CreatedResult(
                 $"api/BookingControler/{newBookingId}", 
@@ -81,27 +82,21 @@ namespace BookingApp.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> Details([FromRoute] int bookingId)
         {
-            bool adminAccess = await CurrentUserHasRole(RoleTypes.Admin);
-            
-
             var models = await bookingService.GetAsync(bookingId);
-
-            bool onwerAcess = 
-                await GetCurrentUserId() == models.CreatedUserId;
-
-            if (adminAccess)
+               
+            if (Anonym)
+            {
+                var dtos = dtoMapper.Map<BookingMinimalDTO>(models);
+                return Ok(dtos);
+            }
+            else if (AdminAccess)
             {
                 var dtos = dtoMapper.Map<BookingAdminDTO>(models);
                 return Ok(dtos);
             }
-            else if(onwerAcess)
-            {
-                var dtos = dtoMapper.Map<BookingOwnerDTO>(models);
-                return Ok(dtos);
-            }
             else
             {
-                var dtos = dtoMapper.Map<BookingMinimalDTO>(models);
+                var dtos = dtoMapper.Map<BookingOwnerDTO>(models);
                 return Ok(dtos);
             }
         }
@@ -121,6 +116,7 @@ namespace BookingApp.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
+        [Authorize(Roles = RoleTypes.User)]
         public async Task<IActionResult> Update([FromRoute] int bookingId, [FromBody] BookingUpdateDTO item)
         {
             if (!ModelState.IsValid)
@@ -128,9 +124,9 @@ namespace BookingApp.Controllers
 
             var bookingData = await bookingService.GetAsync(bookingId);
 
-            if((await GetCurrentUserRoles()).Contains(Helpers.RoleTypes.Admin) || bookingData.CreatedUserId == await GetCurrentUserId())
+            if(AdminAccess || bookingData.CreatedUserId == UserId)
             {
-                await bookingService.Update(bookingId, item.StartTime, item.EndTime, await GetCurrentUserId(), item.Note);
+                await bookingService.Update(bookingId, item.StartTime, item.EndTime, UserId, item.Note);
                 return Ok("Booking data updated succefully");
             }
             else
@@ -153,11 +149,12 @@ namespace BookingApp.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
+        [Authorize(Roles = RoleTypes.User)]
         public async Task<IActionResult> Delete([FromRoute] int bookingId)
         {
             var bookingData = await bookingService.GetAsync(bookingId);
 
-            if ((await GetCurrentUserRoles()).Contains(Helpers.RoleTypes.Admin) || bookingData.CreatedUserId == await GetCurrentUserId())
+            if (AdminAccess || bookingData.CreatedUserId == UserId)
             {
                 await bookingService.Delete(bookingId);
                 return Ok("Booking delete succefully");
@@ -182,45 +179,44 @@ namespace BookingApp.Controllers
         /// <response code="401">Error. Only admin and owner can update booking data</response>
         /// <respomse code="404">Error. Non exist booking id passed</respomse>
         /// <response code="500">Error. Internal server</response>
-        [HttpDelete("terminate/{bookingId}")]
+        [HttpPut("terminate/{bookingId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
+        [Authorize(Roles = RoleTypes.User)]
         public async Task<IActionResult> Terminate([FromRoute] int bookingId)
         {
             var bookingData = await bookingService.GetAsync(bookingId);
 
-            if ((await GetCurrentUserRoles()).Contains(Helpers.RoleTypes.Admin) || bookingData.CreatedUserId == await GetCurrentUserId())
+            if (AdminAccess || bookingData.CreatedUserId == UserId)
             {
-                await bookingService.Terminate(bookingId, await GetCurrentUserId());
+                await bookingService.Terminate(bookingId, UserId);
                 return Ok("Booking delete succefully");
             }
             else
             {
                 throw new Exceptions.OperationRestrictedException("Can terminate not owned booking");
             }
+            
         }
 
         #endregion
 
-        #region Private Utils
-        async Task<ApplicationUser> GetCurrentUserMOCK() => await userManager.FindByNameAsync("SuperAdmin");
-
-        async Task<string> GetCurrentUserId() => (await GetCurrentUserMOCK()).Id;
-        async Task<IEnumerable<string>> GetCurrentUserRoles()
-        {
-            var result = new List<string>();
-            var currentUser = await GetCurrentUserMOCK();
-
-            foreach (var roleName in new[] { RoleTypes.User, RoleTypes.Admin })
-                if (await userManager.IsInRoleAsync(currentUser, roleName))
-                    result.Add(roleName);
-
-            return result;
-        }
-        async Task<bool> CurrentUserHasRole(string role) => (await GetCurrentUserRoles()).Contains(role);
+        #region Helpers
+        /// <summary>
+        /// Shorthand for checking if current user authorized
+        /// </summary>
+        bool Anonym => !User.HasClaim(c => c.Type == "uid");
+        /// <summary>
+        /// Current user identifier
+        /// </summary>
+        string UserId => User.Claims.Single(c => c.Type == "uid").Value;
+        /// <summary>
+        /// Shorthand for checking if current user has admin access level
+        /// </summary>
+        bool AdminAccess => User.IsInRole(RoleTypes.Admin);
         #endregion
     }
 }

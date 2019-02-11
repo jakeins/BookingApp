@@ -17,6 +17,11 @@ namespace BookingApp.Middlewares
             this.next = next;
         }
 
+        /// <summary>
+        /// Invoke request and catch any errors
+        /// </summary>
+        /// <param name="context">Request context</param>
+        /// <returns></returns>
         public async Task Invoke(HttpContext context)
         {
             try
@@ -29,48 +34,52 @@ namespace BookingApp.Middlewares
             }
         }
 
+        /// <summary>
+        /// Handler all exceptions in controlers and return to client aproriated http status code
+        /// </summary>
+        /// <param name="context">Http context for status code</param>
+        /// <param name="exception">Exception which parse</param>
+        /// <returns></returns>
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            var code = HttpStatusCode.InternalServerError;
+            HttpStatusCode code;
 
-            if (exception is Exceptions.FieldValueTimeInvalidException)
+            switch (exception)
             {
-                code = HttpStatusCode.BadRequest;
-            }
-            else if(exception is Exceptions.RelatedEntryNotFoundException)
-            {
-                code = HttpStatusCode.NotFound;
-            }
-            else if(exception is Exceptions.OperationFailedException)
-            {
-                code = HttpStatusCode.BadRequest;
-            }
-            else if(exception is Exceptions.CurrentEntryNotFoundException)
-            {
-                code = HttpStatusCode.NotFound;
-            }
-            else if(exception is Exceptions.OperationRestrictedException)
-            {
-                code = HttpStatusCode.Unauthorized;
-            }
-            else if(exception is InvalidProgramException)
-            {
-                code = HttpStatusCode.InternalServerError;
-            }
-            else if(exception is NullReferenceException)
-            {
-                code = HttpStatusCode.NotFound;
-            }
-            else if(exception is Exceptions.EntryNotFoundException)
-            {
-                code = HttpStatusCode.NotFound;
-            }
-            else
-            {
-                code = HttpStatusCode.InternalServerError;
+                case Exceptions.CurrentEntryNotFoundException detailed:
+                    code = HttpStatusCode.NotFound;
+                    break;
+                case Exceptions.FieldValueTimeInvalidException detailed:
+                    code = HttpStatusCode.BadRequest;
+                    break;
+                case Exceptions.RelatedEntryNotFoundException detailed:
+                    code = HttpStatusCode.BadRequest;
+                    break;
+                case Exceptions.OperationRestrictedException detailed:
+                    code = HttpStatusCode.Unauthorized;
+                    break;
+                case Exceptions.EntryNotFoundException detailed:
+                    code = HttpStatusCode.NotFound;
+                    break;
+                case Exceptions.OperationFailedException detailed:
+                    code = HttpStatusCode.BadRequest;
+                    break;
+                case InvalidProgramException detailed:
+                    code = HttpStatusCode.InternalServerError;
+                    break;
+                case NullReferenceException detailed:
+                    code = HttpStatusCode.NotFound;
+                    break;
+                case UnauthorizedAccessException detailed:
+                    code = HttpStatusCode.Unauthorized;
+                    break;
+                default:
+                    code = HttpStatusCode.InternalServerError;
+                    break;
+
             }
             
-            var result = JsonConvert.SerializeObject(new { error = exception.Message, stacktrace = exception.StackTrace});
+            var result = JsonConvert.SerializeObject(new { error = exception.Message});
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
             return context.Response.WriteAsync(result);
