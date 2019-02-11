@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BookingApp.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace BookingApp.Helpers
                         //Can not book when StartTime in past
                         throw new Exceptions.FieldValueTimeInvalidException(ex.Message + " " + Message);
                     case 2:
-                        //Invalid user id
+                        //Invalid user id OR rule
                         throw new Exceptions.RelatedEntryNotFoundException(ex.Message + " " + Message);
                     case 3:
                         //StartTime must be lower than EndTime
@@ -53,7 +54,7 @@ namespace BookingApp.Helpers
                         //Time range alredy booked
                         throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
                     case 12:
-                        //Invalid BookingID
+                        //Invalid BookingID or ResourceId
                         throw new Exceptions.CurrentEntryNotFoundException(ex.Message + " " + Message);
                     case 13:
                         //Can not edit termіnated booking
@@ -64,6 +65,8 @@ namespace BookingApp.Helpers
                     case 15:
                         //Can not change starttime of alredy started booking
                         throw new Exceptions.OperationFailedException(ex.Message + " " + Message);
+                    case 16:// any Absurd Field Value
+                        throw new FieldValueAbsurdException(ex.Message + " " + Message);
                     default:
                         //If exception uknown to throw InvalidProgramException with this exception
                         throw new InvalidProgramException("Uknown SQL Exception catched " + Message, ex);
