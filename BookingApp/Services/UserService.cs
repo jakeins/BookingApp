@@ -17,43 +17,26 @@ namespace BookingApp.Services
         }
         public async Task CreateUser(ApplicationUser user)
         {
-            if (user == null)
-                throw new NullReferenceException("Parameter user can not be null");
             await userRepository.CreateAsync(user);
         }
         public async Task CreateUser(ApplicationUser user, string password)
         {
-            if (user == null)
-                throw new NullReferenceException("Parameter user can not be null");
-            else if (password == null)
-                throw new NullReferenceException("Parameter password can not be null");
             await userRepository.CreateAsync(user, password);
         }
         public async Task DeleteUser(string id)
         {
-            if (id == null)
-                throw new ArgumentNullException("Parameter id can not be null");
-            else
-                await userRepository.DeleteAsync(id);
+            await userRepository.DeleteAsync(id);
         }
         public async Task DeleteUser(ApplicationUser user)
         {
-            if (user == null)
-                throw new ArgumentNullException("Parameter user can not be null");
-            else
-                await userRepository.DeleteAsync(user);
+            await userRepository.DeleteAsync(user);
         }
         public async Task UpdateUser(ApplicationUser user)
         {
-            if (user == null)
-                throw new NullReferenceException("Parameter user can not be null");
-            else
-                await userRepository.UpdateAsync(user);
+            await userRepository.UpdateAsync(user);
         }
         public async Task<ApplicationUser> GetUserById(string id)
         {
-            if (id == null)
-                throw new ArgumentNullException("Parameter id can not be null");
             return await userRepository.GetAsync(id);
         }
         public async Task<IEnumerable<ApplicationUser>> GetUsersList()
@@ -62,22 +45,14 @@ namespace BookingApp.Services
         }
         public async Task<bool> CheckPassword(ApplicationUser user, string password)
         {
-            if (user == null)
-                throw new NullReferenceException("Parameter user can not be null");
-            else if (password == null)
-                throw new NullReferenceException("Parameter password can not be null");
             return await userRepository.CheckPassword(user, password);
         }
         public async Task<IList<string>> GetUserRoles(ApplicationUser user)
         {
-            if (user == null)
-                throw new NullReferenceException("Parameter user can not be null");
             return await userRepository.GetUserRoles(user);
         }
         public async Task<IList<string>> GetUserRolesById(string userId)
         {
-            if (userId == null)
-                throw new NullReferenceException("Parameter userId can not be null");
             return await userRepository.GetUserRolesById(userId);
         }
     }
