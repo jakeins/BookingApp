@@ -80,7 +80,7 @@
     <EmbeddedResource Include="Data\StoredProcedures\Booking\Create.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\Edit.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
-    <EmbeddedResource Include="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
+    <EmbeddedResource Include="Data\StoredProcedures\Booking\OccupancyByResource.sql" />
   </ItemGroup>
 
   <ItemGroup>

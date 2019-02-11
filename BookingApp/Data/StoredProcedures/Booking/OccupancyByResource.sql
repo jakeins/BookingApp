@@ -1,17 +1,21 @@
-﻿CREATE PROCEDURE [dbo].[Resource.Occupancy]
-	@resourceId int
+﻿-- Determines the occupancy percents for the specified resource.
+CREATE PROCEDURE [dbo].[Resource.OccupancyPercents]	@resourceId int
 AS
 BEGIN
+	-- Check resource existence
 	if NOT EXISTS (SELECT 1 FROM [Resources] WHERE [ResourceId] = @resourceId)
-		Throw 50001, 'Current entry (Resource) not found.',  1;
+		Throw 50001, 'Current entry (Resource) not found.',  12;
 
+	-- Determining basic rule properties
 	DECLARE @serviceMinutes int;
 	DECLARE @preOrderTimeLimit int;
+	DECLARE @maxTime int;
 	DECLARE @ruleId int;
 
 	SELECT TOP(1) 
 		@ruleId = [Rule].[RuleId],
 		@preOrderTimeLimit = [Rule].[PreOrderTimeLimit],
+		@maxTime = [Rule].[MaxTime],
 		@serviceMinutes = COALESCE([Rule].[ServiceTime],0)
 	FROM [Resources]
 	INNER JOIN [Rules] AS [Rule] ON [Resources].[RuleId] = [Rule].[RuleId]
@@ -21,13 +25,16 @@ BEGIN
 		Throw 50001, 'Related entry (Rule) not found.',  2;
 
 	if @preOrderTimeLimit IS NULL
-		Throw 50001, 'Absurd Field Value: Preorder Limit is NULL.',  3;
+		Throw 50001, 'Absurd Field Value: Preorder Limit is NULL.',  16;
+
+	if @maxTime IS NULL
+		Throw 50001, 'Absurd Field Value: Max Time is NULL.',  16;
+
+	-- Zero preorder limit means available timeframe is infinity, thus occupancy is undefined
+	if @preOrderTimeLimit = 0
+		 return -1
 
 	DECLARE @now datetime2 = GETDATE()
-
-	-- Zero preorder limit means available timeframe is infinity, so resource is virtually free.
-	if @preOrderTimeLimit = 0
-		 return 0
 
 	-- Calculate mutual duration of all applicable booking ranges.
 	DECLARE @sumDuration int = (
@@ -57,9 +64,9 @@ BEGIN
 		WHERE BookingDuration > 0 AND IsWierd = 0  
 	)
 
-	-- Not found meaninful bookings durations means resource is free.
+	-- No apt bookings means resource is free.
 	if @sumDuration IS NULL
 		 return 0
 	
-	return 100 * CAST(@sumDuration AS float) / CAST(@preOrderTimeLimit AS float)
+	return 100 * ( CAST(@sumDuration AS float) / CAST(@preOrderTimeLimit+@maxTime AS float) )
 END

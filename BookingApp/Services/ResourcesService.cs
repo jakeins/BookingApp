@@ -1,6 +1,5 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
-using BookingApp.Exceptions;
 using BookingApp.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,52 +16,49 @@ namespace BookingApp.Services
         }
 
         #region CRUD operations
-        public async Task<IEnumerable<Resource>> ListResources(bool includeInactives)
+        /// <summary>
+        /// List resources, all or just the active ones.
+        /// </summary>
+        public async Task<IEnumerable<Resource>> List(bool includeInactiveResources)
         {
-            if(includeInactives)
+            if(includeInactiveResources)
                 return await resourcesRepo.GetListAsync();
             else
-                return await resourcesRepo.GetActiveListAsync();
+                return await resourcesRepo.ListActiveAsync();
         }
 
-        public async Task<Resource> SingleResource(int id) => await resourcesRepo.GetAsync(id);
+        public async Task<Resource> Single(int resourceId) => await resourcesRepo.GetAsync(resourceId);
 
-        public async Task Create(Resource item) => await resourcesRepo.CreateAsync(item);
+        public async Task Create(Resource resource) => await resourcesRepo.CreateAsync(resource);
 
-        public async Task Update(Resource item) => await resourcesRepo.UpdateAsync(item);
+        public async Task Update(Resource resource) => await resourcesRepo.UpdateAsync(resource);
 
-        public async Task Delete(int id) => await resourcesRepo.DeleteAsync(id);
+        public async Task Delete(int resourceId) => await resourcesRepo.DeleteAsync(resourceId);
         #endregion
 
         #region Extended operations
+        /// <summary>
+        /// Check whether specified resource is active.
+        /// </summary>
+        public async Task<bool> IsActive(int resourceId) => await resourcesRepo.IsActiveAsync(resourceId);
 
-        public async Task<bool> IsActive(int id) => await resourcesRepo.IsActiveAsync(id);
-
-        public async Task<double?> SingleOccupancy(int resourceId) => await resourcesRepo.CalculateSingleOccupancyAsync(resourceId);
-
-        public async Task<Dictionary<int, double?>> ListOccupancies(bool includeIncatives)
+        /// <summary>
+        /// List identifiers of resources, all or just the active ones.
+        /// </summary>
+        public async Task<IEnumerable<int>> ListIDs(bool includeIncativeResources)
         {
-            var idsList = includeIncatives ? await resourcesRepo.ListIDsAsync() : await resourcesRepo.ListActiveIDsAsync();
-            var map = new Dictionary<int, double?>();
-
-            foreach (int resourceId in idsList)
-            {
-                map.Add(resourceId, null);
-
-                try
-                {
-                    map[resourceId] = await SingleOccupancy(resourceId);
-                }
-                catch (KeyNotFoundException)
-                {
-                }
-                catch(FieldValueAbsurdException)
-                {
-                }
-            }
-            return map;
+            return includeIncativeResources ? await resourcesRepo.ListIDsAsync() : await resourcesRepo.ListActiveIDsAsync();
         }
 
+        /// <summary>
+        /// Lists all resources adhering to the specified rule. 
+        /// </summary>
+        public async Task<IEnumerable<Resource>> ListByRule(int ruleId) => await resourcesRepo.ListByRuleAsync(ruleId);
+
+        /// <summary>
+        /// Lists all resources associated with the specified user. 
+        /// </summary>
+        public async Task<IEnumerable<Resource>> ListByAssociatedUser(string userId) => await resourcesRepo.ListByAssociatedUser(userId);
         #endregion
     }
 }
