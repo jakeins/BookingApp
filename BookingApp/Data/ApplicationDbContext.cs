@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using BookingApp.Models;
+using BookingApp.Data.Models;
 using System.Linq;
 
 namespace BookingApp.Data
@@ -24,12 +24,13 @@ namespace BookingApp.Data
 
             //setting default date autofill for all modification dates
             foreach (var entity in modelBuilder.Model.GetEntityTypes()
-                .Where(et => et.FindProperty("CreatedDate") != null && et.FindProperty("UpdatedDate") != null)
+                .Where(et => et.FindProperty("CreatedTime") != null && et.FindProperty("UpdatedTime") != null)
                 .Select(et => modelBuilder.Entity(et.ClrType)))
             {
-                entity.Property("CreatedDate").HasDefaultValueSql("getdate()");
-                entity.Property("UpdatedDate").HasDefaultValueSql("getdate()");
+                entity.Property("CreatedTime").HasDefaultValueSql("getdate()");
+                entity.Property("UpdatedTime").HasDefaultValueSql("getdate()");
             }
+
 
             //setting default values
             var ruleEntity = modelBuilder.Entity<Rule>();
@@ -39,12 +40,16 @@ namespace BookingApp.Data
             ruleEntity.Property("ServiceTime").HasDefaultValue(0);
             ruleEntity.Property("ReuseTimeout").HasDefaultValue(0);
             ruleEntity.Property("PreOrderTimeLimit").HasDefaultValue(1440);
-
-            modelBuilder.Entity<Booking>().Property("IsCancelled").HasDefaultValue(false);
             
-            var userEntity = modelBuilder.Entity<ApplicationUser>();
-            userEntity.Property("IsApproved").HasDefaultValue(false);
-            userEntity.Property("IsActive").HasDefaultValue(true);
+            modelBuilder.Entity<ApplicationUser>().Property("IsApproved").HasDefaultValue(false);
+
+            //setting default active state for all applicable entities
+            foreach (var entity in modelBuilder.Model.GetEntityTypes()
+                .Where(et => et.FindProperty("IsActive") != null)
+                .Select(et => modelBuilder.Entity(et.ClrType)))
+            {
+                entity.Property("IsActive").HasDefaultValue(true);
+            }
 
             //resetting the default Delete behavior from Cascade to Restricted (i.e. No Action)
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
