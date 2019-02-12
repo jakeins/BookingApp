@@ -32,8 +32,13 @@ namespace BookingApp.Controllers
         /// <summary>
         /// Creating TreeGroup
         /// <summary>
-        /// <returns>Http response code 200 | 404 | 500</returns>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not found</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Route("api/tree-group")]
         public async Task<IActionResult> Index()
         {
@@ -46,8 +51,13 @@ namespace BookingApp.Controllers
         /// Getting TreeGroup on id
         /// <summary>
         /// <param name="id">Id TreeGroup.</param>
-        /// <returns>Http response code 200 | 404 | 500</returns>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not found</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Authorize(Roles = RoleTypes.Admin)]
         [Route("api/tree-group/{id}")]
         public async Task<IActionResult> Detail(int id)
@@ -60,8 +70,15 @@ namespace BookingApp.Controllers
         /// Creating TreeGroup
         /// <summary>
         /// <param name="tree">Tdo model TreeGroupCrUpDto.</param>
-        /// <returns>Http response code 200 | 201 | 401 | 404 | 500</returns>
+        /// <response code="201">Success created</response>
+        /// <response code="400">Invalid argument</response>
+        /// <response code="404">Resources or rule not found</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Route("api/tree-group")]
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Create([FromBody]TreeGroupCrUpDto tree)
@@ -78,8 +95,15 @@ namespace BookingApp.Controllers
         /// Updating TreeGroup
         /// <summary>
         /// <param name="tree">Tdo model TreeGroupCrUpDto.</param>
-        /// <returns>Http response code 200 | 401 | 404 | 500</returns>
+        /// <response code="200">Success update</response>
+        /// <response code="401">Error. Only admin and owner can update booking data</response>
+        /// <respomse code="404">Error. Non exist booking id passed</respomse>
+        /// <response code="500">Internal server error</response>
         [HttpPut]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Route("api/tree-group/{id}")]
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupCrUpDto tree)
@@ -96,8 +120,15 @@ namespace BookingApp.Controllers
         /// Deleting TreeGroup
         /// <summary>
         /// <param name="tree">Tdo model TreeGroupCrUpDto.</param>
-        /// <returns>Http response code 200 | 401 | 404 | 500</returns>
+        /// <response code="200">Success deleted</response>
+        /// <response code="401">Error. Only admin and owner can update booking data</response>
+        /// <respomse code="404">Error. Non exist booking id passed</respomse>
+        /// <response code="500">Error. Internal server</response>
         [HttpDelete]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Route("api/tree-group/{id}")]
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Delete(int id)
