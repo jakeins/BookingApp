@@ -1,5 +1,6 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
+using BookingApp.DTOs;
 using BookingApp.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,6 +25,11 @@ namespace BookingApp.Repositories
             return await context.TreeGroups.ToListAsync();
         }
 
+        public async Task<IEnumerable<TreeGroup>> GetListForUserAsync()
+        {
+            return await context.TreeGroups.Where(t => t.IsActive == true).ToListAsync();
+        }
+
         public async Task<TreeGroup> GetAsync(int id)
         {
             TreeGroup tree = await context.TreeGroups.FirstOrDefaultAsync(t => t.TreeGroupId == id);
@@ -44,14 +50,27 @@ namespace BookingApp.Repositories
 
         public async Task UpdateAsync(TreeGroup tree)
         {
-            context.TreeGroups.Update(tree);
-            await SaveAsync(); 
+            await GetAsync(tree.TreeGroupId);
+            try
+            {
+                var propsToModify = typeof(TreeGroupMinimalTdo).GetProperties()
+                    .Where(prop => prop.Name != "TreeGroupId")
+                    .Select(prop => prop.Name)
+                    .Concat(new[] { "UpdatedTime", "UpdatedUserId" });
+
+                foreach (var propName in propsToModify)
+                    context.Entry(tree).Property(propName).IsModified = true;
+
+                await SaveAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                Helpers.DbUpdateExceptionTranslator.ReThrow(ex, "TreeGroup Update");
+            }
         }
 
         public async Task DeleteAsync(int id)
         {
-            //await ChangeChildren(id);
-
             TreeGroup tree = await GetAsync(id);
             context.TreeGroups.Remove(tree);
             await SaveAsync();
@@ -59,33 +78,5 @@ namespace BookingApp.Repositories
         }
 
         public async Task SaveAsync() => await context.SaveChangesAsync();
-
-        public async Task<IEnumerable<TreeGroup>> GetListWithChildAsync()
-        {
-            return await context.TreeGroups.Select(t => new TreeGroup
-            {
-                TreeGroupId = t.TreeGroupId,
-                Title = t.Title,
-                ParentTreeGroupId = t.ParentTreeGroupId,
-                DefaultRuleId = t.DefaultRuleId,
-                IsActive = t.IsActive,
-                ChildGroups = t.ChildGroups
-            }).ToListAsync();
-        }
-
-        public async Task ChangeChildren(int id)
-        {
-            List<TreeGroup> children = await context.TreeGroups.Where(t => t.ParentTreeGroupId == id).ToListAsync();
-            if (children != null)
-            {
-                foreach (TreeGroup child in children)
-                {
-                    child.ParentTreeGroupId = null;
-                    context.TreeGroups.Update(child);
-                    await SaveAsync();
-                }
-            }
-        }
-
     }
 }

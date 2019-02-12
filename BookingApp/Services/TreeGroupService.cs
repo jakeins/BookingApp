@@ -2,6 +2,7 @@
 using BookingApp.Data.Models;
 using BookingApp.Repositories;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,14 +20,9 @@ namespace BookingApp.Services
             userManager = um;
         }
 
-        public async Task<IEnumerable<TreeGroup>> GetThree()
+        public async Task<IEnumerable<TreeGroup>> GetTree(bool isAdmin)
         {
-            return await repository.GetListAsync();
-        }
-
-        public async Task<IEnumerable<TreeGroup>> GetWithChild()
-        {
-            return await repository.GetListWithChildAsync();
+            return (isAdmin) ? await repository.GetListAsync() : await repository.GetListForUserAsync();
         }
 
         public async Task<TreeGroup> GetDetail(int id)
@@ -34,16 +30,17 @@ namespace BookingApp.Services
             return await repository.GetAsync(id);
         }
 
-        public async Task Create(TreeGroup tree)
+        public async Task Create(string userId, TreeGroup tree)
         {
-            tree.UpdatedUserId = tree.CreatedUserId = await GetMockUserId();
+            tree.UpdatedUserId = tree.CreatedUserId = userId;
             await repository.CreateAsync(tree);
         }
 
-        public async Task Update(int id, TreeGroup tree)
+        public async Task Update(int treeGroupId, string userId, TreeGroup tree)
         {
-            tree.TreeGroupId = id;
-            tree.UpdatedUserId = tree.CreatedUserId = await GetMockUserId();
+            tree.TreeGroupId = treeGroupId;
+            tree.UpdatedUserId = userId;
+            tree.UpdatedTime = DateTime.Now;
             await repository.UpdateAsync(tree);
         }
 

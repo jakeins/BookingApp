@@ -1,8 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookingApp.DTOs
 {
-    public class TreeGroupCrUpDto
+    public class TreeGroupMinimalTdo
     {
         [Required]
         [StringLength(64, MinimumLength = 3, ErrorMessage = "Title should be no more 64 characters")]
@@ -14,12 +19,7 @@ namespace BookingApp.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "Invalid rule identifier.")]
         public int? DefaultRuleId { get; set; }
 
-        [Required]
-        [MaxLength(450, ErrorMessage = "No data about User.")]
-        public string CreatedUserId { get; set; }
-
-        [Required]
-        [MaxLength(450, ErrorMessage = "No data about User.")]
-        public string UpdatedUserId { get; set; }
+        [Column(TypeName = "bit")]
+        public bool? IsActive { get; set; }
     }
 }
