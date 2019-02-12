@@ -33,7 +33,7 @@ namespace BookingApp.Repositories
         public async Task<TreeGroup> GetAsync(int id)
         {
             TreeGroup tree = await context.TreeGroups.FirstOrDefaultAsync(t => t.TreeGroupId == id);
-            if (tree != null)
+            if (tree is TreeGroup)
             {
                 return tree;
             } else
@@ -73,8 +73,14 @@ namespace BookingApp.Repositories
         {
             TreeGroup tree = await GetAsync(id);
             context.TreeGroups.Remove(tree);
-            await SaveAsync();
-            
+            try
+            {
+                await SaveAsync();
+            }
+            catch (DbUpdateException dbuException)
+            {
+                Helpers.DbUpdateExceptionTranslator.ReThrow(dbuException, "TreeGroup Delete");
+            }          
         }
 
         public async Task SaveAsync() => await context.SaveChangesAsync();

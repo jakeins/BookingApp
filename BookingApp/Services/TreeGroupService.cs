@@ -46,14 +46,7 @@ namespace BookingApp.Services
 
         public async Task Delete(int id) {
             await repository.DeleteAsync(id);
-        }
-
-       //Mock UserId
-        private async Task<string> GetMockUserId()
-        {
-            ApplicationUser user = await userManager.FindByNameAsync("SuperAdmin");
-            return user.Id;
-        }
+        }  
 
     }
 }
