@@ -19,14 +19,9 @@ namespace BookingApp.Services
             userManager = um;
         }
 
-        public async Task<IEnumerable<TreeGroup>> GetThree()
+        public async Task<IEnumerable<TreeGroup>> GetThree(bool isAdmin)
         {
-            return await repository.GetListAsync();
-        }
-
-        public async Task<IEnumerable<TreeGroup>> GetWithChild()
-        {
-            return await repository.GetListWithChildAsync();
+            return (isAdmin) ? await repository.GetListAsync() : await repository.GetListForUserAsync();
         }
 
         public async Task<TreeGroup> GetDetail(int id)
