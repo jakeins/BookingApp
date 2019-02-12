@@ -6,6 +6,7 @@ using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -18,13 +19,15 @@ namespace BookingApp.Controllers
     {
         TreeGroupService service;
         readonly IMapper mapper;
+        string UserId => User.Claims.Single(c => c.Type == "uid").Value;
 
         public TreeGroupController(TreeGroupService s)
         {
             service = s;
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<TreeGroup, TreeGroupBaseDto>().ReverseMap();
+                cfg.CreateMap<TreeGroup, TreeGroupBaseDto>();
+                cfg.CreateMap<TreeGroup, TreeGroupMinimalTdo>().ReverseMap();
             }));
         }
 
@@ -80,13 +83,13 @@ namespace BookingApp.Controllers
         [ProducesResponseType(500)]
         [Route("api/tree-group")]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Create([FromBody]TreeGroupBaseDto tree)
+        public async Task<IActionResult> Create([FromBody]TreeGroupMinimalTdo tree)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            await service.Create(mapper.Map<TreeGroup>(tree));
+            await service.Create(UserId, mapper.Map<TreeGroup>(tree));
             return Ok("TreeGroup created successfully.");
         }
 
@@ -105,13 +108,13 @@ namespace BookingApp.Controllers
         [ProducesResponseType(500)]
         [Route("api/tree-group/{id}")]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupBaseDto tree)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupMinimalTdo tree)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-            await service.Update(id, mapper.Map<TreeGroup>(tree));
+            } 
+            await service.Update(id, UserId, mapper.Map<TreeGroup>(tree));
             return Ok("TreeGroup updated successfully.");  
         }
 

@@ -2,6 +2,7 @@
 using BookingApp.Data.Models;
 using BookingApp.Repositories;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -29,16 +30,17 @@ namespace BookingApp.Services
             return await repository.GetAsync(id);
         }
 
-        public async Task Create(TreeGroup tree)
+        public async Task Create(string userId, TreeGroup tree)
         {
-            tree.UpdatedUserId = tree.CreatedUserId = await GetMockUserId();
+            tree.UpdatedUserId = tree.CreatedUserId = userId;
             await repository.CreateAsync(tree);
         }
 
-        public async Task Update(int treeGroupId, TreeGroup tree)
+        public async Task Update(int treeGroupId, string userId, TreeGroup tree)
         {
             tree.TreeGroupId = treeGroupId;
-            tree.UpdatedUserId = await GetMockUserId();
+            tree.UpdatedUserId = userId;
+            tree.UpdatedTime = DateTime.Now;
             await repository.UpdateAsync(tree);
         }
 

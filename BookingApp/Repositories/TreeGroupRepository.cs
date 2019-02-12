@@ -1,5 +1,6 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
+using BookingApp.DTOs;
 using BookingApp.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -49,8 +50,24 @@ namespace BookingApp.Repositories
 
         public async Task UpdateAsync(TreeGroup tree)
         {
-            context.TreeGroups.Update(tree);
-            await SaveAsync(); 
+            await GetAsync(tree.TreeGroupId);
+            try
+            {
+                var propsToModify = typeof(TreeGroupMinimalTdo).GetProperties()
+                    .Where(prop => prop.Name != "TreeGroupId")
+                    .Select(prop => prop.Name)
+                    .Concat(new[] { "UpdatedTime"})
+                    .Concat(new[] { "UpdatedUserId" });
+
+                foreach (var propName in propsToModify)
+                    context.Entry(tree).Property(propName).IsModified = true;
+
+                await SaveAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                Helpers.DbUpdateExceptionTranslator.ReThrow(ex, "TreeGroup Update");
+            }
         }
 
         public async Task DeleteAsync(int id)
