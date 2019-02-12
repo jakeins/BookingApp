@@ -48,6 +48,7 @@ namespace BookingApp.Controllers
         /// <param name="id">Id TreeGroup.</param>
         /// <returns>Http response code 200 | 404 | 500</returns>
         [HttpGet]
+        [Authorize(Roles = RoleTypes.Admin)]
         [Route("api/tree-group/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
@@ -62,7 +63,7 @@ namespace BookingApp.Controllers
         /// <returns>Http response code 200 | 201 | 401 | 404 | 500</returns>
         [HttpPost]
         [Route("api/tree-group")]
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Create([FromBody]TreeGroupCrUpDto tree)
         {
             if (!ModelState.IsValid)
@@ -80,7 +81,7 @@ namespace BookingApp.Controllers
         /// <returns>Http response code 200 | 401 | 404 | 500</returns>
         [HttpPut]
         [Route("api/tree-group/{id}")]
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupCrUpDto tree)
         {
             if (!ModelState.IsValid)
@@ -98,7 +99,7 @@ namespace BookingApp.Controllers
         /// <returns>Http response code 200 | 401 | 404 | 500</returns>
         [HttpDelete]
         [Route("api/tree-group/{id}")]
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             await service.Delete(id);
