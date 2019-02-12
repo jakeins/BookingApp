@@ -56,8 +56,7 @@ namespace BookingApp.Repositories
                 var propsToModify = typeof(TreeGroupMinimalTdo).GetProperties()
                     .Where(prop => prop.Name != "TreeGroupId")
                     .Select(prop => prop.Name)
-                    .Concat(new[] { "UpdatedTime"})
-                    .Concat(new[] { "UpdatedUserId" });
+                    .Concat(new[] { "UpdatedTime", "UpdatedUserId" });
 
                 foreach (var propName in propsToModify)
                     context.Entry(tree).Property(propName).IsModified = true;
