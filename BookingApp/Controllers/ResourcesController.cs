@@ -33,8 +33,9 @@ namespace BookingApp.Controllers
 
             dtoMapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Resource, ResourceMinimalDto>();
-                cfg.CreateMap<Resource, ResourceDetailedDto>().ReverseMap();
+                cfg.CreateMap<Resource, ResourceBriefDto>();
+                cfg.CreateMap<Resource, ResourceMaxDto>();
+                cfg.CreateMap<ResourceDetailedDto,Resource>();
             }));
         }
 
@@ -45,7 +46,7 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> List()
         {
             var models = await resService.List(includeInactiveResources: AdminAccess == true);
-            var dtos = dtoMapper.Map<IEnumerable<ResourceMinimalDto>>(models);
+            var dtos = dtoMapper.Map<IEnumerable<ResourceBriefDto>>(models);
             return Ok(dtos);
         }
 
@@ -83,7 +84,7 @@ namespace BookingApp.Controllers
             await AuthorizeForSingleResource(resourceId);
 
             var resourceModel = await resService.Single(resourceId);
-            var resourceDTO = dtoMapper.Map<ResourceDetailedDto>(resourceModel);
+            var resourceDTO = dtoMapper.Map<ResourceMaxDto>(resourceModel);
             return Ok(resourceDTO);
         }
 
@@ -97,7 +98,7 @@ namespace BookingApp.Controllers
         }
         #endregion
 
-        #region POST / PUT / DELETE
+        #region POST / PUT
         // POST: api/Resources
         [HttpPost]
         [Authorize(Roles = RoleTypes.Admin)]
@@ -106,9 +107,11 @@ namespace BookingApp.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            #region Mapping
             var itemModel = dtoMapper.Map<Resource>(item);
-            itemModel.ResourceId = 0;
             itemModel.UpdatedUserId = itemModel.CreatedUserId = UserId;
+            itemModel.UpdatedTime = itemModel.CreatedTime = DateTime.Now;
+            #endregion
 
             await resService.Create(itemModel);
 
@@ -123,14 +126,19 @@ namespace BookingApp.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var model = dtoMapper.Map<Resource>(item);
-            model.ResourceId = resourceId;
-            model.UpdatedUserId = UserId;
+            #region Mapping
+            var itemModel = dtoMapper.Map<Resource>(item);
+            itemModel.UpdatedUserId = UserId;
+            itemModel.UpdatedTime = DateTime.Now;
+            itemModel.ResourceId = resourceId;
+            #endregion
 
-            await resService.Update(model);
+            await resService.Update(itemModel);
             return Ok("Resource updated successfully");
         }
+        #endregion
 
+        #region DELETE
         // DELETE: api/Resources/5
         [HttpDelete("{resourceId}")]
         [Authorize(Roles = RoleTypes.Admin)]
@@ -140,7 +148,6 @@ namespace BookingApp.Controllers
             return Ok("Resource deleted");
         }
         #endregion
-
 
         #region Helpers
         /// <summary>

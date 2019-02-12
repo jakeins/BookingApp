@@ -29,7 +29,7 @@ namespace BookingApp.Controllers
                 cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap();
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
                 cfg.CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
-                cfg.CreateMap<Resource, ResourceMinimalDto>().ReverseMap();
+                cfg.CreateMap<Resource, ResourceMaxDto>().ReverseMap();
             }));
         }
         //[Authorize(Roles = RoleTypes.Admin)]
@@ -87,7 +87,7 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> GetResources([FromRoute]string userId)
         { 
             var resources = await resourcesService.ListByAssociatedUser(userId);
-            var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMinimalDto>>(resources);
+            var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(resources);
             return Ok(userResources);
         }
     }

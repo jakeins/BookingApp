@@ -1,9 +1,5 @@
-﻿using BookingApp.Exceptions;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookingApp.Helpers
 {
@@ -13,13 +9,13 @@ namespace BookingApp.Helpers
         /// Generate approriate exception from SqlException
         /// </summary>
         /// <param name="ex">SqlException</param>
-        /// <param name="Message">Addtitional message contactane to default</param>
-        public static void ReThrow(SqlException ex, string Message = "")
+        /// <param name="message">Addtitional message contactane to default</param>
+        public static void ReThrow(SqlException ex, string message = "")
         {
             switch (ex.Number)
             {
                 case 50001:
-                    var exceptionDescription = ex.Message + " " + Message;
+                    var exceptionDescription = ex.Message + " " + message;
                     switch (ex.State)
                     {
                         case 1:
@@ -43,10 +39,10 @@ namespace BookingApp.Helpers
                         case 16:
                             throw new Exceptions.FieldValueAbsurdException(exceptionDescription);
                         default:
-                            throw new InvalidProgramException("Uknown SQL Exception catched " + Message, ex);
+                            throw new InvalidProgramException("Uknown SQL Exception catched " + message, ex);
                     }
                 case 547:
-                    throw new Exceptions.OperationRestrictedException("Relation block this operation: " + Message);
+                    throw new Exceptions.OperationRestrictedException($"Cannot perform {(string.IsNullOrEmpty(message) ? "the" : message)} operation due to the related entries restriction");
                 default:
                     throw new InvalidProgramException("Uknown SQL Exception catched ", ex);
             }

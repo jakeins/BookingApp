@@ -49,7 +49,7 @@ namespace BookingApp.Repositories
         public async Task CreateAsync(Resource resource)
         {
             dbContext.Resources.Add(resource);
-            await SaveAsync();
+            await SaveAsync("Resource Creation");
         }
 
         public async Task UpdateAsync(Resource resource)
@@ -57,22 +57,12 @@ namespace BookingApp.Repositories
             if (! await ExistsAsync(resource))
                 throw NewNotFoundException;
 
-            try
-            {
-                var propsToModify = typeof(ResourceDetailedDto).GetProperties()
-                    .Where(prop => prop.Name != "ResourceId")
-                    .Select(prop => prop.Name)
-                    .Concat(new[] { "UpdatedUserId" });
+            //invalidating the exact properties for updating
+            var updatedProps = typeof(ResourceDetailedModdedDto).GetProperties().Select(prop => prop.Name);
+            foreach (var propName in updatedProps)
+                dbContext.Entry(resource).Property(propName).IsModified = true;
 
-                foreach (var propName in propsToModify)
-                    dbContext.Entry(resource).Property(propName).IsModified = true;
-
-                await SaveAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                Helpers.DbUpdateExceptionTranslator.ReThrow(ex, "Resource Update");
-            }
+            await SaveAsync("Resource Update");
         }
 
         public async Task DeleteAsync(int resourceId)
@@ -81,20 +71,42 @@ namespace BookingApp.Repositories
             {
                 dbContext.Resources.Remove(resource);
 
-                try
-                {
-                    await SaveAsync();
-                }
-                catch (DbUpdateException dbuException)
-                {
-                    Helpers.DbUpdateExceptionTranslator.ReThrow(dbuException, "Resource Delete");
-                }
+                await SaveAsync("Resource Deletion");
             }
             else
                 throw NewNotFoundException;
         }
 
-        public async Task SaveAsync() => await dbContext.SaveChangesAsync();
+        /// <summary>
+        /// Save changes do storage, SAFE.
+        /// </summary>
+        /// <returns></returns>
+        public async Task SaveAsync()
+        {
+            try
+            {
+                await dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException dbuException)
+            {
+                Helpers.DbUpdateExceptionTranslator.ReThrow(dbuException);
+            }
+        }
+        /// <summary>
+        /// Save changes do storage. SAFE, verbose.
+        /// </summary>
+        /// <returns></returns>
+        public async Task SaveAsync(string message)
+        {
+            try
+            {
+                await dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException dbuException)
+            {
+                Helpers.DbUpdateExceptionTranslator.ReThrow(dbuException, message);
+            }
+        }
         #endregion
 
         #region Extensions
