@@ -32,12 +32,22 @@ namespace BookingApp.Services
 
         public async Task Create(string userId, TreeGroup tree)
         {
+            if (tree.ParentTreeGroupId != null)
+            {
+                await repository.isNotParentAsync((int)tree.ParentTreeGroupId, tree.TreeGroupId);    
+            }
+
             tree.UpdatedUserId = tree.CreatedUserId = userId;
             await repository.CreateAsync(tree);
         }
 
         public async Task Update(int treeGroupId, string userId, TreeGroup tree)
         {
+            if (tree.ParentTreeGroupId != null)
+            {
+                await repository.isNotParentAsync((int)tree.ParentTreeGroupId, tree.TreeGroupId);    
+            }
+
             tree.TreeGroupId = treeGroupId;
             tree.UpdatedUserId = userId;
             tree.UpdatedTime = DateTime.Now;
@@ -46,7 +56,7 @@ namespace BookingApp.Services
 
         public async Task Delete(int id) {
             await repository.DeleteAsync(id);
-        }  
+        } 
 
     }
 }

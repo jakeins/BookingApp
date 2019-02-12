@@ -84,5 +84,16 @@ namespace BookingApp.Repositories
         }
 
         public async Task SaveAsync() => await context.SaveChangesAsync();
+
+        //Write myself Exception !!!
+        public async Task isNotParentAsync(int parentId, int treeId)
+        {
+            TreeGroup tree = await GetAsync(parentId);
+            if (tree.ParentTreeGroupId == treeId)
+            {
+                throw new Exception("Current treeGroup can't have this child.");
+            } 
+        }
+
     }
 }
