@@ -1,4 +1,5 @@
-﻿namespace BookingApp.DTOs
+﻿
+namespace BookingApp.DTOs
 {
     public class UserMinimalDto
     {

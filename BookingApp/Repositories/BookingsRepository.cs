@@ -59,7 +59,7 @@ namespace BookingApp.Repositories
         /// <param name="model">New <see cref="Booking"></see> data</param>
         /// <param name="user">User who create booking</param>
         /// <returns>Id of <see cref="Booking"/></returns>
-        public async Task<int> CreateAsync(BookingCreateDTO model, ApplicationUser user)
+        public async Task<int> CreateAsync(BookingCreateDTO model, string userId)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace BookingApp.Repositories
                 };
 
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC @retVal = [Booking.Create] {model.ResourceID}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{user.Id}', '{model.Note}'",
+                    $"EXEC @retVal = [Booking.Create] {model.ResourceID}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{userId}', '{model.Note}'",
                     param);
                 return param.Value as int? ?? -1;
             }
