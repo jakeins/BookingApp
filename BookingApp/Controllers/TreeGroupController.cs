@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
-using BookingApp.Exceptions;
+using BookingApp.Helpers;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 
@@ -39,7 +37,7 @@ namespace BookingApp.Controllers
         [Route("api/tree-group")]
         public async Task<IActionResult> Index()
         {
-            bool isAdmin = User.HasClaim(ClaimTypes.Role, "Admin");
+            bool isAdmin = User.IsInRole(RoleTypes.Admin);
             IEnumerable<TreeGroupListDto> trees = mapper.Map<IEnumerable<TreeGroupListDto>>(await service.GetThree(isAdmin));
             return Ok(trees);
         }
@@ -76,7 +74,7 @@ namespace BookingApp.Controllers
         }
 
         /// <summary>
-        /// Updating TreeGroup (DbUpdateConcurrencyException)
+        /// Updating TreeGroup
         /// <summary>
         /// <param name="tree">Tdo model TreeGroupCrUpDto.</param>
         /// <returns>Http response code 200 | 401 | 404 | 500</returns>
@@ -94,7 +92,7 @@ namespace BookingApp.Controllers
         }
 
         /// <summary>
-        /// Deleting TreeGroup (DbUpdateException)
+        /// Deleting TreeGroup
         /// <summary>
         /// <param name="tree">Tdo model TreeGroupCrUpDto.</param>
         /// <returns>Http response code 200 | 401 | 404 | 500</returns>
