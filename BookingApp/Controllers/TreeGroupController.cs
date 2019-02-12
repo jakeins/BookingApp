@@ -24,8 +24,7 @@ namespace BookingApp.Controllers
             service = s;
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<TreeGroup, TreeGroupListDto>();
-                cfg.CreateMap<TreeGroup, TreeGroupCrUpDto>().ReverseMap();
+                cfg.CreateMap<TreeGroup, TreeGroupBaseDto>().ReverseMap();
             }));
         }
 
@@ -43,7 +42,7 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> Index()
         {
             bool isAdmin = User.IsInRole(RoleTypes.Admin);
-            IEnumerable<TreeGroupListDto> trees = mapper.Map<IEnumerable<TreeGroupListDto>>(await service.GetThree(isAdmin));
+            IEnumerable<TreeGroupBaseDto> trees = mapper.Map<IEnumerable<TreeGroupBaseDto>>(await service.GetTree(isAdmin));
             return Ok(trees);
         }
 
@@ -62,7 +61,7 @@ namespace BookingApp.Controllers
         [Route("api/tree-group/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
-            TreeGroupListDto tree = mapper.Map<TreeGroupListDto>(await service.GetDetail(id));
+            TreeGroupBaseDto tree = mapper.Map<TreeGroupBaseDto>(await service.GetDetail(id));
             return Ok(tree);
         }
 
@@ -81,7 +80,7 @@ namespace BookingApp.Controllers
         [ProducesResponseType(500)]
         [Route("api/tree-group")]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Create([FromBody]TreeGroupCrUpDto tree)
+        public async Task<IActionResult> Create([FromBody]TreeGroupBaseDto tree)
         {
             if (!ModelState.IsValid)
             {
@@ -106,7 +105,7 @@ namespace BookingApp.Controllers
         [ProducesResponseType(500)]
         [Route("api/tree-group/{id}")]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupCrUpDto tree)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupBaseDto tree)
         {
             if (!ModelState.IsValid)
             {

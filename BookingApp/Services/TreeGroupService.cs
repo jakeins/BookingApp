@@ -19,7 +19,7 @@ namespace BookingApp.Services
             userManager = um;
         }
 
-        public async Task<IEnumerable<TreeGroup>> GetThree(bool isAdmin)
+        public async Task<IEnumerable<TreeGroup>> GetTree(bool isAdmin)
         {
             return (isAdmin) ? await repository.GetListAsync() : await repository.GetListForUserAsync();
         }
@@ -35,10 +35,10 @@ namespace BookingApp.Services
             await repository.CreateAsync(tree);
         }
 
-        public async Task Update(int id, TreeGroup tree)
+        public async Task Update(int treeGroupId, TreeGroup tree)
         {
-            tree.TreeGroupId = id;
-            tree.UpdatedUserId = tree.CreatedUserId = await GetMockUserId();
+            tree.TreeGroupId = treeGroupId;
+            tree.UpdatedUserId = await GetMockUserId();
             await repository.UpdateAsync(tree);
         }
 
