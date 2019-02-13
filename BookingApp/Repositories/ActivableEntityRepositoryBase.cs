@@ -32,7 +32,7 @@ namespace BookingApp.Repositories
         /// </summary>
         public async Task<bool> IsActiveAsync(EntityIdType id)
         {
-            var result = await Entities.Where(e => e.Id.Equals(id)).Select(r => new { r.IsActive }).SingleOrDefaultAsync();
+            var result = await Entities.Where(e => e.Id.Equals(id)).Select(e => new { e.IsActive }).SingleOrDefaultAsync();
 
             if (result != null)
                 return result.IsActive == true;
@@ -48,6 +48,6 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Lists identifiers of all active entities.
         /// </summary>
-        public async Task<IEnumerable<EntityIdType>> ListActiveIDsAsync() => await ActiveEntities.Select(r => r.Id).ToListAsync();
+        public async Task<IEnumerable<EntityIdType>> ListActiveIDsAsync() => await ActiveEntities.Select(e => e.Id).ToListAsync();
     }
 }

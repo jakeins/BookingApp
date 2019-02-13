@@ -160,7 +160,7 @@ namespace BookingApp.Repositories
         public async Task<bool> ExistsAsync(EntityType entity) => await ExistsAsync(entity.Id);
 
         /// <summary>
-        /// Lists all resources which have the specified user as a creator or updater.
+        /// Lists all entities which have the specified user as a creator or updater.
         /// </summary>
         public async Task<IEnumerable<EntityType>> ListByAssociatedUser(string userId)
         {
@@ -170,12 +170,12 @@ namespace BookingApp.Repositories
         }
 
         /// <summary>
-        /// Lists all resources which have the specified user as a creator.
+        /// Lists all entities which have the specified user as a creator.
         /// </summary>
         public async Task<IEnumerable<EntityType>> ListByCreator(string userId) => await Entities.Where(e => e.CreatedUserId == userId).ToListAsync();
 
         /// <summary>
-        /// Lists all resources which have the specified user as an updater.
+        /// Lists all entities which have the specified user as an updater.
         /// </summary>
         public async Task<IEnumerable<EntityType>> ListByUpdater(string userId) => await Entities.Where(e => e.UpdatedUserId == userId).ToListAsync();
         #endregion
