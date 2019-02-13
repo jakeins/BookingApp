@@ -127,7 +127,7 @@ namespace BookingApp
                 c.RoutePrefix = string.Empty;
             });
             // Enable midleware for handling exceptions
-            app.UseMiddleware<Middlewares.ErrorHandlingMiddleware>();
+            app.UseMiddleware<Middlewares.ErrorHandlingMiddleware>(env.IsDevelopment());
 
             app.UseMvc(routes =>
             {
