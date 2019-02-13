@@ -34,7 +34,7 @@ namespace BookingApp.Services
         {
             if (tree.ParentTreeGroupId != null)
             {
-                await repository.isNotParentAsync((int)tree.ParentTreeGroupId, tree.TreeGroupId);    
+                await repository.IsNotParentAsync((int)tree.ParentTreeGroupId, tree.TreeGroupId);    
             }
 
             tree.UpdatedUserId = tree.CreatedUserId = userId;
@@ -45,7 +45,7 @@ namespace BookingApp.Services
         {
             if (tree.ParentTreeGroupId != null)
             {
-                await repository.isNotParentAsync((int)tree.ParentTreeGroupId, tree.TreeGroupId);    
+                await repository.IsNotParentAsync((int)tree.ParentTreeGroupId, treeGroupId);    
             }
 
             tree.TreeGroupId = treeGroupId;

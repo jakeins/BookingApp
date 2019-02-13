@@ -86,13 +86,43 @@ namespace BookingApp.Repositories
         public async Task SaveAsync() => await context.SaveChangesAsync();
 
         //Write myself Exception !!!
-        public async Task isNotParentAsync(int parentId, int treeId)
+        public async Task IsNotParentAsync(int parentId, int treeId)
         {
-            TreeGroup tree = await GetAsync(parentId);
-            if (tree.ParentTreeGroupId == treeId)
+            if (parentId == treeId)
             {
                 throw new Exception("Current treeGroup can't have this child.");
-            } 
+            }
+            if (await IsCurrentChildAsync(treeId, parentId))
+            {
+                throw new Exception("Current treeGroup can't have this child.");
+            }
+        }
+
+        public async Task<bool> IsCurrentChildAsync(int treeId, int parent)
+        {
+            List<TreeGroup> listTree = await GetChildTree(treeId);
+            if (listTree != null)
+            {
+                foreach (TreeGroup tree in listTree)
+                {
+                    if (tree.TreeGroupId == parent)
+                    {
+                        return true;
+                    }
+                    if (tree.ParentTreeGroupId == parent)
+                    {
+                        return true;
+                    }
+
+                    return await IsCurrentChildAsync(tree.TreeGroupId, parent);
+                }
+            }
+            return true;
+        }
+
+        public async Task<List<TreeGroup>> GetChildTree(int parent)
+        {
+            return await context.TreeGroups.Where(t => t.ParentTreeGroupId == parent).ToListAsync();
         }
 
     }
