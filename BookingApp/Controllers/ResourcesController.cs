@@ -8,7 +8,6 @@ using BookingApp.DTOs;
 using BookingApp.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using BookingApp.Helpers;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using System;
 
@@ -16,20 +15,16 @@ namespace BookingApp.Controllers
 {
     [Route("api/resources")]
     [ApiController]
-    public partial class ResourcesController : ControllerBase
+    public partial class ResourcesController : EntityControllerBase
     {
         readonly ResourcesService resService;
         readonly BookingsService bookService;
-        readonly UserManager<ApplicationUser> userManager;
-        readonly RoleManager<IdentityRole> roleManager;
         readonly IMapper dtoMapper;
 
-        public ResourcesController(ResourcesService resService, BookingsService bookService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public ResourcesController(ResourcesService resService, BookingsService bookService)
         {
             this.resService = resService;
             this.bookService = bookService;
-            this.userManager = userManager;
-            this.roleManager = roleManager;
 
             dtoMapper = new Mapper(new MapperConfiguration(cfg =>
             {
@@ -45,7 +40,7 @@ namespace BookingApp.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var models = await resService.List(includeInactiveResources: AdminAccess == true);
+            var models = await resService.List(includeInactiveResources: IsAdmin == true);
             var dtos = dtoMapper.Map<IEnumerable<ResourceBriefDto>>(models);
             return Ok(dtos);
         }
@@ -55,7 +50,7 @@ namespace BookingApp.Controllers
         [HttpGet("occupancy")]
         public async Task<IActionResult> ListOccupancy()
         {
-            var idsList = await resService.ListIDs(includeIncativeResources: AdminAccess == true);
+            var idsList = await resService.ListIDs(includeIncativeResources: IsAdmin == true);
 
             var map = new Dictionary<int, double?>();
 
@@ -150,10 +145,6 @@ namespace BookingApp.Controllers
         #endregion
 
         #region Helpers
-        /// <summary>
-        /// Current user identifier
-        /// </summary>
-        string UserId => User.Claims.Single(c => c.Type == "uid").Value;
 
         /// <summary>
         /// Not found exception factory
@@ -161,16 +152,11 @@ namespace BookingApp.Controllers
         CurrentEntryNotFoundException NewNotFoundException => new CurrentEntryNotFoundException("Specified resource not found");
 
         /// <summary>
-        /// Shorthand for checking if current user has admin access level
-        /// </summary>
-        bool AdminAccess => User.IsInRole(RoleTypes.Admin);
-
-        /// <summary>
         /// Gateway for the single resource. Throws Not Found if current user hasn't enough rights for viewing the specified resource.
         /// </summary>
         async Task AuthorizeForSingleResource(int resourceId)
         {
-            bool isAuthorized = AdminAccess || await resService.IsActive(resourceId);
+            bool isAuthorized = IsAdmin || await resService.IsActive(resourceId);
 
             if (!isAuthorized)
                 throw NewNotFoundException;// Excuse
