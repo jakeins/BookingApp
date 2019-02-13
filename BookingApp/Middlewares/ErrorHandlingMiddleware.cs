@@ -11,10 +11,12 @@ namespace BookingApp.Middlewares
     public class ErrorHandlingMiddleware
     {
         readonly RequestDelegate next;
+        readonly bool IsDevelopment;
 
-        public ErrorHandlingMiddleware(RequestDelegate next)
+        public ErrorHandlingMiddleware(RequestDelegate next, bool IsDevelopment)
         {
             this.next = next;
+            this.IsDevelopment = IsDevelopment;
         }
 
         /// <summary>
@@ -40,7 +42,7 @@ namespace BookingApp.Middlewares
         /// <param name="context">Http context for status code</param>
         /// <param name="exception">Exception which parse</param>
         /// <returns></returns>
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             HttpStatusCode code;
 
@@ -73,16 +75,57 @@ namespace BookingApp.Middlewares
                 case UnauthorizedAccessException detailed:
                     code = HttpStatusCode.Unauthorized;
                     break;
+                case Exceptions.UserEmailException detailed:
+                    code = HttpStatusCode.BadRequest;
+                    break;
+                case Exceptions.UserNameException detailed:
+                    code = HttpStatusCode.BadRequest;
+                    break;
+                case Exceptions.UserPasswordException detailed:
+                    code = HttpStatusCode.BadRequest;
+                    break;
+
                 default:
                     code = HttpStatusCode.InternalServerError;
                     break;
-
             }
-            
-            var result = JsonConvert.SerializeObject(new { error = exception.Message});
+
+            object data;
+
+            if (IsDevelopment)
+            {
+                data = new DevelopmentExceptionInfo(exception.Message, exception.StackTrace);
+            }
+            else
+            {
+                data = new ExceptionInfo(exception.Message);
+            }
+
+            var result = JsonConvert.SerializeObject(data, Formatting.Indented);
+
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
             return context.Response.WriteAsync(result);
+        }
+
+        class ExceptionInfo
+        {
+            public string Message { get; set; }
+
+            public ExceptionInfo(string message)
+            {
+                Message = message;
+            }
+        }
+
+        class DevelopmentExceptionInfo : ExceptionInfo
+        {
+            public string StackTrace { get; set; }
+
+            public DevelopmentExceptionInfo(string message, string stackTrace) : base(message)
+            {
+                StackTrace = stackTrace;
+            }
         }
     }
 }
