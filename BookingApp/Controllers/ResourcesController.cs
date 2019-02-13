@@ -6,7 +6,6 @@ using BookingApp.Services;
 using AutoMapper;
 using BookingApp.DTOs;
 using BookingApp.Exceptions;
-using Microsoft.AspNetCore.Identity;
 using BookingApp.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System;
@@ -35,9 +34,11 @@ namespace BookingApp.Controllers
         }
 
         #region GETs
-        // GET: api/Resources
+        // GET: api/resources
         // Filtered access: Guest/Admin. 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> List()
         {
             var models = await resService.List(includeInactiveResources: IsAdmin == true);
@@ -45,9 +46,11 @@ namespace BookingApp.Controllers
             return Ok(dtos);
         }
 
-        // GET: api/Resources/Occupancy
+        // GET: api/resources/occupancy
         // Filtered access: Guest/Admin.
         [HttpGet("occupancy")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> ListOccupancy()
         {
             var idsList = await resService.ListIDs(includeIncativeResources: IsAdmin == true);
@@ -71,9 +74,13 @@ namespace BookingApp.Controllers
             return Ok(map);
         }
 
-        // GET: api/Resources/5
+        // GET: api/resources/5
         // Filtered access: Guest/Admin. 
         [HttpGet("{resourceId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Single([FromRoute] int resourceId)
         {
             await AuthorizeForSingleResource(resourceId);
@@ -83,9 +90,13 @@ namespace BookingApp.Controllers
             return Ok(resourceDTO);
         }
 
-        // GET: api/Resources/5/Occupancy
+        // GET: api/resources/5/occupancy
         // Filtered access: Guest/Admin.
         [HttpGet("{resourceId}/occupancy")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> SingleOccupancy([FromRoute] int resourceId)
         {
             await AuthorizeForSingleResource(resourceId);
@@ -94,8 +105,13 @@ namespace BookingApp.Controllers
         #endregion
 
         #region POST / PUT
-        // POST: api/Resources
+        // POST: api/resources
         [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Create([FromBody] ResourceDetailedDto item)
         {
@@ -110,11 +126,20 @@ namespace BookingApp.Controllers
 
             await resService.Create(itemModel);
 
-            return Ok(itemModel.Id);
+            return Created(
+                this.BaseApiUrl + "/" + itemModel.Id,
+                new { ResourceId = itemModel.Id, itemModel.CreatedTime }
+            );
         }
 
-        // PUT: api/Resources/5
+        // PUT: api/resources/5
         [HttpPut("{resourceId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Update([FromRoute] int resourceId, [FromBody] ResourceDetailedDto item)
         {
@@ -129,18 +154,24 @@ namespace BookingApp.Controllers
             #endregion
 
             await resService.Update(itemModel);
-            return Ok("Resource updated successfully");
+            return Ok(new { itemModel.UpdatedTime });
         }
         #endregion
 
         #region DELETE
-        // DELETE: api/Resources/5
+        // DELETE: api/resources/5
         [HttpDelete("{resourceId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Delete([FromRoute] int resourceId)
         {
             await resService.Delete(resourceId);
-            return Ok("Resource deleted");
+            return Ok(new { DeletedTime = DateTime.Now });
         }
         #endregion
 

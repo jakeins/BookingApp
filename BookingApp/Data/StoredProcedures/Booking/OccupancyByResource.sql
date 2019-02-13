@@ -13,12 +13,12 @@ BEGIN
 	DECLARE @ruleId int;
 
 	SELECT TOP(1) 
-		@ruleId = [Rule].[RuleId],
+		@ruleId = [Rule].[Id],
 		@preOrderTimeLimit = [Rule].[PreOrderTimeLimit],
 		@maxTime = [Rule].[MaxTime],
 		@serviceMinutes = COALESCE([Rule].[ServiceTime],0)
 	FROM [Resources]
-	INNER JOIN [Rules] AS [Rule] ON [Resources].[RuleId] = [Rule].[RuleId]
+	INNER JOIN [Rules] AS [Rule] ON [Resources].[Id] = [Rule].[Id]
 	WHERE [Resources].[Id] = @resourceId
 
 	if @ruleId IS NULL

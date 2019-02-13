@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace BookingApp.Repositories
 {
     /// <summary>
-    /// Base class for repository that uses EF db context.
+    /// Base class for repository that uses EF db context with Activable Entities.
     /// </summary>
     public abstract class ActivableEntityRepositoryBase<EntityType, EntityIdType> : EntityRepositoryBase<EntityType, EntityIdType>
         where EntityType : class, IActivableEntity<EntityIdType>

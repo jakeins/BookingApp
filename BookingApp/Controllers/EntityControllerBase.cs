@@ -29,5 +29,17 @@ namespace BookingApp.Controllers
         /// Current user is anonymous if he hasn't UserID claim.
         /// </summary>
         protected bool IsAnonymous => !User.HasClaim(c => c.Type == "uid");
+
+        /// <summary>
+        /// Gets full base api url of a current controller, if annotated correctly.
+        /// </summary>
+        protected string BaseApiUrl
+        {
+            get
+            {
+                var request = ControllerContext.HttpContext.Request;
+                return request.Scheme + "://" + request.Host + request.Path;
+            }
+        }
     }
 }
