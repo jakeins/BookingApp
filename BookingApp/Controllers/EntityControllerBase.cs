@@ -23,5 +23,10 @@ namespace BookingApp.Controllers
         /// Shorthand for checking if current user has user access level
         /// </summary>
         protected bool IsUser => User.IsInRole(RoleTypes.User);
+
+        /// <summary>
+        /// Shorthand for checking if current user doesn have any specific rights
+        /// </summary>
+        protected bool IsAnonymous => !User.HasClaim(c => c.Type == "uid");
     }
 }
