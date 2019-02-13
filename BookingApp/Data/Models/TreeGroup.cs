@@ -15,7 +15,7 @@ namespace BookingApp.Data.Models
         /// </summary>
         [Key]
         [Required]
-        public int TreeGroupId { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Short designation of the tree group. Required.

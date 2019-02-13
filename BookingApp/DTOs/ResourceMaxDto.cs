@@ -5,6 +5,6 @@
     /// </summary>
     public class ResourceMaxDto : ResourceDetailedDto
     {
-        public int ResourceId { get; set; }
+        public int Id { get; set; }
     }
 }

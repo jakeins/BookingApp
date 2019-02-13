@@ -41,8 +41,10 @@ namespace BookingApp.Helpers
                         default:
                             throw new InvalidProgramException("Uknown SQL Exception catched " + message, ex);
                     }
-                case 547:
+                case 547://foreign key restriction
                     throw new Exceptions.OperationRestrictedException($"Cannot perform {(string.IsNullOrEmpty(message) ? "the" : message)} operation due to the related entries restriction");
+                case 2812://Could not find stored procedure
+                    throw new Exceptions.OperationFailedException("Operation failed. " + ex.Message);
                 default:
                     throw new InvalidProgramException("Uknown SQL Exception catched ", ex);
             }

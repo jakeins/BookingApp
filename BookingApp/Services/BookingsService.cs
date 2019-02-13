@@ -33,7 +33,7 @@ namespace BookingApp.Services
         /// <summary>
         /// Get <see cref="Booking"></see> by Id
         /// </summary>
-        /// <param name="id"><see cref="Booking.BookingId"></see> of exist <see cref="Booking"></see></param>
+        /// <param name="id"><see cref="Booking.Id"></see> of exist <see cref="Booking"></see></param>
         /// <returns><see cref="Booking"></see></returns>
         public async Task<Booking> GetAsync(int id) => await bookingsRepo.GetAsync(id);
 
@@ -68,7 +68,7 @@ namespace BookingApp.Services
         /// <summary>
         /// Update exist <see cref="Booking"></see>
         /// </summary>
-        /// <param name="id"><see cref="Booking.BookingId"></see></param>
+        /// <param name="id"><see cref="Booking.Id"></see></param>
         /// <param name="startTime">Optional <see cref="Booking.StartTime"></see></param>
         /// <param name="endTime">Optional <see cref="Booking.EndTime"></see></param>
         /// <param name="editUser">User id who edit resource</param>
@@ -82,7 +82,7 @@ namespace BookingApp.Services
         /// <summary>
         /// Delete exist <see cref="Booking"></see>
         /// </summary>
-        /// <param name="id"><see cref="Booking.BookingId"></see> of exist <see cref="Booking"></see></param>
+        /// <param name="id"><see cref="Booking.Id"></see> of exist <see cref="Booking"></see></param>
         /// <returns></returns>
         public async Task Delete(int id)
         {
@@ -100,7 +100,7 @@ namespace BookingApp.Services
         /// <summary>
         /// Terminate specific <see cref="Booking"></see>
         /// </summary>
-        /// <param name="id"><see cref="Booking.BookingId"></see> of exist <see cref="Booking"></see></param>
+        /// <param name="id"><see cref="Booking.Id"></see> of exist <see cref="Booking"></see></param>
         /// <param name="user">ID of <see cref="ApplicationUser"> which terminate booking</see></param>
         /// <returns></returns>
         public async Task Terminate(int id, string userId)

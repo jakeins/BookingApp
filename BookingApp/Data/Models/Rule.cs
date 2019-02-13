@@ -14,7 +14,7 @@ namespace BookingApp.Data.Models
         /// </summary>
         [Key]
         [Required]
-        public int RuleId { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Short designation of the rule. Required.

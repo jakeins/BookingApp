@@ -5,6 +5,6 @@
     /// </summary>
     public class ResourceBriefDto : ResourceBaseDto
     {
-        public int ResourceId { get; set; }
+        public int Id { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BookingApp.DTOs
 {
-    public class TreeGroupMinimalTdo
+    public class TreeGroupMinimalDto
     {
         [Required]
         [StringLength(64, MinimumLength = 3, ErrorMessage = "Title should be no more 64 characters")]

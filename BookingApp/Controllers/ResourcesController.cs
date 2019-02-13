@@ -110,7 +110,7 @@ namespace BookingApp.Controllers
 
             await resService.Create(itemModel);
 
-            return Ok(itemModel.ResourceId);
+            return Ok(itemModel.Id);
         }
 
         // PUT: api/Resources/5
@@ -125,7 +125,7 @@ namespace BookingApp.Controllers
             var itemModel = dtoMapper.Map<Resource>(item);
             itemModel.UpdatedUserId = UserId;
             itemModel.UpdatedTime = DateTime.Now;
-            itemModel.ResourceId = resourceId;
+            itemModel.Id = resourceId;
             #endregion
 
             await resService.Update(itemModel);

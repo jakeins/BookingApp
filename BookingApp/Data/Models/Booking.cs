@@ -14,7 +14,7 @@ namespace BookingApp.Data.Models
         /// </summary>
         [Key]
         [Required]
-        public int BookingId { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Identifier of the resource being booked. Required.

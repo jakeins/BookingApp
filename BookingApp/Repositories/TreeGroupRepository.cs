@@ -32,7 +32,7 @@ namespace BookingApp.Repositories
 
         public async Task<TreeGroup> GetAsync(int id)
         {
-            TreeGroup tree = await context.TreeGroups.FirstOrDefaultAsync(t => t.TreeGroupId == id);
+            TreeGroup tree = await context.TreeGroups.FirstOrDefaultAsync(t => t.Id == id);
             if (tree != null)
             {
                 return tree;
@@ -50,10 +50,10 @@ namespace BookingApp.Repositories
 
         public async Task UpdateAsync(TreeGroup tree)
         {
-            await GetAsync(tree.TreeGroupId);
+            await GetAsync(tree.Id);
             try
             {
-                var propsToModify = typeof(TreeGroupMinimalTdo).GetProperties()
+                var propsToModify = typeof(TreeGroupMinimalDto).GetProperties()
                     .Where(prop => prop.Name != "TreeGroupId")
                     .Select(prop => prop.Name)
                     .Concat(new[] { "UpdatedTime", "UpdatedUserId" });
