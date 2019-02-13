@@ -13,7 +13,7 @@ namespace BookingApp.Repositories
     /// Base class for repository that uses EF db context.
     /// </summary>
     public abstract class EntityRepositoryBase<EntityType, EntityIdType> 
-        where EntityType : class, IEntityBase<EntityIdType>
+        where EntityType : class, IEntity<EntityIdType>
         where EntityIdType : IEquatable<EntityIdType>
     {
         protected ApplicationDbContext dbContext;
@@ -27,11 +27,6 @@ namespace BookingApp.Repositories
         /// Shorthand DbSet for Entities.
         /// </summary>
         protected DbSet<EntityType> Entities => dbContext.Set<EntityType>();
-
-        /// <summary>
-        /// IQueryable shorthand for only active Entities.
-        /// </summary>
-        protected IQueryable<EntityType> ActiveEntities => Entities.Where(e => e.IsActive == true);
 
         /// <summary>
         /// Not found exception factory
@@ -150,32 +145,9 @@ namespace BookingApp.Repositories
         }
 
         /// <summary>
-        /// Checks whether sepcified entity is active.
-        /// </summary>
-        public async Task<bool> IsActiveAsync(EntityIdType id)
-        {
-            var result = await Entities.Where(e => e.Id.Equals(id)).Select(r => new { r.IsActive }).SingleOrDefaultAsync();
-
-            if (result != null)
-                return result.IsActive == true;
-            else
-                throw NewNotFoundException;
-        }
-
-        /// <summary>
-        /// Lists active entities.
-        /// </summary>
-        public async Task<IEnumerable<EntityType>> ListActiveAsync() => await ActiveEntities.ToListAsync();
-
-        /// <summary>
         /// Lists identifiers of all entities.
         /// </summary>
         public async Task<IEnumerable<EntityIdType>> ListIDsAsync() => await Entities.Select(r => r.Id).ToListAsync();
-
-        /// <summary>
-        /// Lists identifiers of all active entities.
-        /// </summary>
-        public async Task<IEnumerable<EntityIdType>> ListActiveIDsAsync() => await ActiveEntities.Select(r => r.Id).ToListAsync();
 
         /// <summary>
         /// Checks whether specified entity exists.

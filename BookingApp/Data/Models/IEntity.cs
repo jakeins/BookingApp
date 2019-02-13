@@ -5,10 +5,12 @@ namespace BookingApp.Data.Models
     /// <summary>
     /// Defines basic set of entity properties. Requires the Entity Id Type as a type parameter.
     /// </summary>
-    public interface IEntityBase<EntityIdType>
+    public interface IEntity<EntityIdType>
     {
+        /// <summary>
+        /// Id of the enitity.
+        /// </summary>
         EntityIdType Id { get; set; }
-        bool? IsActive { get; set; }
 
         /// <summary>
         /// Time of the current entry creation. Gets set automatically by the persistent storage.
