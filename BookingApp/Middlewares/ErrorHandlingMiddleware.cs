@@ -57,6 +57,9 @@ namespace BookingApp.Middlewares
                 case Exceptions.RelatedEntryNotFoundException detailed:
                     code = HttpStatusCode.BadRequest;
                     break;
+                case Exceptions.OperationRestrictedRelationException detailed:
+                    code = HttpStatusCode.Forbidden;
+                    break;
                 case Exceptions.OperationRestrictedException detailed:
                     code = HttpStatusCode.Unauthorized;
                     break;

@@ -6,9 +6,7 @@ using BookingApp.Services;
 using AutoMapper;
 using BookingApp.DTOs;
 using BookingApp.Exceptions;
-using Microsoft.AspNetCore.Identity;
 using BookingApp.Helpers;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using System;
 
@@ -16,45 +14,46 @@ namespace BookingApp.Controllers
 {
     [Route("api/resources")]
     [ApiController]
-    public partial class ResourcesController : ControllerBase
+    public partial class ResourcesController : EntityControllerBase
     {
         readonly ResourcesService resService;
         readonly BookingsService bookService;
-        readonly UserManager<ApplicationUser> userManager;
-        readonly RoleManager<IdentityRole> roleManager;
         readonly IMapper dtoMapper;
 
-        public ResourcesController(ResourcesService resService, BookingsService bookService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public ResourcesController(ResourcesService resService, BookingsService bookService)
         {
             this.resService = resService;
             this.bookService = bookService;
-            this.userManager = userManager;
-            this.roleManager = roleManager;
 
             dtoMapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Resource, ResourceMinimalDto>();
-                cfg.CreateMap<Resource, ResourceDetailedDto>().ReverseMap();
+                cfg.CreateMap<Resource, ResourceBriefDto>();
+                cfg.CreateMap<Resource, ResourceMaxDto>();
+                cfg.CreateMap<ResourceDetailedDto,Resource>();
             }));
         }
 
         #region GETs
-        // GET: api/Resources
+        // GET: api/resources
         // Filtered access: Guest/Admin. 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> List()
         {
-            var models = await resService.List(includeInactiveResources: AdminAccess == true);
-            var dtos = dtoMapper.Map<IEnumerable<ResourceMinimalDto>>(models);
+            var models = await resService.List(includeInactiveResources: IsAdmin == true);
+            var dtos = dtoMapper.Map<IEnumerable<ResourceBriefDto>>(models);
             return Ok(dtos);
         }
 
-        // GET: api/Resources/Occupancy
+        // GET: api/resources/occupancy
         // Filtered access: Guest/Admin.
         [HttpGet("occupancy")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> ListOccupancy()
         {
-            var idsList = await resService.ListIDs(includeIncativeResources: AdminAccess == true);
+            var idsList = await resService.ListIDs(includeIncativeResources: IsAdmin == true);
 
             var map = new Dictionary<int, double?>();
 
@@ -75,21 +74,29 @@ namespace BookingApp.Controllers
             return Ok(map);
         }
 
-        // GET: api/Resources/5
+        // GET: api/resources/5
         // Filtered access: Guest/Admin. 
         [HttpGet("{resourceId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Single([FromRoute] int resourceId)
         {
             await AuthorizeForSingleResource(resourceId);
 
             var resourceModel = await resService.Single(resourceId);
-            var resourceDTO = dtoMapper.Map<ResourceDetailedDto>(resourceModel);
+            var resourceDTO = dtoMapper.Map<ResourceMaxDto>(resourceModel);
             return Ok(resourceDTO);
         }
 
-        // GET: api/Resources/5/Occupancy
+        // GET: api/resources/5/occupancy
         // Filtered access: Guest/Admin.
         [HttpGet("{resourceId}/occupancy")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> SingleOccupancy([FromRoute] int resourceId)
         {
             await AuthorizeForSingleResource(resourceId);
@@ -97,56 +104,78 @@ namespace BookingApp.Controllers
         }
         #endregion
 
-        #region POST / PUT / DELETE
-        // POST: api/Resources
+        #region POST / PUT
+        // POST: api/resources
         [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Create([FromBody] ResourceDetailedDto item)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            #region Mapping
             var itemModel = dtoMapper.Map<Resource>(item);
-            itemModel.ResourceId = 0;
             itemModel.UpdatedUserId = itemModel.CreatedUserId = UserId;
+            itemModel.UpdatedTime = itemModel.CreatedTime = DateTime.Now;
+            #endregion
 
             await resService.Create(itemModel);
 
-            return Ok(itemModel.ResourceId);
+            return Created(
+                this.BaseApiUrl + "/" + itemModel.Id,
+                new { ResourceId = itemModel.Id, itemModel.CreatedTime }
+            );
         }
 
-        // PUT: api/Resources/5
+        // PUT: api/resources/5
         [HttpPut("{resourceId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Update([FromRoute] int resourceId, [FromBody] ResourceDetailedDto item)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var model = dtoMapper.Map<Resource>(item);
-            model.ResourceId = resourceId;
-            model.UpdatedUserId = UserId;
+            #region Mapping
+            var itemModel = dtoMapper.Map<Resource>(item);
+            itemModel.UpdatedUserId = UserId;
+            itemModel.UpdatedTime = DateTime.Now;
+            itemModel.Id = resourceId;
+            #endregion
 
-            await resService.Update(model);
-            return Ok("Resource updated successfully");
+            await resService.Update(itemModel);
+            return Ok(new { itemModel.UpdatedTime });
         }
+        #endregion
 
-        // DELETE: api/Resources/5
+        #region DELETE
+        // DELETE: api/resources/5
         [HttpDelete("{resourceId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Delete([FromRoute] int resourceId)
         {
             await resService.Delete(resourceId);
-            return Ok("Resource deleted");
+            return Ok(new { DeletedTime = DateTime.Now });
         }
         #endregion
 
-
         #region Helpers
-        /// <summary>
-        /// Current user identifier
-        /// </summary>
-        string UserId => User.Claims.Single(c => c.Type == "uid").Value;
 
         /// <summary>
         /// Not found exception factory
@@ -154,16 +183,11 @@ namespace BookingApp.Controllers
         CurrentEntryNotFoundException NewNotFoundException => new CurrentEntryNotFoundException("Specified resource not found");
 
         /// <summary>
-        /// Shorthand for checking if current user has admin access level
-        /// </summary>
-        bool AdminAccess => User.IsInRole(RoleTypes.Admin);
-
-        /// <summary>
         /// Gateway for the single resource. Throws Not Found if current user hasn't enough rights for viewing the specified resource.
         /// </summary>
         async Task AuthorizeForSingleResource(int resourceId)
         {
-            bool isAuthorized = AdminAccess || await resService.IsActive(resourceId);
+            bool isAuthorized = IsAdmin || await resService.IsActive(resourceId);
 
             if (!isAuthorized)
                 throw NewNotFoundException;// Excuse

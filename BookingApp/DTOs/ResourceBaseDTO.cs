@@ -2,10 +2,11 @@
 
 namespace BookingApp.DTOs
 {
-    public class ResourceMinimalDto
+    /// <summary>
+    /// Suitable for writing basic properties. No ID.
+    /// </summary>
+    public class ResourceBaseDto
     {
-        public int ResourceId { get; set; }
-
         [MinLength(3, ErrorMessage = "Title is too short.")]
         [MaxLength(64, ErrorMessage = "Title is too long.")]
         public string Title { get; set; }

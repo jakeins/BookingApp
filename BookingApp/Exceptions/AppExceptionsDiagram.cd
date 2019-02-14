@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="BookingApp.Exceptions.CurrentEntryNotFoundException" Collapsed="true">
-    <Position X="21" Y="6" Width="2.5" />
+    <Position X="22.25" Y="7" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Exceptions\CurrentEntryNotFoundException.cs</FileName>
@@ -162,6 +162,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Exceptions\UserNameException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BookingApp.Exceptions.OperationRestrictedRelationException" Collapsed="true">
+    <Position X="20.25" Y="5.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\OperationRestrictedRelationException.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

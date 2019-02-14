@@ -27,7 +27,7 @@ namespace BookingApp.Controllers
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<TreeGroup, TreeGroupBaseDto>();
-                cfg.CreateMap<TreeGroup, TreeGroupMinimalTdo>().ReverseMap();
+                cfg.CreateMap<TreeGroup, TreeGroupMinimalDto>().ReverseMap();
             }));
         }
 
@@ -83,7 +83,7 @@ namespace BookingApp.Controllers
         [ProducesResponseType(500)]
         [Route("api/tree-group")]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Create([FromBody]TreeGroupMinimalTdo tree)
+        public async Task<IActionResult> Create([FromBody]TreeGroupMinimalDto tree)
         {
             if (!ModelState.IsValid)
             {
@@ -108,7 +108,7 @@ namespace BookingApp.Controllers
         [ProducesResponseType(500)]
         [Route("api/tree-group/{id}")]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupMinimalTdo tree)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupMinimalDto tree)
         {
             if (!ModelState.IsValid)
             {

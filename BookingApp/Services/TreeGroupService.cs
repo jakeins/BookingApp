@@ -38,7 +38,7 @@ namespace BookingApp.Services
 
         public async Task Update(int treeGroupId, string userId, TreeGroup tree)
         {
-            tree.TreeGroupId = treeGroupId;
+            tree.Id = treeGroupId;
             tree.UpdatedUserId = userId;
             tree.UpdatedTime = DateTime.Now;
             await repository.UpdateAsync(tree);
