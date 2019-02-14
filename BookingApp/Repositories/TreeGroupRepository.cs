@@ -117,7 +117,7 @@ namespace BookingApp.Repositories
                     return await IsCurrentChildAsync(tree.TreeGroupId, parent);
                 }
             }
-            return true;
+            return false;
         }
 
         public async Task<List<TreeGroup>> GetChildTree(int parent)
