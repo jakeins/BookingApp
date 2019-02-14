@@ -1,7 +1,6 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
-using BookingApp.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +17,7 @@ namespace BookingApp.Repositories
         #region Standard repository operations
         public override async Task UpdateAsync(Resource resource)
         {
-            await UpdateSelectiveAsync<ResourceUpdatePropertiesDto>(resource);
+            await UpdateSelectiveAsync<ResourceUpdateSubsetDto>(resource);
         }
         #endregion
 

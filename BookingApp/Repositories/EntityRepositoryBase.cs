@@ -147,7 +147,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Lists identifiers of all entities.
         /// </summary>
-        public async Task<IEnumerable<EntityIdType>> ListIDsAsync() => await Entities.Select(r => r.Id).ToListAsync();
+        public async Task<IEnumerable<EntityIdType>> ListIDsAsync() => await Entities.Select(e => e.Id).ToListAsync();
 
         /// <summary>
         /// Checks whether specified entity exists.
@@ -165,7 +165,7 @@ namespace BookingApp.Repositories
         public async Task<IEnumerable<EntityType>> ListByAssociatedUser(string userId)
         {
             return await Entities.
-                Where(r => r.CreatedUserId == userId || r.UpdatedUserId == userId).
+                Where(e => e.CreatedUserId == userId || e.UpdatedUserId == userId).
                 ToListAsync();
         }
 
