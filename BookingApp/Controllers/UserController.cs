@@ -52,7 +52,8 @@ namespace BookingApp.Controllers
             UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
             return new OkObjectResult(user);
         }
-        [HttpGet("api/user/{userEmail}")]
+        
+        [HttpGet("api/user/email/{userEmail}")]
         public async Task<IActionResult> GetUserByEmail([FromRoute]string userEmail)
         {
             ApplicationUser appuser = await userService.GetUserByEmail(userEmail);
