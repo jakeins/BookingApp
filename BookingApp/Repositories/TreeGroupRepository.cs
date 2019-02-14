@@ -36,7 +36,21 @@ namespace BookingApp.Repositories
             if (tree is TreeGroup)
             {
                 return tree;
-            } else
+            }
+            else
+            {
+                throw new CurrentEntryNotFoundException("This TreeGroup does't isset.");
+            }
+        }
+
+        private async Task<TreeGroup> GetAsync(int? id)
+        {
+            TreeGroup tree = await context.TreeGroups.FirstOrDefaultAsync(t => t.TreeGroupId == id);
+            if (tree is TreeGroup)
+            {
+                return tree;
+            }
+            else
             {
                 throw new CurrentEntryNotFoundException("This TreeGroup does't isset.");
             }
@@ -80,43 +94,31 @@ namespace BookingApp.Repositories
             catch (DbUpdateException dbuException)
             {
                 Helpers.DbUpdateExceptionTranslator.ReThrow(dbuException, "TreeGroup Delete");
-            }          
+            }
         }
 
         public async Task SaveAsync() => await context.SaveChangesAsync();
 
-        
-        public async Task IsNotParentAsync(int parentId, int treeId)
-        {
-            if (parentId == treeId)
-            {
-                throw new Exception("Current treeGroup can't have this child.");
-            }
-            if (await IsCurrentChildAsync(treeId, parentId))
-            {
-                throw new Exception("Current treeGroup can't have this child.");
-            }
-        }
 
-
-        public async Task<bool> IsCurrentChildAsync(int treeId, int parent)
+        public async Task<bool> IsParentValidAsync(int? newParentId, int? currentId)
         {
-            TreeGroup tree = await GetChildTree(parent);
-            if (tree != null)
+            var currentParentId = newParentId;
+
+            while (true)
             {
-                if (tree.ParentTreeGroupId == null)
-                    return false;
-                if (tree.ParentTreeGroupId == treeId)
+                if (currentParentId == null)
                     return true;
-                return await IsCurrentChildAsync(treeId, (int)tree.ParentTreeGroupId);
+                else
+                {
+                    if (currentParentId == currentId)
+                        throw new Exception("TreeGroup parent setting");
+                    else
+                    {
+                        currentParentId = (await GetAsync(currentParentId)).ParentTreeGroupId;
+                    }
+                }
             }
-            return false;
         }
 
-        public async Task<TreeGroup> GetChildTree(int id)
-        {
-            return await context.TreeGroups.FirstOrDefaultAsync(t => t.TreeGroupId == id);
-        }
-
-    }
+    }  
 }
