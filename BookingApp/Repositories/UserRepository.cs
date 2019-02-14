@@ -62,6 +62,14 @@ namespace BookingApp.Services
             else
                 return applicationUser;
         }
+        public async Task<ApplicationUser> GetUserByEmailAsync(string email)
+        {
+            ApplicationUser applicationUser = await userManager.FindByEmailAsync(email);
+            if (applicationUser == null)
+                throw new NullReferenceException("Can not find user with this email");
+            else
+                return applicationUser;
+        }
         public async Task<IEnumerable<ApplicationUser>> GetListAsync()
         {
             return userManager.Users.ToList();
