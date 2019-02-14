@@ -111,7 +111,7 @@ namespace BookingApp.Repositories
                 else
                 {
                     if (currentParentId == currentId)
-                        throw new Exception("TreeGroup parent setting");
+                        throw new OperationRestrictedRelationException("TreeGroup parent setting");
                     else
                     {
                         currentParentId = (await GetAsync(currentParentId)).ParentTreeGroupId;
