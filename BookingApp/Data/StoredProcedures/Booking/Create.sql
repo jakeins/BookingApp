@@ -111,6 +111,9 @@ BEGIN
 							Bookings.CreatedUserId) AS Result 
 						)= 1
 				);
+		-- verify is no booking in same time
+		if (@CountBooksInSameTime > 0)
+			Throw 50001, 'Time range alredy booked', 11;
 		-- declare temp table variable for store insert result
 		Declare @InsertResult table(Id int);
 		-- insert booking to bookings table and get his id
