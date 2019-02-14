@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace BookingApp.Repositories
 {
     /// <summary>
-    /// Base class for repository that uses EF db context.
+    /// Base class for repository that uses EF db context and users of a string-type id (GUID).
     /// </summary>
     public abstract class EntityRepositoryBase<EntityType, EntityIdType> 
         where EntityType : class, IEntity<EntityIdType>
@@ -61,8 +61,6 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Creates specified enitity in the storage.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
         public virtual async Task CreateAsync(EntityType entity)
         {
             Entities.Add(entity);
@@ -97,7 +95,7 @@ namespace BookingApp.Repositories
         }
 
         /// <summary>
-        /// Save changes do storage, SAFE.
+        /// Save changes do storage, wrapped in exception.
         /// </summary>
         public virtual async Task SaveAsync()
         {
@@ -116,6 +114,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Updates only the properties, present in the provided <see cref="UpdatePropertiesAggregationType"/>.
         /// </summary>
+        /// <typeparam name="UpdatePropertiesAggregationType">The class having all properties which should be updated.</typeparam>
         public async Task UpdateSelectiveAsync<UpdatePropertiesAggregationType>(EntityType entity)
         {
             if (!await ExistsAsync(entity))
@@ -130,7 +129,7 @@ namespace BookingApp.Repositories
         }
 
         /// <summary>
-        /// Save changes do storage. SAFE, verbose.
+        /// Save changes do storage, wrapped in exception, verbose.
         /// </summary>
         public async Task SaveVerboseAsync(string saveReasonTitle)
         {
@@ -160,7 +159,7 @@ namespace BookingApp.Repositories
         public async Task<bool> ExistsAsync(EntityType entity) => await ExistsAsync(entity.Id);
 
         /// <summary>
-        /// Lists all entities which have the specified user as a creator or updater.
+        /// Lists all entities which have the specified user as a creator OR updater.
         /// </summary>
         public async Task<IEnumerable<EntityType>> ListByAssociatedUser(string userId)
         {
