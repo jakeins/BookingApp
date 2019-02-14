@@ -5,7 +5,7 @@ namespace BookingApp.DTOs
 {
     public class BookingOwnerDTO : BookingMinimalDTO
     {
-        public int BookingID { get; set; }
+        public int Id { get; set; }
 
         [MaxLength(512, ErrorMessage = "Description is too long.")]
         public string Note { get; set; }

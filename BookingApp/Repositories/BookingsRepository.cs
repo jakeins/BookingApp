@@ -87,7 +87,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Delete exist <see cref="Booking"></see>
         /// </summary>
-        /// <param name="id"><see cref="Booking.BookingId"></see> of exist <see cref="Booking"></see></param>
+        /// <param name="id"><see cref="Booking.Id"></see> of exist <see cref="Booking"></see></param>
         /// <returns></returns>
         public async Task DeleteAsync(int id)
         {
@@ -103,7 +103,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Return <see cref="Booking"></see> from Db
         /// </summary>
-        /// <param name="id"><see cref="Booking.BookingId"></see> of exis <see cref="Booking"></see></param>
+        /// <param name="id"><see cref="Booking.Id"></see> of exis <see cref="Booking"></see></param>
         /// <returns></returns>
         public async Task<Booking> GetAsync(int id) => await dbContext.Bookings.FindAsync(id);
 
@@ -132,7 +132,7 @@ namespace BookingApp.Repositories
             try
             {
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC [Booking.Edit] {model.BookingId}, {model.StartTime}, {model.EndTime}, {model.UpdatedUserId}, {model.Note}"
+                    $"EXEC [Booking.Edit] {model.Id}, {model.StartTime}, {model.EndTime}, {model.UpdatedUserId}, {model.Note}"
                     );
             }
             catch(SqlException ex)
@@ -186,7 +186,7 @@ namespace BookingApp.Repositories
         /// </summary>
         async Task<double?> OccupancyByResourceAsyncEF(int resourceId)
         {
-            if (!await dbContext.Resources.AnyAsync(e => e.ResourceId == resourceId))
+            if (!await dbContext.Resources.AnyAsync(e => e.Id == resourceId))
                 throw new KeyNotFoundException("Specified resource doesn't exist.");
 
             var firstEntry = await dbContext.Bookings.Include(b => b.Resource).ThenInclude(b => b.Rule)
@@ -280,7 +280,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Get all <see cref="Booking"></see> of specific <see cref="Resource"></see>
         /// </summary>
-        /// <param name="resource">Exist <see cref="Resource.ResourceId"></see></param>
+        /// <param name="resource">Exist <see cref="Resource.Id"></see></param>
         /// <returns>List of all <see cref="Booking"></see> of specific <see cref="Resource"></see></returns>
         public async Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId) => await Bookings
             .Where(b => b.ResourceId == resourceId)
@@ -289,7 +289,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Terminate specific <see cref="Booking"></see>
         /// </summary>
-        /// <param name="id"><see cref="Booking.BookingId"></see> of exist <see cref="Booking"></see></param>
+        /// <param name="id"><see cref="Booking.Id"></see> of exist <see cref="Booking"></see></param>
         /// <param name="user">ID of <see cref="ApplicationUser"> which terminate booking</see></param>
         /// <returns></returns>
         public async Task Terminate(int id, string userId)

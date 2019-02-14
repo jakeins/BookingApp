@@ -1,9 +1,5 @@
-﻿using BookingApp.Exceptions;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookingApp.Helpers
 {
@@ -13,13 +9,20 @@ namespace BookingApp.Helpers
         /// Generate approriate exception from SqlException
         /// </summary>
         /// <param name="ex">SqlException</param>
-        /// <param name="Message">Addtitional message contactane to default</param>
-        public static void ReThrow(SqlException ex, string Message = "")
+        /// <param name="message">Addtitional message contactane to default</param>
+        public static void ReThrow(SqlException ex, string message = "")
         {
             switch (ex.Number)
             {
+                case 207:// Invalid column name
+                case 2812:// Could not find stored procedure
+                    throw new InvalidProgramException("Operation failed because of a program error. " + ex.Message, ex);
+
+                case 547:// Foreign key restriction
+                    throw new Exceptions.OperationRestrictedRelationException($"Cannot perform {(string.IsNullOrEmpty(message) ? "the" : message)} operation due to the related entries restriction", ex);
+
                 case 50001:
-                    var exceptionDescription = ex.Message + " " + Message;
+                    var exceptionDescription = ex.Message + " " + message;
                     switch (ex.State)
                     {
                         case 1:
@@ -30,6 +33,7 @@ namespace BookingApp.Helpers
                             throw new Exceptions.FieldValueTimeInvalidException(exceptionDescription);
                         case 2:
                         case 4:
+                        case 5:
                         case 6:
                             throw new Exceptions.RelatedEntryNotFoundException(exceptionDescription);
                         case 10:
@@ -43,10 +47,8 @@ namespace BookingApp.Helpers
                         case 16:
                             throw new Exceptions.FieldValueAbsurdException(exceptionDescription);
                         default:
-                            throw new InvalidProgramException("Uknown SQL Exception catched " + Message, ex);
+                            throw new InvalidProgramException("Uknown SQL Exception catched " + message, ex);
                     }
-                case 547:
-                    throw new Exceptions.OperationRestrictedException("Relation block this operation: " + Message);
                 default:
                     throw new InvalidProgramException("Uknown SQL Exception catched ", ex);
             }

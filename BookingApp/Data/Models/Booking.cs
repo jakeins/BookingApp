@@ -7,14 +7,14 @@ namespace BookingApp.Data.Models
     /// <summary>
     /// Single booking occasion of a resource by the user in the specific time range. 
     /// </summary>
-    public class Booking
+    public class Booking : IEntity<int>
     {
         /// <summary>
         /// Primary identity key for the booking.
         /// </summary>
         [Key]
         [Required]
-        public int BookingId { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Identifier of the resource being booked. Required.

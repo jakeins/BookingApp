@@ -44,15 +44,15 @@ BEGIN
 		Begin Transaction @TransactioName;
 		Begin
 			-- verify is booking exist
-			if Not Exists (Select Bookings.BookingId From Bookings Where Bookings.BookingId = @BookingID)
+			if Not Exists (Select Bookings.Id From Bookings Where Bookings.Id = @BookingID)
 				Throw 50001, 'Invalid BookingID',  12;
 			--verify that booking not terminated
-			If (Select Bookings.TerminationTime From Bookings Where Bookings.BookingId = @BookingID) Is Not Null
+			If (Select Bookings.TerminationTime From Bookings Where Bookings.Id = @BookingID) Is Not Null
 				Throw 50001, 'Can not edit termunated booking',  13;
 			-- set new Note, change UpdateTime to current time stamp and UserID to @EditUserID
 			Update Bookings
 			Set Bookings.Note = @Note, Bookings.UpdatedUserId = @EditUseID, Bookings.UpdatedTime = @BookingTimeStamp
-			Where Bookings.BookingId = @BookingID;
+			Where Bookings.Id = @BookingID;
 		End
 		-- commit transaction and execution of procedure
 		Commit Transaction @TransactioName;
@@ -76,10 +76,10 @@ BEGIN
 	Begin Transaction @TransactioName
 	Begin
 		-- verify that booking not terminated
-		If (Select Bookings.TerminationTime From Bookings Where Bookings.BookingId = @BookingID) Is Not Null
+		If (Select Bookings.TerminationTime From Bookings Where Bookings.Id = @BookingID) Is Not Null
 			Throw 50001, 'Can not edit termіnated booking',  13;
 		-- verify that booking not ended
-		If (Select Bookings.EndTime From Bookings Where Bookings.BookingId = @BookingID) <= @BookingTimeStamp
+		If (Select Bookings.EndTime From Bookings Where Bookings.Id = @BookingID) <= @BookingTimeStamp
 			Throw 50001, 'Can not edit ended booking',  14;
 		-- declare table for storing current booking data
 		Declare @BookingData Table(
@@ -101,14 +101,14 @@ BEGIN
 				Note
 			) 
 		Select 
-			Bookings.BookingId, 
+			Bookings.Id, 
 			Bookings.StartTime, 
 			Bookings.EndTime, 
 			Bookings.ResourceId,  
 			Bookings.CreatedUserId, 
 			Bookings.Note
 		From Bookings 
-		Where Bookings.BookingId = @BookingID;
+		Where Bookings.Id = @BookingID;
 		-- if data not exit than invalid @BookingID passed, throw exception
 		IF Not Exists (SELECT 1 FROM @BookingData)
 			Throw 50001, 'Invalid BookingID',  12;
@@ -137,9 +137,9 @@ BEGIN
 		Declare @Rule Table(MaxTime int, MinTime int, StepTime int, ServiceTime int, ReuseTimeout int, PreOrderTimeLimit int);
 		Insert Into @Rule
 			Select Rules.MaxTime, Rules.MinTime, Rules.StepTime, Rules.ServiceTime, Rules.ReuseTimeout, Rules.PreOrderTimeLimit
-				From Rules Where Rules.IsActive = 1 AND Rules.RuleId = 
+				From Rules Where Rules.IsActive = 1 AND Rules.Id = 
 					(Select Resources.RuleID From Resources 
-						Where Resources.IsActive = 1 AND Resources.ResourceId = (Select Top 1 ID From @BookingData));
+						Where Resources.IsActive = 1 AND Resources.Id = (Select Top 1 ID From @BookingData));
 
 		-- verify that rule is active
 		If Not Exists (Select 1 From @Rule)
@@ -182,7 +182,7 @@ BEGIN
 		-- calculate count bookings in same time using dbo.Booking.IsRangeAvailable function
 		-- notes: weigh that the creator is a customer	
 		Set @CountBooksInSameTime =(
-			Select Count(Bookings.BookingId)
+			Select Count(Bookings.Id)
 						From Bookings 
 						Where Bookings.ResourceId = (Select Top 1 ID From @BookingData) 
 						AND
@@ -211,7 +211,7 @@ BEGIN
 			Bookings.UpdatedTime = @BookingTimeStamp,
 			Bookings.Note = ISNULL(@Note, (SELECT Top 1 Note From @BookingData))
 		Where
-			Bookings.BookingId = (Select Top 1 ID From @BookingData) 
+			Bookings.Id = (Select Top 1 ID From @BookingData) 
 	End;
 	Commit Transaction @TransactioName;
 END
