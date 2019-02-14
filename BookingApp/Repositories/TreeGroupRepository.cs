@@ -98,54 +98,24 @@ namespace BookingApp.Repositories
             }
         }
 
-        private static int count = 0;
 
         public async Task<bool> IsCurrentChildAsync(int treeId, int parent)
         {
-            List<TreeGroup> listTree = await GetChildTree(treeId);
-            if (listTree != null)
+            TreeGroup tree = await GetChildTree(parent);
+            if (tree != null)
             {
-                count++;
-                foreach (TreeGroup tree in listTree)
-                {
-                    if (tree.TreeGroupId == parent)
-                    {
-                        return true;
-                    }
-                    return await IsCurrentChildAsync(tree.TreeGroupId, parent);
-                }
+                if (tree.ParentTreeGroupId == null)
+                    return false;
+                if (tree.ParentTreeGroupId == treeId)
+                    return true;
+                return await IsCurrentChildAsync(treeId, (int)tree.ParentTreeGroupId);
             }
-            return (count == 1) ? false : true;
+            return false;
         }
 
-
-            /*
-            public async Task<bool> IsCurrentChildAsync(int treeId, int parent)
-            {
-                List<TreeGroup> listTree = await GetChildTree(treeId);
-                if (listTree != null)
-                {
-                    foreach (TreeGroup tree in listTree)
-                    {
-                        if (tree.TreeGroupId == parent)
-                        {
-                            return true;
-                        }
-                        if (tree.ParentTreeGroupId == parent)
-                        {
-                            return true;
-                        }
-
-                        return await IsCurrentChildAsync(tree.TreeGroupId, parent);
-                    }
-                }
-                return false;
-            }
-            */
-
-        public async Task<List<TreeGroup>> GetChildTree(int parent)
+        public async Task<TreeGroup> GetChildTree(int id)
         {
-            return await context.TreeGroups.Where(t => t.ParentTreeGroupId == parent).ToListAsync();
+            return await context.TreeGroups.FirstOrDefaultAsync(t => t.TreeGroupId == id);
         }
 
     }
