@@ -45,7 +45,7 @@ BEGIN
 		UPDATE Bookings
 		Set Bookings.TerminationTime = @BookingTimeStamp,
 			Bookings.UpdatedUserId = @UseID
-		Where Bookings.BookingId = @BookingID;
+		Where Bookings.Id = @BookingID;
 	End;
 	-- commit transaction
 	Commit Transaction @TransactioName;

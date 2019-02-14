@@ -44,7 +44,7 @@ namespace BookingApp.Data
 
             if (isDbFresh)
             {
-                //await CreateStoreProceduresInDb();
+                await CreateStoreProceduresInDb();
 #if DEBUG
                 await SeedDummyData();
 #endif

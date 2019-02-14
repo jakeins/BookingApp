@@ -18,7 +18,7 @@ BEGIN
 		@maxTime = [Rule].[MaxTime],
 		@serviceMinutes = COALESCE([Rule].[ServiceTime],0)
 	FROM [Resources]
-	INNER JOIN [Rules] AS [Rule] ON [Resources].[Id] = [Rule].[Id]
+	INNER JOIN [Rules] AS [Rule] ON [Resources].[RuleId] = [Rule].[Id]
 	WHERE [Resources].[Id] = @resourceId
 
 	if @ruleId IS NULL

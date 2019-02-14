@@ -101,7 +101,7 @@ BEGIN
 				Note
 			) 
 		Select 
-			Bookings.BookingId, 
+			Bookings.Id, 
 			Bookings.StartTime, 
 			Bookings.EndTime, 
 			Bookings.ResourceId,  
