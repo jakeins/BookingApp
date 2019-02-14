@@ -33,20 +33,20 @@ BEGIN
 		Throw 50001, 'StartTime must be lower than EndTime', 3;
 	-- verify that resource exist
 	if not exists(Select Resources.RuleID From Resources 
-					Where Resources.ResourceId = @ResourceID)
+					Where Resources.Id = @ResourceID)
 		Throw 50001, 'Invalid resource id passed', 4;
 	-- verify that resource active
 	if not exists (Select Resources.RuleID From Resources 
-					Where Resources.ResourceId = @ResourceID AND Resources.IsActive = 1)
+					Where Resources.Id = @ResourceID AND Resources.IsActive = 1)
 		Throw 50002, 'Resorce is disable and can not book', 5;
 
 	-- get resource book rule
 	Declare @Rule Table(MaxTime int, MinTime int, StepTime int, ServiceTime int, ReuseTimeout int, PreOrderTimeLimit int);
 	Insert Into @Rule
 		Select Rules.MaxTime, Rules.MinTime, Rules.StepTime, Rules.ServiceTime, Rules.ReuseTimeout, Rules.PreOrderTimeLimit
-			From Rules Where Rules.IsActive = 1 AND Rules.RuleId = 
+			From Rules Where Rules.IsActive = 1 AND Rules.Id = 
 				(Select Resources.RuleID From Resources 
-					Where Resources.ResourceId = @ResourceID);
+					Where Resources.Id = @ResourceID);
 
 	-- verify that rule is active
 	If Not Exists (Select 1 From @Rule)
@@ -95,7 +95,7 @@ BEGIN
 		-- calculate count bookings in same time using dbo.Booking.IsRangeAvailable function
 		-- notes: weigh that the creator is a customer	
 		SET @CountBooksInSameTime =(
-			Select Count(Bookings.BookingId)
+			Select Count(Bookings.Id)
 						From Bookings 
 						Where Bookings.ResourceId = @ResourceID 
 						AND
@@ -115,7 +115,7 @@ BEGIN
 		Declare @InsertResult table(Id int);
 		-- insert booking to bookings table and get his id
 		Insert Into Bookings(ResourceID, StartTime, EndTime, CreatedTime, UpdatedTime, CreatedUserID, UpdatedUserID, Note)
-		Output INSERTED.BookingId Into @InsertResult
+		Output INSERTED.Id Into @InsertResult
 		Values(@ResourceID, @StartTime, @EndTime, @BookingTimeStamp, @BookingTimeStamp, @UserID, @UserID, @Note);
 		-- extract id from temp result table
 		Set @BookingID = (Select Top 1 Id From @InsertResult);
@@ -123,5 +123,5 @@ BEGIN
 	End;
 	Commit Transaction Booking;
 	-- return id of newly created booking
-	Return Select Top 1 * From Bookings Where Bookings.BookingId = @BookingID
+	Return Select Top 1 * From Bookings Where Bookings.Id = @BookingID
 END

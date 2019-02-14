@@ -30,15 +30,15 @@ BEGIN
 	Begin Transaction @TransactioName;
 	Begin
 		-- verify is booking exist
-		if Not Exists (Select Bookings.BookingId From Bookings Where Bookings.BookingId = @BookingID)
+		if Not Exists (Select Bookings.Id From Bookings Where Bookings.Id = @BookingID)
 			Throw 50001, 'Invalid BookingID',  12;
 
 		--verify that booking not terminated
-		If (Select Bookings.TerminationTime From Bookings Where Bookings.BookingId = @BookingID) Is Not Null
+		If (Select Bookings.TerminationTime From Bookings Where Bookings.Id = @BookingID) Is Not Null
 			Throw 50001, 'Can not terminate termіnated booking',  13;
 
 		-- verify that booking not ended
-		If (Select Bookings.EndTime From Bookings Where Bookings.BookingId = @BookingID) <= @BookingTimeStamp
+		If (Select Bookings.EndTime From Bookings Where Bookings.Id = @BookingID) <= @BookingTimeStamp
 			Throw 50001, 'Can not terminate ended booking',  13;
 
 		-- set terminate time for booking
