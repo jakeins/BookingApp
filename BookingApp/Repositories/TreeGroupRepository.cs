@@ -85,7 +85,7 @@ namespace BookingApp.Repositories
 
         public async Task SaveAsync() => await context.SaveChangesAsync();
 
-        //Write myself Exception !!!
+        
         public async Task IsNotParentAsync(int parentId, int treeId)
         {
             if (parentId == treeId)
@@ -98,27 +98,50 @@ namespace BookingApp.Repositories
             }
         }
 
+        private static int count = 0;
+
         public async Task<bool> IsCurrentChildAsync(int treeId, int parent)
         {
             List<TreeGroup> listTree = await GetChildTree(treeId);
             if (listTree != null)
             {
+                count++;
                 foreach (TreeGroup tree in listTree)
                 {
                     if (tree.TreeGroupId == parent)
                     {
                         return true;
                     }
-                    if (tree.ParentTreeGroupId == parent)
-                    {
-                        return true;
-                    }
-
                     return await IsCurrentChildAsync(tree.TreeGroupId, parent);
                 }
             }
-            return false;
+            return (count == 1) ? false : true;
         }
+
+
+            /*
+            public async Task<bool> IsCurrentChildAsync(int treeId, int parent)
+            {
+                List<TreeGroup> listTree = await GetChildTree(treeId);
+                if (listTree != null)
+                {
+                    foreach (TreeGroup tree in listTree)
+                    {
+                        if (tree.TreeGroupId == parent)
+                        {
+                            return true;
+                        }
+                        if (tree.ParentTreeGroupId == parent)
+                        {
+                            return true;
+                        }
+
+                        return await IsCurrentChildAsync(tree.TreeGroupId, parent);
+                    }
+                }
+                return false;
+            }
+            */
 
         public async Task<List<TreeGroup>> GetChildTree(int parent)
         {
