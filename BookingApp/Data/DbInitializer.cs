@@ -82,7 +82,8 @@ namespace BookingApp.Data
                 await userManager.AddToRoleAsync(superAdmin, RoleTypes.User);
 
             //unblocking and approving SuperAdmin
-            superAdmin.IsActive = superAdmin.IsApproved = true;
+            superAdmin.ApprovalStatus = true;
+            superAdmin.IsBlocked = false;
             await userManager.UpdateAsync(superAdmin);
         }
 
@@ -104,8 +105,16 @@ namespace BookingApp.Data
                 string name = dummyUsernames[i];
                 string password = name;// password == name
                 bool isAdmin = i < 2;// first two are admins
-                bool isApproved = i < 6;//first six are approved
-                bool isActive = i != 3;//active everyone except fourth
+
+                bool? approvalStatus = null; // newcomers
+
+                if (i < 6) // approves
+                    approvalStatus = true;
+
+                if (i == 3 || i == 7) // rejects
+                    approvalStatus = false;
+
+                bool isBlocked = (i == 3);//active everyone except fourth
                 string email = $"{name}@{(isAdmin ? RoleTypes.Admin : RoleTypes.User)}.cow".ToLower();//e.g. lion@admin.cow & camel@user.cow
 
                 var user = new ApplicationUser() { UserName = name, Email = email };
@@ -115,8 +124,8 @@ namespace BookingApp.Data
                 if (isAdmin)
                     await userManager.AddToRoleAsync(user, RoleTypes.Admin);
 
-                user.IsActive = isActive;
-                user.IsApproved = isApproved;
+                user.IsBlocked = isBlocked;
+                user.ApprovalStatus = approvalStatus;
                 await userManager.UpdateAsync(user);
 
                 users.Add(user.UserName, user);
