@@ -90,7 +90,17 @@ namespace BookingApp.Data
 
         async Task SeedDummyData()
         {
-            var dummyUsernames = new[] { "Tiger", "Elephant", "Lion", "Bear", "Cheetah", "Wolf", "Camel", "Eagle", "Mantis" };
+            var dummyUsernames = new[] {
+                "Tiger",// 0
+                "Elephant",// 1
+                "Lion",// 2
+                "Bear",// 3
+                "Cheetah",// 4
+                "Wolf",// 5
+                "Camel",// 6
+                "Eagle",// 7
+                "Mantis"// 8
+            };
 
             #region Dummy data source
             var rand = new Random();
@@ -104,17 +114,18 @@ namespace BookingApp.Data
             {
                 string name = dummyUsernames[i];
                 string password = name;// password == name
-                bool isAdmin = i < 2;// first two are admins
+                bool isAdmin = i < 2;// first two dummies are admins
 
-                bool? approvalStatus = null; // newcomers
+                bool? approvalStatus = null; // basically, all are newcomers
 
-                if (i < 6) // approves
+                if (i < 6) // approved all up to Wolf
                     approvalStatus = true;
 
-                if (i == 3 || i == 7) // rejects
+                if (i == 3 || i == 7) // rejects: Bear & Eagle
                     approvalStatus = false;
 
-                bool isBlocked = (i == 3);//active everyone except fourth
+                bool isBlocked = (i == 1 || i == 3 || i == 5);// block Elphant, Bear, Wolf
+
                 string email = $"{name}@{(isAdmin ? RoleTypes.Admin : RoleTypes.User)}.cow".ToLower();//e.g. lion@admin.cow & camel@user.cow
 
                 var user = new ApplicationUser() { UserName = name, Email = email };
