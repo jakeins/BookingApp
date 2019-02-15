@@ -15,49 +15,65 @@ namespace BookingApp.Services
         {
             this.userRepository = userRepository;
         }
+
         public async Task CreateUser(ApplicationUser user)
-        {
+        {     
             await userRepository.CreateAsync(user);
         }
+
         public async Task CreateUser(ApplicationUser user, string password)
         {
             await userRepository.CreateAsync(user, password);
         }
+
         public async Task DeleteUser(string id)
         {
             await userRepository.DeleteAsync(id);
         }
+
         public async Task DeleteUser(ApplicationUser user)
         {
             await userRepository.DeleteAsync(user);
         }
+
         public async Task UpdateUser(ApplicationUser user)
         {
             await userRepository.UpdateAsync(user);
         }
+
         public async Task<ApplicationUser> GetUserById(string id)
         {
             return await userRepository.GetAsync(id);
         }
+
         public async Task<ApplicationUser> GetUserByEmail(string email)
         {
             return await userRepository.GetUserByEmailAsync(email);
         }
+
         public async Task<IEnumerable<ApplicationUser>> GetUsersList()
         {
             return await userRepository.GetListAsync();
         }
+
         public async Task<bool> CheckPassword(ApplicationUser user, string password)
         {
             return await userRepository.CheckPassword(user, password);
         }
+
         public async Task<IList<string>> GetUserRoles(ApplicationUser user)
         {
             return await userRepository.GetUserRoles(user);
         }
+
         public async Task<IList<string>> GetUserRolesById(string userId)
         {
             return await userRepository.GetUserRolesById(userId);
+        }
+
+        public async Task ChangePassword(ApplicationUser user, string currentpassword, string newpassword)
+        {
+            await userRepository.ChangePassword(user,currentpassword,newpassword);
         }
     }
 }
