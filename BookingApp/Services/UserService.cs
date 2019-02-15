@@ -39,6 +39,10 @@ namespace BookingApp.Services
         {
             return await userRepository.GetAsync(id);
         }
+        public async Task<ApplicationUser> GetUserByEmail(string email)
+        {
+            return await userRepository.GetUserByEmailAsync(email);
+        }
         public async Task<IEnumerable<ApplicationUser>> GetUsersList()
         {
             return await userRepository.GetListAsync();

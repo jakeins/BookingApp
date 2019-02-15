@@ -8,13 +8,16 @@ namespace BookingApp.Data.Models
     public class ApplicationUser : IdentityUser
     {
         /// <summary>
-        /// Defines whether user is approved by the administrator after sign up. Is false by default at the persistent storage.
+        /// Defines whether user is approved by the administrator after sign up.
+        /// <para>Null:  Newcomer,</para>
+        /// <para>True:  Approved,</para>
+        /// <para>False: Rejected.</para>
         /// </summary>
-        public bool? IsApproved { get; set; }
+        public bool? ApprovalStatus { get; set; }
 
         /// <summary>
-        /// Provides ban or suspension functionality. Is true by default at the persistent storage.
+        /// Provides ban or suspension functionality.
         /// </summary>
-        public bool? IsActive { get; set; }
+        public bool? IsBlocked { get; set; }
     }
 }

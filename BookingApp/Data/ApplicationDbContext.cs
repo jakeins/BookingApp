@@ -31,7 +31,6 @@ namespace BookingApp.Data
                 entity.Property("UpdatedTime").HasDefaultValueSql("getdate()");
             }
 
-
             //setting default values
             var ruleEntity = modelBuilder.Entity<Rule>();
             ruleEntity.Property("MinTime").HasDefaultValue(1);
@@ -40,8 +39,9 @@ namespace BookingApp.Data
             ruleEntity.Property("ServiceTime").HasDefaultValue(0);
             ruleEntity.Property("ReuseTimeout").HasDefaultValue(0);
             ruleEntity.Property("PreOrderTimeLimit").HasDefaultValue(1440);
-            
-            modelBuilder.Entity<ApplicationUser>().Property("IsApproved").HasDefaultValue(false);
+
+            var userEntity = modelBuilder.Entity<ApplicationUser>();
+            userEntity.Property("IsBlocked").HasDefaultValue(false);
 
             //setting default active state for all applicable entities
             foreach (var entity in modelBuilder.Model.GetEntityTypes()
@@ -50,6 +50,8 @@ namespace BookingApp.Data
             {
                 entity.Property("IsActive").HasDefaultValue(true);
             }
+
+            
 
             //resetting the default Delete behavior from Cascade to Restricted (i.e. No Action)
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
