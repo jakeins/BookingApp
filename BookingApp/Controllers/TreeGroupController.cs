@@ -15,11 +15,10 @@ namespace BookingApp.Controllers
     /// <remarks>
     /// This class-controller can add, edit, delete and getting TreeGroup.
     /// </remarks>
-    public class TreeGroupController : Controller
+    public class TreeGroupController : EntityControllerBase
     {
         TreeGroupService service;
         readonly IMapper mapper;
-        string UserId => User.Claims.Single(c => c.Type == "uid").Value;
 
         public TreeGroupController(TreeGroupService s)
         {
@@ -44,8 +43,7 @@ namespace BookingApp.Controllers
         [Route("api/tree-group")]
         public async Task<IActionResult> Index()
         {
-            bool isAdmin = User.IsInRole(RoleTypes.Admin);
-            IEnumerable<TreeGroupBaseDto> trees = mapper.Map<IEnumerable<TreeGroupBaseDto>>(await service.GetTree(isAdmin));
+            IEnumerable<TreeGroupBaseDto> trees = mapper.Map<IEnumerable<TreeGroupBaseDto>>(await service.GetTree(IsAdmin));
             return Ok(trees);
         }
 
