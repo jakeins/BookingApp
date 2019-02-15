@@ -16,6 +16,7 @@ using BookingApp.Services;
 using BookingApp.Repositories;
 using System.Collections.Generic;
 using System.Linq;
+using BookingApp.Helpers;
 
 namespace BookingApp
 {
@@ -63,6 +64,12 @@ namespace BookingApp
             }).AddRoles<IdentityRole>()
               .AddEntityFrameworkStores<ApplicationDbContext>()
               .AddDefaultTokenProviders();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(PolicyTypes.NotBanned, policy =>
+                    policy.AddRequirements(new NotBannedRequirement()));
+            });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

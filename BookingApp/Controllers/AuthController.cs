@@ -17,15 +17,13 @@ namespace BookingApp.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> userManager;
         private readonly NotificationService notificationService;
         private readonly UserService userService;
         private readonly JwtService jwtService;
         private readonly IMapper mapper;
 
-        public AuthController(UserManager<ApplicationUser> userManager, NotificationService notificationService, UserService userService, JwtService jwtService)
+        public AuthController(NotificationService notificationService, UserService userService, JwtService jwtService)
         {
-            this.userManager = userManager;
             this.notificationService = notificationService;
             this.userService = userService;
             this.jwtService = jwtService;
@@ -45,11 +43,23 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = await userManager.FindByEmailAsync(dto.Email);
+            var user = await userService.GetUserByEmail(dto.Email);
 
-            if (user == null || !await userManager.CheckPasswordAsync(user, dto.Password))
+            if (user == null || !await userService.CheckPassword(user, dto.Password))
             {
                 ModelState.AddModelError("login_failure", "Invalid email or password");
+                return BadRequest(ModelState);
+            }
+
+            if (!(user.ApprovalStatus ?? false))
+            {
+                ModelState.AddModelError("login_failure", "Not approved yet");
+                return BadRequest(ModelState);
+            }
+
+            if (user.IsBlocked ?? false)
+            {
+                ModelState.AddModelError("login_failure", "Account has been blocked");
                 return BadRequest(ModelState);
             }
 
@@ -69,27 +79,9 @@ namespace BookingApp.Controllers
             }
 
             var user = mapper.Map<ApplicationUser>(dto);
-            var result = await userManager.CreateAsync(user, dto.Password);
-
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.TryAddModelError(error.Code, error.Description);
-                }
-                return BadRequest(ModelState);
-            }
-
-            result = await userManager.AddToRoleAsync(user, RoleTypes.User);
-
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.TryAddModelError(error.Code, error.Description);
-                }
-                return BadRequest(ModelState);
-            }
+            await userService.CreateUser(user, dto.Password);
+            
+            //await userService.AddToRoleAsync(user, RoleTypes.User);
 
             return Ok();
         }
