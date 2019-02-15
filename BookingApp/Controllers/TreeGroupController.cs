@@ -6,7 +6,6 @@ using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -43,8 +42,9 @@ namespace BookingApp.Controllers
         [Route("api/tree-group")]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<TreeGroupBaseDto> trees = mapper.Map<IEnumerable<TreeGroupBaseDto>>(await service.GetTree(IsAdmin));
-            return Ok(trees);
+            var models = (IsAdmin) ? await service.GetTreeGroups() : await service.GetTreeGroupsActive();
+            IEnumerable <TreeGroupBaseDto> dtos = mapper.Map<IEnumerable<TreeGroupBaseDto>>(models);
+            return Ok(dtos);
         }
 
         /// <summary>
@@ -62,14 +62,14 @@ namespace BookingApp.Controllers
         [Route("api/tree-group/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
-            TreeGroupBaseDto tree = mapper.Map<TreeGroupBaseDto>(await service.GetDetail(id));
-            return Ok(tree);
+            TreeGroupBaseDto treeGroupDto = mapper.Map<TreeGroupBaseDto>(await service.GetDetail(id));
+            return Ok(treeGroupDto);
         }
 
         /// <summary>
         /// Creating TreeGroup
         /// <summary>
-        /// <param name="tree">Tdo model TreeGroupCrUpDto.</param>
+        /// <param name="treeGroupDto">Tdo model TreeGroupCrUpDto.</param>
         /// <response code="201">Success created</response>
         /// <response code="400">Invalid argument</response>
         /// <response code="404">Resources or rule not found</response>
@@ -81,20 +81,25 @@ namespace BookingApp.Controllers
         [ProducesResponseType(500)]
         [Route("api/tree-group")]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Create([FromBody]TreeGroupMinimalDto tree)
+        public async Task<IActionResult> Create([FromBody]TreeGroupMinimalDto treeGroupDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            await service.Create(UserId, mapper.Map<TreeGroup>(tree));
-            return Ok("TreeGroup created successfully.");
+            var itemModel = mapper.Map<TreeGroup>(treeGroupDto);
+
+            await service.Create(UserId, itemModel);
+            return Created(
+                this.BaseApiUrl + "/" + itemModel.Id,
+                new { ResourceId = itemModel.Id }
+            );
         }
 
         /// <summary>
         /// Updating TreeGroup
         /// <summary>
-        /// <param name="tree">Tdo model TreeGroupCrUpDto.</param>
+        /// <param name="treeGroupDto">Tdo model TreeGroupCrUpDto.</param>
         /// <response code="200">Success update</response>
         /// <response code="401">Error. Only admin and owner can update booking data</response>
         /// <respomse code="404">Error. Non exist booking id passed</respomse>
@@ -106,13 +111,13 @@ namespace BookingApp.Controllers
         [ProducesResponseType(500)]
         [Route("api/tree-group/{id}")]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupMinimalDto tree)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupMinimalDto treeGroupDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             } 
-            await service.Update(id, UserId, mapper.Map<TreeGroup>(tree));
+            await service.Update(id, UserId, mapper.Map<TreeGroup>(treeGroupDto));
             return Ok("TreeGroup updated successfully.");  
         }
 

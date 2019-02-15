@@ -1,5 +1,4 @@
-﻿using BookingApp.Data;
-using BookingApp.Data.Models;
+﻿using BookingApp.Data.Models;
 using BookingApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -20,9 +19,14 @@ namespace BookingApp.Services
             userManager = um;
         }
 
-        public async Task<IEnumerable<TreeGroup>> GetTree(bool isAdmin)
+        public async Task<IEnumerable<TreeGroup>> GetTreeGroupsActive()
         {
-            return (isAdmin) ? await repository.GetListAsync() : await repository.GetListForUserAsync();
+            return await repository.ListActiveAsync();
+        }
+
+        public async Task<IEnumerable<TreeGroup>> GetTreeGroups()
+        {
+            return await repository.GetListAsync();
         }
 
         public async Task<TreeGroup> GetDetail(int id)
@@ -30,20 +34,20 @@ namespace BookingApp.Services
             return await repository.GetAsync(id);
         }
 
-        public async Task Create(string userId, TreeGroup tree)
+        public async Task Create(string userId, TreeGroup treeGroup)
         {
-            tree.UpdatedUserId = tree.CreatedUserId = userId;
-            await repository.CreateAsync(tree);
+            treeGroup.UpdatedUserId = treeGroup.CreatedUserId = userId;
+            await repository.CreateAsync(treeGroup);
         }
 
-        public async Task Update(int currentTreeGroupId, string userId, TreeGroup tree)
+        public async Task Update(int currentTreeGroupId, string userId, TreeGroup treeGroup)
         {
-            await repository.IsParentValidAsync(tree.ParentTreeGroupId, currentTreeGroupId);    
+            await repository.IsParentValidAsync(treeGroup.ParentTreeGroupId, currentTreeGroupId);    
 
-            tree.Id = currentTreeGroupId;
-            tree.UpdatedUserId = userId;
-            tree.UpdatedTime = DateTime.Now;
-            await repository.UpdateAsync(tree);
+            treeGroup.Id = currentTreeGroupId;
+            treeGroup.UpdatedUserId = userId;
+            treeGroup.UpdatedTime = DateTime.Now;
+            await repository.UpdateAsync(treeGroup);
         }
 
         public async Task Delete(int id) {
