@@ -89,5 +89,12 @@ namespace BookingApp.Controllers
 
             return Ok();
         }
+
+        /*[AllowAnonymous]
+        [HttpPost("forget")]
+        public async Task<IActionResult> Forget([FromBody]AuthMinimalDto dto)
+        {
+            
+        }*/
     }
 }
