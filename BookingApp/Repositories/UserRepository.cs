@@ -88,6 +88,12 @@ namespace BookingApp.Services
         {
             return await userManager.CheckPasswordAsync(user, password);
         }
+        public async Task ChangePassword(ApplicationUser user, string currentpassword,string newpassword)
+        {
+           IdentityResult result =  await userManager.ChangePasswordAsync(user, currentpassword,newpassword);
+           if(!result.Succeeded)
+                GetExceptionIdentityResult(result);
+        }
         private void GetExceptionIdentityResult(IdentityResult identityResult)
         {
             foreach (IdentityError item in identityResult.Errors)
