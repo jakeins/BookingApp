@@ -40,7 +40,7 @@ namespace BookingApp.Services
         {
             await repository.IsParentValidAsync(tree.ParentTreeGroupId, currentTreeGroupId);    
 
-            tree.TreeGroupId = currentTreeGroupId;
+            tree.Id = currentTreeGroupId;
             tree.UpdatedUserId = userId;
             tree.UpdatedTime = DateTime.Now;
             await repository.UpdateAsync(tree);
