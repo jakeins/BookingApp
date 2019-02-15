@@ -98,7 +98,7 @@ namespace BookingApp.Controllers
             var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(resources);
             return Ok(userResources);
         }
-        [HttpPut("api/user/changepassword/{userId}")]
+        [HttpPut("api/user/{userId}/change-password")]
         public async Task<IActionResult> ChangePassword([FromBody]UserPasswordChangeDTO userDTO,[FromRoute]string userId)
         {
             ApplicationUser user = await userService.GetUserById(userId);
