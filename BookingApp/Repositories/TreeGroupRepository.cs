@@ -2,81 +2,52 @@
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
 using BookingApp.Exceptions;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookingApp.Repositories
 {
-    public class TreeGroupRepository : IRepositoryAsync<TreeGroup, int>
+    public class TreeGroupRepository : ActivableEntityRepositoryBase<TreeGroup, int>, IRepositoryAsync<TreeGroup, int>
     {
-
-        ApplicationDbContext context;
-
-        public TreeGroupRepository(ApplicationDbContext c)
+        public TreeGroupRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
-            context = c;
         }
 
-        public async Task<IEnumerable<TreeGroup>> GetListAsync()
+        private async Task<TreeGroup> GetAsync(int? id)
         {
-            return await context.TreeGroups.ToListAsync();
-        }
-
-        public async Task<IEnumerable<TreeGroup>> GetListForUserAsync()
-        {
-            return await context.TreeGroups.Where(t => t.IsActive == true).ToListAsync();
-        }
-
-        public async Task<TreeGroup> GetAsync(int id)
-        {
-            TreeGroup tree = await context.TreeGroups.FirstOrDefaultAsync(t => t.Id == id);
-            if (tree != null)
+            if (id == null)
             {
-                return tree;
-            } else
+                throw NewNotFoundException;
+            }
+            else
             {
-                throw new CurrentEntryNotFoundException("This TreeGroup does't isset.");
+                return await base.GetAsync((int)id);
+            } 
+        }
+
+        public override async Task UpdateAsync(TreeGroup treeGroup)
+        {
+            await UpdateSelectiveAsync<TreeGroupUpdateSubsetDto>(treeGroup);
+        }
+
+        public async Task<bool> IsParentValidAsync(int? newParentId, int? currentId)
+        {
+            var currentParentId = newParentId;
+
+            while (true)
+            {
+                if (currentParentId == null)
+                    return true;
+                else
+                {
+                    if (currentParentId == currentId)
+                        throw new OperationRestrictedRelationException("Specified parent TreeGroup can't be set because this would cause circluar dependency");
+                    else
+                    {
+                        currentParentId = (await GetAsync(currentParentId)).ParentTreeGroupId;
+                    }
+                }
             }
         }
 
-        public async Task CreateAsync(TreeGroup tree)
-        {
-            context.TreeGroups.Add(tree);
-            await SaveAsync();
-        }
-
-        public async Task UpdateAsync(TreeGroup tree)
-        {
-            await GetAsync(tree.Id);
-            try
-            {
-                var propsToModify = typeof(TreeGroupMinimalDto).GetProperties()
-                    .Where(prop => prop.Name != "TreeGroupId")
-                    .Select(prop => prop.Name)
-                    .Concat(new[] { "UpdatedTime", "UpdatedUserId" });
-
-                foreach (var propName in propsToModify)
-                    context.Entry(tree).Property(propName).IsModified = true;
-
-                await SaveAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                Helpers.DbUpdateExceptionTranslator.ReThrow(ex, "TreeGroup Update");
-            }
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            TreeGroup tree = await GetAsync(id);
-            context.TreeGroups.Remove(tree);
-            await SaveAsync();
-            
-        }
-
-        public async Task SaveAsync() => await context.SaveChangesAsync();
-    }
+    }  
 }

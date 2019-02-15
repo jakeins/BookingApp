@@ -120,12 +120,12 @@ namespace BookingApp
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-            // specifying the Swagger JSON endpoint.
+            // specifying the Swagger JSON endpoint.            
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "BookingApp API V1");
                 c.RoutePrefix = string.Empty;
-            });
+            });            
             // Enable midleware for handling exceptions
             app.UseMiddleware<Middlewares.ErrorHandlingMiddleware>(env.IsDevelopment());
 
