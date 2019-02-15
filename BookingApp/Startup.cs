@@ -39,7 +39,9 @@ namespace BookingApp
             services.AddTransient<BookingsService>();
             services.AddTransient<BookingsRepository>();
 
-            services.AddScoped<JwtService>();
+            services.AddTransient<JwtService>();
+            services.AddTransient<MailMessageService>();
+            services.AddTransient<NotificationService>();
 
             services.AddTransient<UserService>();
             services.AddTransient<UserRepository>();

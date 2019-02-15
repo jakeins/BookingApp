@@ -18,12 +18,16 @@ namespace BookingApp.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly NotificationService notificationService;
+        private readonly UserService userService;
         private readonly JwtService jwtService;
         private readonly IMapper mapper;
 
-        public AuthController(UserManager<ApplicationUser> userManager, JwtService jwtService)
+        public AuthController(UserManager<ApplicationUser> userManager, NotificationService notificationService, UserService userService, JwtService jwtService)
         {
             this.userManager = userManager;
+            this.notificationService = notificationService;
+            this.userService = userService;
             this.jwtService = jwtService;
 
             mapper = new Mapper(new MapperConfiguration(cfg =>
@@ -90,11 +94,19 @@ namespace BookingApp.Controllers
             return Ok();
         }
 
-        /*[AllowAnonymous]
+        [AllowAnonymous]
         [HttpPost("forget")]
         public async Task<IActionResult> Forget([FromBody]AuthMinimalDto dto)
         {
-            
-        }*/
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await userService.GetUserByEmail(dto.Email);
+            await notificationService.ForgetPasswordMail(user);
+
+            return Ok();
+        }
     }
 }
