@@ -158,5 +158,11 @@ namespace BookingApp.Services
             if (!result.Succeeded)
                 GetExceptionIdentityResult(result);
         }
+        public async Task RessetUserPassword(ApplicationUser user,string token,string newPassword)
+        {
+            IdentityResult result = await userManager.ResetPasswordAsync(user, token, newPassword);
+            if (!result.Succeeded)
+                GetExceptionIdentityResult(result);
+        }
     }
 }

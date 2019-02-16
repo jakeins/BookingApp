@@ -95,5 +95,10 @@ namespace BookingApp.Services
         {
             await userRepository.RemoveUserRoles(user, roles);
         }
+
+        public async Task RessetUserPassword(ApplicationUser user, string token, string newPassword)
+        {
+            await userRepository.RessetUserPassword(user, token,newPassword);
+        }
     }
 }
