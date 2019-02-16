@@ -91,6 +91,7 @@ namespace BookingApp.Controllers
             var userRoles = await userService.GetUserRolesById(userId);
             return Ok(userRoles);
         }
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("api/user/{userId}/resources")]
         public async Task<IActionResult> GetResources([FromRoute]string userId)
         { 
@@ -98,12 +99,27 @@ namespace BookingApp.Controllers
             var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(resources);
             return Ok(userResources);
         }
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/change-password")]
         public async Task<IActionResult> ChangePassword([FromBody]UserPasswordChangeDTO userDTO,[FromRoute]string userId)
         {
             ApplicationUser user = await userService.GetUserById(userId);
             await userService.ChangePassword(user,userDTO.CurrentPassword,userDTO.NewPassword);
             return Ok("Password changed");
+        }
+        [HttpPut("api/user/{userId}/add-role/{role}")]
+        public async Task<IActionResult> AddRole([FromRoute]string userId,[FromRoute]string role)
+        {
+            ApplicationUser user = await userService.GetUserById(userId);
+            await userService.AddUserRoleAsync(user, role);
+            return Ok("Role added");
+        }
+        [HttpPut("api/user/{userId}/remove-role/{role}")]
+        public async Task<IActionResult> RemoveRole([FromRoute]string userId, [FromRoute]string role)
+        {
+            ApplicationUser user = await userService.GetUserById(userId);
+            await userService.RemoveUserRoleAsync(user, role);
+            return Ok("Role removed");
         }
     }
 }

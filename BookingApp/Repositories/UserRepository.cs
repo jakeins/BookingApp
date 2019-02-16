@@ -134,5 +134,29 @@ namespace BookingApp.Services
                 throw new NullReferenceException("Can not find user with this id");
             return await userManager.GetRolesAsync(applicationUser);
         }
+        public async Task AddUserRole(ApplicationUser user,string role)
+        {
+          IdentityResult result =   await userManager.AddToRoleAsync(user, role);
+            if (!result.Succeeded)
+                GetExceptionIdentityResult(result);
+        }
+        public async Task RemoveUserRole(ApplicationUser user, string role)
+        {
+           IdentityResult result = await userManager.RemoveFromRoleAsync(user, role);
+            if (!result.Succeeded)
+                GetExceptionIdentityResult(result);
+        }
+        public async Task AddUserRoles(ApplicationUser user, IEnumerable<string> roles)
+        {
+            IdentityResult result = await userManager.AddToRolesAsync(user, roles);
+            if (!result.Succeeded)
+                GetExceptionIdentityResult(result);
+        }
+        public async Task RemoveUserRoles(ApplicationUser user, IEnumerable<string> roles)
+        {
+            IdentityResult result = await userManager.RemoveFromRolesAsync(user, roles);
+            if (!result.Succeeded)
+                GetExceptionIdentityResult(result);
+        }
     }
 }

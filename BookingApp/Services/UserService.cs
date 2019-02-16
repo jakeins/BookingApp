@@ -75,5 +75,25 @@ namespace BookingApp.Services
         {
             await userRepository.ChangePassword(user,currentpassword,newpassword);
         }
+
+        public async Task AddUserRoleAsync(ApplicationUser user,string role)
+        {
+            await userRepository.AddUserRole(user,role);
+        }
+
+        public async Task RemoveUserRoleAsync(ApplicationUser user, string role)
+        {
+            await userRepository.RemoveUserRole(user, role);
+        }
+
+        public async Task AddUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles)
+        {
+            await userRepository.AddUserRoles(user, roles);
+        }
+
+        public async Task RemoveUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles)
+        {
+            await userRepository.RemoveUserRoles(user, roles);
+        }
     }
 }
