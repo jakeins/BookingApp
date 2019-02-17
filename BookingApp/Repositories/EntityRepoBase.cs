@@ -15,7 +15,7 @@ namespace BookingApp.Repositories
     /// <typeparam name="TEntity">Type of the entity.</typeparam>
     /// /// <typeparam name="TEntityKey">Type of the primary key (id).</typeparam>
     /// <typeparam name="TUserKey">Type of the primary key (id) of the related user.</typeparam>
-    public abstract class EntityRepositoryBase<TEntity, TEntityKey, TUserKey> 
+    public abstract class EntityRepoBase<TEntity, TEntityKey, TUserKey> 
         where TEntity : class, IEntity<TEntityKey, TUserKey>
         where TEntityKey : IEquatable<TEntityKey>
         where TUserKey : IEquatable<TUserKey>
@@ -40,7 +40,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Constructor.
         /// </summary>
-        public EntityRepositoryBase(ApplicationDbContext dbContext)
+        public EntityRepoBase(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
         }

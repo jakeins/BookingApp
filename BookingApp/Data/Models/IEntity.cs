@@ -3,10 +3,10 @@
 namespace BookingApp.Data.Models
 {
     /// <summary>
-    /// Defines basic set of entity properties. Requires the Entity Id Type as a type parameter.
+    /// Defines basic set of entity properties.
     /// </summary>
-    /// <typeparam name="TEntityKey">Type of the primary key (id).</typeparam>
-    /// <typeparam name="TUserKey">Type of the primary key (id) of the related user.</typeparam>
+    /// <typeparam name="TEntityKey">Type of the entity primary key (id).</typeparam>
+    /// <typeparam name="TUserKey">Type of the related user primary key (id).</typeparam>
     public interface IEntity<TEntityKey,TUserKey>
         where TEntityKey : IEquatable<TEntityKey>
         where TUserKey : IEquatable<TUserKey>

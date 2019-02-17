@@ -11,9 +11,9 @@ namespace BookingApp.Repositories
     /// <summary>
     /// Base class for repository that uses EF db context with Activable Entities.
     /// </summary>
-    public abstract class ActivableEntityRepositoryBase<TEntity, TEntityKey, TUserKey> 
-        : EntityRepositoryBase<TEntity, TEntityKey, TUserKey>
-        where TEntity : class, IActivableEntity<TEntityKey, TUserKey>
+    public abstract class ActEntityRepoBase<TEntity, TEntityKey, TUserKey> 
+        : EntityRepoBase<TEntity, TEntityKey, TUserKey>
+        where TEntity : class, IEntity<TEntityKey, TUserKey>, IActivable
         where TEntityKey : IEquatable<TEntityKey>
         where TUserKey : IEquatable<TUserKey>
     {
@@ -25,7 +25,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ActivableEntityRepositoryBase(ApplicationDbContext dbContext) : base(dbContext)
+        public ActEntityRepoBase(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 

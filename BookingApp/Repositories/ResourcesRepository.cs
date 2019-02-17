@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace BookingApp.Repositories
 {
     public class ResourcesRepository 
-        : ActivableEntityRepositoryBase<Resource, int, string>,
+        : ActEntityRepoBase<Resource, int, string>,
         IBasicRepositoryAsync<Resource, int>
     {
         public ResourcesRepository(ApplicationDbContext dbContext) : base(dbContext)

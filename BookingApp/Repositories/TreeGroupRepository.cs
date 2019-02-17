@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BookingApp.Repositories
 {
     public class TreeGroupRepository 
-        : ActivableEntityRepositoryBase<TreeGroup, int, string>, 
+        : ActEntityRepoBase<TreeGroup, int, string>, 
         IBasicRepositoryAsync<TreeGroup, int>
     {
         public TreeGroupRepository(ApplicationDbContext dbContext) : base(dbContext)
