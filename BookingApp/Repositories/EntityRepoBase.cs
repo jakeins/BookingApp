@@ -16,6 +16,7 @@ namespace BookingApp.Repositories
     /// /// <typeparam name="TEntityKey">Type of the primary key (id).</typeparam>
     /// <typeparam name="TUserKey">Type of the primary key (id) of the related user.</typeparam>
     public abstract class EntityRepoBase<TEntity, TEntityKey, TUserKey> 
+        : IBasicRepositoryAsync<TEntity, TEntityKey>
         where TEntity : class, IEntity<TEntityKey, TUserKey>
         where TEntityKey : IEquatable<TEntityKey>
         where TUserKey : IEquatable<TUserKey>
@@ -45,7 +46,7 @@ namespace BookingApp.Repositories
             this.dbContext = dbContext;
         }
 
-        #region Standard repository operations
+        #region Basic Repository
         /// <summary>
         /// List all entries.
         /// </summary>
@@ -114,7 +115,6 @@ namespace BookingApp.Repositories
         }
         #endregion
 
-        #region Extensions
         /// <summary>
         /// Updates only the properties, present in the provided <see cref="UpdatePropertiesAggregationType"/>.
         /// </summary>
@@ -150,7 +150,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Lists identifiers of all entities.
         /// </summary>
-        public async Task<IEnumerable<TEntityKey>> ListIDsAsync() => await Entities.Select(e => e.Id).ToListAsync();
+        public async Task<IEnumerable<TEntityKey>> ListKeysAsync() => await Entities.Select(e => e.Id).ToListAsync();
 
         /// <summary>
         /// Checks whether specified entity exists.
@@ -163,24 +163,38 @@ namespace BookingApp.Repositories
         public async Task<bool> ExistsAsync(TEntity entity) => await ExistsAsync(entity.Id);
 
         /// <summary>
+        /// Get total count of all entities.
+        /// </summary>
+        public async Task<int> CountAsync() => await Entities.CountAsync();
+
+        /// <summary>
         /// Lists all entities which have the specified user as a creator OR updater.
         /// </summary>
         public async Task<IEnumerable<TEntity>> ListByAssociatedUser(TUserKey userId)
         {
-            return await Entities.
-                Where(e => userId.Equals(e.CreatedUserId) || userId.Equals(e.UpdatedUserId))
+            return await Entities
+                .Where(e => userId.Equals(e.CreatedUserId) || userId.Equals(e.UpdatedUserId))
                 .ToListAsync();
         }
 
         /// <summary>
         /// Lists all entities which have the specified user as a creator.
         /// </summary>
-        public async Task<IEnumerable<TEntity>> ListByCreator(TUserKey userId) => await Entities.Where(e => userId.Equals(e.CreatedUserId)).ToListAsync();
+        public async Task<IEnumerable<TEntity>> ListByCreator(TUserKey userId)
+        {
+            return await Entities
+                .Where(e => userId.Equals(e.CreatedUserId))
+                .ToListAsync();
+        }
 
         /// <summary>
         /// Lists all entities which have the specified user as an updater.
         /// </summary>
-        public async Task<IEnumerable<TEntity>> ListByUpdater(TUserKey userId) => await Entities.Where(e => userId.Equals(e.UpdatedUserId)).ToListAsync();
-        #endregion
+        public async Task<IEnumerable<TEntity>> ListByUpdater(TUserKey userId)
+        {
+            return await Entities
+                .Where(e => userId.Equals(e.UpdatedUserId))
+                .ToListAsync();
+        }
     }
 }

@@ -50,6 +50,11 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Lists identifiers of all active entities.
         /// </summary>
-        public async Task<IEnumerable<TEntityKey>> ListActiveIDsAsync() => await ActiveEntities.Select(e => e.Id).ToListAsync();
+        public async Task<IEnumerable<TEntityKey>> ListActiveKeysAsync() => await ActiveEntities.Select(e => e.Id).ToListAsync();
+
+        /// <summary>
+        /// Get count of all active entities.
+        /// </summary>
+        public async Task<int> CountActiveAsync() => await ActiveEntities.CountAsync();
     }
 }

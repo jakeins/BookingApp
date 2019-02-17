@@ -47,7 +47,7 @@ namespace BookingApp.Services
         /// </summary>
         public async Task<IEnumerable<int>> ListIDs(bool includeIncativeResources)
         {
-            return includeIncativeResources ? await resourcesRepo.ListIDsAsync() : await resourcesRepo.ListActiveIDsAsync();
+            return includeIncativeResources ? await resourcesRepo.ListKeysAsync() : await resourcesRepo.ListActiveKeysAsync();
         }
 
         /// <summary>
