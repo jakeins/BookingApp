@@ -8,7 +8,7 @@ namespace BookingApp.Services
 {
     public class ResourcesService
     {
-        readonly ResourcesRepository resourcesRepo;
+        readonly IResourcesRepository resourcesRepo;
 
         public ResourcesService(ResourcesRepository resourcesRepo, ApplicationDbContext dbContext)
         {
@@ -47,13 +47,13 @@ namespace BookingApp.Services
         /// </summary>
         public async Task<IEnumerable<int>> ListIDs(bool includeIncativeResources)
         {
-            return includeIncativeResources ? await resourcesRepo.ListIDsAsync() : await resourcesRepo.ListActiveIDsAsync();
+            return includeIncativeResources ? await resourcesRepo.ListKeysAsync() : await resourcesRepo.ListActiveKeysAsync();
         }
 
         /// <summary>
         /// Lists all resources adhering to the specified rule. 
         /// </summary>
-        public async Task<IEnumerable<Resource>> ListByRule(int ruleId) => await resourcesRepo.ListByRuleAsync(ruleId);
+        public async Task<IEnumerable<Resource>> ListByRule(int ruleId) => await resourcesRepo.ListByRuleKeyAsync(ruleId);
 
         /// <summary>
         /// Lists all resources associated with the specified user. 
