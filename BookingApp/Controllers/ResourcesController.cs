@@ -44,7 +44,7 @@ namespace BookingApp.Controllers
         // Filtered access: Guest/Admin. 
         public async Task<IActionResult> List()
         {
-            var models = IsAdmin ? await resService.List() : await resService.ListActive();
+            var models = IsAdmin ? await resService.GetList() : await resService.ListActive();
             var dtos = dtoMapper.Map<IEnumerable<ResourceBriefDto>>(models);
             return Ok(dtos);
         }
@@ -55,7 +55,7 @@ namespace BookingApp.Controllers
         // Filtered access: Guest/Admin.
         public async Task<IActionResult> ListOccupancy()
         {
-            var idsList = await resService.ListIDs(includeIncativeResources: IsAdmin == true);
+            var idsList = await resService.ListKeys(includeIncativeResources: IsAdmin == true);
 
             var map = new Dictionary<int, double?>();
 
@@ -131,7 +131,7 @@ namespace BookingApp.Controllers
         {
             await AuthorizeForSingleResource(resourceId);
 
-            var resourceModel = await resService.Single(resourceId);
+            var resourceModel = await resService.Get(resourceId);
             var resourceDTO = dtoMapper.Map<ResourceMaxDto>(resourceModel);
             return Ok(resourceDTO);
         }

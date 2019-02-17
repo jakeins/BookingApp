@@ -8,18 +8,18 @@ namespace BookingApp.Services
 {
     public class ResourcesService
     {
-        readonly ResourcesRepository resourcesRepo;
+        readonly IResourcesRepository resourcesRepo;
 
         public ResourcesService(ResourcesRepository resourcesRepo, ApplicationDbContext dbContext)
         {
             this.resourcesRepo = resourcesRepo;
         }
 
-        public async Task<IEnumerable<Resource>> List() => await resourcesRepo.GetListAsync();
+        public async Task<IEnumerable<Resource>> GetList() => await resourcesRepo.GetListAsync();
 
         public async Task<IEnumerable<Resource>> ListActive() => await resourcesRepo.ListActiveAsync();
 
-        public async Task<Resource> Single(int resourceId) => await resourcesRepo.GetAsync(resourceId);
+        public async Task<Resource> Get(int resourceId) => await resourcesRepo.GetAsync(resourceId);
 
         public async Task Create(Resource resource) => await resourcesRepo.CreateAsync(resource);
 
@@ -29,14 +29,14 @@ namespace BookingApp.Services
 
         public async Task<bool> IsActive(int resourceId) => await resourcesRepo.IsActiveAsync(resourceId);
 
-        public async Task<IEnumerable<int>> ListIDs(bool includeIncativeResources) => await resourcesRepo.ListIDsAsync();
+        public async Task<IEnumerable<int>> ListKeys(bool includeIncativeResources) => await resourcesRepo.ListKeysAsync();
 
-        public async Task<IEnumerable<int>> ListActiveIDs(bool includeIncativeResources) => await resourcesRepo.ListActiveIDsAsync();
+        public async Task<IEnumerable<int>> ListActiveKeys(bool includeIncativeResources) => await resourcesRepo.ListActiveKeysAsync();
 
         /// <summary>
         /// Lists all resources adhering to the specified rule. 
         /// </summary>
-        public async Task<IEnumerable<Resource>> ListByRule(int ruleId) => await resourcesRepo.ListByRuleAsync(ruleId);
+        public async Task<IEnumerable<Resource>> ListByRuleKey(int ruleId) => await resourcesRepo.ListByRuleKeyAsync(ruleId);
 
         /// <summary>
         /// Lists all resources associated with the specified user. 
