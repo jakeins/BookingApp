@@ -7,7 +7,7 @@ namespace BookingApp.Data.Models
     /// <summary>
     /// Single booking occasion of a resource by the user in the specific time range. 
     /// </summary>
-    public class Booking : IEntity<int, string>
+    public class Booking : IEntity<int, ApplicationUser, string>
     {
         /// <summary>
         /// Primary identity key for the booking.

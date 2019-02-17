@@ -1,12 +1,12 @@
 ﻿namespace BookingApp.Data.Models
 {
     /// <summary>
-    /// Defines an entity that can be activated or deactivated.
+    /// Defines an object that exposes 3-state activation status.
     /// </summary>
     public interface IActivable
     {
         /// <summary>
-        /// Provides deactivation functionality.
+        /// 3-state activation status.
         /// </summary>
         bool? IsActive { get; set; }
     }

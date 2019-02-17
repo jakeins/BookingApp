@@ -8,7 +8,7 @@ namespace BookingApp.Data.Models
     /// <summary>
     /// Visual nesting entity, provides ability to *visually* group resources in a form of a nested set (tree).
     /// </summary>
-    public class TreeGroup : IEntity<int, string>, IActivable
+    public class TreeGroup : IEntity<int, ApplicationUser, string>, IActivable
     {
         /// <summary>
         /// Primary identity key for the tree group.

@@ -11,10 +11,16 @@ namespace BookingApp.Repositories
     /// <summary>
     /// Base class for repository that uses EF db context with Activable Entities.
     /// </summary>
-    public abstract class ActEntityRepoBase<TEntity, TEntityKey, TUserKey> 
-        : EntityRepoBase<TEntity, TEntityKey, TUserKey>
-        where TEntity : class, IEntity<TEntityKey, TUserKey>, IActivable
+    /// <typeparam name="TEntity">Type of the entity object.</typeparam>
+    /// <typeparam name="TEntityKey">Type of the primary id.</typeparam>
+    /// <typeparam name="TUserModel">Type of the related user object.</typeparam>
+    /// <typeparam name="TUserKey">Type of the primary id of the related user.</typeparam>
+    public abstract class ActEntityRepositoryBase<TEntity, TEntityKey, TUserModel, TUserKey>
+        : EntityRepositoryBase<TEntity, TEntityKey, TUserModel, TUserKey>,
+        IActEntityRepository<TEntity, TEntityKey, TUserModel, TUserKey>
+        where TEntity : class, IEntity<TEntityKey, TUserModel, TUserKey>, IActivable
         where TEntityKey : IEquatable<TEntityKey>
+        where TUserModel : class
         where TUserKey : IEquatable<TUserKey>
     {
         /// <summary>
@@ -25,13 +31,10 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ActEntityRepoBase(ApplicationDbContext dbContext) : base(dbContext)
+        public ActEntityRepositoryBase(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 
-        /// <summary>
-        /// Checks whether sepcified entity is active.
-        /// </summary>
         public async Task<bool> IsActiveAsync(TEntityKey id)
         {
             var result = await Entities.Where(e => e.Id.Equals(id)).Select(e => new { e.IsActive }).SingleOrDefaultAsync();
@@ -41,20 +44,9 @@ namespace BookingApp.Repositories
             else
                 throw NewNotFoundException;
         }
-
-        /// <summary>
-        /// Lists active entities.
-        /// </summary>
+        
         public async Task<IEnumerable<TEntity>> ListActiveAsync() => await ActiveEntities.ToListAsync();
-
-        /// <summary>
-        /// Lists identifiers of all active entities.
-        /// </summary>
-        public async Task<IEnumerable<TEntityKey>> ListActiveKeysAsync() => await ActiveEntities.Select(e => e.Id).ToListAsync();
-
-        /// <summary>
-        /// Get count of all active entities.
-        /// </summary>
+        public async Task<IEnumerable<TEntityKey>> ListActiveKeysAsync() => await ActiveEntities.Select(e => e.Id).ToListAsync();        
         public async Task<int> CountActiveAsync() => await ActiveEntities.CountAsync();
     }
 }

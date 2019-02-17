@@ -8,7 +8,7 @@ namespace BookingApp.Data.Models
     /// <summary>
     /// Valuable rentable entity that is being booked (and used) by the users over time.
     /// </summary>
-    public class Resource : IEntity<int, string>, IActivable
+    public class Resource : IEntity<int, ApplicationUser, string>, IActivable
     {
         /// <summary>
         /// Primary identity key for the resource.

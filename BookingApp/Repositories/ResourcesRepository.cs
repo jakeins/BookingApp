@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Repositories
 {
-    public class ResourcesRepository 
-        : ActEntityRepoBase<Resource, int, string>,
-        IBasicRepositoryAsync<Resource, int>
+    public class ResourcesRepository
+        : ActEntityRepositoryBase<Resource, int, ApplicationUser, string>,
+        IResourcesRepository
     {
         public ResourcesRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
@@ -18,9 +18,6 @@ namespace BookingApp.Repositories
 
         public override async Task UpdateAsync(Resource resource) => await UpdateSelectiveAsync<ResourceUpdateSubsetDto>(resource);
 
-        /// <summary>
-        /// Lists all resources adhering to the specified rule.
-        /// </summary>
-        public async Task<IEnumerable<Resource>> ListByRuleAsync(int ruleId) => await Entities.Where(r => r.RuleId == ruleId).ToListAsync();
+        public async Task<IEnumerable<Resource>> ListByRuleKeyAsync(int ruleId) => await Entities.Where(r => r.RuleId == ruleId).ToListAsync();
     }
 }

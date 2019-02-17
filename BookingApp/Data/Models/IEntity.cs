@@ -3,12 +3,14 @@
 namespace BookingApp.Data.Models
 {
     /// <summary>
-    /// Defines basic set of entity properties.
+    /// Entity that can be trackable thanks to having primary id and created/updated user/time.
     /// </summary>
     /// <typeparam name="TEntityKey">Type of the entity primary key (id).</typeparam>
+    /// <typeparam name="TUserModel">Type of the related user object.</typeparam>
     /// <typeparam name="TUserKey">Type of the related user primary key (id).</typeparam>
-    public interface IEntity<TEntityKey,TUserKey>
+    public interface IEntity<TEntityKey, TUserModel, TUserKey>
         where TEntityKey : IEquatable<TEntityKey>
+        where TUserModel : class
         where TUserKey : IEquatable<TUserKey>
     {
         /// <summary>
@@ -39,11 +41,11 @@ namespace BookingApp.Data.Models
         /// <summary>
         /// User who created current entry.
         /// </summary>
-        ApplicationUser Creator { get; set; }
+        TUserModel Creator { get; set; }
 
         /// <summary>
         /// User who updated current entry.
         /// </summary>
-        ApplicationUser Updater { get; set; }
+        TUserModel Updater { get; set; }
     }
 }
