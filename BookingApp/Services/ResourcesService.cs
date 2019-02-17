@@ -15,17 +15,9 @@ namespace BookingApp.Services
             this.resourcesRepo = resourcesRepo;
         }
 
-        #region CRUD operations
-        /// <summary>
-        /// List resources, all or just the active ones.
-        /// </summary>
-        public async Task<IEnumerable<Resource>> List(bool includeInactiveResources)
-        {
-            if(includeInactiveResources)
-                return await resourcesRepo.GetListAsync();
-            else
-                return await resourcesRepo.ListActiveAsync();
-        }
+        public async Task<IEnumerable<Resource>> List() => await resourcesRepo.GetListAsync();
+
+        public async Task<IEnumerable<Resource>> ListActive() => await resourcesRepo.ListActiveAsync();
 
         public async Task<Resource> Single(int resourceId) => await resourcesRepo.GetAsync(resourceId);
 
@@ -34,21 +26,12 @@ namespace BookingApp.Services
         public async Task Update(Resource resource) => await resourcesRepo.UpdateAsync(resource);
 
         public async Task Delete(int resourceId) => await resourcesRepo.DeleteAsync(resourceId);
-        #endregion
 
-        #region Extended operations
-        /// <summary>
-        /// Check whether specified resource is active.
-        /// </summary>
         public async Task<bool> IsActive(int resourceId) => await resourcesRepo.IsActiveAsync(resourceId);
 
-        /// <summary>
-        /// List identifiers of resources, all or just the active ones.
-        /// </summary>
-        public async Task<IEnumerable<int>> ListIDs(bool includeIncativeResources)
-        {
-            return includeIncativeResources ? await resourcesRepo.ListIDsAsync() : await resourcesRepo.ListActiveIDsAsync();
-        }
+        public async Task<IEnumerable<int>> ListIDs(bool includeIncativeResources) => await resourcesRepo.ListIDsAsync();
+
+        public async Task<IEnumerable<int>> ListActiveIDs(bool includeIncativeResources) => await resourcesRepo.ListActiveIDsAsync();
 
         /// <summary>
         /// Lists all resources adhering to the specified rule. 
@@ -59,6 +42,5 @@ namespace BookingApp.Services
         /// Lists all resources associated with the specified user. 
         /// </summary>
         public async Task<IEnumerable<Resource>> ListByAssociatedUser(string userId) => await resourcesRepo.ListByAssociatedUser(userId);
-        #endregion
     }
 }

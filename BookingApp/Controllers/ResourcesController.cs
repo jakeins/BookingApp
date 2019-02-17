@@ -44,7 +44,7 @@ namespace BookingApp.Controllers
         // Filtered access: Guest/Admin. 
         public async Task<IActionResult> List()
         {
-            var models = await resService.List(includeInactiveResources: IsAdmin == true);
+            var models = IsAdmin ? await resService.List() : await resService.ListActive();
             var dtos = dtoMapper.Map<IEnumerable<ResourceBriefDto>>(models);
             return Ok(dtos);
         }
@@ -78,6 +78,8 @@ namespace BookingApp.Controllers
 
         [HttpGet("{resourceId}/bookings")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         // Filtered access: Guest/Owner/Admin.
         public async Task<IActionResult> ListRelatedBookings([FromRoute] int resourceId)
@@ -89,7 +91,9 @@ namespace BookingApp.Controllers
             IEnumerable<object> dtos;
 
             if (IsAdmin)
+            {
                 dtos = dtoMapper.Map<IEnumerable<BookingAdminDTO>>(models);
+            }
             else
             {
                 if (IsUser && models.Any(b => b.CreatedUserId == UserId))
@@ -221,7 +225,9 @@ namespace BookingApp.Controllers
         CurrentEntryNotFoundException NewNotFoundException => new CurrentEntryNotFoundException("Specified resource not found");
 
         /// <summary>
-        /// Gateway for the single resource. Throws Not Found if current user hasn't enough rights for viewing the specified resource.
+        /// Gateway for the single resource. 
+        /// Throws Not Found if current user hasn't enough rights for viewing the specified resource.
+        /// Throws Not Found if current resource not found.
         /// </summary>
         async Task AuthorizeForSingleResource(int resourceId)
         {
