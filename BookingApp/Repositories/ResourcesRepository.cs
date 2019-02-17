@@ -8,24 +8,16 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Repositories
 {
-    public class ResourcesRepository : ActivableEntityRepositoryBase<Resource, int>, IRepositoryAsync<Resource, int>
+    public class ResourcesRepository
+        : ActEntityRepositoryBase<Resource, int, ApplicationUser, string>,
+        IResourcesRepository
     {
         public ResourcesRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 
-        #region Standard repository operations
-        public override async Task UpdateAsync(Resource resource)
-        {
-            await UpdateSelectiveAsync<ResourceUpdateSubsetDto>(resource);
-        }
-        #endregion
+        public override async Task UpdateAsync(Resource resource) => await UpdateSelectiveAsync<ResourceUpdateSubsetDto>(resource);
 
-        #region Extensions
-        /// <summary>
-        /// Lists all resources adhering to the specified rule.
-        /// </summary>
-        public async Task<IEnumerable<Resource>> ListByRuleAsync(int ruleId) => await Entities.Where(r => r.RuleId == ruleId).ToListAsync();
-        #endregion
+        public async Task<IEnumerable<Resource>> ListByRuleKeyAsync(int ruleId) => await Entities.Where(r => r.RuleId == ruleId).ToListAsync();
     }
 }
