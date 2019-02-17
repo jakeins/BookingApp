@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookingApp.Repositories
 {
-    public class BookingsRepository : IRepositoryAsync<Booking, int>
+    public class BookingsRepository : IBasicRepositoryAsync<Booking, int>
     {
         Data.ApplicationDbContext dbContext;
 
@@ -40,7 +40,7 @@ namespace BookingApp.Repositories
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        async Task IRepositoryAsync<Booking, int>.CreateAsync(Booking model)
+        async Task IBasicRepositoryAsync<Booking, int>.CreateAsync(Booking model)
         {
             try
             {

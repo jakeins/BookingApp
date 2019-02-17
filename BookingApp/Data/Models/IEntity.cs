@@ -5,12 +5,16 @@ namespace BookingApp.Data.Models
     /// <summary>
     /// Defines basic set of entity properties. Requires the Entity Id Type as a type parameter.
     /// </summary>
-    public interface IEntity<EntityIdType>
+    /// <typeparam name="TEntityKey">Type of the primary key (id).</typeparam>
+    /// <typeparam name="TUserKey">Type of the primary key (id) of the related user.</typeparam>
+    public interface IEntity<TEntityKey,TUserKey>
+        where TEntityKey : IEquatable<TEntityKey>
+        where TUserKey : IEquatable<TUserKey>
     {
         /// <summary>
         /// Id of the enitity.
         /// </summary>
-        EntityIdType Id { get; set; }
+        TEntityKey Id { get; set; }
 
         /// <summary>
         /// Time of the current entry creation. Gets set automatically by the persistent storage.
@@ -25,12 +29,12 @@ namespace BookingApp.Data.Models
         /// <summary>
         /// Identifier of the user who created current entry.
         /// </summary>
-        string CreatedUserId { get; set; }
+        TUserKey CreatedUserId { get; set; }
 
         /// <summary>
         /// Identifier of the user who updated current entry.
         /// </summary>
-        string UpdatedUserId { get; set; }
+        TUserKey UpdatedUserId { get; set; }
 
         /// <summary>
         /// User who created current entry.

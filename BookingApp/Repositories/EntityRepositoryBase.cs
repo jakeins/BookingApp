@@ -10,23 +10,27 @@ using System.Threading.Tasks;
 namespace BookingApp.Repositories
 {
     /// <summary>
-    /// Base class for repository that uses EF db context and users of a string-type id (GUID).
+    /// Base class for repository that uses EF.
     /// </summary>
-    public abstract class EntityRepositoryBase<EntityType, EntityIdType> 
-        where EntityType : class, IEntity<EntityIdType>
-        where EntityIdType : IEquatable<EntityIdType>
+    /// <typeparam name="TEntity">Type of the entity.</typeparam>
+    /// /// <typeparam name="TEntityKey">Type of the primary key (id).</typeparam>
+    /// <typeparam name="TUserKey">Type of the primary key (id) of the related user.</typeparam>
+    public abstract class EntityRepositoryBase<TEntity, TEntityKey, TUserKey> 
+        where TEntity : class, IEntity<TEntityKey, TUserKey>
+        where TEntityKey : IEquatable<TEntityKey>
+        where TUserKey : IEquatable<TUserKey>
     {
         protected ApplicationDbContext dbContext;
 
         /// <summary>
         /// Name of the current entity, default is the model class name.
         /// </summary>
-        protected string EntityName = typeof(EntityType).Name;
+        protected string EntityName = typeof(TEntity).Name;
 
         /// <summary>
         /// Shorthand DbSet for Entities.
         /// </summary>
-        protected DbSet<EntityType> Entities => dbContext.Set<EntityType>();
+        protected DbSet<TEntity> Entities => dbContext.Set<TEntity>();
 
         /// <summary>
         /// Not found exception factory
@@ -45,14 +49,14 @@ namespace BookingApp.Repositories
         /// <summary>
         /// List all entries.
         /// </summary>
-        public virtual async Task<IEnumerable<EntityType>> GetListAsync() => await Entities.ToListAsync();
+        public virtual async Task<IEnumerable<TEntity>> GetListAsync() => await Entities.ToListAsync();
 
         /// <summary>
         /// Gets specified entry.
         /// </summary>
-        public virtual async Task<EntityType> GetAsync(EntityIdType id)
+        public virtual async Task<TEntity> GetAsync(TEntityKey id)
         {
-            if (await Entities.SingleOrDefaultAsync(e => e.Id.Equals(id)) is EntityType entity)
+            if (await Entities.SingleOrDefaultAsync(e => e.Id.Equals(id)) is TEntity entity)
                 return entity;
             else
                 throw NewNotFoundException;
@@ -61,7 +65,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Creates specified enitity in the storage.
         /// </summary>
-        public virtual async Task CreateAsync(EntityType entity)
+        public virtual async Task CreateAsync(TEntity entity)
         {
             Entities.Add(entity);
             await SaveVerboseAsync(EntityName + " Creation");
@@ -70,7 +74,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Rewrites storage entity entirely with the provided model.
         /// </summary>
-        public virtual async Task UpdateAsync(EntityType entity)
+        public virtual async Task UpdateAsync(TEntity entity)
         {
             if (!await ExistsAsync(entity))
                 throw NewNotFoundException;
@@ -82,9 +86,9 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Deletes specified entity.
         /// </summary>
-        public virtual async Task DeleteAsync(EntityIdType id)
+        public virtual async Task DeleteAsync(TEntityKey id)
         {
-            if (await GetAsync(id) is EntityType entity)
+            if (await GetAsync(id) is TEntity entity)
             {
                 Entities.Remove(entity);
 
@@ -115,7 +119,7 @@ namespace BookingApp.Repositories
         /// Updates only the properties, present in the provided <see cref="UpdatePropertiesAggregationType"/>.
         /// </summary>
         /// <typeparam name="UpdatePropertiesAggregationType">The class having all properties which should be updated.</typeparam>
-        public async Task UpdateSelectiveAsync<UpdatePropertiesAggregationType>(EntityType entity)
+        public async Task UpdateSelectiveAsync<UpdatePropertiesAggregationType>(TEntity entity)
         {
             if (!await ExistsAsync(entity))
                 throw NewNotFoundException;
@@ -146,37 +150,37 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Lists identifiers of all entities.
         /// </summary>
-        public async Task<IEnumerable<EntityIdType>> ListIDsAsync() => await Entities.Select(e => e.Id).ToListAsync();
+        public async Task<IEnumerable<TEntityKey>> ListIDsAsync() => await Entities.Select(e => e.Id).ToListAsync();
 
         /// <summary>
         /// Checks whether specified entity exists.
         /// </summary>
-        public async Task<bool> ExistsAsync(EntityIdType id) => await Entities.AnyAsync(e => e.Id.Equals(id));
+        public async Task<bool> ExistsAsync(TEntityKey id) => await Entities.AnyAsync(e => e.Id.Equals(id));
 
         /// <summary>
         /// Checks whether specified entity exists.
         /// </summary>
-        public async Task<bool> ExistsAsync(EntityType entity) => await ExistsAsync(entity.Id);
+        public async Task<bool> ExistsAsync(TEntity entity) => await ExistsAsync(entity.Id);
 
         /// <summary>
         /// Lists all entities which have the specified user as a creator OR updater.
         /// </summary>
-        public async Task<IEnumerable<EntityType>> ListByAssociatedUser(string userId)
+        public async Task<IEnumerable<TEntity>> ListByAssociatedUser(TUserKey userId)
         {
             return await Entities.
-                Where(e => e.CreatedUserId == userId || e.UpdatedUserId == userId).
-                ToListAsync();
+                Where(e => userId.Equals(e.CreatedUserId) || userId.Equals(e.UpdatedUserId))
+                .ToListAsync();
         }
 
         /// <summary>
         /// Lists all entities which have the specified user as a creator.
         /// </summary>
-        public async Task<IEnumerable<EntityType>> ListByCreator(string userId) => await Entities.Where(e => e.CreatedUserId == userId).ToListAsync();
+        public async Task<IEnumerable<TEntity>> ListByCreator(TUserKey userId) => await Entities.Where(e => userId.Equals(e.CreatedUserId)).ToListAsync();
 
         /// <summary>
         /// Lists all entities which have the specified user as an updater.
         /// </summary>
-        public async Task<IEnumerable<EntityType>> ListByUpdater(string userId) => await Entities.Where(e => e.UpdatedUserId == userId).ToListAsync();
+        public async Task<IEnumerable<TEntity>> ListByUpdater(TUserKey userId) => await Entities.Where(e => userId.Equals(e.UpdatedUserId)).ToListAsync();
         #endregion
     }
 }

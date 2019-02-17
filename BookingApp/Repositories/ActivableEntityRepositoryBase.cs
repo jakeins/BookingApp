@@ -11,14 +11,16 @@ namespace BookingApp.Repositories
     /// <summary>
     /// Base class for repository that uses EF db context with Activable Entities.
     /// </summary>
-    public abstract class ActivableEntityRepositoryBase<EntityType, EntityIdType> : EntityRepositoryBase<EntityType, EntityIdType>
-        where EntityType : class, IActivableEntity<EntityIdType>
-        where EntityIdType : IEquatable<EntityIdType>
+    public abstract class ActivableEntityRepositoryBase<TEntity, TEntityKey, TUserKey> 
+        : EntityRepositoryBase<TEntity, TEntityKey, TUserKey>
+        where TEntity : class, IActivableEntity<TEntityKey, TUserKey>
+        where TEntityKey : IEquatable<TEntityKey>
+        where TUserKey : IEquatable<TUserKey>
     {
         /// <summary>
         /// IQueryable shorthand for only active Entities.
         /// </summary>
-        protected IQueryable<EntityType> ActiveEntities => Entities.Where(e => e.IsActive == true);
+        protected IQueryable<TEntity> ActiveEntities => Entities.Where(e => e.IsActive == true);
 
         /// <summary>
         /// Constructor.
@@ -30,7 +32,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Checks whether sepcified entity is active.
         /// </summary>
-        public async Task<bool> IsActiveAsync(EntityIdType id)
+        public async Task<bool> IsActiveAsync(TEntityKey id)
         {
             var result = await Entities.Where(e => e.Id.Equals(id)).Select(e => new { e.IsActive }).SingleOrDefaultAsync();
 
@@ -43,11 +45,11 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Lists active entities.
         /// </summary>
-        public async Task<IEnumerable<EntityType>> ListActiveAsync() => await ActiveEntities.ToListAsync();
+        public async Task<IEnumerable<TEntity>> ListActiveAsync() => await ActiveEntities.ToListAsync();
 
         /// <summary>
         /// Lists identifiers of all active entities.
         /// </summary>
-        public async Task<IEnumerable<EntityIdType>> ListActiveIDsAsync() => await ActiveEntities.Select(e => e.Id).ToListAsync();
+        public async Task<IEnumerable<TEntityKey>> ListActiveIDsAsync() => await ActiveEntities.Select(e => e.Id).ToListAsync();
     }
 }
