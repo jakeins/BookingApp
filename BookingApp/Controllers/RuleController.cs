@@ -26,7 +26,6 @@ namespace BookingApp.Controllers
 
             mapper = new Mapper(new MapperConfiguration(c =>
             {
-                c.CreateMap<Rule, RuleMinimalDTO>().ReverseMap();
                 c.CreateMap<Rule, RuleBasicDTO>().ReverseMap();
                 c.CreateMap<Rule, RuleDetailedDTO>();
             }));
@@ -39,12 +38,12 @@ namespace BookingApp.Controllers
 
             if (IsAdmin)
             {
-                var dtos = mapper.Map<IEnumerable<RuleBasicDTO>>(rules);
+                var dtos = mapper.Map<IEnumerable<RuleDetailedDTO>>(rules);
                 return Ok(dtos);
             }
             else
             {
-                var dtos = mapper.Map<IEnumerable<RuleMinimalDTO>>(rules);
+                var dtos = mapper.Map<IEnumerable<RuleBasicDTO>>(rules);
                 return Ok(dtos);
             }
         }
@@ -62,7 +61,7 @@ namespace BookingApp.Controllers
             }
             if (IsUser)
             {
-                var dtor = mapper.Map<RuleMinimalDTO>(rule);
+                var dtor = mapper.Map<RuleBasicDTO>(rule);
                 return Ok(dtor);
             }
             else return BadRequest();
