@@ -7,7 +7,7 @@ namespace BookingApp.Data.Models
     /// <summary>
     /// Resource booking policy.
     /// </summary>
-    public class Rule : IActivableEntity<int>
+    public class Rule : IEntity<int, ApplicationUser, string>, IActivable
     {
         /// <summary>
         /// Primary identity key for the rule.
