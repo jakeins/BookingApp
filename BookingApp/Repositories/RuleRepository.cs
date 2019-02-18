@@ -2,11 +2,11 @@
 using BookingApp.Data.Models;
 using BookingApp.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using BookingApp.Helpers;
 
 namespace BookingApp.Repositories
 {
@@ -17,7 +17,7 @@ namespace BookingApp.Repositories
         public RuleRepository(ApplicationDbContext db)
         {
             _db = db;
-        }                                                               //Change exception types
+        }                                                               
 
         public async Task CreateAsync(Rule rule)
         {
@@ -26,9 +26,9 @@ namespace BookingApp.Repositories
                 _db.Rules.Add(rule);
                 await SaveAsync();
             }
-            catch (OperationFailedException e)
+            catch (SqlException e)
             {
-                throw e;
+                SqlExceptionTranslator.ReThrow(e, "on creating rule");
             }
         }
 
@@ -45,7 +45,7 @@ namespace BookingApp.Repositories
                 }
                 catch (SqlException e)
                 {
-                    Helpers.SqlExceptionTranslator.ReThrow(e, "on deleting rule");
+                    SqlExceptionTranslator.ReThrow(e, "on deleting rule");
                 }
             }
             else throw new EntryNotFoundException();
@@ -65,7 +65,7 @@ namespace BookingApp.Repositories
                 }
                 catch (SqlException e)
                 {
-                    Helpers.SqlExceptionTranslator.ReThrow(e, "on updating rule");
+                    SqlExceptionTranslator.ReThrow(e, "on updating rule");
                 }
             }
             else throw new EntryNotFoundException();
@@ -79,8 +79,7 @@ namespace BookingApp.Repositories
         public async Task<Rule> GetAsync(int id)
         {
 
-            Rule rule = _db.Rules.FirstOrDefault(p => p.Id == id);
-            //await SaveAsync();
+            Rule rule = await _db.Rules.FirstOrDefaultAsync(p => p.Id == id);
             if (rule != null)
                 return rule;
             else
@@ -96,7 +95,7 @@ namespace BookingApp.Repositories
             }
             catch (DbUpdateException dbuException)
             {
-                Helpers.DbUpdateExceptionTranslator.ReThrow(dbuException);
+                DbUpdateExceptionTranslator.ReThrow(dbuException, "on updating Rules");               
             }
         }
 

@@ -76,7 +76,7 @@ namespace BookingApp.Controllers
             {
                 return BadRequest(ModelState);
             }
-            //make normal 'id generator'
+
             var rule = mapper.Map<Rule>(dtos);
             rule.CreatedUserId = rule.UpdatedUserId = UserId;                         //fix time
             rule.CreatedTime = rule.UpdatedTime = DateTime.Now;
