@@ -26,7 +26,7 @@ namespace BookingApp.Controllers
             this.resourcesService = resourcesService;
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap();
+                cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap().ForMember(dest => dest.PasswordHash,opt => opt.MapFrom(src => src.Password));
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
                 cfg.CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
                 cfg.CreateMap<Resource, ResourceMaxDto>().ReverseMap();
@@ -39,7 +39,7 @@ namespace BookingApp.Controllers
             if (ModelState.IsValid)
             {
                 ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
-                await userService.CreateUser(appUser);
+                await userService.CreateUser(appUser,user.Password);
                 return Ok("User created");
             }
             return BadRequest("Error valid");
@@ -77,7 +77,7 @@ namespace BookingApp.Controllers
         }
         //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}")]
-        public async Task<IActionResult> UpdateUser(UserUpdateDTO user,string userId)
+        public async Task<IActionResult> UpdateUser([FromBody]UserUpdateDTO user,string userId)
         {
             ApplicationUser appuser = await userService.GetUserById(userId);
             mapper.Map<UserUpdateDTO, ApplicationUser>(user,appuser);    
@@ -97,6 +97,13 @@ namespace BookingApp.Controllers
             var resources = await resourcesService.ListByAssociatedUser(userId);
             var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(resources);
             return Ok(userResources);
+        }
+        [HttpPut("api/user/{userId}/change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody]UserPasswordChangeDTO userDTO,[FromRoute]string userId)
+        {
+            ApplicationUser user = await userService.GetUserById(userId);
+            await userService.ChangePassword(user,userDTO.CurrentPassword,userDTO.NewPassword);
+            return Ok("Password changed");
         }
     }
 }

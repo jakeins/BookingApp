@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace BookingApp.Services
 {
 
-    public class UserRepository : IRepositoryAsync<ApplicationUser, string>
+    public class UserRepository : IBasicRepositoryAsync<ApplicationUser, string>
     {
         private UserManager<ApplicationUser> userManager;
 
@@ -87,6 +87,12 @@ namespace BookingApp.Services
         public async Task<bool> CheckPassword(ApplicationUser user, string password)
         {
             return await userManager.CheckPasswordAsync(user, password);
+        }
+        public async Task ChangePassword(ApplicationUser user, string currentpassword,string newpassword)
+        {
+           IdentityResult result =  await userManager.ChangePasswordAsync(user, currentpassword,newpassword);
+           if(!result.Succeeded)
+                GetExceptionIdentityResult(result);
         }
         private void GetExceptionIdentityResult(IdentityResult identityResult)
         {
