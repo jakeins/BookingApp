@@ -10,12 +10,12 @@ namespace BookingApp.Services
 {
     public class NotificationService
     {
-        private readonly MailMessageService mailService;
+        private readonly IMessageService messageService;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public NotificationService(MailMessageService mailService, UserManager<ApplicationUser> userManager)
+        public NotificationService(IMessageService messageService, UserManager<ApplicationUser> userManager)
         {
-            this.mailService = mailService;
+            this.messageService = messageService;
             this.userManager = userManager;
         }
 
@@ -26,11 +26,12 @@ namespace BookingApp.Services
             var body = $"Click to <a href=\"{callbackUrl}\">link</a>, if you want restore your password";
             var message = new Message
             {
-                Destination = user.Email,
+                //Destination = user.Email,
+                Destination = "zalupa.kentavra3@gmail.com",
                 Subject = "Forget Password",
                 Body = body
             };
-            await mailService.SendAsync(message);
+            await messageService.SendAsync(message);
         }
     }
 }

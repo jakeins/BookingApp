@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookingApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {

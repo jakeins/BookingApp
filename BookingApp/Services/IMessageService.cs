@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-    interface IMessageService
+    public interface IMessageService
     {
         Task SendAsync(Message message);
     }
