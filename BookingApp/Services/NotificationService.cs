@@ -26,8 +26,7 @@ namespace BookingApp.Services
             var body = $"Click to <a href=\"{callbackUrl}\">link</a>, if you want restore your password";
             var message = new Message
             {
-                //Destination = user.Email,
-                Destination = "zalupa.kentavra3@gmail.com",
+                Destination = user.Email,
                 Subject = "Forget Password",
                 Body = body
             };
