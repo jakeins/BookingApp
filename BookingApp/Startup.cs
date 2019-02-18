@@ -37,7 +37,7 @@ namespace BookingApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<ResourcesService>();
-            services.AddTransient<ResourcesRepository>();
+            services.AddTransient<IResourcesRepository,ResourcesRepository>();
             services.AddTransient<TreeGroupService>();
             services.AddTransient<TreeGroupRepository>();
 
