@@ -18,16 +18,19 @@ namespace BookingApp.Controllers
     public class RuleController : EntityControllerBase
     {
         RuleService _ruleService;
+        ResourcesService _resourceService;
         IMapper mapper;
 
-        public RuleController(RuleService ruleService)
+        public RuleController(RuleService ruleService, ResourcesService resourceService)
         {
             _ruleService = ruleService;
+            _resourceService = resourceService;
 
             mapper = new Mapper(new MapperConfiguration(c =>
             {
                 c.CreateMap<Rule, RuleBasicDTO>().ReverseMap();
                 c.CreateMap<Rule, RuleDetailedDTO>();
+                c.CreateMap<Resource, ResourceMaxDto>().ReverseMap();
             }));
         }
 
@@ -111,6 +114,16 @@ namespace BookingApp.Controllers
             await _ruleService.Update(rule);
             return Ok("Rule's been updated");
 
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = RoleTypes.Admin)]
+        [Route("{id}/resources")]
+        public async Task<IActionResult> GetResources(int id)
+        {
+            var res = await _resourceService.ListByRuleKey(id);
+            var resRules =  mapper.Map< IEnumerable<Resource>, IEnumerable<ResourceMaxDto>> (res);
+            return Ok(resRules);
         }
     }
 }
