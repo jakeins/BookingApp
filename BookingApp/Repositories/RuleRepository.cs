@@ -10,7 +10,7 @@ using BookingApp.Helpers;
 
 namespace BookingApp.Repositories
 {
-    public class RuleRepository : IRepositoryAsync<Rule, int>
+    public class RuleRepository : IBasicRepositoryAsync<Rule, int>
     {
         ApplicationDbContext _db;
 
