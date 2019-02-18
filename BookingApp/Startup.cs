@@ -16,14 +16,18 @@ using BookingApp.Services;
 using BookingApp.Repositories;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace BookingApp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILogger<Startup> Logger;
+
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            Logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -104,6 +108,7 @@ namespace BookingApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                Logger.LogInformation("In development enviroment");
             }
             else
             {

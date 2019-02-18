@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookingApp.Repositories
 {
-    public class BookingsRepository : IBasicRepositoryAsync<Booking, int>
+    public class BookingsRepository : IBookingRepository
     {
         Data.ApplicationDbContext dbContext;
 
@@ -40,26 +40,7 @@ namespace BookingApp.Repositories
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        async Task IBasicRepositoryAsync<Booking, int>.CreateAsync(Booking model)
-        {
-            try
-            {
-                await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC [Booking.Create] {model.ResourceId}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.CreatedUserId}', '{model.Note}'");
-            }
-            catch (SqlException ex)
-            {
-                Helpers.SqlExceptionTranslator.ReThrow(ex, "on creating booking");
-            }
-        }
-
-        /// <summary>
-        /// Creating new <see cref="Booking"></see> using store procedure Booking.Create
-        /// </summary>
-        /// <param name="model">New <see cref="Booking"></see> data</param>
-        /// <param name="user">User who create booking</param>
-        /// <returns>Id of <see cref="Booking"/></returns>
-        public async Task<int> CreateAsync(BookingCreateDTO model, string userId)
+        public async Task CreateAsync(Booking model)
         {
             try
             {
@@ -72,16 +53,15 @@ namespace BookingApp.Repositories
                 };
 
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC @retVal = [Booking.Create] {model.ResourceID}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{userId}', '{model.Note}'",
+                    $"EXEC @retVal = [Booking.Create] {model.Id}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.CreatedUserId}', '{model.Note}'",
                     param);
-                return param.Value as int? ?? -1;
+
+                model.Id = param.Value as int? ?? -1;
             }
             catch (SqlException ex)
             {
                 Helpers.SqlExceptionTranslator.ReThrow(ex, "on creating booking");
             }
-            //Dummy throw. Unreachable code because ReThow not return
-            throw new NullReferenceException();
         }
 
         /// <summary>
