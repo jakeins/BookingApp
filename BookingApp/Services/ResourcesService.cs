@@ -10,7 +10,7 @@ namespace BookingApp.Services
     {
         readonly IResourcesRepository resourcesRepo;
 
-        public ResourcesService(ResourcesRepository resourcesRepo, ApplicationDbContext dbContext)
+        public ResourcesService(IResourcesRepository resourcesRepo, ApplicationDbContext dbContext)
         {
             this.resourcesRepo = resourcesRepo;
         }
@@ -37,6 +37,11 @@ namespace BookingApp.Services
         /// Lists all resources adhering to the specified rule. 
         /// </summary>
         public async Task<IEnumerable<Resource>> ListByRuleKey(int ruleId) => await resourcesRepo.ListByRuleKeyAsync(ruleId);
+
+        /// <summary>
+        /// Lists all resources having specified parent tree group. 
+        /// </summary>
+        public async Task<IEnumerable<Resource>> ListByTreeGroupKey(int treeGroupId) => await resourcesRepo.ListByTreeGroupKeyAsync(treeGroupId);
 
         /// <summary>
         /// Lists all resources associated with the specified user. 

@@ -14,5 +14,10 @@ namespace BookingApp.Repositories
         /// Lists all resources adhering to the specified rule.
         /// </summary>
         Task<IEnumerable<Resource>> ListByRuleKeyAsync(int ruleId);
+
+        /// <summary>
+        /// Lists all resources having specified parent tree group.
+        /// </summary>
+        Task<IEnumerable<Resource>> ListByTreeGroupKeyAsync(int treeGroupId);
     }
 }

@@ -12,12 +12,16 @@ namespace BookingApp.Repositories
         : ActEntityRepositoryBase<Resource, int, ApplicationUser, string>,
         IResourcesRepository
     {
+        DbSet<Resource> Resources => Entities;
+
         public ResourcesRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 
         public override async Task UpdateAsync(Resource resource) => await UpdateSelectiveAsync<ResourceUpdateSubsetDto>(resource);
 
-        public async Task<IEnumerable<Resource>> ListByRuleKeyAsync(int ruleId) => await Entities.Where(r => r.RuleId == ruleId).ToListAsync();
+        public async Task<IEnumerable<Resource>> ListByRuleKeyAsync(int ruleId) => await Resources.Where(r => r.RuleId == ruleId).ToListAsync();
+
+        public async Task<IEnumerable<Resource>> ListByTreeGroupKeyAsync(int treeGroupId) => await Resources.Where(r => r.TreeGroupId == treeGroupId).ToListAsync();
     }
 }
