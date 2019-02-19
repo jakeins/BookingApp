@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,13 @@ namespace BookingApp.Middlewares
     {
         readonly RequestDelegate next;
         readonly bool IsDevelopment;
+        readonly ILogger<ErrorHandlingMiddleware> logger;
 
-        public ErrorHandlingMiddleware(RequestDelegate next, bool IsDevelopment)
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger, bool IsDevelopment)
         {
             this.next = next;
             this.IsDevelopment = IsDevelopment;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -89,6 +92,7 @@ namespace BookingApp.Middlewares
                     break;
 
                 default:
+                    logger.LogError($"Catched internal exception. Message: {exception.Message}. Stacktrace: {exception.StackTrace}");
                     code = HttpStatusCode.InternalServerError;
                     break;
             }
@@ -98,10 +102,12 @@ namespace BookingApp.Middlewares
             if (IsDevelopment)
             {
                 data = new DevelopmentExceptionInfo(exception.Message, exception.StackTrace);
+                logger.LogDebug($"Catched exception. Message: {exception.Message}. Stacktrace: {exception.StackTrace}");
             }
             else
             {
                 data = new ExceptionInfo(exception.Message);
+                logger.LogInformation($"Catched exception. Message: {exception.Message}.");
             }
 
             var result = JsonConvert.SerializeObject(data, Formatting.Indented);

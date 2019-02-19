@@ -16,14 +16,19 @@ using BookingApp.Services;
 using BookingApp.Repositories;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using BookingApp.Helpers;
 
 namespace BookingApp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILogger<Startup> Logger;
+
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            Logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -39,10 +44,15 @@ namespace BookingApp
             services.AddTransient<BookingsService>();
             services.AddTransient<BookingsRepository>();
 
-            services.AddScoped<JwtService>();
+            services.AddTransient<JwtService>();
+            services.AddTransient<IMessageService, MailMessageService>();
+            services.AddTransient<NotificationService>();
 
             services.AddTransient<UserService>();
             services.AddTransient<UserRepository>();
+
+            services.AddTransient<RuleService>();
+            services.AddTransient<RuleRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -61,6 +71,12 @@ namespace BookingApp
             }).AddRoles<IdentityRole>()
               .AddEntityFrameworkStores<ApplicationDbContext>()
               .AddDefaultTokenProviders();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(PolicyTypes.NotBanned, policy =>
+                    policy.AddRequirements(new NotBannedRequirement()));
+            });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -104,6 +120,7 @@ namespace BookingApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                Logger.LogInformation("In development enviroment");
             }
             else
             {
@@ -120,12 +137,12 @@ namespace BookingApp
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-            // specifying the Swagger JSON endpoint.
+            // specifying the Swagger JSON endpoint.            
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "BookingApp API V1");
                 c.RoutePrefix = string.Empty;
-            });
+            });            
             // Enable midleware for handling exceptions
             app.UseMiddleware<Middlewares.ErrorHandlingMiddleware>(env.IsDevelopment());
 

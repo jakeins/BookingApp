@@ -2,7 +2,7 @@
 
 namespace BookingApp.DTOs
 {
-    public class AuthRegisterDto : AuthMinimalDto
+    public class AuthRegisterDto : AuthLoginDto
     {
         public string UserName { get; set; }
         [Compare("Password", ErrorMessage = "Passwords don't match")]

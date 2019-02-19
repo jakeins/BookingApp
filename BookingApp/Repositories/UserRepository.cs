@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace BookingApp.Services
 {
 
-    public class UserRepository : IRepositoryAsync<ApplicationUser, string>
+    public class UserRepository : IBasicRepositoryAsync<ApplicationUser, string>
     {
         private UserManager<ApplicationUser> userManager;
 

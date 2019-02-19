@@ -9,6 +9,7 @@ using BookingApp.Exceptions;
 using BookingApp.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using System.Linq;
 
 namespace BookingApp.Controllers
 {
@@ -30,30 +31,31 @@ namespace BookingApp.Controllers
                 cfg.CreateMap<Resource, ResourceBriefDto>();
                 cfg.CreateMap<Resource, ResourceMaxDto>();
                 cfg.CreateMap<ResourceDetailedDto,Resource>();
+                cfg.CreateMap<Booking, BookingMinimalDTO>();
+                cfg.CreateMap<Booking, BookingOwnerDTO>();
+                cfg.CreateMap<Booking, BookingAdminDTO>();
             }));
         }
 
         #region GETs
-        // GET: api/resources
-        // Filtered access: Guest/Admin. 
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
+        // Filtered access: Guest/Admin. 
         public async Task<IActionResult> List()
         {
-            var models = await resService.List(includeInactiveResources: IsAdmin == true);
+            var models = IsAdmin ? await resService.GetList() : await resService.ListActive();
             var dtos = dtoMapper.Map<IEnumerable<ResourceBriefDto>>(models);
             return Ok(dtos);
         }
 
-        // GET: api/resources/occupancy
-        // Filtered access: Guest/Admin.
         [HttpGet("occupancy")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
+        // Filtered access: Guest/Admin.
         public async Task<IActionResult> ListOccupancy()
         {
-            var idsList = await resService.ListIDs(includeIncativeResources: IsAdmin == true);
+            var idsList = await resService.ListKeys(includeIncativeResources: IsAdmin == true);
 
             var map = new Dictionary<int, double?>();
 
@@ -74,29 +76,72 @@ namespace BookingApp.Controllers
             return Ok(map);
         }
 
-        // GET: api/resources/5
-        // Filtered access: Guest/Admin. 
+        [HttpGet("{resourceId}/bookings")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        // Filtered access: Guest/Owner/Admin.
+        public async Task<IActionResult> ListRelatedBookings([FromRoute] int resourceId)
+        {
+            await AuthorizeForSingleResource(resourceId);
+
+            var models = await bookService.ListBookingOfResource(resourceId, IsAdmin);
+
+            IEnumerable<object> dtos;
+
+            if (IsAdmin)
+            {
+                dtos = dtoMapper.Map<IEnumerable<BookingAdminDTO>>(models);
+            }
+            else
+            {
+                if (IsUser && models.Any(b => b.CreatedUserId == UserId))
+                {
+                    var diffList = new List<object>();
+                    var currentUserId = UserId;
+                    foreach (var model in models)
+                    {
+                        object suitableDto;
+
+                        if (model.CreatedUserId == currentUserId)
+                            suitableDto = dtoMapper.Map<BookingOwnerDTO>(model);
+                        else
+                            suitableDto = dtoMapper.Map<BookingMinimalDTO>(model);
+
+                        diffList.Add(suitableDto);
+                    }
+                    dtos = diffList;
+                }
+                else
+                {
+                    dtos = dtoMapper.Map<IEnumerable<BookingMinimalDTO>>(models);
+                }
+            }
+            return Ok(dtos);
+        }
+
         [HttpGet("{resourceId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
+        // Filtered access: Guest/Admin.
         public async Task<IActionResult> Single([FromRoute] int resourceId)
         {
             await AuthorizeForSingleResource(resourceId);
 
-            var resourceModel = await resService.Single(resourceId);
+            var resourceModel = await resService.Get(resourceId);
             var resourceDTO = dtoMapper.Map<ResourceMaxDto>(resourceModel);
             return Ok(resourceDTO);
         }
 
-        // GET: api/resources/5/occupancy
-        // Filtered access: Guest/Admin.
         [HttpGet("{resourceId}/occupancy")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
+        // Filtered access: Guest/Admin.
         public async Task<IActionResult> SingleOccupancy([FromRoute] int resourceId)
         {
             await AuthorizeForSingleResource(resourceId);
@@ -105,7 +150,6 @@ namespace BookingApp.Controllers
         #endregion
 
         #region POST / PUT
-        // POST: api/resources
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
@@ -132,7 +176,6 @@ namespace BookingApp.Controllers
             );
         }
 
-        // PUT: api/resources/5
         [HttpPut("{resourceId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -159,7 +202,6 @@ namespace BookingApp.Controllers
         #endregion
 
         #region DELETE
-        // DELETE: api/resources/5
         [HttpDelete("{resourceId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -183,7 +225,9 @@ namespace BookingApp.Controllers
         CurrentEntryNotFoundException NewNotFoundException => new CurrentEntryNotFoundException("Specified resource not found");
 
         /// <summary>
-        /// Gateway for the single resource. Throws Not Found if current user hasn't enough rights for viewing the specified resource.
+        /// Gateway for the single resource. 
+        /// Throws Not Found if current user hasn't enough rights for viewing the specified resource.
+        /// Throws Not Found if current resource not found.
         /// </summary>
         async Task AuthorizeForSingleResource(int resourceId)
         {

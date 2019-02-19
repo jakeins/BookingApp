@@ -25,9 +25,9 @@ namespace BookingApp.Services
         /// <param name="booking">New <see cref="Booking"></see> data</param>
         /// <param name="user">User who create booking</param>
         /// <returns>Id of <see cref="Booking"/></returns>
-        public async Task<int> CreateAsync(BookingCreateDTO booking, string userId)
+        public async Task CreateAsync(Booking model)
         {
-            return await bookingsRepo.CreateAsync(booking, userId);
+            await bookingsRepo.CreateAsync(model);
         }
 
         /// <summary>

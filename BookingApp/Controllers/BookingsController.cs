@@ -6,27 +6,20 @@ using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookingApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/booking")]
     [ApiController]
-    public class BookingsController : ControllerBase
+    public class BookingsController : EntityControllerBase
     {
-        readonly BookingsService bookingService;
-        readonly UserManager<ApplicationUser> userManager;
-        readonly RoleManager<IdentityRole> roleManager;
-        readonly IMapper dtoMapper;
+        private readonly BookingsService bookingService;
+        private readonly IMapper dtoMapper;
 
-        public BookingsController(BookingsService bookingService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public BookingsController(BookingsService bookingService)
         {
             this.bookingService = bookingService;
-            this.userManager = userManager;
-            this.roleManager = roleManager;
 
             dtoMapper = new Mapper(new MapperConfiguration(cfg =>
             {
@@ -59,11 +52,13 @@ namespace BookingApp.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            int newBookingId = await bookingService.CreateAsync(item, UserId);
-            
+            Booking model = dtoMapper.Map<Booking>(item);
+
+            await bookingService.CreateAsync(model);
+
             return new CreatedResult(
-                $"api/BookingControler/{newBookingId}", 
-                dtoMapper.Map<BookingOwnerDTO>(await bookingService.GetAsync(newBookingId))
+                $"api/booking/{model.Id}",
+                dtoMapper.Map<BookingOwnerDTO>(await bookingService.GetAsync(model.Id))
                 );
         }
 
@@ -82,21 +77,24 @@ namespace BookingApp.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> Details([FromRoute] int bookingId)
         {
-            var models = await bookingService.GetAsync(bookingId);
-               
-            if (Anonym)
+            var model = await bookingService.GetAsync(bookingId);
+
+            if (model == null)
+                throw new Exceptions.EntryNotFoundException($"Booking with id {bookingId} not found");
+
+            if (IsAdmin)
             {
-                var dtos = dtoMapper.Map<BookingMinimalDTO>(models);
+                var dtos = dtoMapper.Map<BookingAdminDTO>(model);
                 return Ok(dtos);
             }
-            else if (AdminAccess)
+            else if(model.CreatedUserId == UserId)
             {
-                var dtos = dtoMapper.Map<BookingAdminDTO>(models);
+                var dtos = dtoMapper.Map<BookingOwnerDTO>(model);
                 return Ok(dtos);
             }
             else
             {
-                var dtos = dtoMapper.Map<BookingOwnerDTO>(models);
+                var dtos = dtoMapper.Map<BookingMinimalDTO>(model);
                 return Ok(dtos);
             }
         }
@@ -124,7 +122,7 @@ namespace BookingApp.Controllers
 
             var bookingData = await bookingService.GetAsync(bookingId);
 
-            if(AdminAccess || bookingData.CreatedUserId == UserId)
+            if (IsAdmin || bookingData.CreatedUserId == UserId)
             {
                 await bookingService.Update(bookingId, item.StartTime, item.EndTime, UserId, item.Note);
                 return Ok("Booking data updated succefully");
@@ -154,7 +152,7 @@ namespace BookingApp.Controllers
         {
             var bookingData = await bookingService.GetAsync(bookingId);
 
-            if (AdminAccess || bookingData.CreatedUserId == UserId)
+            if (IsAdmin || bookingData.CreatedUserId == UserId)
             {
                 await bookingService.Delete(bookingId);
                 return Ok("Booking delete succefully");
@@ -165,7 +163,7 @@ namespace BookingApp.Controllers
             }
         }
 
-        #endregion
+        #endregion CRUD actions
 
         #region Public Extensions
 
@@ -190,7 +188,7 @@ namespace BookingApp.Controllers
         {
             var bookingData = await bookingService.GetAsync(bookingId);
 
-            if (AdminAccess || bookingData.CreatedUserId == UserId)
+            if (IsAdmin || bookingData.CreatedUserId == UserId)
             {
                 await bookingService.Terminate(bookingId, UserId);
                 return Ok("Booking delete succefully");
@@ -199,24 +197,8 @@ namespace BookingApp.Controllers
             {
                 throw new Exceptions.OperationRestrictedException("Can terminate not owned booking");
             }
-            
         }
 
-        #endregion
-
-        #region Helpers
-        /// <summary>
-        /// Shorthand for checking if current user authorized
-        /// </summary>
-        bool Anonym => !User.HasClaim(c => c.Type == "uid");
-        /// <summary>
-        /// Current user identifier
-        /// </summary>
-        string UserId => User.Claims.Single(c => c.Type == "uid").Value;
-        /// <summary>
-        /// Shorthand for checking if current user has admin access level
-        /// </summary>
-        bool AdminAccess => User.IsInRole(RoleTypes.Admin);
-        #endregion
+        #endregion Public Extensions
     }
 }
