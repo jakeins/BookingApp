@@ -164,5 +164,13 @@ namespace BookingApp.Services
             if (!result.Succeeded)
                 GetExceptionIdentityResult(result);
         }
+        public async Task<bool> IsInRole(ApplicationUser user, string role)
+        {
+            return await userManager.IsInRoleAsync(user, role);          
+        }
+        public async Task<string> GeneratePasswordResetToken(ApplicationUser user)
+        {
+            return await userManager.GeneratePasswordResetTokenAsync(user);
+        }
     }
 }
