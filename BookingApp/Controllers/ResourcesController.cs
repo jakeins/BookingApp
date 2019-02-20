@@ -17,7 +17,7 @@ namespace BookingApp.Controllers
     [ApiController]
     public partial class ResourcesController : EntityControllerBase
     {
-        readonly ResourcesService resService;
+        readonly IResourcesService resService;
         readonly BookingsService bookService;
         readonly IMapper dtoMapper;
 
