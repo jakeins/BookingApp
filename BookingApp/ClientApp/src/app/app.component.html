@@ -1,10 +1,44 @@
-<div class='container-fluid'>
-  <div class='row'>
-    <div class='col-sm-3'>
-      <app-nav-menu></app-nav-menu>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700" rel="stylesheet">
+</head>
+<body>
+<header class="header-site">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-3">
+                <a routerLink="/"><h1 class="logo">Booking</h1></a>
+            </div>
+            <div class="col-lg-5 col-4">
+            </div>
+            <div class="col-lg-4 col-4">
+              <div style="float: right; width: 350px;">
+                <div style="float: left; margin-right: 20px;">
+                  <a href="swagger"  class="btn btn-success">Swagger</a>
+                </div>
+                <div style="float: left; margin-right: 20px;">
+                  <a routerLink="/register" class="btn btn-outline-secondary">SignUp</a>
+                </div>
+                <div>
+                  <a routerLink="/login" class="btn btn-outline-success">SignIn</a>
+                </div>
+              </div>
+
+            </div>
+        </div>
     </div>
-    <div class='col-sm-9 body-content'>
-      <router-outlet></router-outlet>
+</header>
+<main class="main-site">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
+</main>
+</body>
+</html>
