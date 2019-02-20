@@ -141,7 +141,7 @@ namespace BookingApp
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "BookingApp API V1");
-                c.RoutePrefix = string.Empty;
+                c.RoutePrefix = "swagger";
             });
             // Enable midleware for handling exceptions
             app.UseMiddleware<Middlewares.ErrorHandlingMiddleware>(env.IsDevelopment());
