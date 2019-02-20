@@ -1,6 +1,78 @@
+/* Reset */
+body {
+    background-color: #fff;
+    font-family: 'Montserrat', sans-serif;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+
+/* Reset */
+
+/* Layout */
+.header-site {
+    padding-top: 10px;
+    -webkit-box-shadow: 0px 3px 11px -4px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 3px 11px -4px rgba(0,0,0,0.75);
+    box-shadow: 0px 3px 11px -4px rgba(0,0,0,0.75);
+    position: fixed;
+    z-index: 99;
+    top: 0;
+    width: 100%;
+    background: #fff;
+}
+
+
+
+.logo {
+    color: #000000;
+}
+
+.logo span {
+    color: #ff627b;
+}
+/* Layout */
+
+/* Main */
+.main-site {
+    margin-top: 100px;
+    margin-bottom: 20px;
+}
+
+.main-site .card {
+    margin-bottom: 20px;
+}
+/* Main */
+
+/* Register */
+.fa-facebook-square {
+    font-size: 30px;
+    margin-right: 10px;
+}
+
+.fa-instagram {
+    font-size: 30px;
+    color: #ff6cbd;
+}
+/* Register */
+
+/* Cabinet-articles */
+.cabinet-articles h3 a {
+    color: #000;
+}
+/* Cabinet-articles */
+
+
+@media only screen and (max-width:960px) {
+}
+
+
+
 @media (max-width: 767px) {
-  /* On small screens, the nav menu spans the full width of the screen. Leave a space for it. */
-  .body-content {
-    padding-top: 50px;
-  }
+    /* On small screens, the nav menu spans the full width of the screen. Leave a space for it. */
+    .body-content {
+        padding-top: 50px;
+    }
 }
