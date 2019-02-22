@@ -45,30 +45,42 @@ namespace BookingApp.Services
             {
                 IdentityResult result = await userManager.DeleteAsync(applicationUser);
                 if (!result.Succeeded)
+                {
                     GetExceptionIdentityResult(result);
+                }
             }
         }
         public async Task DeleteAsync(ApplicationUser user)
         {
             IdentityResult result = await userManager.DeleteAsync(user);
             if (!result.Succeeded)
+            {
                 GetExceptionIdentityResult(result);
+            }
         }
         public async Task<ApplicationUser> GetAsync(string userid)
         {
             ApplicationUser applicationUser = await userManager.FindByIdAsync(userid);
             if (applicationUser == null)
+            {
                 throw new NullReferenceException("Can not find user with this id");
+            }
             else
+            {
                 return applicationUser;
+            }
         }
         public async Task<ApplicationUser> GetUserByEmailAsync(string email)
         {
             ApplicationUser applicationUser = await userManager.FindByEmailAsync(email);
             if (applicationUser == null)
+            {
                 throw new NullReferenceException("Can not find user with this email");
+            }
             else
+            {
                 return applicationUser;
+            }
         }
         public async Task<IEnumerable<ApplicationUser>> GetListAsync()
         {
@@ -82,7 +94,9 @@ namespace BookingApp.Services
         {
             IdentityResult result = await userManager.UpdateAsync(user);
             if (!result.Succeeded)
+            {
                 GetExceptionIdentityResult(result);
+            }
         }
         public async Task<bool> CheckPassword(ApplicationUser user, string password)
         {
@@ -91,8 +105,10 @@ namespace BookingApp.Services
         public async Task ChangePassword(ApplicationUser user, string currentpassword,string newpassword)
         {
            IdentityResult result =  await userManager.ChangePasswordAsync(user, currentpassword,newpassword);
-           if(!result.Succeeded)
+            if (!result.Succeeded)
+            {
                 GetExceptionIdentityResult(result);
+            }
         }
         private void GetExceptionIdentityResult(IdentityResult identityResult)
         {
@@ -131,38 +147,50 @@ namespace BookingApp.Services
         {
             ApplicationUser applicationUser = await userManager.FindByIdAsync(userId);
             if (applicationUser == null)
+            {
                 throw new NullReferenceException("Can not find user with this id");
+            }
             return await userManager.GetRolesAsync(applicationUser);
         }
         public async Task AddUserRole(ApplicationUser user,string role)
         {
           IdentityResult result =   await userManager.AddToRoleAsync(user, role);
             if (!result.Succeeded)
+            {
                 GetExceptionIdentityResult(result);
+            }
         }
         public async Task RemoveUserRole(ApplicationUser user, string role)
         {
            IdentityResult result = await userManager.RemoveFromRoleAsync(user, role);
             if (!result.Succeeded)
+            {
                 GetExceptionIdentityResult(result);
+            }
         }
         public async Task AddUserRoles(ApplicationUser user, IEnumerable<string> roles)
         {
             IdentityResult result = await userManager.AddToRolesAsync(user, roles);
             if (!result.Succeeded)
+            {
                 GetExceptionIdentityResult(result);
+            }
         }
         public async Task RemoveUserRoles(ApplicationUser user, IEnumerable<string> roles)
         {
             IdentityResult result = await userManager.RemoveFromRolesAsync(user, roles);
             if (!result.Succeeded)
+            {
                 GetExceptionIdentityResult(result);
+            }
         }
         public async Task RessetUserPassword(ApplicationUser user,string token,string newPassword)
         {
             IdentityResult result = await userManager.ResetPasswordAsync(user, token, newPassword);
             if (!result.Succeeded)
+            {
                 GetExceptionIdentityResult(result);
+            }
         }
         public async Task<bool> IsInRole(ApplicationUser user, string role)
         {

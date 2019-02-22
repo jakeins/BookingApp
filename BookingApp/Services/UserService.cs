@@ -26,6 +26,12 @@ namespace BookingApp.Services
             await userRepository.CreateAsync(user, password);
         }
 
+        public async Task CreateAdmin(ApplicationUser user, string password)
+        {
+            user.ApprovalStatus = true;
+            await userRepository.CreateAsync(user, password);
+        }
+
         public async Task DeleteUser(string id)
         {
             await userRepository.DeleteAsync(id);
@@ -109,6 +115,13 @@ namespace BookingApp.Services
         public async Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
         {
             return await userRepository.GeneratePasswordResetToken(user);
+        }
+
+        public async Task UserApproval(string userId, bool IsApproved)
+        {
+            ApplicationUser user = await userRepository.GetAsync(userId);
+            user.ApprovalStatus = IsApproved;
+            await userRepository.UpdateAsync(user);
         }
     }
 }

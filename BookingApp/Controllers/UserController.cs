@@ -44,6 +44,17 @@ namespace BookingApp.Controllers
             }
             return BadRequest("Error valid");
         }
+        [HttpPost("api/user/create-admin")]
+        public async Task<IActionResult> CreateAdmin([FromBody] AuthRegisterDto user)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
+                await userService.CreateUser(appUser, user.Password);
+                return Ok("User created");
+            }
+            return BadRequest("Error valid");
+        }
         //[Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("api/user/{userId}")]
         public async Task<IActionResult> GetUserById([FromRoute]string userId)
@@ -120,6 +131,12 @@ namespace BookingApp.Controllers
             ApplicationUser user = await userService.GetUserById(userId);
             await userService.RemoveUserRoleAsync(user, role);
             return Ok("Role removed");
+        }
+        [HttpPut("api/user/{userId}/approve/{IsApproved}")]
+        public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromRoute]bool IsApproved)
+        { 
+            await userService.UserApproval(userId, IsApproved);
+            return Ok();
         }
     }
 }
