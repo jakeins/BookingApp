@@ -77,18 +77,21 @@ namespace BookingApp.Services
             return await userRepository.GetUserRolesById(userId);
         }
 
-        public async Task ChangePassword(ApplicationUser user, string currentpassword, string newpassword)
+        public async Task ChangePassword(string userId, string currentpassword, string newpassword)
         {
+            ApplicationUser user = await GetUserById(userId);
             await userRepository.ChangePassword(user,currentpassword,newpassword);
         }
 
-        public async Task AddUserRoleAsync(ApplicationUser user,string role)
+        public async Task AddUserRoleAsync(string userId,string role)
         {
+            ApplicationUser user = await GetUserById(userId);
             await userRepository.AddUserRole(user,role);
         }
 
-        public async Task RemoveUserRoleAsync(ApplicationUser user, string role)
+        public async Task RemoveUserRoleAsync(string userId, string role)
         {
+             ApplicationUser user = await GetUserById(userId);
             await userRepository.RemoveUserRole(user, role);
         }
 
@@ -102,8 +105,9 @@ namespace BookingApp.Services
             await userRepository.RemoveUserRoles(user, roles);
         }
 
-        public async Task RessetUserPassword(ApplicationUser user, string token, string newPassword)
+        public async Task RessetUserPassword(string userId, string token, string newPassword)
         {
+            ApplicationUser user = await GetUserById(userId);
             await userRepository.RessetUserPassword(user, token,newPassword);
         }
 
