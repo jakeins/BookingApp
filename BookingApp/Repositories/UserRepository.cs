@@ -82,9 +82,9 @@ namespace BookingApp.Services
                 return applicationUser;
             }
         }
-        public async Task<IEnumerable<ApplicationUser>> GetListAsync()
+        public Task<IEnumerable<ApplicationUser>> GetListAsync()
         {
-            return userManager.Users.ToList();
+            return Task.FromResult(userManager.Users.ToList().AsEnumerable());
         }
         public Task SaveAsync()
         {
