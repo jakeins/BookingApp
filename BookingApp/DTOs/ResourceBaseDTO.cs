@@ -12,7 +12,7 @@ namespace BookingApp.DTOs
         public string Title { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "Invalid group identifier.")]
-        public int? TreeGroupId { get; set; }
+        public int? FolderId { get; set; }
 
         [Required]
         public bool? IsActive { get; set; }
