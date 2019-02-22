@@ -36,10 +36,11 @@ namespace BookingApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<ResourcesService>();
-            services.AddTransient<ResourcesRepository>();
-            services.AddTransient<TreeGroupService>();
-            services.AddTransient<TreeGroupRepository>();
+            services.AddTransient<IResourcesService, ResourcesService>();
+            services.AddTransient<IResourcesRepository, ResourcesRepository>();
+
+            services.AddTransient<FolderService>();
+            services.AddTransient<FolderRepository>();
 
             services.AddTransient<BookingsService>();
             services.AddTransient<BookingsRepository>();

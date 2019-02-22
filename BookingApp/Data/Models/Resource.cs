@@ -31,9 +31,9 @@ namespace BookingApp.Data.Models
         public string Description { get; set; }
 
         /// <summary>
-        /// The identifier of the TreeGroup at which current resource should be *visually* nested. Optional: null means this resource is being shown at the root level.
+        /// The identifier of the Folder at which current resource should be *visually* nested. Optional: null means this resource is being shown at the root level.
         /// </summary>
-        public int? TreeGroupId { get; set; }
+        public int? FolderId { get; set; }
 
         /// <summary>
         /// The identifier of the booking rule that is used to define booking policy of the current resource. Required.
@@ -53,9 +53,9 @@ namespace BookingApp.Data.Models
         public Rule Rule { get; set; }
 
         /// <summary>
-        /// The TreeGroup at which current resource should be *visually* nested. Nullity means this resource is being shown at the root level.
+        /// The Folder at which current resource should be *visually* nested. Nullity means this resource is being shown at the root level.
         /// </summary>
-        public TreeGroup TreeGroup { get; set; }
+        public Folder Folder { get; set; }
 
         /// <summary>
         /// The reverse-navigation list of all bookings of the current resource.
