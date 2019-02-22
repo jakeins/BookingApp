@@ -142,5 +142,8 @@ namespace BookingApp.Controllers
             await userService.RessetUserPassword(userId, token,newPassword);
             return Ok();
         }
+        #region Bookings
+        //TODO: List bookings
+        #endregion
     }
 }
