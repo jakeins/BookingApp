@@ -39,8 +39,8 @@ namespace BookingApp
             services.AddTransient<IResourcesService, ResourcesService>();
             services.AddTransient<IResourcesRepository, ResourcesRepository>();
 
-            services.AddTransient<TreeGroupService>();
-            services.AddTransient<TreeGroupRepository>();
+            services.AddTransient<FolderService>();
+            services.AddTransient<FolderRepository>();
 
             services.AddTransient<BookingsService>();
             services.AddTransient<BookingsRepository>();

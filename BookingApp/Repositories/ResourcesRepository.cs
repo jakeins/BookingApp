@@ -39,6 +39,6 @@ namespace BookingApp.Repositories
 
         public async Task<IEnumerable<Resource>> ListByRuleKeyAsync(int ruleId) => await Resources.Where(r => r.RuleId == ruleId).ToListAsync();
 
-        public async Task<IEnumerable<Resource>> ListByTreeGroupKeyAsync(int treeGroupId) => await Resources.Where(r => r.TreeGroupId == treeGroupId).ToListAsync();
+        public async Task<IEnumerable<Resource>> ListByTreeGroupKeyAsync(int treeGroupId) => await Resources.Where(r => r.FolderId == treeGroupId).ToListAsync();
     }
 }
