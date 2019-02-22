@@ -1,29 +1,29 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import {RouterModule} from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 
-import { HomeComponent } from './home/home.component';
+import { FolderComponent } from './folder/folder.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
 import { ForgetComponent } from './auth/forget/forget.component';
 import { ResetComponent } from './auth/reset/reset.component';
-import {ErrorComponent} from './error/error.component';
+import { ErrorComponent } from './error/error.component';
 
 
 
 @NgModule({
   declarations: [
-    HomeComponent,
+    FolderComponent,
     RegisterComponent,
     LoginComponent,
     ForgetComponent,
     ResetComponent,
-      ErrorComponent
+    ErrorComponent
   ],
   imports: [
     CommonModule,
-      RouterModule
+    RouterModule
   ],
   providers: [],
   bootstrap: []

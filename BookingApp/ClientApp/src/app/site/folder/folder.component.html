@@ -1,0 +1,9 @@
+<h2>{{ href }}</h2>
+<ul class="list-unstyled">
+    <li><a routerLink='/cabinet'>Cabinet</a></li>
+    <li><a routerLink='/admin'>Admin</a></li>
+    <hr />
+    <li *ngFor="let folder of folders">
+      <a href="#">{{ folder.title }}</a>
+    </li>
+  </ul>
