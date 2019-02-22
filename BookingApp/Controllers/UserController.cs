@@ -19,8 +19,8 @@ namespace BookingApp.Controllers
     {
         readonly UserService userService;
         readonly IMapper mapper;
-        readonly ResourcesService resourcesService;
-        public UserController(UserService userService, ResourcesService resourcesService)
+        readonly IResourcesService resourcesService;
+        public UserController(UserService userService, IResourcesService resourcesService)
         {
             this.userService = userService;
             this.resourcesService = resourcesService;
