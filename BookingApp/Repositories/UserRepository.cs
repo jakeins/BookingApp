@@ -117,23 +117,23 @@ namespace BookingApp.Services
                 switch (item.Code)
                 {
                     case "DuplicateUserName":
-                        throw new UserNameDuplicateException("User with this Username already created");
+                        throw new UserNameException("User with this Username already created");
                     case "DuplicateEmail":
-                        throw new UserEmailDuplicateException("Email already registered");
+                        throw new UserEmailException("Email already registered");
                     case "InvalidEmail":
-                        throw new UserEmailInvalidException("Invalid email");
+                        throw new UserEmailException("Invalid email");
                     case "InvalidUserName":
-                        throw new UserNameInvalidException("Invalid Username");
+                        throw new UserNameException("Invalid Username");
                     case "PasswordTooShort":
-                        throw new UserPasswordTooShortException("Password too short");
+                        throw new UserPasswordException("Password too short");
                     case "PasswordRequiresNonAlphanumeric":
-                        throw new UserPasswordRequiresNonAlphanumericException("Password requires non alphanumeric");
+                        throw new UserPasswordException("Password requires non alphanumeric");
                     case "PasswordRequiresDigit":
-                        throw new UserPasswordRequiresDigitException("Password requires digit");
+                        throw new UserPasswordException("Password requires digit");
                     case "PasswordRequiresLower":
-                        throw new UserPasswordRequiresLowerException("Password requires lower");
+                        throw new UserPasswordException("Password requires lower");
                     case "PasswordRequiresUpper":
-                        throw new UserPasswordRequiresUpperException("Password requires upper");
+                        throw new UserPasswordException("Password requires upper");
                     default:
                         throw new UserException("Default User Exception");
                 }
