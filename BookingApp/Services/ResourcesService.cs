@@ -29,7 +29,7 @@ namespace BookingApp.Services
 
         public async Task<IEnumerable<Resource>> ListByAssociatedUser(string userId) => await resourcesRepo.ListByAssociatedUser(userId);
         public async Task<IEnumerable<Resource>> ListByRuleKey(int ruleId) => await resourcesRepo.ListByRuleKeyAsync(ruleId);
-        public async Task<IEnumerable<Resource>> ListByTreeGroupKey(int treeGroupId) => await resourcesRepo.ListByTreeGroupKeyAsync(treeGroupId);
+        public async Task<IEnumerable<Resource>> ListByFolderKey(int folderId) => await resourcesRepo.ListByFolderKeyAsync(folderId);
         
     }
 
@@ -60,6 +60,6 @@ namespace BookingApp.Services
         /// <summary>
         /// Lists all resources having specified parent tree group. 
         /// </summary>
-        Task<IEnumerable<Resource>> ListByTreeGroupKey(int treeGroupId);
+        Task<IEnumerable<Resource>> ListByFolderKey(int folderId);
     }
 }
