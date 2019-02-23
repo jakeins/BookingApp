@@ -49,8 +49,8 @@ namespace BookingApp
             services.AddTransient<IMessageService, MailMessageService>();
             services.AddTransient<NotificationService>();
 
-            services.AddTransient<UserService>();
-            services.AddTransient<UserRepository>();
+            services.AddTransient<IUserService,UserService>();
+            services.AddTransient<IUserRepository,UserRepository>();
 
             services.AddTransient<RuleService>();
             services.AddTransient<RuleRepository>();
@@ -102,8 +102,7 @@ namespace BookingApp
             });
 
             services.AddScoped<DbInitializer>();
-            services.AddScoped<UserService>();
-            services.AddScoped<UserRepository>();
+            
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {

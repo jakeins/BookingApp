@@ -17,9 +17,9 @@ namespace BookingApp.Services
 
     public class NotBannedHandler : AuthorizationHandler<NotBannedRequirement>
     {
-        private readonly UserService userService;
+        private readonly IUserService userService;
 
-        public NotBannedHandler(UserService userService)
+        public NotBannedHandler(IUserService userService)
         {
             this.userService = userService;
         }
