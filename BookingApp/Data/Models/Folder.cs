@@ -8,7 +8,7 @@ namespace BookingApp.Data.Models
     /// <summary>
     /// Visual nesting entity, provides ability to *visually* group resources in a form of a nested set (tree).
     /// </summary>
-    public class TreeGroup : IEntity<int, ApplicationUser, string>, IActivable
+    public class Folder : IEntity<int, ApplicationUser, string>, IActivable
     {
         /// <summary>
         /// Primary identity key for the tree group.
@@ -27,7 +27,7 @@ namespace BookingApp.Data.Models
         /// <summary>
         /// Identifier of the parent tree group, where current tree group should be *visually* nested in. Optional: null means this tree group is being shown at the root level.
         /// </summary>
-        public int? ParentTreeGroupId { get; set; }
+        public int? ParentFolderId { get; set; }
 
         /// <summary>
         /// Identifier of a default booking rule for the nested resources during their creation. Optional: null means this tree group offers no rule as default.
@@ -48,13 +48,13 @@ namespace BookingApp.Data.Models
         /// <summary>
         /// Parent tree group, where current tree group should be *visually* nested in. Nullity means this tree group is being shown at the root level.
         /// </summary>
-        public TreeGroup ParentTreeGroup { get; set; }
+        public Folder ParentFolder { get; set; }
 
         /// <summary>
         /// Reverse-navigation list of all tree groups that are child relative to the current one.
         /// </summary>
-        [ForeignKey("ParentTreeGroupId")]
-        public IList<TreeGroup> ChildGroups { get; set; } = new List<TreeGroup>();
+        [ForeignKey("ParentFolderId")]
+        public IList<Folder> ChildGroups { get; set; } = new List<Folder>();
 
         /// <summary>
         /// Reverse-navigation list of all resources that are child relative to the current tree group.

@@ -8,10 +8,37 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-    public class UserService
+    public interface IUserService
     {
-        private UserRepository userRepository;
-        public UserService(UserRepository userRepository)
+        Task AddUserRoleAsync(string userId, string role);
+        Task AddUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles);
+        Task ChangePassword(string userId, string currentpassword, string newpassword);
+        Task<bool> CheckPassword(ApplicationUser user, string password);
+        Task CreateAdmin(ApplicationUser user, string password);
+        Task CreateUser(ApplicationUser user);
+        Task CreateUser(ApplicationUser user, string password);
+        Task DeleteUser(ApplicationUser user);
+        Task DeleteUser(string id);
+        Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user);
+        Task<ApplicationUser> GetUserByEmail(string email);
+        Task<ApplicationUser> GetUserById(string id);
+        Task<IList<string>> GetUserRoles(ApplicationUser user);
+        Task<IList<string>> GetUserRolesById(string userId);
+        Task<IEnumerable<ApplicationUser>> GetUsersList();
+        Task<bool> IsInRoleAsync(ApplicationUser user, string role);
+        Task RemoveUserRoleAsync(string userId, string role);
+        Task RemoveUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles);
+        Task RessetUserPassword(string userId, string token, string newPassword);
+        Task UpdateUser(ApplicationUser user);
+        Task UserApproval(string userId, bool IsApproved);
+        Task UserBlocking(string userId, bool IsBlocked);
+    }
+
+    public class UserService : IUserService
+    {
+
+        private IUserRepository userRepository;
+        public UserService(IUserRepository userRepository)
         {
             this.userRepository = userRepository;
         }
@@ -23,6 +50,12 @@ namespace BookingApp.Services
 
         public async Task CreateUser(ApplicationUser user, string password)
         {
+            await userRepository.CreateAsync(user, password);
+        }
+
+        public async Task CreateAdmin(ApplicationUser user, string password)
+        {
+            user.ApprovalStatus = true;
             await userRepository.CreateAsync(user, password);
         }
 
@@ -71,9 +104,62 @@ namespace BookingApp.Services
             return await userRepository.GetUserRolesById(userId);
         }
 
-        public async Task ChangePassword(ApplicationUser user, string currentpassword, string newpassword)
+        public async Task ChangePassword(string userId, string currentpassword, string newpassword)
         {
+            ApplicationUser user = await GetUserById(userId);
             await userRepository.ChangePassword(user,currentpassword,newpassword);
+        }
+
+        public async Task AddUserRoleAsync(string userId,string role)
+        {
+            ApplicationUser user = await GetUserById(userId);
+            await userRepository.AddUserRole(user,role);
+        }
+
+        public async Task RemoveUserRoleAsync(string userId, string role)
+        {
+             ApplicationUser user = await GetUserById(userId);
+            await userRepository.RemoveUserRole(user, role);
+        }
+
+        public async Task AddUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles)
+        {
+            await userRepository.AddUserRoles(user, roles);
+        }
+
+        public async Task RemoveUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles)
+        {
+            await userRepository.RemoveUserRoles(user, roles);
+        }
+
+        public async Task RessetUserPassword(string userId, string token, string newPassword)
+        {
+            ApplicationUser user = await GetUserById(userId);
+            await userRepository.RessetUserPassword(user, token,newPassword);
+        }
+
+        public async Task<bool> IsInRoleAsync(ApplicationUser user, string role)
+        {
+            return  await userRepository.IsInRole(user, role);
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
+        {
+            return await userRepository.GeneratePasswordResetToken(user);
+        }
+
+        public async Task UserApproval(string userId, bool IsApproved)
+        {
+            ApplicationUser user = await GetUserById(userId);
+            user.ApprovalStatus = IsApproved;
+            await userRepository.UpdateAsync(user);
+        }
+
+        public async Task UserBlocking(string userId, bool IsBlocked)
+        {
+            ApplicationUser user = await GetUserById(userId);
+            user.IsBlocked = IsBlocked;
+            await userRepository.UpdateAsync(user);
         }
     }
 }

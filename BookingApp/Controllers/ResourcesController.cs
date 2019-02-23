@@ -21,7 +21,7 @@ namespace BookingApp.Controllers
         readonly BookingsService bookService;
         readonly IMapper dtoMapper;
 
-        public ResourcesController(ResourcesService resService, BookingsService bookService)
+        public ResourcesController(IResourcesService resService, BookingsService bookService)
         {
             this.resService = resService;
             this.bookService = bookService;

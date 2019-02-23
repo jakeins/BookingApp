@@ -8,29 +8,28 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-
 namespace BookingApp.Controllers
 {
     /// <remarks>
-    /// This class-controller can add, edit, delete and getting TreeGroup.
+    /// This class-controller can add, edit, delete and getting Folder.
     /// </remarks>
-    public class TreeGroupController : EntityControllerBase
+    public class FolderController : EntityControllerBase
     {
-        TreeGroupService service;
+        FolderService service;
         readonly IMapper mapper;
 
-        public TreeGroupController(TreeGroupService s)
+        public FolderController(FolderService s)
         {
             service = s;
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<TreeGroup, TreeGroupBaseDto>();
-                cfg.CreateMap<TreeGroup, TreeGroupMinimalDto>().ReverseMap();
+                cfg.CreateMap<Folder, FolderBaseDto>();
+                cfg.CreateMap<Folder, FolderMinimalDto>().ReverseMap();
             }));
         }
 
         /// <summary>
-        /// Creating TreeGroup
+        /// Creating Folder
         /// <summary>
         /// <response code="200">Success</response>
         /// <response code="404">Not found</response>
@@ -39,18 +38,18 @@ namespace BookingApp.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        [Route("api/tree-group")]
+        [Route("api/folder")]
         public async Task<IActionResult> Index()
         {
-            var models = (IsAdmin) ? await service.GetTreeGroups() : await service.GetTreeGroupsActive();
-            IEnumerable <TreeGroupBaseDto> dtos = mapper.Map<IEnumerable<TreeGroupBaseDto>>(models);
+            var models = (IsAdmin) ? await service.GetFolders() : await service.GetFoldersActive();
+            IEnumerable <FolderBaseDto> dtos = mapper.Map<IEnumerable<FolderBaseDto>>(models);
             return Ok(dtos);
         }
 
         /// <summary>
-        /// Getting TreeGroup on id
+        /// Getting Folder on id
         /// <summary>
-        /// <param name="id">Id TreeGroup.</param>
+        /// <param name="id">Id Folder.</param>
         /// <response code="200">Success</response>
         /// <response code="404">Not found</response>
         /// <response code="500">Internal server error</response>
@@ -59,17 +58,17 @@ namespace BookingApp.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         [Authorize(Roles = RoleTypes.Admin)]
-        [Route("api/tree-group/{id}")]
+        [Route("api/folder/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
-            TreeGroupBaseDto treeGroupDto = mapper.Map<TreeGroupBaseDto>(await service.GetDetail(id));
-            return Ok(treeGroupDto);
+            FolderBaseDto FolderDto = mapper.Map<FolderBaseDto>(await service.GetDetail(id));
+            return Ok(FolderDto);
         }
 
         /// <summary>
-        /// Creating TreeGroup
+        /// Creating Folder
         /// <summary>
-        /// <param name="treeGroupDto">Tdo model TreeGroupCrUpDto.</param>
+        /// <param name="FolderDto">Tdo model FolderCrUpDto.</param>
         /// <response code="201">Success created</response>
         /// <response code="400">Invalid argument</response>
         /// <response code="404">Resources or rule not found</response>
@@ -79,15 +78,15 @@ namespace BookingApp.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        [Route("api/tree-group")]
+        [Route("api/folder")]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Create([FromBody]TreeGroupMinimalDto treeGroupDto)
+        public async Task<IActionResult> Create([FromBody]FolderMinimalDto FolderDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var itemModel = mapper.Map<TreeGroup>(treeGroupDto);
+            var itemModel = mapper.Map<Folder>(FolderDto);
 
             await service.Create(UserId, itemModel);
             return Created(
@@ -97,9 +96,9 @@ namespace BookingApp.Controllers
         }
 
         /// <summary>
-        /// Updating TreeGroup
+        /// Updating Folder
         /// <summary>
-        /// <param name="treeGroupDto">Tdo model TreeGroupCrUpDto.</param>
+        /// <param name="FolderDto">Tdo model FolderCrUpDto.</param>
         /// <response code="200">Success update</response>
         /// <response code="401">Error. Only admin and owner can update booking data</response>
         /// <respomse code="404">Error. Non exist booking id passed</respomse>
@@ -109,22 +108,22 @@ namespace BookingApp.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        [Route("api/tree-group/{id}")]
+        [Route("api/folder/{id}")]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]TreeGroupMinimalDto treeGroupDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]FolderMinimalDto FolderDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             } 
-            await service.Update(id, UserId, mapper.Map<TreeGroup>(treeGroupDto));
-            return Ok("TreeGroup updated successfully.");  
+            await service.Update(id, UserId, mapper.Map<Folder>(FolderDto));
+            return Ok("Folder updated successfully.");  
         }
 
         /// <summary>
-        /// Deleting TreeGroup
+        /// Deleting Folder
         /// <summary>
-        /// <param name="tree">Tdo model TreeGroupCrUpDto.</param>
+        /// <param name="tree">Tdo model FolderCrUpDto.</param>
         /// <response code="200">Success deleted</response>
         /// <response code="401">Error. Only admin and owner can update booking data</response>
         /// <respomse code="404">Error. Non exist booking id passed</respomse>
@@ -134,13 +133,12 @@ namespace BookingApp.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        [Route("api/tree-group/{id}")]
+        [Route("api/folder/{id}")]
         [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             await service.Delete(id);
-            return Ok("TreeGroup deleted.");
+            return Ok("Folder deleted.");
         }
-
     }
 }

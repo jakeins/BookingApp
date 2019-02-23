@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Repositories
 {
-    public class TreeGroupRepository 
-        : ActEntityRepositoryBase<TreeGroup, int, ApplicationUser, string>
+    public class FolderRepository 
+        : ActEntityRepositoryBase<Folder, int, ApplicationUser, string>
     {
-        public TreeGroupRepository(ApplicationDbContext dbContext) : base(dbContext)
+        public FolderRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 
-        private async Task<TreeGroup> GetAsync(int? id)
+        private async Task<Folder> GetAsync(int? id)
         {
             if (id == null)
             {
@@ -25,9 +25,9 @@ namespace BookingApp.Repositories
             } 
         }
 
-        public override async Task UpdateAsync(TreeGroup treeGroup)
+        public override async Task UpdateAsync(Folder Folder)
         {
-            await UpdateSelectiveAsync<TreeGroupUpdateSubsetDto>(treeGroup);
+            await UpdateSelectiveAsync<FolderUpdateSubsetDto>(Folder);
         }
 
         public async Task<bool> IsParentValidAsync(int? newParentId, int? currentId)
@@ -41,10 +41,10 @@ namespace BookingApp.Repositories
                 else
                 {
                     if (currentParentId == currentId)
-                        throw new OperationRestrictedRelationException("Specified parent TreeGroup can't be set because this would cause circluar dependency");
+                        throw new OperationRestrictedRelationException("Specified parent Folder can't be set because this would cause circluar dependency");
                     else
                     {
-                        currentParentId = (await GetAsync(currentParentId)).ParentTreeGroupId;
+                        currentParentId = (await GetAsync(currentParentId)).ParentFolderId;
                     }
                 }
             }
