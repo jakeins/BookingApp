@@ -5,9 +5,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 
-import { AppComponent } from './app.component';
+import { FolderService } from './services/folder.service';
 import { AuthService } from './services/auth.service';
 import { SiteModule } from './site/site.module';
+
+import { AppComponent } from './app.component';
+
 
 
 @NgModule({
@@ -22,7 +25,7 @@ import { SiteModule } from './site/site.module';
       AppRoutingModule,
       SiteModule
   ],
-  providers: [AuthService],
+  providers: [AuthService, FolderService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,19 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Response } from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import { Observable } from 'rxjs/Observable';
 import * as jwt_decode from "jwt-decode";
-
+import { DOCUMENT } from '@angular/common';
 
 
 @Injectable()
 export class AuthService {
 
-  private BaseUrlLogin = "https://localhost:44340/api/auth/login";
+  private BaseUrlLogin: string;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, @Inject(DOCUMENT) private document: any) {
+    this.BaseUrlLogin = document.location.protocol + '/api/auth/login';
   }
 
   login(login, password) {
