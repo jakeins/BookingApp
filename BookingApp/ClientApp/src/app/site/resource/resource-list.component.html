@@ -1,0 +1,6 @@
+<h2>{{ href }}</h2>
+<ul class="list-unstyled">
+    <li *ngFor="let resource of resources">
+      <a [routerLink]="['/resources', resource.id]">{{ resource.title }}</a>
+    </li>
+  </ul>

@@ -8,6 +8,9 @@ import { FolderComponent } from './site/folder/folder.component';
 import { CabinetGuard } from './cabinet/cabinet.guard';
 import { AdminGuard } from './admin/admin.guard';
 import { ErrorComponent } from './site/error/error.component';
+import { ResourceListComponent } from './site/resource/resource-list.component';
+import { ResourceComponent } from './site/resource/resource.component';
+
 
 
 const routes: Routes = [
@@ -17,6 +20,8 @@ const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'forget', component: ForgetComponent },
     { path: 'reset', component: ResetComponent },
+  { path: 'resources', component: ResourceListComponent },
+  { path: 'resources/:id', component: ResourceComponent },
     {
         path: 'cabinet',
         loadChildren: './cabinet/cabinet.module#CabinetModule',
