@@ -158,40 +158,40 @@ namespace BookingApp.Data
             context.Rules.AddRange(rules.Select(e => e.Value));
             #endregion
 
-            #region TreeGroups
-            var treeGroups = new Dictionary<string, TreeGroup> {
-                { "Town Hall", new TreeGroup() { Title = "Town Hall" } },
-                { "Bike Rental", new TreeGroup() { Title = "Bike Rental" } }
+            #region Folders
+            var Folders = new Dictionary<string, Folder> {
+                { "Town Hall", new Folder() { Title = "Town Hall" } },
+                { "Bike Rental", new Folder() { Title = "Bike Rental" } }
             };
-            treeGroups.Add("Spire Balcony", new TreeGroup() { Title = "Spire Balcony", ParentTreeGroup = treeGroups["Town Hall"], DefaultRule = rules["Inactive Rule"] });
-            treeGroups.Add("Gala Balcony", new TreeGroup() { Title = "Gala Balcony", ParentTreeGroup = treeGroups["Town Hall"] });
-            treeGroups.Add("Museums", new TreeGroup() { Title = "Museums", ParentTreeGroup = treeGroups["Town Hall"], IsActive = false });
+            Folders.Add("Spire Balcony", new Folder() { Title = "Spire Balcony", ParentFolder = Folders["Town Hall"], DefaultRule = rules["Inactive Rule"] });
+            Folders.Add("Gala Balcony", new Folder() { Title = "Gala Balcony", ParentFolder = Folders["Town Hall"] });
+            Folders.Add("Museums", new Folder() { Title = "Museums", ParentFolder = Folders["Town Hall"], IsActive = false });
 
-            treeGroups.ToList().ForEach(e => e.Value.Creator = e.Value.Updater = superAdmin);
+            Folders.ToList().ForEach(e => e.Value.Creator = e.Value.Updater = superAdmin);
 
-            context.TreeGroups.AddRange(treeGroups.Select(e => e.Value));
+            context.Folders.AddRange(Folders.Select(e => e.Value));
             #endregion
 
             #region Resources
             var resources = new Dictionary<int, Resource> {
-                {  1, new Resource() { Title = "Nothern View",          TreeGroup = treeGroups["Spire Balcony"], Rule = rules["Defaultest"] } },
-                {  2, new Resource() { Title = "Southern View",         TreeGroup = treeGroups["Spire Balcony"], Rule = rules["Toilets"] } },
-                {  3, new Resource() { Title = "Flag",                  TreeGroup = treeGroups["Spire Balcony"], Rule = rules["Strict Stuff"] } },
+                {  1, new Resource() { Title = "Nothern View",          Folder = Folders["Spire Balcony"], Rule = rules["Defaultest"] } },
+                {  2, new Resource() { Title = "Southern View",         Folder = Folders["Spire Balcony"], Rule = rules["Toilets"] } },
+                {  3, new Resource() { Title = "Flag",                  Folder = Folders["Spire Balcony"], Rule = rules["Strict Stuff"] } },
 
-                {  4, new Resource() { Title = "Trumpet Ensemble",      TreeGroup = treeGroups["Gala Balcony"],  Rule = rules["Teslas"] } },
+                {  4, new Resource() { Title = "Trumpet Ensemble",      Folder = Folders["Gala Balcony"],  Rule = rules["Teslas"] } },
 
-                {  5, new Resource() { Title = "First Floor Hallway",   TreeGroup = treeGroups["Town Hall"],     Rule = rules["Toilets"] } },
+                {  5, new Resource() { Title = "First Floor Hallway",   Folder = Folders["Town Hall"],     Rule = rules["Toilets"] } },
 
-                {  6, new Resource() { Title = "Natural Museum",        TreeGroup = treeGroups["Museums"],       Rule = rules["Rooms"], IsActive = false } },
-                {  7, new Resource() { Title = "Art Museum",            TreeGroup = treeGroups["Museums"],       Rule = rules["Rooms"], IsActive = false } },
-                {  8, new Resource() { Title = "History Museum",        TreeGroup = treeGroups["Museums"],       Rule = rules["Rooms"] } },
+                {  6, new Resource() { Title = "Natural Museum",        Folder = Folders["Museums"],       Rule = rules["Rooms"], IsActive = false } },
+                {  7, new Resource() { Title = "Art Museum",            Folder = Folders["Museums"],       Rule = rules["Rooms"], IsActive = false } },
+                {  8, new Resource() { Title = "History Museum",        Folder = Folders["Museums"],       Rule = rules["Rooms"] } },
 
                 {  9, new Resource() { Title = "Civil Defence Alarm",                                            Rule = rules["Strict Stuff"] } },
 
-                { 10, new Resource() { Title = "Cruiser Bicycle #2000", TreeGroup = treeGroups["Bike Rental"],   Rule = rules["Inactive Rule"] } },
-                { 11, new Resource() { Title = "Cruiser Bicycle #46",   TreeGroup = treeGroups["Bike Rental"],   Rule = rules["Teslas"] } },
-                { 12, new Resource() { Title = "Ukraine Tier0 Bicycle", TreeGroup = treeGroups["Bike Rental"],   Rule = rules["Toilets"] } },
-                { 13, new Resource() { Title = "Mountain Bike Roger",   TreeGroup = treeGroups["Bike Rental"],   Rule = rules["Teslas"], IsActive = false } },
+                { 10, new Resource() { Title = "Cruiser Bicycle #2000", Folder = Folders["Bike Rental"],   Rule = rules["Inactive Rule"] } },
+                { 11, new Resource() { Title = "Cruiser Bicycle #46",   Folder = Folders["Bike Rental"],   Rule = rules["Teslas"] } },
+                { 12, new Resource() { Title = "Ukraine Tier0 Bicycle", Folder = Folders["Bike Rental"],   Rule = rules["Toilets"] } },
+                { 13, new Resource() { Title = "Mountain Bike Roger",   Folder = Folders["Bike Rental"],   Rule = rules["Teslas"], IsActive = false } },
             };
 
             //fill authorship & description (random stuff)

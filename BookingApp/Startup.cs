@@ -36,10 +36,11 @@ namespace BookingApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<ResourcesService>();
-            services.AddTransient<ResourcesRepository>();
-            services.AddTransient<TreeGroupService>();
-            services.AddTransient<TreeGroupRepository>();
+            services.AddTransient<IResourcesService, ResourcesService>();
+            services.AddTransient<IResourcesRepository, ResourcesRepository>();
+
+            services.AddTransient<FolderService>();
+            services.AddTransient<FolderRepository>();
 
             services.AddTransient<BookingsService>();
             services.AddTransient<BookingsRepository>();
@@ -48,8 +49,11 @@ namespace BookingApp
             services.AddTransient<IMessageService, MailMessageService>();
             services.AddTransient<NotificationService>();
 
-            services.AddTransient<UserService>();
-            services.AddTransient<UserRepository>();
+            services.AddTransient<IUserService,UserService>();
+            services.AddTransient<IUserRepository,UserRepository>();
+
+            services.AddTransient<RuleService>();
+            services.AddTransient<RuleRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -98,8 +102,7 @@ namespace BookingApp
             });
 
             services.AddScoped<DbInitializer>();
-            services.AddScoped<UserService>();
-            services.AddScoped<UserRepository>();
+            
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
@@ -134,12 +137,12 @@ namespace BookingApp
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-            // specifying the Swagger JSON endpoint.            
+            // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "BookingApp API V1");
-                c.RoutePrefix = string.Empty;
-            });            
+                c.RoutePrefix = "swagger";
+            });
             // Enable midleware for handling exceptions
             app.UseMiddleware<Middlewares.ErrorHandlingMiddleware>(env.IsDevelopment());
 

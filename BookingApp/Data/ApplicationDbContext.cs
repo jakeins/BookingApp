@@ -15,7 +15,7 @@ namespace BookingApp.Data
         public virtual DbSet<Booking> Bookings { get; set; }
         public virtual DbSet<Resource> Resources { get; set; }
         public virtual DbSet<Rule> Rules { get; set; }
-        public virtual DbSet<TreeGroup> TreeGroups { get; set; }
+        public virtual DbSet<Folder> Folders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
