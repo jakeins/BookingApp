@@ -8,20 +8,25 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-    public class NotificationService
+    public interface INotificationService
+    {
+        Task ForgetPasswordMail(ApplicationUser user);
+    }
+
+    public class NotificationService : INotificationService
     {
         private readonly IMessageService messageService;
-        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IUserService userService;
 
-        public NotificationService(IMessageService messageService, UserManager<ApplicationUser> userManager)
+        public NotificationService(IMessageService messageService, IUserService userService)
         {
             this.messageService = messageService;
-            this.userManager = userManager;
+            this.userService = userService;
         }
 
         public async Task ForgetPasswordMail(ApplicationUser user)
         {
-            var code = await userManager.GeneratePasswordResetTokenAsync(user);
+            var code = await userService.GeneratePasswordResetTokenAsync(user);
             var callbackUrl = $"https://yoursite.com?userId={user.Id}&code={code}";
             var body = $"Click to <a href=\"{callbackUrl}\">link</a>, if you want restore your password";
             var message = new Message
