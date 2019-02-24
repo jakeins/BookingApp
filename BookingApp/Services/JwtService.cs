@@ -11,7 +11,13 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-    public class JwtService
+    public interface IJwtService
+    {
+        string GenerateJwtAccessToken(IEnumerable<Claim> claims);
+        Task<Claim[]> GetClaimsAsync(ApplicationUser userInfo);
+    }
+
+    public class JwtService : IJwtService
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IConfiguration configuration;

@@ -13,22 +13,22 @@ namespace BookingAppTests.Controllers
 {
     public class AuthControllerTest
     {
-        private readonly Mock<NotificationService> mockNotificationService;
-        private readonly Mock<UserService> mockUserService;
-        private readonly Mock<JwtService> mockJwtService;
+        private readonly Mock<INotificationService> mockNotificationService;
+        private readonly Mock<IUserService> mockUserService;
+        private readonly Mock<IJwtService> mockJwtService;
 
         public AuthControllerTest()
         {
-            mockNotificationService = new Mock<NotificationService>();
-            mockUserService = new Mock<UserService>();
-            mockJwtService = new Mock<JwtService>();
+            mockNotificationService = new Mock<INotificationService>();
+            mockUserService = new Mock<IUserService>();
+            mockJwtService = new Mock<IJwtService>();
         }
 
         [Fact]
         public async Task LoginWithCorrectParametersAsync()
         {
             var userClaims = It.IsAny<Claim[]>();
-            var expectedAccessToken = It.IsAny<string>();
+            var expectedAccessToken = "token"; // It.IsAny<string>() don't work and returns null
             var mockUser = new Mock<ApplicationUser>();
             var mockAuthLoginDto = new Mock<AuthLoginDto>();
             mockAuthLoginDto.Setup(authLoginDto => authLoginDto.Email).Returns(It.IsAny<string>());
