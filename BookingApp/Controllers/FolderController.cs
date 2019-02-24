@@ -15,10 +15,10 @@ namespace BookingApp.Controllers
     /// </remarks>
     public class FolderController : EntityControllerBase
     {
-        FolderService service;
+        IFolderService service;
         readonly IMapper mapper;
 
-        public FolderController(FolderService s)
+        public FolderController(IFolderService s)
         {
             service = s;
             mapper = new Mapper(new MapperConfiguration(cfg =>
@@ -41,7 +41,8 @@ namespace BookingApp.Controllers
         [Route("api/folder")]
         public async Task<IActionResult> Index()
         {
-            var models = (IsAdmin) ? await service.GetFolders() : await service.GetFoldersActive();
+            bool admin = false; //IsAdmin
+            var models = (admin) ? await service.GetFolders() : await service.GetFoldersActive();
             IEnumerable <FolderBaseDto> dtos = mapper.Map<IEnumerable<FolderBaseDto>>(models);
             return Ok(dtos);
         }

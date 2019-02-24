@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-    public class FolderService
+    public class FolderService : IFolderService
     {
         FolderRepository repository;
         readonly UserManager<ApplicationUser> userManager;
@@ -54,5 +54,15 @@ namespace BookingApp.Services
             await repository.DeleteAsync(id);
         } 
 
+    }
+
+    public interface IFolderService
+    {
+        Task Create(string userId, Folder Folder);
+        Task<IEnumerable<Folder>> GetFoldersActive();
+        Task<IEnumerable<Folder>> GetFolders();
+        Task<Folder> GetDetail(int folderId);
+        Task Update(int currentFolderId, string userId, Folder Folder);
+        Task Delete(int folderId);
     }
 }
