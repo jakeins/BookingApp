@@ -1,0 +1,47 @@
+.entry {
+  font-size:larger;
+  width: 100%;
+  padding: 12px;
+  height: 50px;
+}
+
+.entry:hover {
+  background-color: #eee;
+}
+
+.titles {
+  float:left;
+}
+
+.fright {
+  float: right;
+}
+
+.indicator {
+  width: 80px;
+  height: 30px;
+  background-color: darkseagreen;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: inset 0 3px 4px rgba(0,0,0,.24);
+}
+
+  .indicator > .occupied {
+    background-color: indianred;
+    box-shadow: inset 0 3px 4px rgba(0,0,0,.24), 2px 0 2px rgba(0,0,0,.24);
+    height:120%;
+  }
+   
+.entry:hover .control {
+  display:block;
+}
+
+.control {
+  padding-right: 24px;
+  display: none;
+  font-size:large;
+}
+
+.redundand {
+  color: lightgray;
+}

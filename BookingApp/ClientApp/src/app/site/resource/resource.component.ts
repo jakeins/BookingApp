@@ -24,7 +24,7 @@ export class ResourceComponent implements OnInit {
       this.id = +params['id'];
     });
 
-    this.folderService.getResource(this.id).subscribe((response: TreeEntry) => {
+    this.folderService.getResource(this.id).subscribe((response: Resource) => {
       this.resource = response;
     });
   }

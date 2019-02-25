@@ -1,12 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var TreeEntry = /** @class */ (function () {
-    function TreeEntry(id, title, isFolder, isActive, parentFolderId) {
-        this.id = id;
-        this.title = title;
-        this.isFolder = isFolder;
-        this.isActive = isActive;
-        this.parentFolderId = parentFolderId;
+    function TreeEntry(original) {
+        this.isFolder = original.parentFolderId !== undefined;
+        this.id = original.id;
+        this.title = original.title;
+        this.isActive = true; //this.isActive;
+        if (this.isFolder) {
+            this.parentFolderId = original.parentFolderId;
+        }
+        else {
+            this.parentFolderId = original.folderId;
+        }
+        //Logger.log(`${original.title} - ${this.isFolder}`);
     }
     return TreeEntry;
 }());

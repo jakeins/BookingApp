@@ -55,7 +55,7 @@ namespace BookingApp.Controllers
         // Filtered access: Guest/Admin.
         public async Task<IActionResult> ListOccupancy()
         {
-            var idsList = await resService.ListKeys(includeIncativeResources: IsAdmin == true);
+            var idsList = await (IsAdmin ? resService.ListKeys() : resService.ListActiveKeys());
 
             var map = new Dictionary<int, double?>();
 

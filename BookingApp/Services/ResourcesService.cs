@@ -21,11 +21,11 @@ namespace BookingApp.Services
         public async Task Update(Resource resource) => await resourcesRepo.UpdateAsync(resource);
         public async Task Delete(int resourceId) => await resourcesRepo.DeleteAsync(resourceId);
 
-        public async Task<IEnumerable<int>> ListKeys(bool includeIncativeResources) => await resourcesRepo.ListKeysAsync();
+        public async Task<IEnumerable<int>> ListKeys() => await resourcesRepo.ListKeysAsync();
                
         public async Task<bool> IsActive(int resourceId) => await resourcesRepo.IsActiveAsync(resourceId);
         public async Task<IEnumerable<Resource>> ListActive() => await resourcesRepo.ListActiveAsync();
-        public async Task<IEnumerable<int>> ListActiveKeys(bool includeIncativeResources) => await resourcesRepo.ListActiveKeysAsync();
+        public async Task<IEnumerable<int>> ListActiveKeys() => await resourcesRepo.ListActiveKeysAsync();
 
         public async Task<IEnumerable<Resource>> ListByAssociatedUser(string userId) => await resourcesRepo.ListByAssociatedUser(userId);
         public async Task<IEnumerable<Resource>> ListByRuleKey(int ruleId) => await resourcesRepo.ListByRuleKeyAsync(ruleId);
@@ -41,11 +41,11 @@ namespace BookingApp.Services
         Task Update(Resource resource);
         Task Delete(int resourceId);
 
-        Task<IEnumerable<int>> ListKeys(bool includeIncativeResources);
+        Task<IEnumerable<int>> ListKeys();
 
         Task<bool> IsActive(int resourceId);
         Task<IEnumerable<Resource>> ListActive();
-        Task<IEnumerable<int>> ListActiveKeys(bool includeIncativeResources);
+        Task<IEnumerable<int>> ListActiveKeys();
 
         /// <summary>
         /// Lists all resources associated with the specified user. 
