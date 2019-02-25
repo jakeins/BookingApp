@@ -12,23 +12,23 @@ namespace BookingApp.Controllers
         /// <summary>
         /// Current user identifier
         /// </summary>
-        protected string UserId => User.Claims.Single(c => c.Type == "uid").Value;
+        public virtual string UserId => User.Claims.Single(c => c.Type == "uid").Value;
 
         /// <summary>
         /// Shorthand for checking if current user has admin access level
         /// </summary>
-        protected bool IsAdmin => User.IsInRole(RoleTypes.Admin);
+        public virtual bool IsAdmin => User.IsInRole(RoleTypes.Admin);
 
         /// <summary>
         /// Shorthand for checking if current user has user access level
         /// </summary>
-        protected bool IsUser => User.IsInRole(RoleTypes.User);
+        public virtual bool IsUser => User.IsInRole(RoleTypes.User);
 
         /// <summary>
         /// Shorthand for checking if current user doesn't have any specific rights.
         /// Current user is anonymous if he hasn't UserID claim.
         /// </summary>
-        protected bool IsAnonymous => !User.HasClaim(c => c.Type == "uid");
+        public virtual bool IsAnonymous => !User.HasClaim(c => c.Type == "uid");
 
         /// <summary>
         /// Gets full base api url of a current controller, if annotated correctly.

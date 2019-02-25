@@ -10,9 +10,9 @@ import { BookingsComponent } from './bookings/bookings.component';
 
 @NgModule({
     imports: [
-        CommonModule,
-        CabinetRoutingModule,
-        RouterModule
+      CommonModule,
+      RouterModule,
+      CabinetRoutingModule
     ],
     declarations: [
         CabinetComponent,

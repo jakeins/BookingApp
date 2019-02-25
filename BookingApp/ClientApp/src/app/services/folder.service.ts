@@ -4,7 +4,7 @@ import { Response } from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import { Observable } from 'rxjs/Observable';
-import { Folders } from '../models/folders';
+import { Folder } from '../models/folder';
 import { DOCUMENT } from '@angular/common';
 
 
@@ -16,7 +16,7 @@ export class FolderService {
     this.BaseUrlFolder = document.location.protocol + '/api/folder';
   }
 
-  getList(): Observable<Folders> {
+  getList(): Observable<Folder> {
     var headers = new HttpHeaders({
       "Content-Type": "application/json",
       "Accept": "application/json"
