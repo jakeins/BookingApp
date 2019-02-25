@@ -24,17 +24,14 @@ export class TreeComponent implements OnInit {
   treeRoot = new TreeNode(0, "[root]", new TreeEntry(new Folder(0,"root", null)), []);
   private barrierCount = 0;
 
-  authService: AuthService;
   isUser: boolean;
   isAdmin: boolean;
 
   constructor(
     private resourceService: ResourceService,
     private folderService: FolderService,
-    authService: AuthService
-  ) {
-    this.authService = authService;
-  }
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.isUser = true;

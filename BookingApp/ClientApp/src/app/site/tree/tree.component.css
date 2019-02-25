@@ -5,11 +5,11 @@
   height: 50px;
 }
 
-.entry:hover {
+.resource-entry:hover, .admin.folder-entry:hover {
   background-color: #eee;
 }
 
-.titles {
+.fleft {
   float:left;
 }
 
