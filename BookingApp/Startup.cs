@@ -42,12 +42,12 @@ namespace BookingApp
             services.AddTransient<IFolderService, FolderService>();
             services.AddTransient<FolderRepository>();
 
-            services.AddTransient<BookingsService>();
-            services.AddTransient<BookingsRepository>();
+            services.AddTransient<IBookingsService, BookingsService>();
+            services.AddTransient<IBookingsRepository, BookingsRepository>();
 
-            services.AddTransient<JwtService>();
+            services.AddTransient<IJwtService, JwtService>();
             services.AddTransient<IMessageService, MailMessageService>();
-            services.AddTransient<NotificationService>();
+            services.AddTransient<INotificationService, NotificationService>();
 
             services.AddTransient<IUserService,UserService>();
             services.AddTransient<IUserRepository,UserRepository>();

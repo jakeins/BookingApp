@@ -1,36 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using BookingApp.Services;
+﻿using AutoMapper;
 using BookingApp.Data.Models;
-using AutoMapper;
 using BookingApp.DTOs;
-using Microsoft.AspNetCore.Authorization;
-using BookingApp.Helpers;
+using BookingApp.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BookingApp.Controllers
 {
-    
     [ApiController]
     public class UserController : ControllerBase
     {
-        readonly IUserService userService;
-        readonly IMapper mapper;
-        readonly IResourcesService resourcesService;
+        private readonly IUserService userService;
+        private readonly IMapper mapper;
+        private readonly IResourcesService resourcesService;
+        private readonly IBookingsService bookingsService;
 
-        public UserController(IUserService userService, IResourcesService resourcesService)
+        public UserController(IUserService userService, IResourcesService resourcesService, IBookingsService bookingsService)
         {
             this.userService = userService;
             this.resourcesService = resourcesService;
+            this.bookingsService = bookingsService;
+
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap().ForMember(dest => dest.PasswordHash,opt => opt.MapFrom(src => src.Password));
+                cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap().ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
                 cfg.CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
                 cfg.CreateMap<Resource, ResourceMaxDto>().ReverseMap();
+                cfg.CreateMap<Booking, BookingOwnerDTO>();
             }));
         }
 
@@ -41,7 +40,7 @@ namespace BookingApp.Controllers
             if (ModelState.IsValid)
             {
                 ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
-                await userService.CreateUser(appUser,user.Password);
+                await userService.CreateUser(appUser, user.Password);
                 return Ok("User created");
             }
             return BadRequest("Error valid");
@@ -67,7 +66,7 @@ namespace BookingApp.Controllers
             UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
             return new OkObjectResult(user);
         }
-        
+
         [HttpGet("api/user/email/{userEmail}")]
         public async Task<IActionResult> GetUserByEmail([FromRoute]string userEmail)
         {
@@ -98,7 +97,7 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> UpdateUser([FromBody]UserUpdateDTO user, [FromRoute]string userId)
         {
             ApplicationUser appuser = await userService.GetUserById(userId);
-            mapper.Map<UserUpdateDTO, ApplicationUser>(user,appuser);    
+            mapper.Map<UserUpdateDTO, ApplicationUser>(user, appuser);
             await userService.UpdateUser(appuser);
             return new OkObjectResult("User updated");
         }
@@ -111,25 +110,24 @@ namespace BookingApp.Controllers
             return Ok(userRoles);
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("api/user/{userId}/resources")]
         public async Task<IActionResult> GetResources([FromRoute]string userId)
-        { 
+        {
             var resources = await resourcesService.ListByAssociatedUser(userId);
             var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(resources);
             return Ok(userResources);
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/change-password")]
-        public async Task<IActionResult> ChangePassword([FromBody]UserPasswordChangeDTO userDTO,[FromRoute]string userId)
+        public async Task<IActionResult> ChangePassword([FromBody]UserPasswordChangeDTO userDTO, [FromRoute]string userId)
         {
-            await userService.ChangePassword(userId, userDTO.CurrentPassword,userDTO.NewPassword);
+            ApplicationUser user = await userService.GetUserById(userId);
+            await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
             return Ok("Password changed");
         }
 
         [HttpPut("api/user/{userId}/add-role")]
-        public async Task<IActionResult> AddRole([FromRoute]string userId,[FromBody]string role)
+        public async Task<IActionResult> AddRole([FromRoute]string userId, [FromBody]string role)
         {
             await userService.AddUserRoleAsync(userId, role);
             return Ok("Role added");
@@ -144,7 +142,7 @@ namespace BookingApp.Controllers
 
         [HttpPut("api/user/{userId}/approval")]
         public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody]bool IsApproved)
-        { 
+        {
             await userService.UserApproval(userId, IsApproved);
             return Ok();
         }
@@ -159,12 +157,33 @@ namespace BookingApp.Controllers
         [HttpPut("api/user/{userId}/resset-password")]
         public async Task<IActionResult> RessetPassword([FromRoute]string userId, string token, string newPassword)
         {
-            await userService.RessetUserPassword(userId, token,newPassword);
+            await userService.RessetUserPassword(userId, token, newPassword);
             return Ok();
         }
 
         #region Bookings
-        //TODO: List bookings
-        #endregion
+
+        /// <summary>
+        /// Returns user bookings in selected time range
+        /// </summary>
+        /// <param name="userId">Id of <see cref="ApplicationUser"/></param>
+        /// <param name="startTime">Optional start time, if not setted then use current server time</param>
+        /// <param name="endTime">Optional end time, if not setted then return all booking from startTime</param>
+        /// <returns>List of <see cref="BookingOwnerDTO"/></returns>
+        [HttpGet("api/user/{userId}/bookings")]
+        public async Task<IActionResult> GetBookings([FromRoute]string userId, [FromQuery]DateTime? startTime, [FromQuery]DateTime? endTime)
+        {
+            var bookings = await bookingsService.ListBookingForSpecificUser(userId, startTime, endTime);
+            var dtos = new List<BookingOwnerDTO>();
+
+            foreach (var booking in bookings)
+            {
+                dtos.Add(mapper.Map<BookingOwnerDTO>(booking));
+            }
+
+            return Ok(dtos);
+        }
+
+        #endregion Bookings
     }
 }

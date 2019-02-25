@@ -14,10 +14,10 @@ namespace BookingApp.Controllers
     [ApiController]
     public class BookingsController : EntityControllerBase
     {
-        private readonly BookingsService bookingService;
+        private readonly IBookingsService bookingService;
         private readonly IMapper dtoMapper;
 
-        public BookingsController(BookingsService bookingService)
+        public BookingsController(IBookingsService bookingService)
         {
             this.bookingService = bookingService;
 

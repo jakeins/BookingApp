@@ -17,12 +17,12 @@ namespace BookingApp.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly NotificationService notificationService;
+        private readonly INotificationService notificationService;
         private readonly IUserService userService;
-        private readonly JwtService jwtService;
+        private readonly IJwtService jwtService;
         private readonly IMapper mapper;
 
-        public AuthController(NotificationService notificationService, IUserService userService, JwtService jwtService)
+        public AuthController(INotificationService notificationService, IUserService userService, IJwtService jwtService)
         {
             this.notificationService = notificationService;
             this.userService = userService;
@@ -65,8 +65,9 @@ namespace BookingApp.Controllers
 
             var userClaims = await jwtService.GetClaimsAsync(user);
             var accessToken = jwtService.GenerateJwtAccessToken(userClaims);
+            //var tokens = new AuthTokensDto { AccessToken = accessToken };
 
-            return Ok(new { accessToken });
+            return Ok(accessToken);
         }
 
         [AllowAnonymous]
@@ -80,8 +81,8 @@ namespace BookingApp.Controllers
 
             var user = mapper.Map<ApplicationUser>(dto);
             await userService.CreateUser(user, dto.Password);
-            
-            //await userService.AddToRoleAsync(user, RoleTypes.User);
+
+            await userService.AddUserRoleAsync(user.Id, RoleTypes.User);
 
             return Ok();
         }

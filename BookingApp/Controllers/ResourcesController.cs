@@ -18,10 +18,10 @@ namespace BookingApp.Controllers
     public partial class ResourcesController : EntityControllerBase
     {
         readonly IResourcesService resService;
-        readonly BookingsService bookService;
+        readonly IBookingsService bookService;
         readonly IMapper dtoMapper;
 
-        public ResourcesController(IResourcesService resService, BookingsService bookService)
+        public ResourcesController(IResourcesService resService, IBookingsService bookService)
         {
             this.resService = resService;
             this.bookService = bookService;
