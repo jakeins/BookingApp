@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { TreeEntry } from '../../models/tree-entry';
 import { ResourceService } from '../../services/resource.service';
 import { Resource } from '../../models/resource';
 import { ActivatedRoute } from '@angular/router';

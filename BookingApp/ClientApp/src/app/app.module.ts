@@ -11,11 +11,15 @@ import { AppComponent } from './app.component';
 import { AuthService } from './services/auth.service';
 import { FolderService } from './services/folder.service';
 import { ResourceService } from './services/resource.service';
+import { AppHeaderComponent } from './site/header/header.component';
+import { CabinetModule } from './cabinet/cabinet.module';
+import { AdminModule } from './admin/admin.module';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    AppHeaderComponent
   ],
   imports: [
       BrowserModule,
@@ -23,7 +27,9 @@ import { ResourceService } from './services/resource.service';
       FormsModule,
       RouterModule,
       AppRoutingModule,
-      SiteModule
+    SiteModule,
+    CabinetModule,
+    AdminModule
   ],
   providers: [
     AuthService,

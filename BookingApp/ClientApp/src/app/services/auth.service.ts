@@ -6,6 +6,8 @@ import 'rxjs/add/operator/catch';
 import { Observable } from 'rxjs/Observable';
 import * as jwt_decode from "jwt-decode";
 import { DOCUMENT } from '@angular/common';
+import { Logger } from './logger.service';
+
 
 
 @Injectable()
@@ -18,6 +20,7 @@ export class AuthService {
   }
 
   login(login, password) {
+
     var headers = new HttpHeaders({
       "Content-Type": "application/json",
       "Accept": "application/json"
@@ -29,7 +32,13 @@ export class AuthService {
 
     return this.http.post(this.BaseUrlLogin, JSON.stringify(postData), {
       headers: headers
-    }).map((response: Response) => response)
+    }).map((response: Response) => {
+
+      //Logger.log(response);
+
+      this.setToken(response.toString());
+      return response;
+      })
       .catch((error: any) =>
         Observable.throw(error.error || 'Server error'));
   }
@@ -51,12 +60,66 @@ export class AuthService {
     }
   }
 
-  checkAuth() {
+  getUserName() {
     if (this.getEncodeToken() !== false) {
       let tokenInfo = this.getEncodeToken();
       return tokenInfo.sub;
     }
     return false;
   }
+
+
+  isAdmin: boolean = false;
+  isUser: boolean = false;
+
+  authAsAdmin() {
+    let login = "superadmin@admin.cow";
+    let password = "SuperAdmin";
+    this.login(login, password)
+      .subscribe(res => {
+        if (res != null) {
+          this.isAdmin = true;
+          this.isUser = true;
+        }
+      });
+  }
+
+  authAsUser() {
+    let login = "lion@user.cow";
+    let password = "Lion";
+    this.login(login, password)
+      .subscribe(res => {
+        if (res != null) {
+          this.isUser = true;
+          this.isAdmin = false;
+        }
+      });
+  }
+
+  logout() {
+    this.removeToken();
+    this.isAdmin = false;
+    this.isUser = false;
+  }
+
+
+  resetAuthFlags() {
+    let userName = this.getUserName();
+
+      if (userName == "Lion") {
+        this.isAdmin = false;
+        this.isUser = true;
+      }
+      else if (userName == "SuperAdmin") {
+        this.isAdmin = true;
+        this.isUser = true;
+      }
+      else {
+        this.isAdmin = false;
+        this.isUser = false;
+      }
+  }
+
+
 
 }
