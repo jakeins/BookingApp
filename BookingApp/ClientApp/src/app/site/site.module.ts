@@ -9,11 +9,18 @@ import { LoginComponent } from './auth/login/login.component';
 import { ForgetComponent } from './auth/forget/forget.component';
 import { ResetComponent } from './auth/reset/reset.component';
 import { ErrorComponent } from './error/error.component';
+import { ResourceListComponent } from './resource/resource-list.component';
+import { ResourceComponent } from './resource/resource.component';
+import { TreeComponent } from './tree/tree.component';
+
 
 
 
 @NgModule({
   declarations: [
+    TreeComponent,
+    ResourceListComponent,
+    ResourceComponent,
     FolderComponent,
     RegisterComponent,
     LoginComponent,
