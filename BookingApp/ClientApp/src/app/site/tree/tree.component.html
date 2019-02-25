@@ -1,36 +1,33 @@
+<div *ngFor="let node of treeFlat" >
+  <div class="entry clearfix" *ngIf="node.nesting != 0 || authService.isAdmin">
 
-<div class="entry clearfix" *ngFor="let node of treeFlat">
+    <div class="titles" [style.padding-left.px]="30*node.nesting">
 
-  <div class="titles" [style.padding-left.px]="30*node.nesting">
+      <span title="This is a folder" *ngIf="node.item.isFolder">📦</span>
+      <span title="This is a resource" *ngIf="!node.item.isFolder">🍎</span>
 
-    <span title="This is a folder" *ngIf="node.item.isFolder">📦</span>
-    <span title="This is a resource" *ngIf="!node.item.isFolder">🍎</span>
+      <span *ngIf="node.item.isFolder">{{ node.item.title }}</span>
+      <a *ngIf="!node.item.isFolder" [routerLink]="['/resources', node.item.id]">{{ node.item.title }}</a>
 
-    <span *ngIf="node.item.isFolder">{{ node.item.title }}</span>
-    <a *ngIf="!node.item.isFolder" [routerLink]="['/resources', node.item.id]">{{ node.item.title }}</a>
+      <span class="redundand" style="padding-left:12px;">#{{ node.item.id }}</span>
+    </div>
 
-    <span class="redundand" style="padding-left:12px;">#{{ node.item.id }}</span>
+    <div class="indicator fright" *ngIf="node.item.occupancy != null" title="{{node.item.occupancyTitle}}">
+      <div class="occupied" [style.width]="node.item.occupancy+'%'">&nbsp;</div>
+    </div>
+
+    <div *ngIf="authService.isAdmin" class="control fright">
+      <span *ngIf="node.item.isFolder">
+        <a title="Create nested resource" [routerLink]="['/resources', node.item.id, 'create']">🍏</a>
+        <a title="Create nested folder" [routerLink]="['/folders', node.item.id, '/create']">📦</a>
+        <a title="Edit folder" [routerLink]="['/resources', node.item.id, 'edit']">✏️</a>
+        <a title="Delete folder" [routerLink]="['/resources', node.item.id, 'delete']">❌</a>
+      </span>
+      <span *ngIf="!node.item.isFolder">
+        <a title="Edit resource" [routerLink]="['/resources', node.item.id, 'edit']">✏️</a>
+        <a title="Delete resource" [routerLink]="['/resources', node.item.id, 'delete']">❌</a>
+      </span>
+    </div>
   </div>
-
-  <div class="indicator fright" *ngIf="node.item.occupancy != null" title="{{node.item.occupancyTitle}}">
-    <div class="occupied" [style.width]="node.item.occupancy+'%'">&nbsp;</div>
-  </div>
-
-  <div class="control fright">
-
-    <span *ngIf="node.item.isFolder">
-      <a title="Create nested resource" [routerLink]="['/resources', node.item.id, 'create']">🍏</a>
-      <a title="Create nested folder" [routerLink]="['/folders', node.item.id, '/create']">📦</a>
-      <a title="Edit folder" [routerLink]="['/resources', node.item.id, 'edit']">✏️</a>
-      <a title="Delete folder" [routerLink]="['/resources', node.item.id, 'delete']">❌</a>
-    </span>
-    <span *ngIf="!node.item.isFolder">
-      <a title="Edit resource" [routerLink]="['/resources', node.item.id, 'edit']">✏️</a>
-      <a title="Delete resource" [routerLink]="['/resources', node.item.id, 'delete']">❌</a>
-    </span>
-  </div>
-
-
-
 </div>
 

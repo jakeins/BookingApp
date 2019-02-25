@@ -1,4 +1,4 @@
-import { Folders } from "./folders";
+import { Folder } from "./folder";
 import { Resource } from "./resource";
 import { Logger } from "../services/logger.service";
 
@@ -16,16 +16,16 @@ export class TreeEntry {
   occupancy?: number;
   occupancyTitle?: string;
 
-  constructor(original: Folders | Resource) {
+  constructor(original: Folder | Resource) {
 
-    this.isFolder = (<Folders>original).parentFolderId !== undefined;
+    this.isFolder = (<Folder>original).parentFolderId !== undefined;
 
     this.id = original.id;
     this.title = original.title;
     this.isActive = true;//this.isActive;
     
     if (this.isFolder) {
-      this.parentFolderId = (<Folders>original).parentFolderId;
+      this.parentFolderId = (<Folder>original).parentFolderId;
     }
     else {
       this.parentFolderId = (<Resource>original).folderId;

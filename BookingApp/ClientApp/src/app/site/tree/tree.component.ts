@@ -5,8 +5,9 @@ import { TreeNode } from '../../models/tree-node';
 import { ResourceService } from '../../services/resource.service';
 import { FolderService } from '../../services/folder.service';
 import { Resource } from '../../models/resource';
-import { Folders } from '../../models/folders';
+import { Folder } from '../../models/folder';
 import { Logger } from '../../services/logger.service';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -20,14 +21,24 @@ export class TreeComponent implements OnInit {
   folderEntries: TreeEntry[] = [];
   allEntries: TreeEntry[] = [];
   treeFlat: TreeNode[] = [];
-  treeRoot = new TreeNode(0, "[root]", new TreeEntry(new Folders(0,"root", null)), []);
+  treeRoot = new TreeNode(0, "[root]", new TreeEntry(new Folder(0,"root", null)), []);
   private barrierCount = 0;
 
-  constructor(private resourceService: ResourceService, private folderService: FolderService) { }
+  authService: AuthService;
+  isUser: boolean;
+  isAdmin: boolean;
+
+  constructor(
+    private resourceService: ResourceService,
+    private folderService: FolderService,
+    authService: AuthService
+  ) {
+    this.authService = authService;
+  }
 
   ngOnInit() {
-
-    this.folderService.getList().subscribe((result: Folders) => {
+    this.isUser = true;
+    this.folderService.getList().subscribe((result: Folder) => {
       for (let key in result) {
         let entry = new TreeEntry(result[key]);
         this.folderEntries[key] = entry;
