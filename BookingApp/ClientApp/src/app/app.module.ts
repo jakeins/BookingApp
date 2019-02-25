@@ -12,8 +12,6 @@ import { AuthService } from './services/auth.service';
 import { FolderService } from './services/folder.service';
 import { ResourceService } from './services/resource.service';
 import { AppHeaderComponent } from './site/header/header.component';
-import { CabinetModule } from './cabinet/cabinet.module';
-import { AdminModule } from './admin/admin.module';
 
 
 @NgModule({
@@ -27,9 +25,7 @@ import { AdminModule } from './admin/admin.module';
       FormsModule,
       RouterModule,
       AppRoutingModule,
-    SiteModule,
-    CabinetModule,
-    AdminModule
+      SiteModule
   ],
   providers: [
     AuthService,
