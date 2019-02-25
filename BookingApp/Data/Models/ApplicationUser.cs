@@ -13,11 +13,11 @@ namespace BookingApp.Data.Models
         /// <para>True:  Approved,</para>
         /// <para>False: Rejected.</para>
         /// </summary>
-        public bool? ApprovalStatus { get; set; }
+        public virtual bool? ApprovalStatus { get; set; }
 
         /// <summary>
         /// Provides ban or suspension functionality.
         /// </summary>
-        public bool? IsBlocked { get; set; }
+        public virtual bool? IsBlocked { get; set; }
     }
 }

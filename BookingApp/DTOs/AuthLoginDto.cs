@@ -7,6 +7,6 @@ namespace BookingApp.DTOs
     public class AuthLoginDto : AuthMinimalDto
     {
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public virtual string Password { get; set; }
     }
 }
