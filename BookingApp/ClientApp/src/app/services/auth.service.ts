@@ -68,7 +68,6 @@ export class AuthService {
     return false;
   }
 
-
   isAdmin: boolean = false;
   isUser: boolean = false;
 
@@ -102,7 +101,6 @@ export class AuthService {
     this.isUser = false;
   }
 
-
   resetAuthFlags() {
     let userName = this.getUserName();
 
@@ -119,7 +117,5 @@ export class AuthService {
         this.isUser = false;
       }
   }
-
-
 
 }
