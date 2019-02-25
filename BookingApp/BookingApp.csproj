@@ -74,8 +74,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\globals.ts" />
     <None Remove="ClientApp\src\app\models\folders.ts" />
+    <None Remove="ClientApp\src\app\models\resource.ts" />
+    <None Remove="ClientApp\src\app\models\tree-entry.ts" />
+    <None Remove="ClientApp\src\app\models\tree-node.ts" />
     <None Remove="ClientApp\src\app\services\folder.service.ts" />
+    <None Remove="ClientApp\src\app\services\logger.service.ts" />
+    <None Remove="ClientApp\src\app\services\resource.service.ts" />
     <None Remove="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
     <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
     <None Remove="Data\StoredProcedures\Booking\Terminate.sql" />
@@ -97,8 +103,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\resource.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\tree-entry.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\tree-node.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folders.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\folder.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\logger.service.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

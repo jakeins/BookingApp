@@ -8,15 +8,23 @@ import { FolderComponent } from './site/folder/folder.component';
 import { CabinetGuard } from './cabinet/cabinet.guard';
 import { AdminGuard } from './admin/admin.guard';
 import { ErrorComponent } from './site/error/error.component';
+import { ResourceListComponent } from './site/resource/resource-list.component';
+import { ResourceComponent } from './site/resource/resource.component';
+import { TreeComponent } from './site/tree/tree.component';
+
 
 
 const routes: Routes = [
-  { path: '', component: FolderComponent },
+  { path: '', component: TreeComponent },
     { path: 'error', component: ErrorComponent},
     { path: 'register', component: RegisterComponent },
     { path: 'login', component: LoginComponent },
     { path: 'forget', component: ForgetComponent },
     { path: 'reset', component: ResetComponent },
+  { path: 'folders', component: FolderComponent },
+  { path: 'resources', component: ResourceListComponent },
+  { path: 'resources/:id', component: ResourceComponent },
+  { path: 'tree', component: TreeComponent},
     {
         path: 'cabinet',
         loadChildren: './cabinet/cabinet.module#CabinetModule',
