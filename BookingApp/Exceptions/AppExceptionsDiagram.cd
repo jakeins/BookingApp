@@ -7,13 +7,6 @@
       <FileName>Exceptions\CurrentEntryNotFoundException.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BookingApp.Exceptions.UserNameInvalidException" Collapsed="true">
-    <Position X="27" Y="3.75" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserNameInvalidException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="BookingApp.Exceptions.EntryNotFoundException" Collapsed="true">
     <Position X="23" Y="4" Width="2.25" />
     <TypeIdentifier>
@@ -65,41 +58,6 @@
       <FileName>Exceptions\OperationRestrictedException.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BookingApp.Exceptions.UserPasswordRequiresDigitException" Collapsed="true">
-    <Position X="37" Y="5" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserPasswordRequiresDigitException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BookingApp.Exceptions.UserPasswordRequiresLowerException" Collapsed="true">
-    <Position X="37.25" Y="4" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserPasswordRequiresLowerException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BookingApp.Exceptions.UserPasswordRequiresNonAlphanumericException" Collapsed="true">
-    <Position X="33.75" Y="4" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserPasswordRequiresNonAlphanumericException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BookingApp.Exceptions.UserPasswordRequiresUpperException" Collapsed="true">
-    <Position X="33.75" Y="5" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserPasswordRequiresUpperException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BookingApp.Exceptions.UserPasswordTooShortException" Collapsed="true">
-    <Position X="35.25" Y="6" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserPasswordTooShortException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="BookingApp.Exceptions.RelatedEntryNotFoundException" Collapsed="true">
     <Position X="24" Y="6" Width="2.25" />
     <TypeIdentifier>
@@ -121,13 +79,6 @@
       <FileName>Exceptions\UserException.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BookingApp.Exceptions.UserNameDuplicateException" Collapsed="true">
-    <Position X="29.5" Y="3.75" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserNameDuplicateException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="BookingApp.Exceptions.UserPasswordException" Collapsed="true">
     <Position X="35.25" Y="2.75" Width="2.5" />
     <TypeIdentifier>
@@ -136,25 +87,11 @@
       <NewMemberFileName>Exceptions\UserNameException.cs</NewMemberFileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BookingApp.Exceptions.UserEmailDuplicateException" Collapsed="true">
-    <Position X="30" Y="6" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserEmailDuplicateException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BookingApp.Exceptions.UserEmailException" Collapsed="true">
-    <Position X="31.25" Y="4.75" Width="1.75" />
+  <Class Name="BookingApp.Exceptions.UserEmailException">
+    <Position X="32.5" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Exceptions\UserEmailException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BookingApp.Exceptions.UserEmailInvalidException" Collapsed="true">
-    <Position X="32.5" Y="6" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserEmailInvalidException.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BookingApp.Exceptions.UserNameException" Collapsed="true">

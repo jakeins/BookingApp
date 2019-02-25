@@ -18,11 +18,11 @@ namespace BookingApp.Controllers
     public class AuthController : ControllerBase
     {
         private readonly NotificationService notificationService;
-        private readonly UserService userService;
+        private readonly IUserService userService;
         private readonly JwtService jwtService;
         private readonly IMapper mapper;
 
-        public AuthController(NotificationService notificationService, UserService userService, JwtService jwtService)
+        public AuthController(NotificationService notificationService, IUserService userService, JwtService jwtService)
         {
             this.notificationService = notificationService;
             this.userService = userService;

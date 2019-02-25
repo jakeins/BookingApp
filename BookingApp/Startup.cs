@@ -36,10 +36,11 @@ namespace BookingApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<ResourcesService>();
-            services.AddTransient<ResourcesRepository>();
-            services.AddTransient<TreeGroupService>();
-            services.AddTransient<TreeGroupRepository>();
+            services.AddTransient<IResourcesService, ResourcesService>();
+            services.AddTransient<IResourcesRepository, ResourcesRepository>();
+
+            services.AddTransient<IFolderService, FolderService>();
+            services.AddTransient<FolderRepository>();
 
             services.AddTransient<BookingsService>();
             services.AddTransient<BookingsRepository>();
@@ -48,8 +49,8 @@ namespace BookingApp
             services.AddTransient<IMessageService, MailMessageService>();
             services.AddTransient<NotificationService>();
 
-            services.AddTransient<UserService>();
-            services.AddTransient<UserRepository>();
+            services.AddTransient<IUserService,UserService>();
+            services.AddTransient<IUserRepository,UserRepository>();
 
             services.AddTransient<RuleService>();
             services.AddTransient<RuleRepository>();
@@ -101,8 +102,7 @@ namespace BookingApp
             });
 
             services.AddScoped<DbInitializer>();
-            services.AddScoped<UserService>();
-            services.AddScoped<UserRepository>();
+            
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {

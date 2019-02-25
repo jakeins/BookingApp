@@ -4,14 +4,14 @@ import { ForgetComponent } from './site/auth/forget/forget.component';
 import { LoginComponent } from './site/auth/login/login.component';
 import { ResetComponent } from './site/auth/reset/reset.component';
 import { RegisterComponent } from './site/auth/register/register.component';
-import { HomeComponent } from './site/home/home.component';
+import { FolderComponent } from './site/folder/folder.component';
 import { CabinetGuard } from './cabinet/cabinet.guard';
 import { AdminGuard } from './admin/admin.guard';
 import { ErrorComponent } from './site/error/error.component';
 
 
 const routes: Routes = [
-    { path: '', component: HomeComponent },
+  { path: '', component: FolderComponent },
     { path: 'error', component: ErrorComponent},
     { path: 'register', component: RegisterComponent },
     { path: 'login', component: LoginComponent },
