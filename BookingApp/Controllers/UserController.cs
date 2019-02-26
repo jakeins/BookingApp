@@ -110,6 +110,7 @@ namespace BookingApp.Controllers
             return Ok(userRoles);
         }
 
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("api/user/{userId}/resources")]
         public async Task<IActionResult> GetResources([FromRoute]string userId)
         {
@@ -118,46 +119,46 @@ namespace BookingApp.Controllers
             return Ok(userResources);
         }
 
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/change-password")]
         public async Task<IActionResult> ChangePassword([FromBody]UserPasswordChangeDTO userDTO, [FromRoute]string userId)
         {
-            ApplicationUser user = await userService.GetUserById(userId);
-            await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
+            await userService.ChangePassword(userId, userDTO.CurrentPassword,userDTO.NewPassword);
             return Ok("Password changed");
         }
 
         [HttpPut("api/user/{userId}/add-role")]
-        public async Task<IActionResult> AddRole([FromRoute]string userId, [FromBody]string role)
+        public async Task<IActionResult> AddRole([FromRoute]string userId, [FromBody]UserRoleDto roleDto)
         {
-            await userService.AddUserRoleAsync(userId, role);
+            await userService.AddUserRoleAsync(userId, roleDto.Role);
             return Ok("Role added");
         }
 
         [HttpPut("api/user/{userId}/remove-role")]
-        public async Task<IActionResult> RemoveRole([FromRoute]string userId, [FromBody]string role)
+        public async Task<IActionResult> RemoveRole([FromRoute]string userId, [FromBody]UserRoleDto roleDto)
         {
-            await userService.RemoveUserRoleAsync(userId, role);
+            await userService.RemoveUserRoleAsync(userId, roleDto.Role);
             return Ok("Role removed");
         }
 
         [HttpPut("api/user/{userId}/approval")]
-        public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody]bool IsApproved)
+        public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody]UserApprovalDto userApprovalDto)
         {
-            await userService.UserApproval(userId, IsApproved);
+            await userService.UserApproval(userId, userApprovalDto.IsApproved);
             return Ok();
         }
 
         [HttpPut("api/user/{userId}/blocking")]
-        public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]bool IsBlocked)
+        public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]UserBlockingDto userBlockingDTO)
         {
-            await userService.UserBlocking(userId, IsBlocked);
+            await userService.UserBlocking(userId, userBlockingDTO.IsBlocked);
             return Ok();
         }
 
-        [HttpPut("api/user/{userId}/resset-password")]
-        public async Task<IActionResult> RessetPassword([FromRoute]string userId, string token, string newPassword)
+        [HttpPut("api/user/{userId}/reset-password")]
+        public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
         {
-            await userService.RessetUserPassword(userId, token, newPassword);
+            await userService.ResetUserPassword(userId, token,userNewPasswordDto.NewPassword);
             return Ok();
         }
 
