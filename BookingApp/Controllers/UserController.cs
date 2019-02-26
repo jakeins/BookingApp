@@ -155,10 +155,10 @@ namespace BookingApp.Controllers
             return Ok();
         }
 
-        [HttpPut("api/user/{userId}/resset-password")]
-        public async Task<IActionResult> RessetPassword([FromRoute]string userId, string token, string newPassword)
+        [HttpPut("api/user/{userId}/reset-password")]
+        public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
         {
-            await userService.RessetUserPassword(userId, token,newPassword);
+            await userService.ResetUserPassword(userId, token,userNewPasswordDto.NewPassword);
             return Ok();
         }
 
