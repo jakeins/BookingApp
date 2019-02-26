@@ -1,6 +1,5 @@
 ﻿using BookingApp.Data.Models;
 using BookingApp.Repositories;
-using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,12 +10,10 @@ namespace BookingApp.Services
     public class FolderService : IFolderService
     {
         FolderRepository repository;
-        readonly UserManager<ApplicationUser> userManager;
 
-        public FolderService(FolderRepository r, UserManager<ApplicationUser> um)
+        public FolderService(FolderRepository r)
         {
             repository = r;
-            userManager = um;
         }
 
         public async Task<IEnumerable<Folder>> GetFoldersActive()
