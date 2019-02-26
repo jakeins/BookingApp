@@ -28,7 +28,7 @@ namespace BookingApp.Services
         Task<bool> IsInRoleAsync(ApplicationUser user, string role);
         Task RemoveUserRoleAsync(string userId, string role);
         Task RemoveUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles);
-        Task RessetUserPassword(string userId, string token, string newPassword);
+        Task ResetUserPassword(string userId, string token, string newPassword);
         Task UpdateUser(ApplicationUser user);
         Task UserApproval(string userId, bool IsApproved);
         Task UserBlocking(string userId, bool IsBlocked);
@@ -132,10 +132,10 @@ namespace BookingApp.Services
             await userRepository.RemoveUserRoles(user, roles);
         }
 
-        public async Task RessetUserPassword(string userId, string token, string newPassword)
+        public async Task ResetUserPassword(string userId, string token, string newPassword)
         {
             ApplicationUser user = await GetUserById(userId);
-            await userRepository.RessetUserPassword(user, token,newPassword);
+            await userRepository.ResetUserPassword(user, token,newPassword);
         }
 
         public async Task<bool> IsInRoleAsync(ApplicationUser user, string role)

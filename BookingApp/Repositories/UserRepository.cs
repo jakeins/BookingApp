@@ -27,7 +27,7 @@ namespace BookingApp.Services
         Task<bool> IsInRole(ApplicationUser user, string role);
         Task RemoveUserRole(ApplicationUser user, string role);
         Task RemoveUserRoles(ApplicationUser user, IEnumerable<string> roles);
-        Task RessetUserPassword(ApplicationUser user, string token, string newPassword);
+        Task ResetUserPassword(ApplicationUser user, string token, string newPassword);
     }
     public class UserRepository : IUserRepository
     {
@@ -220,7 +220,7 @@ namespace BookingApp.Services
             }
         }
 
-        public async Task RessetUserPassword(ApplicationUser user,string token,string newPassword)
+        public async Task ResetUserPassword(ApplicationUser user,string token,string newPassword)
         {
             IdentityResult result = await userManager.ResetPasswordAsync(user, token, newPassword);
             if (!result.Succeeded)
