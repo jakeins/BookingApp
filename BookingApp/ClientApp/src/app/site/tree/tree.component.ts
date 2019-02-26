@@ -21,7 +21,7 @@ export class TreeComponent implements OnInit {
   folderEntries: TreeEntry[] = [];
   allEntries: TreeEntry[] = [];
   treeFlat: TreeNode[] = [];
-  treeRoot = new TreeNode(0, "[root]", new TreeEntry(new Folder(0,"root", null)), []);
+  treeRoot = new TreeNode(0, "[root]", new TreeEntry(new Folder(0,"root", false, null)), []);
   private barrierCount = 0;
 
   isUser: boolean;

@@ -84,14 +84,17 @@ export class AuthService {
     localStorage.setItem('accessToken', accessToken);
   }
 
+  getToken(): string {
+    return localStorage.getItem('accessToken');
+  }
+
   removeToken(): void {
     localStorage.removeItem('accessToken');
   }
 
   getEncodeToken() {
     try {
-      let token = localStorage.getItem('accessToken');
-      return jwt_decode(token);
+      return jwt_decode(this.getToken());
     } catch (e) {
       return false;
     }

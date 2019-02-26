@@ -9,6 +9,11 @@
   background-color: #eee;
 }
 
+.inactive {
+  color: gray;
+  background-color: #f8f8f8;
+}
+
 .fleft {
   float:left;
 }
