@@ -22,7 +22,7 @@ export class TreeEntry {
 
     this.id = original.id;
     this.title = original.title;
-    this.isActive = true;//this.isActive;
+    this.isActive = original.isActive;
     
     if (this.isFolder) {
       this.parentFolderId = (<Folder>original).parentFolderId;
