@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 
+import { CabinetGuard } from './cabinet.guard';
 import { HomeComponent } from './home/home.component';
 import { CabinetComponent } from './cabinet.component';
-import { CabinetGuard } from './cabinet.guard';
 import { BookingsComponent } from './bookings/bookings.component';
 
 

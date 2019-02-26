@@ -5,8 +5,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import { Observable } from 'rxjs/Observable';
 import * as jwt_decode from "jwt-decode";
-import { DOCUMENT } from '@angular/common';
-import { Logger } from './logger.service';
 
 
 
@@ -15,11 +13,11 @@ export class AuthService {
 
   private BaseUrlLogin: string;
 
-  constructor(private http: HttpClient, @Inject(DOCUMENT) private document: any) {
+  constructor(private http: HttpClient) {
     this.BaseUrlLogin = document.location.protocol + '/api/auth/login';
   }
 
-  login(login, password) {
+  login(login, password): any {
 
     var headers = new HttpHeaders({
       "Content-Type": "application/json",
@@ -33,11 +31,8 @@ export class AuthService {
     return this.http.post(this.BaseUrlLogin, JSON.stringify(postData), {
       headers: headers
     }).map((response: Response) => {
-
-      //Logger.log(response);
-
-      this.setToken(response.toString());
-      return response;
+        this.setToken(response.toString());
+        return response;
       })
       .catch((error: any) =>
         Observable.throw(error.error || 'Server error'));
@@ -51,16 +46,7 @@ export class AuthService {
     localStorage.removeItem('accessToken');
   }
 
-  getEncodeToken() {
-    try {
-      let token = localStorage.getItem('accessToken');
-      return jwt_decode(token);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  getUserName() {
+  getUserName(): any {
     if (this.getEncodeToken() !== false) {
       let tokenInfo = this.getEncodeToken();
       return tokenInfo.sub;
@@ -71,7 +57,7 @@ export class AuthService {
   isAdmin: boolean = false;
   isUser: boolean = false;
 
-  authAsAdmin() {
+  authAsAdmin(): void {
     let login = "superadmin@admin.cow";
     let password = "SuperAdmin";
     this.login(login, password)
@@ -83,7 +69,7 @@ export class AuthService {
       });
   }
 
-  authAsUser() {
+  authAsUser(): void {
     let login = "lion@user.cow";
     let password = "Lion";
     this.login(login, password)
@@ -95,13 +81,13 @@ export class AuthService {
       });
   }
 
-  logout() {
+  logout(): void {
     this.removeToken();
     this.isAdmin = false;
     this.isUser = false;
   }
 
-  resetAuthFlags() {
+  resetAuthFlags(): void {
     let userName = this.getUserName();
 
       if (userName == "Lion") {
@@ -116,6 +102,15 @@ export class AuthService {
         this.isAdmin = false;
         this.isUser = false;
       }
+  }
+
+  private getEncodeToken(): any {
+    try {
+      let token = localStorage.getItem('accessToken');
+      return jwt_decode(token);
+    } catch (e) {
+      return false;
+    }
   }
 
 }

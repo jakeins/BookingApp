@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 
+import { AdminGuard } from './admin.guard';
 import { HomeComponent } from './home/home.component';
 import { AdminComponent } from './admin.component';
-import { AdminGuard } from './admin.guard';
 import { UserComponent } from './user/user.component';
 
 
