@@ -7,7 +7,11 @@
     <a title="Edit resource" [routerLink]="['edit']">✏️</a>
     <a title="Delete resource" [routerLink]="['delete']">❌</a>
   </span>
-  <h1>{{ resource.title }}</h1>
+  <h1>
+    {{ resource.title }}
+    <span class="redundand" *ngIf="resource.isActive != true"> (inactive)</span>
+  </h1>
+  
   <p>{{ resource.description }}</p>
 </div>
 

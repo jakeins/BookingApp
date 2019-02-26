@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Inject, Output, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Response } from '@angular/http';
 import 'rxjs/add/operator/map';
@@ -36,6 +36,7 @@ export class AuthService {
 
       this.setToken(response.toString());
       this.resetTokenRoles();
+      this.AuthChanged.emit('Logged in');
 
       return response;
       })
@@ -54,9 +55,11 @@ export class AuthService {
   logout() {
     this.removeToken();
     this.resetTokenRoles();
+    this.AuthChanged.emit('Logged out');
   }
 
 
+  @Output() AuthChanged: EventEmitter<any> = new EventEmitter();
 
 
 
