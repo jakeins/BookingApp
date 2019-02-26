@@ -129,30 +129,30 @@ namespace BookingApp.Controllers
         }
 
         [HttpPut("api/user/{userId}/add-role")]
-        public async Task<IActionResult> AddRole([FromRoute]string userId,[FromBody]string role)
+        public async Task<IActionResult> AddRole([FromRoute]string userId, [FromBody]UserRoleDto roleDto)
         {
-            await userService.AddUserRoleAsync(userId, role);
+            await userService.AddUserRoleAsync(userId, roleDto.Role);
             return Ok("Role added");
         }
 
         [HttpPut("api/user/{userId}/remove-role")]
-        public async Task<IActionResult> RemoveRole([FromRoute]string userId, [FromBody]string role)
+        public async Task<IActionResult> RemoveRole([FromRoute]string userId, [FromBody]UserRoleDto roleDto)
         {
-            await userService.RemoveUserRoleAsync(userId, role);
+            await userService.RemoveUserRoleAsync(userId, roleDto.Role);
             return Ok("Role removed");
         }
 
         [HttpPut("api/user/{userId}/approval")]
-        public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody]bool IsApproved)
-        { 
-            await userService.UserApproval(userId, IsApproved);
+        public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody]UserApprovalDto userApprovalDto)
+        {
+            await userService.UserApproval(userId, userApprovalDto.IsApproved);
             return Ok();
         }
 
         [HttpPut("api/user/{userId}/blocking")]
-        public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]bool IsBlocked)
+        public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]UserBlockingDto userBlockingDTO)
         {
-            await userService.UserBlocking(userId, IsBlocked);
+            await userService.UserBlocking(userId, userBlockingDTO.IsBlocked);
             return Ok();
         }
 
