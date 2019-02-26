@@ -11,7 +11,7 @@ export class AppHeaderComponent implements OnInit {
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    
+    this.authService.resetTokenRoles();
   }
 
   authAdmin() {

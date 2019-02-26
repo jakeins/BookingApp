@@ -23,20 +23,25 @@ export class TreeComponent implements OnInit {
   treeFlat: TreeNode[];
   treeRoot: TreeNode;
   barrierCount : number;
-   
+
+  authChangedSubscription: any;
+
   constructor(
     private resourceService: ResourceService,
     private folderService: FolderService,
     private authService: AuthService
   ) {
-    authService.AuthChanged.subscribe(() => {
-      this.resetdata();
-    });
+    
   }
 
   ngOnInit() {
-    this.resetdata();  
+    this.resetdata();
+    this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => this.resetdata());
   }
+
+  ngOnDestroy() {
+    this.authChangedSubscription.unsubscribe();
+  };
 
   resetdata() {
     this.resourceEntries = [];

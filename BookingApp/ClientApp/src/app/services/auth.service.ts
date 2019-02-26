@@ -5,16 +5,16 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import { Observable } from 'rxjs/Observable';
 import * as jwt_decode from "jwt-decode";
-import { DOCUMENT } from '@angular/common';
 import { Logger } from './logger.service';
+import { BASE_API_URL } from '../globals';
 
 @Injectable()
 export class AuthService {
 
   private BaseUrlLogin: string;
 
-  constructor(private http: HttpClient, @Inject(DOCUMENT) private document: any) {
-    this.BaseUrlLogin = document.location.protocol + '/api/auth/login';
+  constructor(private http: HttpClient) {
+    this.BaseUrlLogin = BASE_API_URL + '/auth/login';
   }
 
   login(login, password) {
@@ -77,10 +77,6 @@ export class AuthService {
 
   get isAnonymous(): boolean {
     return !this.isUser;
-  }
-
-  resetAuthFlags() {
-    this.resetTokenRoles();
   }
 
   setToken(accessToken: string): void {

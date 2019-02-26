@@ -20,22 +20,26 @@ export class ResourceComponent implements OnInit {
 
   constructor(
     private folderService: ResourceService,
-    private route: ActivatedRoute,
+    private actRoute: ActivatedRoute,
     private authService: AuthService,
     private router: Router
   ) {
-    authService.AuthChanged.subscribe(() => {
-      this.resetData();
-    });
+    
   }
+
+  authChangedSubscription: any;
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      this.id = +params['id'];
-    });
+    this.actRoute.params.subscribe(params => {this.id = +params['id'];});
 
     this.resetData();
+
+    this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => this.resetData());
   }
+
+  ngOnDestroy() {
+    this.authChangedSubscription.unsubscribe();
+  };
 
   resetData() {
     this.folderService.getResource(this.id).subscribe((response: Resource) => {
