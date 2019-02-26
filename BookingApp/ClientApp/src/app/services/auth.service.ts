@@ -8,8 +8,6 @@ import * as jwt_decode from "jwt-decode";
 import { DOCUMENT } from '@angular/common';
 import { Logger } from './logger.service';
 
-
-
 @Injectable()
 export class AuthService {
 
@@ -37,10 +35,49 @@ export class AuthService {
       //Logger.log(response);
 
       this.setToken(response.toString());
+      this.resetTokenRoles();
+
       return response;
       })
       .catch((error: any) =>
         Observable.throw(error.error || 'Server error'));
+  }
+
+  authAsAdmin() {
+    this.login("superadmin@admin.cow", "SuperAdmin").subscribe();
+  }
+
+  authAsUser() {
+    this.login("lion@user.cow", "Lion").subscribe();
+  }
+
+  logout() {
+    this.removeToken();
+    this.resetTokenRoles();
+  }
+
+
+
+
+
+
+  _isAdmin: boolean = false;
+  _isUser: boolean = false;
+
+  get isAdmin(): boolean {
+    return this._isAdmin;
+  }
+
+  get isUser(): boolean {
+    return this._isUser;
+  }
+
+  get isAnonymous(): boolean {
+    return !this.isUser;
+  }
+
+  resetAuthFlags() {
+    this.resetTokenRoles();
   }
 
   setToken(accessToken: string): void {
@@ -60,66 +97,34 @@ export class AuthService {
     }
   }
 
-  getUserName() {
+  getTokenUserName() {
     if (this.getEncodeToken() !== false) {
       let tokenInfo = this.getEncodeToken();
+
+      Logger.log(tokenInfo);
+
       return tokenInfo.sub;
     }
     return false;
   }
 
+  resetTokenRoles() {
+    this._isUser = this._isAdmin = false;
 
-  isAdmin: boolean = false;
-  isUser: boolean = false;
+    if (this.getEncodeToken() !== false) {
+      let roles = this.getEncodeToken()["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
-  authAsAdmin() {
-    let login = "superadmin@admin.cow";
-    let password = "SuperAdmin";
-    this.login(login, password)
-      .subscribe(res => {
-        if (res != null) {
-          this.isAdmin = true;
-          this.isUser = true;
-        }
-      });
-  }
+      if (!(roles instanceof Array))
+        roles = [roles];
 
-  authAsUser() {
-    let login = "lion@user.cow";
-    let password = "Lion";
-    this.login(login, password)
-      .subscribe(res => {
-        if (res != null) {
-          this.isUser = true;
-          this.isAdmin = false;
-        }
-      });
-  }
-
-  logout() {
-    this.removeToken();
-    this.isAdmin = false;
-    this.isUser = false;
-  }
-
-
-  resetAuthFlags() {
-    let userName = this.getUserName();
-
-      if (userName == "Lion") {
-        this.isAdmin = false;
-        this.isUser = true;
+      for (let x of roles) {
+        if (x == "User")
+          this._isUser = true;
+        else if (x == "Admin")
+          this._isAdmin = true;
       }
-      else if (userName == "SuperAdmin") {
-        this.isAdmin = true;
-        this.isUser = true;
-      }
-      else {
-        this.isAdmin = false;
-        this.isUser = false;
-      }
+    }
   }
-
 
 
 }
