@@ -80,6 +80,7 @@ namespace BookingApp.Controllers
             }
 
             var rule = mapper.Map<Rule>(dtos);
+            //TODO: remove create id and time
             rule.CreatedUserId = rule.UpdatedUserId = UserId;                         //fix time
             rule.CreatedTime = rule.UpdatedTime = DateTime.Now;
             await _ruleService.Create(rule);
@@ -107,6 +108,7 @@ namespace BookingApp.Controllers
             }
 
             var rule = mapper.Map<Rule>(dtos);
+            //TODO: remove create id and time
             rule.UpdatedTime = rule.CreatedTime = DateTime.Now;              //need createdtime and createduser to update
             rule.UpdatedUserId = rule.CreatedUserId = UserId;
             rule.Id = id;
