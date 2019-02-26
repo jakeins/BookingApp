@@ -5,11 +5,16 @@
   height: 50px;
 }
 
-.entry:hover {
+.resource-entry:hover, .admin.folder-entry:hover {
   background-color: #eee;
 }
 
-.titles {
+.inactive {
+  color: gray;
+  background-color: #f8f8f8;
+}
+
+.fleft {
   float:left;
 }
 

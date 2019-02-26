@@ -5,7 +5,7 @@ var TreeEntry = /** @class */ (function () {
         this.isFolder = original.parentFolderId !== undefined;
         this.id = original.id;
         this.title = original.title;
-        this.isActive = true; //this.isActive;
+        this.isActive = original.isActive;
         if (this.isFolder) {
             this.parentFolderId = original.parentFolderId;
         }

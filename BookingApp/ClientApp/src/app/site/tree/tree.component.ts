@@ -17,27 +17,40 @@ import { AuthService } from '../../services/auth.service';
 })
 export class TreeComponent implements OnInit {
 
-  resourceEntries: TreeEntry[] = [];
-  folderEntries: TreeEntry[] = [];
-  allEntries: TreeEntry[] = [];
-  treeFlat: TreeNode[] = [];
-  treeRoot = new TreeNode(0, "[root]", new TreeEntry(new Folder(0,"root", null)), []);
-  private barrierCount = 0;
+  resourceEntries: TreeEntry[];
+  folderEntries: TreeEntry[];
+  allEntries: TreeEntry[];
+  treeFlat: TreeNode[];
+  treeRoot: TreeNode;
+  barrierCount : number;
 
-  authService: AuthService;
-  isUser: boolean;
-  isAdmin: boolean;
+  authChangedSubscription: any;
 
   constructor(
     private resourceService: ResourceService,
     private folderService: FolderService,
-    authService: AuthService
+    private authService: AuthService
   ) {
-    this.authService = authService;
+    
   }
 
   ngOnInit() {
-    this.isUser = true;
+    this.resetdata();
+    this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => this.resetdata());
+  }
+
+  ngOnDestroy() {
+    this.authChangedSubscription.unsubscribe();
+  };
+
+  resetdata() {
+    this.resourceEntries = [];
+    this.folderEntries = [];
+    this.allEntries = [];
+    this.treeFlat = [];
+    this.treeRoot = new TreeNode(0, "[root]", new TreeEntry(new Folder(0, "root", false, null)), []);
+    this.barrierCount = 0;
+
     this.folderService.getList().subscribe((result: Folder) => {
       for (let key in result) {
         let entry = new TreeEntry(result[key]);
@@ -57,8 +70,7 @@ export class TreeComponent implements OnInit {
       this.reachDoubleBarrier();
     });
   }
-
-  
+    
   reachDoubleBarrier() {
     this.barrierCount++;
 
