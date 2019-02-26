@@ -52,8 +52,8 @@ namespace BookingApp
             services.AddTransient<IUserService,UserService>();
             services.AddTransient<IUserRepository,UserRepository>();
 
-            services.AddTransient<RuleService>();
-            services.AddTransient<RuleRepository>();
+            services.AddTransient<IRuleService, RuleService>();
+            services.AddTransient<IRuleRepository, RuleRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 

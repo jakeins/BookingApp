@@ -17,59 +17,73 @@ namespace BookingApp.Controllers
     [ApiController]
     public class RuleController : EntityControllerBase
     {
-        RuleService _ruleService;
-        IMapper mapper;
+        readonly IRuleService _ruleService;
+        readonly IMapper mapper;
 
-        public RuleController(RuleService ruleService)
+        public RuleController(IRuleService ruleService)
         {
             _ruleService = ruleService;
 
             mapper = new Mapper(new MapperConfiguration(c =>
             {
-                c.CreateMap<Rule, RuleBasicDTO>().ReverseMap();
-                c.CreateMap<Rule, RuleDetailedDTO>();
+                c.CreateMap<Rule, RuleBasicDTO>();
+                c.CreateMap<Rule, RuleAdminDTO>();
+                c.CreateMap<Rule, RuleDetailedDTO>().ReverseMap();
             }));
         }
 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Rules()
         {
-            var rules = await _ruleService.GetList();
-
             if (IsAdmin)
             {
-                var dtos = mapper.Map<IEnumerable<RuleDetailedDTO>>(rules);
+                var rules = await _ruleService.GetList();
+                var dtos = mapper.Map<IEnumerable<RuleAdminDTO>>(rules);
                 return Ok(dtos);
             }
             else
             {
+                var rules = await _ruleService.GetActiveList();
                 var dtos = mapper.Map<IEnumerable<RuleBasicDTO>>(rules);
                 return Ok(dtos);
             }
         }
 
+
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [Route("{id}")]
-        //[Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> GetRule(int id)
         {
-            var rule = await _ruleService.Get(id);
+            
             if (IsAdmin)
             {
-                var dtor = mapper.Map<RuleDetailedDTO>(rule);
+                var rule = await _ruleService.Get(id);
+                var dtor = mapper.Map<RuleAdminDTO>(rule);
                 return Ok(dtor);
             }
-            if (IsUser)
+            else
             {
+                bool existsActive = await _ruleService.GetActive(id);
+                if (!existsActive)
+                    return BadRequest();
+                var rule = await _ruleService.Get(id);
                 var dtor = mapper.Map<RuleBasicDTO>(rule);
                 return Ok(dtor);
             }
-            else return BadRequest();
         }
 
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(401)]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> CreateRule([FromBody] RuleBasicDTO dtos)
+        public async Task<IActionResult> CreateRule([FromBody] RuleDetailedDTO dtos)
         {
             if (!ModelState.IsValid)
             {
@@ -85,6 +99,10 @@ namespace BookingApp.Controllers
         }
 
         [HttpDelete]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         [Authorize(Roles = RoleTypes.Admin)]
         [Route("{id}")]
         public async Task<IActionResult> DeleteRule(int id)
@@ -94,9 +112,14 @@ namespace BookingApp.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         [Authorize(Roles = RoleTypes.Admin)]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateRule(int id, [FromBody]RuleBasicDTO dtos)
+        public async Task<IActionResult> UpdateRule(int id, [FromBody]RuleDetailedDTO dtos)
         {
             if (!ModelState.IsValid)
             {
@@ -104,13 +127,28 @@ namespace BookingApp.Controllers
             }
 
             var rule = mapper.Map<Rule>(dtos);
-            rule.UpdatedTime = rule.CreatedTime = DateTime.Now;              //need createdtime and createduser to update
-            rule.UpdatedUserId = rule.CreatedUserId = UserId;
+            rule.UpdatedTime = DateTime.Now;              
+            rule.UpdatedUserId = UserId;                 
             rule.Id = id;
 
             await _ruleService.Update(rule);
             return Ok("Rule's been updated");
 
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [Authorize(Roles = RoleTypes.Admin)]
+        [Route("{id}/resources")]
+        public async Task<IActionResult> GetResourcesByRule(int id, [FromServices]IResourcesService _resourcesService)
+        {
+            var res = await _resourcesService.ListByRuleKey(id);
+            var resD = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(res);
+            return Ok(resD);
         }
     }
 }
