@@ -1,4 +1,4 @@
-export class Folders {
+export class Folder {
   constructor(
     public id: number,
     public title: string,

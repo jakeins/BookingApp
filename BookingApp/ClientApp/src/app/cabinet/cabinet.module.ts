@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {RouterModule} from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 import { HomeComponent } from './home/home.component';
 import { CabinetRoutingModule } from './cabinet-routing.module';
@@ -10,9 +10,9 @@ import { BookingsComponent } from './bookings/bookings.component';
 
 @NgModule({
     imports: [
-        CommonModule,
-        CabinetRoutingModule,
-        RouterModule
+      CommonModule,
+      RouterModule,
+      CabinetRoutingModule
     ],
     declarations: [
         CabinetComponent,

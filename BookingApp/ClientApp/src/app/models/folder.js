@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Folders = /** @class */ (function () {
-    function Folders(id, title, parentFolderId) {
+var Folder = /** @class */ (function () {
+    function Folder(id, title, parentFolderId) {
         this.id = id;
         this.title = title;
         this.parentFolderId = parentFolderId;
     }
-    return Folders;
+    return Folder;
 }());
-exports.Folders = Folders;
-//# sourceMappingURL=folders.js.map
+exports.Folder = Folder;
+//# sourceMappingURL=folder.js.map
