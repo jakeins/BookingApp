@@ -1,0 +1,29 @@
+
+<div class="entry" *ngFor="let entry of resourceEntries">
+
+  <!--<span>{{entry.isFolder ? "📦" : "🍎" }}</span>-->
+
+  <span>🍎</span>
+
+  <span class="redundand">#{{ entry.id }}</span>
+  <a [routerLink]="['/resources', entry.id]">{{ entry.title }}</a>
+
+  <span class="redundand">({{ (entry.parentFolderId ? "&#8627; " : "") + entry.parentFolderId }})</span>
+
+  <div class="indicator fright" *ngIf="entry.occupancy != null" title="{{entry.occupancyTitle}}">
+    <div class="occupied" [style.width]="entry.occupancy+'%'">&nbsp;</div>
+  </div>
+
+  <div class="control fright">
+    <!--<a title="Create resource" [routerLink]="['/resources', entry.id, 'create']">🍏</a>-->
+    <!--<a title="Create folder" [routerLink]="['/folders', entry.id, '/create']">📦</a>-->
+    <a title="Edit resource" [routerLink]="['/resources', entry.id, 'edit']">✏️</a>
+    <!--<a title="Edit folder" [routerLink]="['/resources', entry.id, 'edit']">✏️</a>-->
+    <a title="Delete resource" [routerLink]="['/resources', entry.id, 'delete']">❌</a>
+    <!--<a title="Delete folder" [routerLink]="['/resources', entry.id, 'delete']">❌</a>-->
+  </div>
+
+
+
+</div>
+

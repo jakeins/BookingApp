@@ -1,12 +1,9 @@
-﻿using BookingApp.Helpers;
-using BookingApp.Data.Models;
+﻿using BookingApp.Data.Models;
+using BookingApp.Helpers;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace BookingApp.Data
@@ -41,14 +38,17 @@ namespace BookingApp.Data
             bool isDbFresh = context.Database.EnsureCreated();
 
             await EnsureCompetentSuperAdmin();
-
+#if DEBUG
             if (isDbFresh)
             {
-                await CreateStoreProceduresInDb();
-#if DEBUG
+                await StoreProcFuncRepository.LoadAllToDb(context);
                 await SeedDummyData();
-#endif
+
             }
+#else
+            await StoreProcFuncRepository.DeleteAllFromDb(context);
+            await StoreProcFuncRepository.LoadAllToDb(context);
+#endif
         }
 
         /// <summary>
@@ -102,12 +102,12 @@ namespace BookingApp.Data
                 "Mantis"// 8
             };
 
-            #region Dummy data source
+#region Dummy data source
             var rand = new Random();
             const string loremIpsum = "The core of the city consists predominately of wall-to-wall buildings, with blocks of clustered low-rises made out of a variety of old and new buildings. Under Combine rule, certain residential buildings in the city are used as accommodations for citizens. Conditions in such housings are typically seen as poor, with very few luxuries and constant inspection and raids by Civil Protection. However, some city infrastructure, such as power plants, are maintained by the Combine, and electricity is made widely available from both traditional sources and Combine generators. The Combine themselves occupied some former government buildings, such as the Overwatch Nexus, to help keep control over the city. The city was large enough to provide all necessary needs for the citizens before the Combines occupation. This is supported by the presence of a hospital, several cafés and restaurants, office buildings, and underground city systems; most of which are still intact but abandoned. The outskirts of City 17 features industrial districts and additional Soviet - style housing, most of which are considered off - limits to citizens.The industrial districts are seen linked to the city via railway lines and canals. As there was little emphasis in maintaining non - essential parts of the city, many areas of City 17 suffered from urban decay prior to the Citadel's explosion.";
-            #endregion
+#endregion
 
-            #region Users
+#region Users
             var users = new Dictionary<string, ApplicationUser> { { superAdmin.UserName, superAdmin } };
 
             for (int i = 0; i < dummyUsernames.Length; i++)
@@ -141,9 +141,9 @@ namespace BookingApp.Data
 
                 users.Add(user.UserName, user);
             }
-            #endregion
+#endregion
 
-            #region Rules
+#region Rules
             var rules = new Dictionary<string, Rule> {
                 { "Defaultest",      new Rule() { Title = "Defaultest",    MinTime = 1,  MaxTime = 1440, } },
                 { "Rooms",           new Rule() { Title = "Rooms",         MinTime = 60, MaxTime = 480, StepTime = 30, ServiceTime = 0,   ReuseTimeout = 0,   PreOrderTimeLimit = 1440 } },
@@ -156,9 +156,9 @@ namespace BookingApp.Data
 
             //pushing into EF
             context.Rules.AddRange(rules.Select(e => e.Value));
-            #endregion
+#endregion
 
-            #region Folders
+#region Folders
             var Folders = new Dictionary<string, Folder> {
                 { "Town Hall", new Folder() { Title = "Town Hall" } },
                 { "Bike Rental", new Folder() { Title = "Bike Rental" } }
@@ -170,9 +170,9 @@ namespace BookingApp.Data
             Folders.ToList().ForEach(e => e.Value.Creator = e.Value.Updater = superAdmin);
 
             context.Folders.AddRange(Folders.Select(e => e.Value));
-            #endregion
+#endregion
 
-            #region Resources
+#region Resources
             var resources = new Dictionary<int, Resource> {
                 {  1, new Resource() { Title = "Nothern View",          Folder = Folders["Spire Balcony"], Rule = rules["Defaultest"] } },
                 {  2, new Resource() { Title = "Southern View",         Folder = Folders["Spire Balcony"], Rule = rules["Toilets"] } },
@@ -206,7 +206,7 @@ namespace BookingApp.Data
 
             //pushing into EF
             context.Resources.AddRange(resources.Select(e => e.Value));
-            #endregion
+#endregion
 
             //saving changes to DB before seeding booking, so the rules have default storage values.
             context.SaveChanges();
@@ -264,7 +264,7 @@ namespace BookingApp.Data
             {
                 Resource r = entry.Value;
 
-                #region Per-resource variables
+#region Per-resource variables
                 int stepMinutes = (int)r.Rule.StepTime;
                 int preOrderLimit = r.Rule.PreOrderTimeLimit < 1 ? day : (int)r.Rule.PreOrderTimeLimit;
 
@@ -277,7 +277,7 @@ namespace BookingApp.Data
                 int serviceMinutes = (int)r.Rule.ServiceTime;
 
                 int postUsageDelayMinutesLimit = rand.Next(maxMinutes, day);
-                #endregion
+#endregion
 
                 // The value used in a loop, for correct time determination
                 int earliestOccupiedMinute = preOrderLimit + maxMinutes;
@@ -338,28 +338,6 @@ namespace BookingApp.Data
                 //pushing into EF
                 perResourceBookings.Reverse();
                 context.Bookings.AddRange(perResourceBookings);
-            }
-        }
-
-        /// <summary>
-        /// Search store procedures code as embeded ressources in 
-        /// namespace <c>Data.StoredProcedures</c> and must be with extension sql
-        /// </summary>
-        private async Task CreateStoreProceduresInDb()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-
-            var storedProcedureResourceList = assembly.GetManifestResourceNames().Where(
-                str => str.Contains("Data.StoredProcedures") && str.EndsWith(".sql")
-                );
-
-            foreach (var resourceName in storedProcedureResourceList)
-            {
-                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    await context.Database.ExecuteSqlCommandAsync(reader.ReadToEnd());
-                }
             }
         }
     }

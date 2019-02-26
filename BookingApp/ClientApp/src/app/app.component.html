@@ -6,59 +6,7 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700" rel="stylesheet">
 </head>
 <body>
-  <header class="header-site">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-lg-3 col-3">
-          <a routerLink="/"><h1 class="logo">Booking</h1></a>
-        </div>
-        <div class="col-lg-5 col-4">
-        </div>
-        <div class="col-lg-4 col-4">
-          <div style="float: right; width: 600px;">
-            <div style="float: left; margin-right: 20px;">
-              <a href="swagger" class="btn btn-success">Swagger</a>
-            </div>
-
-            <div *ngIf="!flag">
-              <div *ngIf="!admin" style="float: left; margin-right: 20px;">
-                <button (click)="authUser()" class="btn btn-secondary">User</button>
-              </div>
-              <div *ngIf="!admin" style="float: left; margin-right: 20px;">
-                <button (click)="authAdmin()" class="btn btn-primary">Admin</button>
-              </div>
-            </div>
-
-            <div *ngIf="admin">
-              <div style="float: left; margin-right: 20px;">
-                <button (click)="logout()" class="btn btn-outline-secondary" disabled>You are Admin</button>
-              </div>
-            </div>
-
-            <div *ngIf="user">
-              <div style="float: left; margin-right: 20px;">
-                <button class="btn btn-outline-secondary" disabled>You are User</button>
-              </div>
-            </div>
-
-            <div *ngIf="flag">
-              <div style="float: left; margin-right: 20px;">
-                <button (click)="logout()" class="btn btn-danger">Logout</button>
-              </div>
-            </div>
-
-            <div style="float: left; margin-right: 20px;">
-              <a routerLink="/register" class="btn btn-outline-secondary">SignUp</a>
-            </div>
-            <div>
-              <a routerLink="/login" class="btn btn-outline-success">SignIn</a>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </header>
+  <app-header></app-header>
   <main class="main-site">
     <div class="container">
       <div class="row">

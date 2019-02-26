@@ -22,7 +22,7 @@ namespace BookingApp.Repositories
         /// <summary>
         /// Lists all resources having specified parent tree group.
         /// </summary>
-        Task<IEnumerable<Resource>> ListByTreeGroupKeyAsync(int treeGroupId);
+        Task<IEnumerable<Resource>> ListByFolderKeyAsync(int folderId);
     }
 
     public class ResourcesRepository
@@ -39,6 +39,6 @@ namespace BookingApp.Repositories
 
         public async Task<IEnumerable<Resource>> ListByRuleKeyAsync(int ruleId) => await Resources.Where(r => r.RuleId == ruleId).ToListAsync();
 
-        public async Task<IEnumerable<Resource>> ListByTreeGroupKeyAsync(int treeGroupId) => await Resources.Where(r => r.FolderId == treeGroupId).ToListAsync();
+        public async Task<IEnumerable<Resource>> ListByFolderKeyAsync(int folderId) => await Resources.Where(r => r.FolderId == folderId).ToListAsync();
     }
 }

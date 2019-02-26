@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FolderService } from '../../services/folder.service';
-import { Folders } from '../../models/folders';
+import { Folder } from '../../models/folder';
 
 @Component({
   selector: 'app-folder',
@@ -8,12 +8,12 @@ import { Folders } from '../../models/folders';
 })
 export class FolderComponent implements OnInit {
 
-  folders: Folders;
+  folders: Folder;
 
   constructor(private folderService: FolderService) { }
 
   ngOnInit() {
-    this.folderService.getList().subscribe((folders: Folders) => {
+    this.folderService.getList().subscribe((folders: Folder) => {
       this.folders = folders;
     });
   }

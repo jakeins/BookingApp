@@ -18,10 +18,10 @@ namespace BookingApp.Controllers
     public partial class ResourcesController : EntityControllerBase
     {
         readonly IResourcesService resService;
-        readonly BookingsService bookService;
+        readonly IBookingsService bookService;
         readonly IMapper dtoMapper;
 
-        public ResourcesController(IResourcesService resService, BookingsService bookService)
+        public ResourcesController(IResourcesService resService, IBookingsService bookService)
         {
             this.resService = resService;
             this.bookService = bookService;
@@ -55,7 +55,7 @@ namespace BookingApp.Controllers
         // Filtered access: Guest/Admin.
         public async Task<IActionResult> ListOccupancy()
         {
-            var idsList = await resService.ListKeys(includeIncativeResources: IsAdmin == true);
+            var idsList = await (IsAdmin ? resService.ListKeys() : resService.ListActiveKeys());
 
             var map = new Dictionary<int, double?>();
 
