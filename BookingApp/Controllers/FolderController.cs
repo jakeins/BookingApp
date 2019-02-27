@@ -58,8 +58,8 @@ namespace BookingApp.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        [Authorize(Roles = RoleTypes.Admin)]
         [Route("api/folder/{id}")]
+        [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> Detail(int id)
         {
             FolderBaseDto FolderDto = mapper.Map<FolderBaseDto>(await service.GetDetail(id));

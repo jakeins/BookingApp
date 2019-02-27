@@ -39,7 +39,7 @@ namespace BookingApp.Controllers
         /// <summary>
         /// Gets full base api url of a current controller, if annotated correctly.
         /// </summary>
-        protected string BaseApiUrl
+        public virtual string BaseApiUrl
         {
             get
             {
