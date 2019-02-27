@@ -48,7 +48,7 @@ export class TreeComponent implements OnInit {
     this.folderEntries = [];
     this.allEntries = [];
     this.treeFlat = [];
-    this.treeRoot = new TreeNode(0, "[root]", new TreeEntry(new Folder(0, "root", false, null)), []);
+    this.treeRoot = new TreeNode(0, "[root]", new TreeEntry(this.folderService.newRoot()), []);
     this.barrierCount = 0;
 
     this.folderService.getList().subscribe((result: Folder) => {

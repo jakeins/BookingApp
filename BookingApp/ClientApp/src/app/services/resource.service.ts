@@ -58,4 +58,9 @@ constructor(private http: HttpClient) {
     return this.http.get<Resource>(this.path + '/' + id);
   }
 
+
+  createResource(resource: Resource): Observable<any> {
+    return this.http.post(this.path, resource);
+  }
+
 }

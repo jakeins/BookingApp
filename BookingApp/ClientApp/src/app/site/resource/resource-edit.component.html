@@ -1,0 +1,51 @@
+<form [formGroup]="resourceForm" (ngSubmit)="onSubmit()">
+
+  <div>
+    Title:<br />
+    <input type="text" formControlName="title" minlength="3" maxlength="64" required />
+  </div>
+  <br />
+
+  <div>
+    Description:<br />
+    <textarea formControlName="description" maxlength="512"></textarea>
+  </div>
+  <br />
+
+  <div>
+    Rule:<br />
+    <input type="number" formControlName="ruleId" required />
+  </div>
+  <br />
+
+  <div>
+    Folder:<br />
+             <select formControlName="folderId" required>
+               <option *ngFor="let folder of folders" [value]="folder.id">{{folder.title}}{{folder.isActive ? "" : " (inactive)"}}</option>
+             </select>
+
+</div>
+  <br />
+
+  <div>
+    <label for="active">
+      Active
+      <input id="active" type="radio" formControlName="isActive" value="true"/>
+    </label>
+    &nbsp;&nbsp;&nbsp;
+    <label for="inactive">
+      Inactive
+      <input id="inactive" type="radio" formControlName="isActive" value="false"/>
+    </label>
+  </div>
+
+
+  <div>
+    <button type="submit" [disabled]="!resourceForm.valid">Submit</button>
+  </div>
+
+  <p>
+    Form Status: {{ resourceForm.status }}
+  </p>
+
+</form>

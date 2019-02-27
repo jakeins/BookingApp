@@ -58,7 +58,7 @@ BEGIN
 				) AS BookingDuration
 
 			FROM [Bookings]
-			WHERE [Id] = @resourceId
+			WHERE [ResourceId] = @resourceId
 			) AS MidResult
 
 		WHERE BookingDuration > 0 AND IsWierd = 0  
