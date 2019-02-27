@@ -17,7 +17,6 @@ namespace BookingApp.Controllers
     {
         IFolderService service;
         readonly IMapper mapper;
-        public bool isUserT = false;
 
         public FolderController(IFolderService s)
         {
@@ -43,7 +42,7 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> Index()
         {
             //IsAdmin
-            var models = (isUserT) ? await service.GetFolders() : await service.GetFoldersActive();
+            var models = (IsAdmin) ? await service.GetFolders() : await service.GetFoldersActive();
             IEnumerable <FolderBaseDto> dtos = mapper.Map<IEnumerable<FolderBaseDto>>(models);
             return Ok(dtos);
         }

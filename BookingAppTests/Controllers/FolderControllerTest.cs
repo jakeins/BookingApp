@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -19,8 +20,6 @@ namespace BookingAppTests
         public FolderControllerTest()
         {
             mockFolderService = new Mock<IFolderService>();
-            //var mockBaseController = new Mock<EntityControllerBase>();
-            //mockBaseController.Setup(bc => bc.IsAdmin).Returns(true);
         }
 
         #region FolderController.Index
@@ -29,17 +28,16 @@ namespace BookingAppTests
         {
             // Arrange
             mockFolderService.Setup(service => service.GetFolders()).ReturnsAsync(await GetTestFolders());
-            FolderController controller = new FolderController(mockFolderService.Object);
-            controller.isUserT = true;
-
+            Mock<FolderController> mockControler = new Mock<FolderController>(mockFolderService.Object) { CallBase = true };
+            mockControler.SetupGet(mock => mock.IsAdmin).Returns(true);
             // Act
-            var result = await controller.Index();
+            var result = await mockControler.Object.Index();
             var okResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsType<List<FolderBaseDto>>(okResult.Value);
 
             // Assert
-            Assert.Equal(GetTestFolders().GetAwaiter().GetResult().Count(), model.Count());
-            Assert.Equal(GetTestFolders().GetAwaiter().GetResult().Where(p => p.Id == 1).FirstOrDefault().Title, (model.Where(p => p.Id == 1)).FirstOrDefault().Title);
+            Assert.Equal((await GetTestFolders()).Count(), model.Count());
+            Assert.Equal((await GetTestFolders()).FirstOrDefault(p => p.Id == 1).Title, model.FirstOrDefault(p => p.Id == 1).Title);
         }
 
         [Fact]
@@ -47,17 +45,16 @@ namespace BookingAppTests
         {
             // Arrange
             mockFolderService.Setup(service => service.GetFoldersActive()).ReturnsAsync(await GetTestFolders());
-            FolderController controller = new FolderController(mockFolderService.Object);
-            controller.isUserT = false;
-
+            Mock<FolderController> mockControler = new Mock<FolderController>(mockFolderService.Object) { CallBase = true };
+            mockControler.SetupGet(mock => mock.IsAdmin).Returns(false);
             // Act
-            var result = await controller.Index();
+            var result = await mockControler.Object.Index();
             var okResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsType<List<FolderBaseDto>>(okResult.Value);
 
             // Assert
-            Assert.Equal(GetTestFolders().GetAwaiter().GetResult().Count(), model.Count());
-            Assert.Equal(GetTestFolders().GetAwaiter().GetResult().Where(p => p.Id == 1).FirstOrDefault().Title, (model.Where(p => p.Id == 1)).FirstOrDefault().Title);
+            Assert.Equal((await GetTestFolders()).Count(), model.Count());
+            Assert.Equal((await GetTestFolders()).Where(p => p.Id == 1).FirstOrDefault().Title, (model.Where(p => p.Id == 1)).FirstOrDefault().Title);
         }
         #endregion FolderController.Index
 
@@ -76,7 +73,7 @@ namespace BookingAppTests
             var model = Assert.IsType<FolderBaseDto>(okResult.Value);
 
             // Assert
-            Assert.Equal(GetTestFolders().GetAwaiter().GetResult().Where(f => f.Id == id).FirstOrDefault().Title, model.Title);
+            Assert.Equal((await GetTestFolders()).Where(f => f.Id == id).FirstOrDefault().Title, model.Title);
         }
 
         [Fact]
@@ -103,11 +100,18 @@ namespace BookingAppTests
                 DefaultRuleId = 1,
                 IsActive = true
             };
-            
-            FolderController controller = new FolderController(mockFolderService.Object);
 
+            var claims = new List<Claim>()
+            {
+                new Claim("uid", It.IsAny<string>())
+            };
+            var identity = new ClaimsIdentity(claims, "Test");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            Mock<FolderController> mockControler = new Mock<FolderController>(mockFolderService.Object) { CallBase = true };
+            mockControler.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
             // Act
-            var result = await controller.Create(FolderDto);
+            var result = await mockControler.Object.Index();
 
             // Assert
             Assert.IsType<CreatedResult>(result);
