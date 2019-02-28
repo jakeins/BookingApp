@@ -3,6 +3,7 @@ using BookingApp.Data.Models;
 using BookingApp.DTOs;
 using BookingApp.Exceptions;
 using BookingApp.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Collections.Generic;
@@ -164,27 +165,30 @@ namespace BookingAppTests
             Mock<FolderMinimalDto> mockDto = new Mock<FolderMinimalDto>();
             mockFolderService.Setup(service => service.Update(It.IsAny<int>(), It.IsAny<string>(), mockFolder.Object)).Throws(new CurrentEntryNotFoundException("Specified Folder not found"));
 
-            Mock<FolderController> mockControler = new Mock<FolderController>(mockFolderService.Object) { CallBase = true };
-            mockControler.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
-            
-            var ex = await Assert.ThrowsAsync<CurrentEntryNotFoundException>(() => mockControler.Object.Update(It.IsAny<int>(), mockDto.Object));
-            Assert.Equal("Specified Folder not found", ex.Message);   
+            //Mock<FolderController> mockControler = new Mock<FolderController>(mockFolderService.Object) { CallBase = true };
+            //mockControler.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
+
+            var controller = new FolderController(mockFolderService.Object);
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim("uid", "string")
+                    }, "someAuthTypeName"))
+                }
+            };
+
+            var ex = await Assert.ThrowsAsync<CurrentEntryNotFoundException>(() => controller.Update(It.IsAny<int>(), mockDto.Object));
+            Assert.Equal("Specified Folder not found", ex.Message);  
+
+
+
         }
         #endregion FolderController.Update
 
         #region FolderController.Delete
-        [Fact]
-        public async void GetFolderByIdFailedDeleteFolderAsync()
-        {
-            // Arrange
-            mockFolderService.Setup(service => service.Delete(It.IsAny<int>())).Throws(new CurrentEntryNotFoundException("Specified Folder not found"));
-            FolderController controller = new FolderController(mockFolderService.Object);
-
-            // Assert
-            var ex = await Assert.ThrowsAsync<CurrentEntryNotFoundException>(() => controller.Delete(It.IsAny<int>()));
-            Assert.Equal("Specified Folder not found", ex.Message);
-        }
-
         [Fact]
         public async void DeleteOkFolderAsync()
         {
@@ -196,6 +200,18 @@ namespace BookingAppTests
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public async void GetFolderByIdFailedDeleteFolderAsync()
+        {
+            // Arrange
+            mockFolderService.Setup(service => service.Delete(It.IsAny<int>())).Throws(new CurrentEntryNotFoundException("Specified Folder not found"));
+            FolderController controller = new FolderController(mockFolderService.Object);
+
+            // Assert
+            var ex = await Assert.ThrowsAsync<CurrentEntryNotFoundException>(() => controller.Delete(It.IsAny<int>()));
+            Assert.Equal("Specified Folder not found", ex.Message);
         }
         #endregion FolderController.Delete
 
