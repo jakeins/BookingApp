@@ -27,9 +27,9 @@ const routes: Routes = [
 
   { path: 'folders', component: FolderComponent },
 
-  { path: 'resources/create', component: ResourceEditComponent },
+  { path: 'resources/create', component: ResourceEditComponent, canActivate: [AdminGuard] },
   { path: 'resources/:id', component: ResourceComponent },
-  { path: 'resources/:id/edit', component: ResourceEditComponent },
+  { path: 'resources/:id/edit', component: ResourceEditComponent, canActivate: [AdminGuard] },
 
   { path: 'tree', component: TreeComponent },
 

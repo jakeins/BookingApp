@@ -7,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FolderService } from '../../services/folder.service';
 import { Folder } from '../../models/folder';
 import { DevService } from '../../services/development.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-resource-edit',
@@ -21,7 +22,8 @@ export class ResourceEditComponent implements OnInit {
     private resourceService: ResourceService,
     private router: Router,
     private actRoute: ActivatedRoute,
-    private folderService: FolderService
+    private folderService: FolderService,
+    private authService: AuthService
   )
   { }
 
@@ -33,8 +35,19 @@ export class ResourceEditComponent implements OnInit {
   model: Resource;
   apiError: string;
   id: number;
+  authChangedSubscription: any;
+
+  ngOnDestroy() {
+    this.authChangedSubscription.unsubscribe();
+  };
 
   ngOnInit() {
+
+    this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => {
+      if (!this.authService.isAdmin) {
+        this.router.navigate(['/error']);
+      }
+    });
 
     this.id = +this.actRoute.snapshot.params['id'];
 
