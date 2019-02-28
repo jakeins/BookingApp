@@ -115,7 +115,7 @@ namespace BookingApp.Controllers
             }
 
             var rule = mapper.Map<Rule>(dtos);
-            rule.CreatedUserId = rule.UpdatedUserId = UserId;                         //fix time
+            rule.CreatedUserId = rule.UpdatedUserId = UserId;                        
             rule.CreatedTime = rule.UpdatedTime = DateTime.Now;
             await _ruleService.Create(rule);
             return Ok(rule);
