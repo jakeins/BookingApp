@@ -45,7 +45,7 @@ export class ResourceEditComponent implements OnInit {
 
     this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => {
       if (!this.authService.isAdmin) {
-        this.router.navigate(['/error']);
+        this.router.navigate(['/error/401']);
       }
     });
 
@@ -60,7 +60,7 @@ export class ResourceEditComponent implements OnInit {
           response.folderId = 0;
         this.model = response;
         this.initializeForm();
-      }, error => { this.router.navigate(['/error']); });
+      }, error => { this.router.navigate(['/error/401']); });
 
     }
     else if (this.createMode) {

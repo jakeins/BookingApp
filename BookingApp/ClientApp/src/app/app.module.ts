@@ -10,14 +10,12 @@ import { AppComponent } from './app.component';
 import { AuthService } from './services/auth.service';
 import { FolderService } from './services/folder.service';
 import { ResourceService } from './services/resource.service';
-import { AppHeaderComponent } from './site/header/header.component';
 import { TokenInterceptor } from './services/token.interceptor';
 import { AccessTokenService } from './services/access-token.service';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    AppHeaderComponent
+    AppComponent
   ],
   imports: [
       BrowserModule,

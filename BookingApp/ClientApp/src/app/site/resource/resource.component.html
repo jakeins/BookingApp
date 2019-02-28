@@ -1,10 +1,9 @@
-<a [routerLink]="['']">🏠</a> &nbsp; &#12297;
+<a [routerLink]="['']"><i class="fas fa-home fa-lg"></i></a> &nbsp; &#12297;
 <span>Resource details</span>
-<hr />
 
 <div *ngIf="resource">
   <span class="resource-modifies fright" *ngIf="authService.isAdmin">
-    <a title="Edit resource" [routerLink]="['edit']">⚙️</a>
+    <a title="Edit resource" [routerLink]="['/admin/resources', resource.id, 'edit']"><i class="fas fa-wrench fa-lg"></i></a>
   </span>
   <h1>
     {{ resource.title }}

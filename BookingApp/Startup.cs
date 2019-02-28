@@ -39,7 +39,7 @@ namespace BookingApp
             services.AddTransient<IResourcesService, ResourcesService>();
             services.AddTransient<IResourcesRepository, ResourcesRepository>();
 
-            services.AddTransient<FolderService>();
+            services.AddTransient<IFolderService, FolderService>();
             services.AddTransient<FolderRepository>();
 
             services.AddTransient<IBookingsService, BookingsService>();
