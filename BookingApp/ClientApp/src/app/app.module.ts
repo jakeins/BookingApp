@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
@@ -12,7 +11,7 @@ import { AuthService } from './services/auth.service';
 import { FolderService } from './services/folder.service';
 import { ResourceService } from './services/resource.service';
 import { TokenInterceptor } from './services/token.interceptor';
-
+import { AccessTokenService } from './services/access-token.service';
 
 @NgModule({
   declarations: [
@@ -21,13 +20,14 @@ import { TokenInterceptor } from './services/token.interceptor';
   imports: [
       BrowserModule,
       HttpClientModule,
-      FormsModule,
+
       RouterModule,
       AppRoutingModule,
       SiteModule
   ],
   providers: [
     AuthService,
+    AccessTokenService,
     FolderService,
     ResourceService,
     {
@@ -38,4 +38,6 @@ import { TokenInterceptor } from './services/token.interceptor';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+
+export class AppModule {
+}

@@ -8,18 +8,22 @@ import { LoginComponent } from './auth/login/login.component';
 import { ForgetComponent } from './auth/forget/forget.component';
 import { ResetComponent } from './auth/reset/reset.component';
 import { ErrorComponent } from './error/error.component';
-import { ResourceListComponent } from './resource/resource-list.component';
-import { ResourceComponent } from './resource/resource.component';
-import { TreeComponent } from './tree/tree.component';
-import { AppHeaderComponent } from './header/header.component';
 
+import { ResourceComponent } from './resource/resource.component';
+import { ResourceEditComponent } from './resource/resource-edit.component';
+
+import { TreeComponent } from './tree/tree.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     TreeComponent,
-    ResourceListComponent,
+
     ResourceComponent,
+    ResourceEditComponent,
+
     FolderComponent,
+
     RegisterComponent,
     LoginComponent,
     ForgetComponent,
@@ -29,10 +33,15 @@ import { AppHeaderComponent } from './header/header.component';
   ],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+
+    FormsModule,
+    ReactiveFormsModule,
   ],
   exports: [AppHeaderComponent],
   providers: [],
   bootstrap: []
 })
-export class SiteModule { }
+
+export class SiteModule {
+}

@@ -1,132 +1,80 @@
-import { Injectable, Inject, Output, EventEmitter } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Response } from '@angular/http';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
 import { Observable } from 'rxjs/Observable';
-import * as jwt_decode from "jwt-decode";
 import { Logger } from './logger.service';
 import { BASE_API_URL } from '../globals';
+import { AccessTokenService } from './access-token.service';
 
 @Injectable()
 export class AuthService {
 
   private BaseUrlLogin: string;
+  @Output() AuthChanged: EventEmitter<any> = new EventEmitter();
+  
+  public get isAdmin() : boolean {
+    this.fillRoles();
+    return this.roleAdminCache === true;
+  }
 
-  constructor(private http: HttpClient) {
+  public get isUser(): boolean {
+    this.fillRoles();
+    return this.roleUserCache === true;
+  }
+
+  public get isAnon(): boolean {
+    this.fillRoles();
+    return this.roleUserCache !== true;
+  }
+
+  constructor(private http: HttpClient, private aTokenService : AccessTokenService) {
     this.BaseUrlLogin = BASE_API_URL + '/auth/login';
+
+    aTokenService.TokenExpired.subscribe(() => {
+      this.logout();
+    })
   }
 
-  login(login, password) {
+  public login(login, password) {
 
-    var headers = new HttpHeaders({
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    });
-    let postData = {
-      password: password,
-      email: login
-    }
-
-    return this.http.post(this.BaseUrlLogin, JSON.stringify(postData), {
-      headers: headers
-    }).map((response: Response) => {
-
-      //Logger.log(response);
-
-      this.setToken(response.toString());
-      this.resetTokenRoles();
-      this.AuthChanged.emit('Logged in');
-
-      return response;
-      })
-      .catch((error: any) =>
-        Observable.throw(error.error || 'Server error'));
+    this.http.post(
+      this.BaseUrlLogin,
+      JSON.stringify({ password: password, email: login }),
+      { headers: new HttpHeaders({ "Content-Type": "application/json", "Accept": "application/json" }) }
+      )
+      .subscribe((response: Response) => {
+        this.aTokenService.writeToken(response.toString());
+        this.fillRoles();
+        this.AuthChanged.emit('Logged in');
+      }, error => Observable.throw(error.error || 'Server error'));
   }
 
-  authAsAdmin() {
-    this.login("superadmin@admin.cow", "SuperAdmin").subscribe();
-  }
-
-  authAsUser() {
-    this.login("lion@user.cow", "Lion").subscribe();
-  }
-
-  logout() {
-    this.removeToken();
-    this.resetTokenRoles();
+  public logout() {
+    this.aTokenService.deleteToken();
+    this.clearRoles();
     this.AuthChanged.emit('Logged out');
   }
 
+  private roleAdminCache?: boolean = null;
+  private roleUserCache?: boolean = null;
+  private fillRoles() {
+    if (this.roleUserCache === null) {
+      
+      let tokenRoles = this.aTokenService.readRoles();
 
-  @Output() AuthChanged: EventEmitter<any> = new EventEmitter();
+      if (tokenRoles != undefined) {
+        this.roleAdminCache = this.roleUserCache = false;
 
-
-
-
-  _isAdmin: boolean = false;
-  _isUser: boolean = false;
-
-  get isAdmin(): boolean {
-    return this._isAdmin;
-  }
-
-  get isUser(): boolean {
-    return this._isUser;
-  }
-
-  get isAnonymous(): boolean {
-    return !this.isUser;
-  }
-
-  setToken(accessToken: string): void {
-    localStorage.setItem('accessToken', accessToken);
-  }
-
-  getToken(): string {
-    return localStorage.getItem('accessToken');
-  }
-
-  removeToken(): void {
-    localStorage.removeItem('accessToken');
-  }
-
-  getEncodeToken() {
-    try {
-      return jwt_decode(this.getToken());
-    } catch (e) {
-      return false;
-    }
-  }
-
-  getTokenUserName() {
-    if (this.getEncodeToken() !== false) {
-      let tokenInfo = this.getEncodeToken();
-
-      Logger.log(tokenInfo);
-
-      return tokenInfo.sub;
-    }
-    return false;
-  }
-
-  resetTokenRoles() {
-    this._isUser = this._isAdmin = false;
-
-    if (this.getEncodeToken() !== false) {
-      let roles = this.getEncodeToken()["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-
-      if (!(roles instanceof Array))
-        roles = [roles];
-
-      for (let x of roles) {
-        if (x == "User")
-          this._isUser = true;
-        else if (x == "Admin")
-          this._isAdmin = true;
+        for (let role of tokenRoles) {
+          if (role == "User")
+            this.roleUserCache = true;
+          else if (role == "Admin")
+            this.roleAdminCache = true;
+        }
       }
     }
   }
-
-
+  private clearRoles() {
+    this.roleAdminCache = this.roleUserCache = null;
+  }
 }

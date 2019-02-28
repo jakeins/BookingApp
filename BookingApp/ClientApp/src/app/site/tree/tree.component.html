@@ -31,17 +31,15 @@
     <div class="control fright" *ngIf="authService.isAdmin">
       <span class="folder-modifies controls" *ngIf="node.item.isFolder">
         <span class="folder-modifies" *ngIf="node.nesting != 0">
-          <a title="Edit folder" [routerLink]="['/resources', node.item.id, 'edit']">✏️</a>
-          <a title="Delete folder" [routerLink]="['/resources', node.item.id, 'delete']">❌</a>
+          <a title="Edit folder" [routerLink]="['/folders', node.item.id, 'edit']">⚙️</a>
         </span>
         <span class="nested-creates">
-          <a title="Create nested resource" [routerLink]="['/resources', node.item.id, 'create']">🍏</a>
-          <a title="Create nested folder" [routerLink]="['/folders', node.item.id, '/create']">📦</a>
+          <a title="Create nested resource" [routerLink]="['/resources','create']" [queryParams]="{parentFolderId: node.item.id}">🍏</a>
+          <a title="Create nested folder" [routerLink]="['/folders', 'create']" [queryParams]="{parentFolderId: node.item.id}">📦</a>
         </span>
       </span>
       <span class="resource-modifies" *ngIf="!node.item.isFolder">
-        <a title="Edit resource" [routerLink]="['/resources', node.item.id, 'edit']">✏️</a>
-        <a title="Delete resource" [routerLink]="['/resources', node.item.id, 'delete']">❌</a>
+        <a title="Edit resource" [routerLink]="['/resources', node.item.id, 'edit']">⚙️</a>
       </span>
     </div>
   </div>

@@ -4,8 +4,7 @@
 
 <div *ngIf="resource">
   <span class="resource-modifies fright" *ngIf="authService.isAdmin">
-    <a title="Edit resource" [routerLink]="['edit']">✏️</a>
-    <a title="Delete resource" [routerLink]="['delete']">❌</a>
+    <a title="Edit resource" [routerLink]="['edit']">⚙️</a>
   </span>
   <h1>
     {{ resource.title }}
