@@ -6,11 +6,22 @@ using BookingApp.Repositories;
 
 namespace BookingApp.Services
 {
-    public class RuleService
+    public interface IRuleService
     {
-        RuleRepository _rulesRepository;
+        Task<IEnumerable<Rule>> GetList();
+        Task<Rule> Get(int id);
+        Task Create(Rule rule);
+        Task Delete(int id);
+        Task Update(Rule rule);
+        Task<IEnumerable<Rule>> GetActiveList();
+        Task<bool> GetActive(int id);
+    }
 
-        public RuleService(RuleRepository rulesRepository)
+    public class RuleService : IRuleService
+    {
+        readonly IRuleRepository _rulesRepository;
+
+        public RuleService(IRuleRepository rulesRepository)
         {
             _rulesRepository = rulesRepository;
         }
@@ -27,5 +38,10 @@ namespace BookingApp.Services
         public async Task Delete(int id) => await _rulesRepository.DeleteAsync(id);
 
         public async Task Update(Rule rule) => await _rulesRepository.UpdateAsync(rule);
+
+        public async Task<IEnumerable<Rule>> GetActiveList() => await _rulesRepository.ListActiveAsync();
+
+        public async Task<bool> GetActive(int id) => await _rulesRepository.IsActiveAsync(id);
     }
+
 }
