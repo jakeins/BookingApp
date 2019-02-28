@@ -13,6 +13,8 @@ namespace BookingApp.DTOs
 
         public int StepTime { get; set; }
 
+        public int ServiceTime { get; set; }
+
         public int PreOrderTimeLimit { get; set; }
 
         public int ReuseTimeout { get; set; }
