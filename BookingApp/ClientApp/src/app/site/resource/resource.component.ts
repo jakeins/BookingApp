@@ -46,11 +46,4 @@ export class ResourceComponent implements OnInit {
       this.resource = response;
     }, error => { this.router.navigate(['/error']); });
   }
-
-  delete() {
-    this.resourceService.deleteResource(this.id).subscribe(() => {
-      Logger.warn(`Resource ${this.id} deleted.`);
-      this.router.navigate(['']);
-    });
-  }
 }

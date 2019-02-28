@@ -43,13 +43,6 @@ export class TreeComponent implements OnInit {
     this.authChangedSubscription.unsubscribe();
   };
 
-  deleteResource(id: number) {
-    this.resourceService.deleteResource(id).subscribe(() => {
-      Logger.warn(`Resource ${id} deleted.`);
-      this.resetdata();
-    });
-  }
-
   resetdata() {
     this.resourceEntries = [];
     this.folderEntries = [];

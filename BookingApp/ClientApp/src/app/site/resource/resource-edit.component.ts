@@ -32,16 +32,17 @@ export class ResourceEditComponent implements OnInit {
   get createMode(): boolean { return !this.updateMode; };
   model: Resource;
   apiError: string;
+  id: number;
 
   ngOnInit() {
 
-    let id = +this.actRoute.snapshot.params['id'];
+    this.id = +this.actRoute.snapshot.params['id'];
 
-    this.updateMode = id > 0;
+    this.updateMode = this.id > 0;
 
     if (this.updateMode) {
 
-      this.resourceService.getResource(id).subscribe((response: Resource) => {
+      this.resourceService.getResource(this.id).subscribe((response: Resource) => {
         if (response.folderId == undefined)
           response.folderId = 0;
         this.model = response;
@@ -96,9 +97,6 @@ export class ResourceEditComponent implements OnInit {
     Logger.log(this.resourceForm);
   }
 
-
-
-
   onSubmit() {
     this.apiError = undefined;
 
@@ -119,10 +117,7 @@ export class ResourceEditComponent implements OnInit {
 
           this.router.navigate(['/resources', this.model.id]);
 
-        }, error => {
-          console.log(error);
-          this.apiError = error['error']['Message'];
-        });
+        }, error => this.handleError(error));
     }
     else if (this.createMode) {
       this.resourceService.createResource(this.model)
@@ -133,10 +128,24 @@ export class ResourceEditComponent implements OnInit {
 
           this.router.navigate(['/resources', resourceId]);
 
-        }, error => {
-          console.log(error);
-          this.apiError = error['error']['Message'];
-        });
+        }, error => this.handleError(error));
     }
   }
+
+  delete() {
+    this.resourceService.deleteResource(this.id).subscribe(() => {
+      Logger.warn(`Resource ${this.id} deleted.`);
+      this.router.navigate(['']);
+    }, error => this.handleError(error));
+  }
+
+
+  handleError(error: any ) {
+    console.log(error);
+    this.apiError = error['status'];
+
+    if (error['error'] != undefined)
+      this.apiError += ': ' + error['error']['Message'];
+  }
+
 }
