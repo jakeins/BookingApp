@@ -82,6 +82,7 @@
     <None Remove="ClientApp\src\app\models\resource.ts" />
     <None Remove="ClientApp\src\app\models\tree-entry.ts" />
     <None Remove="ClientApp\src\app\models\tree-node.ts" />
+    <None Remove="ClientApp\src\app\services\development.service.ts" />
     <None Remove="ClientApp\src\app\services\folder.service.ts" />
     <None Remove="ClientApp\src\app\services\logger.service.ts" />
     <None Remove="ClientApp\src\app\services\resource.service.ts" />
@@ -117,6 +118,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\folder.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\logger.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\development.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\token.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\site\header\header.component.ts" />
   </ItemGroup>
