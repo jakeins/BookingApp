@@ -8,7 +8,6 @@ import { FolderComponent } from './site/folder/folder.component';
 import { CabinetGuard } from './cabinet/cabinet.guard';
 import { AdminGuard } from './admin/admin.guard';
 import { ErrorComponent } from './site/error/error.component';
-import { ResourceListComponent } from './site/resource/resource-list.component';
 import { ResourceComponent } from './site/resource/resource.component';
 import { ResourceEditComponent } from './site/resource/resource-edit.component';
 import { TreeComponent } from './site/tree/tree.component';
@@ -28,7 +27,6 @@ const routes: Routes = [
 
   { path: 'folders', component: FolderComponent },
 
-  { path: 'resources', component: ResourceListComponent },
   { path: 'resources/create', component: ResourceEditComponent },
   { path: 'resources/:id', component: ResourceComponent },
   { path: 'resources/:id/edit', component: ResourceEditComponent },

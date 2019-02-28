@@ -16,11 +16,10 @@ import { DevService } from '../../services/development.service';
 
 export class ResourceEditComponent implements OnInit {
 
-    
-
   constructor(
     private fb: FormBuilder,
     private resourceService: ResourceService,
+    private router: Router,
     private actRoute: ActivatedRoute,
     private folderService: FolderService
   )
@@ -31,51 +30,43 @@ export class ResourceEditComponent implements OnInit {
   parentFolderId: number;
   updateMode: boolean;
   get createMode(): boolean { return !this.updateMode; };
-
-
+  model: Resource;
+  apiError: string;
 
   ngOnInit() {
 
-    this.updateMode = +this.actRoute.snapshot.params['id'] > 0;
+    let id = +this.actRoute.snapshot.params['id'];
 
-    let title: string;
-    let description: string;
-    let ruleId: number;
-    let folderId: number;
-    let isActive: boolean;
-
-
+    this.updateMode = id > 0;
 
     if (this.updateMode) {
 
-
-      Logger.warn('Update mode!');
+      this.resourceService.getResource(id).subscribe((response: Resource) => {
+        if (response.folderId == undefined)
+          response.folderId = 0;
+        this.model = response;
+        this.initializeForm();
+      }, error => { this.router.navigate(['/error']); });
 
     }
     else if (this.createMode) {
 
-      //#region Dev only
-      title = DevService.RandomTerm('wishAdj') + ' ' + DevService.RandomTerm('basicColor') + ' ' + DevService.RandomTerm('popNoun') + ' ' + DevService.RandomTerm('emojiNature');
-      description = DevService.GenerateText(3, 30);
-      ruleId = 1;
-      //folderId
-      isActive = true;
-      //#endregion Dev only
+      this.model = new Resource();
+
+      //#region DEVELOPMENT
+      this.model.title = [DevService.RandomTerm('wishAdj'), DevService.RandomTerm('basicColor'), DevService.RandomTerm('popNoun'), DevService.RandomTerm('emojiNature')].join(' ');
+      this.model.description = DevService.GenerateText(3, 30);
+      this.model.ruleId = 1;
+      this.model.folderId = 0;
+      this.model.isActive = true;
+      //#endregion DEVELOPMENT
 
       //reading parent folder from query parameters
       let pFoldId = this.actRoute.snapshot.queryParams["parentFolderId"];
       this.parentFolderId = +pFoldId > 0 ? +pFoldId : 0;
 
+      this.initializeForm();
     }
-
-    //form initializing
-    this.resourceForm = this.fb.group({
-      title: title,
-      description: description,
-      ruleId: ruleId,
-      folderId: folderId,
-      isActive: isActive ? 'true' : 'false',
-    });
 
     //getting list of folders
     this.folderService.getList().subscribe((result: Folder) => {
@@ -83,7 +74,7 @@ export class ResourceEditComponent implements OnInit {
         this.folders.push(result[key]);
       }
 
-      //forcing folder seleciton during creation
+      //folder preseleciton during creation
       if (this.createMode)
         this.resourceForm.controls['folderId'].setValue(this.parentFolderId);
 
@@ -92,34 +83,60 @@ export class ResourceEditComponent implements OnInit {
 
 
 
+  initializeForm() {
+    this.resourceForm = this.fb.group({
+      title: [this.model.title, [Validators.required, Validators.minLength(3), Validators.maxLength(64)]],
+      description: [this.model.description, Validators.maxLength(512)],
+      ruleId: this.model.ruleId,
+      folderId: this.model.folderId,
+      isActive: this.model.isActive ? 'true' : 'false',
+    });
+
+    Logger.log('Form initialized.');
+    Logger.log(this.resourceForm);
+  }
+
 
 
 
   onSubmit() {
-    let form = this.resourceForm.value;
-    let model = new Resource();
+    this.apiError = undefined;
 
-    model.title = form.title;
-    model.description = form.description;
-    model.isActive = form.isActive;
-    model.ruleId = form.ruleId;
-    model.folderId = form.folderId;
+    let formData = this.resourceForm.value;
 
-    if (model.folderId == 0)
-      model.folderId = null;
+    this.model.title = formData.title;
+    this.model.description = formData.description;
+    this.model.isActive = formData.isActive == 'true';
+    this.model.ruleId = formData.ruleId > 1 ? formData.ruleId : 1;
+    this.model.folderId = formData.folderId > 0 ? formData.folderId : null;
 
-    this.resourceService.createResource(model)
-      .subscribe(result => {
-        let resourceId = result['resourceId'];
+    Logger.log(this.model);
 
-        Logger.log(model);
+    if (this.updateMode) {
+      this.resourceService.updateResource(this.model)
+        .subscribe(result => {
+          Logger.log(`Resource has been updated on ${result['updatedTime']}.`);
 
-        Logger.log(`Resource ${resourceId} has been created.`);
+          this.router.navigate(['/resources', this.model.id]);
 
-        //this.router.navigate(['/resources/'+resourceId]);
+        }, error => {
+          console.log(error);
+          this.apiError = error['error']['Message'];
+        });
+    }
+    else if (this.createMode) {
+      this.resourceService.createResource(this.model)
+        .subscribe(result => {
+          let resourceId = result['resourceId'];
 
-      }, error => console.log(error));
+          Logger.log(`Resource ${resourceId} has been created on ${result['updatedTime']}.`);
+
+          this.router.navigate(['/resources', resourceId]);
+
+        }, error => {
+          console.log(error);
+          this.apiError = error['error']['Message'];
+        });
+    }
   }
-
 }
-

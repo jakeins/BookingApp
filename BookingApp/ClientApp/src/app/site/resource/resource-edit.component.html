@@ -1,14 +1,18 @@
-<form [formGroup]="resourceForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="resourceForm" (ngSubmit)="onSubmit()" *ngIf="model && resourceForm">
+
+  <div class="error" [hidden]="apiError == undefined">API error: {{apiError}}</div>
 
   <div>
     Title:<br />
     <input type="text" formControlName="title" minlength="3" maxlength="64" required />
+    <div class="error" [hidden]="!resourceForm.controls['title'].errors || resourceForm.controls['title'].pristine">Please keep length of 3 to 64 characters.</div>
   </div>
   <br />
 
   <div>
     Description:<br />
     <textarea formControlName="description" maxlength="512"></textarea>
+    <div class="error" [hidden]="!resourceForm.controls['description'].errors">Please keep length less that 512 characters.</div>
   </div>
   <br />
 
@@ -20,32 +24,28 @@
 
   <div>
     Folder:<br />
-             <select formControlName="folderId" required>
-               <option *ngFor="let folder of folders" [value]="folder.id">{{folder.title}}{{folder.isActive ? "" : " (inactive)"}}</option>
-             </select>
+    <select formControlName="folderId" required>
+      <option *ngFor="let folder of folders" [value]="folder.id">{{folder.title}}{{folder.isActive ? "" : " (inactive)"}}</option>
+    </select>
 
-</div>
+  </div>
   <br />
 
   <div>
     <label for="active">
       Active
-      <input id="active" type="radio" formControlName="isActive" value="true"/>
+      <input id="active" type="radio" formControlName="isActive" value="true" />
     </label>
     &nbsp;&nbsp;&nbsp;
     <label for="inactive">
       Inactive
-      <input id="inactive" type="radio" formControlName="isActive" value="false"/>
+      <input id="inactive" type="radio" formControlName="isActive" value="false" />
     </label>
   </div>
 
 
   <div>
-    <button type="submit" [disabled]="!resourceForm.valid">Submit</button>
+    <button type="submit" [disabled]="!resourceForm.valid">Post</button>
   </div>
-
-  <p>
-    Form Status: {{ resourceForm.status }}
-  </p>
 
 </form>

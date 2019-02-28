@@ -9,7 +9,6 @@ import { ForgetComponent } from './auth/forget/forget.component';
 import { ResetComponent } from './auth/reset/reset.component';
 import { ErrorComponent } from './error/error.component';
 
-import { ResourceListComponent } from './resource/resource-list.component';
 import { ResourceComponent } from './resource/resource.component';
 import { ResourceEditComponent } from './resource/resource-edit.component';
 
@@ -20,7 +19,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   declarations: [
     TreeComponent,
 
-    ResourceListComponent,
     ResourceComponent,
     ResourceEditComponent,
 

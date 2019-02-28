@@ -41,7 +41,7 @@
       </span>
       <span class="resource-modifies" *ngIf="!node.item.isFolder">
         <a title="Edit resource" [routerLink]="['/resources', node.item.id, 'edit']">✏️</a>
-        <a title="Delete resource" [routerLink]="['/resources', node.item.id, 'delete']">❌</a>
+        <a title="Delete resource #{{node.item.id}}" (click)="deleteResource(node.item.id)">❌</a>
       </span>
     </div>
   </div>

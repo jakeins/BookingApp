@@ -13,7 +13,7 @@ export class AccessTokenService {
 
   public writeToken(accessToken: string): void {
     localStorage.setItem(this.accTokenName, accessToken);
-    localStorage.setItem(this.accTokenExpName, (Date.now() + 1000 * 60 * 5).toString() ); // 5-minute STUB
+    localStorage.setItem(this.accTokenExpName, (Date.now() + 1000 * 60 * 15).toString() ); // 15-minute STUB
   }
 
   public readToken(): string {
