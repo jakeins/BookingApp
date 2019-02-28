@@ -16,6 +16,7 @@ namespace BookingAppTests
 {
     public class FolderControllerTest
     {
+
         private readonly Mock<IFolderService> mockFolderService;
 
         public FolderControllerTest()
