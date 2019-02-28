@@ -14,7 +14,7 @@ export class CabinetComponent implements OnInit {
     
     ngOnInit() {
       this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => {
-        if (!this.authService._isUser) {
+        if (!this.authService.isUser) {
           this.router.navigate(['/error']);
         }
       });

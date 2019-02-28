@@ -14,6 +14,7 @@ import { ResourceEditComponent } from './resource/resource-edit.component';
 
 import { TreeComponent } from './tree/tree.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AppHeaderComponent } from './header/header.component';
 
 @NgModule({
   declarations: [
