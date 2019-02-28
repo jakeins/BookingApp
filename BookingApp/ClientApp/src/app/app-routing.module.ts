@@ -18,7 +18,7 @@ import { AdminModule } from './admin/admin.module';
 
 const routes: Routes = [
   { path: '', component: TreeComponent },
-  { path: 'error', component: ErrorComponent },
+  { path: 'error/:status-code', component: ErrorComponent },
 
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
@@ -42,11 +42,12 @@ const routes: Routes = [
   {
       path: 'admin',
       loadChildren: () => AdminModule,
+      //loadChildren: './admin/admin.module#AdminModule',
       canLoad: [AdminGuard]
   },
   {
       path: '**',
-      redirectTo: 'error'
+      redirectTo: 'error/404'
   }
 ];
 
