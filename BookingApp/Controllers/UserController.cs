@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.Helpers;
 using BookingApp.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -46,6 +48,7 @@ namespace BookingApp.Controllers
             return BadRequest("Error valid");
         }
 
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPost("api/user/create-admin")]
         public async Task<IActionResult> CreateAdmin([FromBody] AuthRegisterDto user)
         {
@@ -127,6 +130,7 @@ namespace BookingApp.Controllers
             return Ok("Password changed");
         }
 
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/add-role")]
         public async Task<IActionResult> AddRole([FromRoute]string userId, [FromBody]UserRoleDto roleDto)
         {
