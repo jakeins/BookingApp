@@ -65,9 +65,9 @@ namespace BookingApp.Controllers
 
             var userClaims = await jwtService.GetClaimsAsync(user);
             var accessToken = jwtService.GenerateJwtAccessToken(userClaims);
-            //var tokens = new AuthTokensDto { AccessToken = accessToken };
+            var tokens = new AuthTokensDto { AccessToken = accessToken };
 
-            return Ok(accessToken);
+            return Ok(tokens);
         }
 
         [AllowAnonymous]
