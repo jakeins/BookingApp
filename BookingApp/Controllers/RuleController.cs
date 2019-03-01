@@ -103,6 +103,7 @@ namespace BookingApp.Controllers
         /// <response code ="200">Successfull operation</response>
         /// <response code ="500">Internal server error</response>
         /// <response code ="401">Unauthorized.Only admin can create rule.</response>
+        /// <response code = "400">Invalid dtos</response>
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]

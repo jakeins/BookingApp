@@ -9,7 +9,6 @@ using BookingApp.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using BookingApp.DTOs;
 using System.Linq;
-using System.Net;
 
 namespace BookingAppTests
 {
@@ -25,15 +24,15 @@ namespace BookingAppTests
 
         #region GetListRules
         [Fact]
-        public async Task GetListRulesForAdmin()
+        public async Task GetListOfRulesForAdmin()
         {
             //arrange
             mockServ.Setup(p => p.GetList()).ReturnsAsync(initRules());
-            var mockContr = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            mockContr.SetupGet(p => p.IsAdmin).Returns(true);
+            var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
+            controller.SetupGet(p => p.IsAdmin).Returns(true);
 
             //act
-            var result = await mockContr.Object.Rules();
+            var result = await controller.Object.Rules();
 
             //Assert
             var ruleOk = Assert.IsType<OkObjectResult>(result);
@@ -43,15 +42,15 @@ namespace BookingAppTests
         }
 
         [Fact]
-        public async Task GetListRulesForUser()
+        public async Task GetListRulesOfForUser()
         {
             //arrange
             mockServ.Setup(p => p.GetActiveList()).ReturnsAsync(initRules().Where(p => p.IsActive == true));
-            var mockContr = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            mockContr.SetupGet(p => p.IsAdmin).Returns(false);
+            var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
+            controller.SetupGet(p => p.IsAdmin).Returns(false);
 
             //act
-            var result = await mockContr.Object.Rules();
+            var result = await controller.Object.Rules();
 
             //Assert
             var ruleOk = Assert.IsType<OkObjectResult>(result);
@@ -80,24 +79,6 @@ namespace BookingAppTests
             Assert.Equal("LibraryRule", modelOk.Title);
             Assert.Equal(20, modelOk.MinTime);
         }
-
-        [Theory]
-        [InlineData(20)]
-        public async Task GetRuleForAdminReturnsError(int id)
-        {
-            //arrange
-            mockServ.Setup(p => p.Get(id)).ReturnsAsync((Rule)null);
-            var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.SetupGet(p => p.IsAdmin).Returns(true);
-
-            //act
-            var result = await controller.Object.GetRule(id);
-
-            //assert
-            var ruleBad = Assert.IsType<OkObjectResult>(result);
-            Assert.Null(ruleBad.Value);
-        }
-
 
         [Theory]
         [InlineData(3)]
@@ -135,23 +116,25 @@ namespace BookingAppTests
 
             //assert
             var ruleBad = Assert.IsType<BadRequestResult>(result);
+            Assert.Equal(400, ruleBad.StatusCode);
         }
         #endregion
 
         #region CreateRule
         [Fact]
-        public async Task CreateRuleWithInvalidModel()
+        public async Task CreateRuleWithInvalidModelReturnsBadRequest()
         {
             //arrange
             mockServ.Setup(p => p.Create(It.IsAny<Rule>()));
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.Object.ModelState.AddModelError("error", "someeror");
+            controller.Object.ModelState.AddModelError("error", "Invalid Rule model");
 
             //act
             var result = await controller.Object.CreateRule(It.IsAny<RuleDetailedDTO>());
 
             //assert
-            var ruleOk = Assert.IsType<BadRequestObjectResult>(result);
+            var ruleBad = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, ruleBad.StatusCode);
         }
 
         [Fact]
@@ -186,25 +169,10 @@ namespace BookingAppTests
 
             //assert
             var ruleOk = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal("Rule's been deleted", ruleOk.Value);
 
         }
 
-        [Fact]
-        public async Task DeleteRuleRelativeToResourcesReturnsError()
-        {
-            //arrange
-            mockServ.Setup(p => p.Delete(It.IsAny<int>()));
-            var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.SetReturnsDefault(HttpStatusCode.Forbidden);
-
-            //act
-            var result =  controller.Object.DeleteRule(It.IsAny<int>()).IsFaulted;
-
-            //assert
-            var ruleOk = Assert.IsType<bool> (result);
-            Assert.True(result);
-
-        }
         #endregion
 
         #region Update Rule
@@ -214,12 +182,13 @@ namespace BookingAppTests
             //arrange
             mockServ.Setup(f => f.Update(someRule())).Returns(Task.CompletedTask);
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.Object.ModelState.AddModelError("error", "smth");
+            controller.Object.ModelState.AddModelError("error", "Invalid model");
             //act
             var result = await controller.Object.UpdateRule(1, someDTORule());
 
-            //Assert
+            //assert
             var ruleBad = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, ruleBad.StatusCode);
         }
 
         [Fact]
@@ -238,6 +207,26 @@ namespace BookingAppTests
             Assert.Equal("Rule's been updated", ruleOk.Value);
         }
         #endregion
+
+        #region GetResourcesForRule
+        [Theory]
+        [InlineData(2)]
+        [InlineData(5)]
+        public async Task GetResourcesForRule(int id)
+        {
+            //arrange
+            var mockResServ = new Mock<IResourcesService>();
+            mockResServ.Setup(p => p.ListByRuleKey(id)).ReturnsAsync(resourceForRules());
+            var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
+
+            //act
+            var result = await controller.Object.GetResourcesByRule(id, mockResServ.Object);
+
+            //assert
+            var ruleOk = Assert.IsType<OkObjectResult>(result);
+            var resourcesOk = Assert.IsAssignableFrom<IEnumerable<ResourceMaxDto>>(ruleOk.Value);
+        }
+#endregion
 
         #region TestDataHelper
         public IEnumerable<Rule> initRules()
@@ -307,6 +296,11 @@ namespace BookingAppTests
                 MinTime = 10,
                 MaxTime = 100
             };
+        }
+
+        public IEnumerable<Resource> resourceForRules()
+        {
+            return new List<Resource>();
         }
 #endregion
 
