@@ -65,7 +65,14 @@ namespace BookingApp.Controllers
 
             var userClaims = await jwtService.GetClaimsAsync(user);
             var accessToken = jwtService.GenerateJwtAccessToken(userClaims);
-            var tokens = new AuthTokensDto { AccessToken = accessToken };
+            var refreshToken = jwtService.GenerateJwtRefreshToken();
+            await jwtService.LoginByRefreshTokenAsync(user.Id, refreshToken);
+            var tokens = new AuthTokensDto
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpireOn = jwtService.ExpirationTime
+            };
 
             return Ok(tokens);
         }
@@ -85,6 +92,23 @@ namespace BookingApp.Controllers
             await userService.AddUserRoleAsync(user.Id, RoleTypes.User);
 
             return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody]AuthTokensDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var principal = jwtService.GetPrincipalFromExpiredAccessToken(dto.AccessToken);
+            dto.AccessToken = jwtService.GenerateJwtAccessToken(principal.Claims);
+            dto.RefreshToken = await jwtService.UpdateRefreshTokenAsync(dto.RefreshToken, principal);
+            dto.ExpireOn = jwtService.ExpirationTime;
+
+            return Ok(dto);
         }
 
         [AllowAnonymous]

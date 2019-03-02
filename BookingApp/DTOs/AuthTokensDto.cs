@@ -8,6 +8,8 @@ namespace BookingApp.DTOs
     public class AuthTokensDto
     {
         public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime ExpireOn { get; set; }
 
         public override bool Equals(object obj)
         {
