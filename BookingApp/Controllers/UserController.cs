@@ -123,7 +123,7 @@ namespace BookingApp.Controllers
         [HttpPut("api/user/{userId}/change-password")]
         public async Task<IActionResult> ChangePassword([FromBody]UserPasswordChangeDTO userDTO, [FromRoute]string userId)
         {
-            await userService.ChangePassword(userId, userDTO.CurrentPassword,userDTO.NewPassword);
+            await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
             return Ok("Password changed");
         }
 
@@ -158,7 +158,7 @@ namespace BookingApp.Controllers
         [HttpPut("api/user/{userId}/reset-password")]
         public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
         {
-            await userService.ResetUserPassword(userId, token,userNewPasswordDto.NewPassword);
+            await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
             return Ok();
         }
 
@@ -174,7 +174,7 @@ namespace BookingApp.Controllers
         [HttpGet("api/user/{userId}/bookings")]
         public async Task<IActionResult> GetBookings([FromRoute]string userId, [FromQuery]DateTime? startTime, [FromQuery]DateTime? endTime)
         {
-            var bookings = await bookingsService.ListBookingForSpecificUser(userId, startTime, endTime);
+            var bookings = await bookingsService.ListBookingForSpecificUser(userId, startTime ?? DateTime.Now, endTime ?? DateTime.MaxValue);
             var dtos = new List<BookingOwnerDTO>();
 
             foreach (var booking in bookings)
