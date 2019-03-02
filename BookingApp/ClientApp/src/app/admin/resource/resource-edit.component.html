@@ -1,0 +1,53 @@
+<form [formGroup]="resourceForm" (ngSubmit)="onSubmit()" *ngIf="model && resourceForm">
+     <div class="errors">
+    <p class="alert alert-danger" [hidden]="apiError == undefined">API error {{apiError}}</p>
+    <p class="alert alert-danger" [hidden]="!resourceForm.controls['title'].errors || resourceForm.controls['title'].pristine">Please keep length of 3 to 64 characters.</p>
+    <p class="alert alert-danger" [hidden]="!resourceForm.controls['description'].errors">Please keep description length less that 512 characters.</p>
+  </div>
+     <div>
+    Title:<br />
+    <input type="text" formControlName="title" class="form-control" minlength="3" maxlength="64" required />
+
+  </div>
+  <br />
+
+  <div>
+    Description:<br />
+    <textarea formControlName="description" class="form-control" maxlength="512"></textarea>
+
+  </div>
+  <br />
+
+  <div>
+    Rule:<br />
+    <input type="number" formControlName="ruleId" class="form-control" required />
+  </div>
+  <br />
+
+  <div>
+    Folder:<br />
+    <select formControlName="folderId" class="form-control" required>
+      <option *ngFor="let folder of folders" [value]="folder.id">{{folder.title}}{{folder.isActive ? "" : " (inactive)"}}</option>
+    </select>
+
+  </div>
+  <br />
+
+  <div>
+    <label for="active" class="radio-inline">
+      Active
+      <input id="active" type="radio" formControlName="isActive" value="true" />
+    </label>
+    <label for="inactive" class="radio-inline">
+      Inactive
+      <input id="inactive" type="radio" formControlName="isActive" value="false" />
+    </label>
+  </div>
+
+  <input *ngIf="updateMode" class="btn btn-danger" style="float:right" type="button" value="Delete this resource" (click)="delete()" />
+
+  <div>
+    <button type="submit" class="btn btn-success" style="width:200px;" [disabled]="!resourceForm.valid">Post</button>
+  </div>
+   
+</form>

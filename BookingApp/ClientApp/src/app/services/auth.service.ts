@@ -1,62 +1,80 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Response } from '@angular/http';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
 import { Observable } from 'rxjs/Observable';
-import * as jwt_decode from "jwt-decode";
-import { DOCUMENT } from '@angular/common';
-
+import { Logger } from './logger.service';
+import { BASE_API_URL } from '../globals';
+import { AccessTokenService } from './access-token.service';
 
 @Injectable()
 export class AuthService {
 
   private BaseUrlLogin: string;
-
-  constructor(private http: HttpClient, @Inject(DOCUMENT) private document: any) {
-    this.BaseUrlLogin = document.location.protocol + '/api/auth/login';
+  @Output() AuthChanged: EventEmitter<any> = new EventEmitter();
+  
+  public get isAdmin() : boolean {
+    this.fillRoles();
+    return this.roleAdminCache === true;
   }
 
-  login(login, password) {
-    var headers = new HttpHeaders({
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    });
-    let postData = {
-      password: password,
-      email: login
+  public get isUser(): boolean {
+    this.fillRoles();
+    return this.roleUserCache === true;
+  }
+
+  public get isAnon(): boolean {
+    this.fillRoles();
+    return this.roleUserCache !== true;
+  }
+
+  constructor(private http: HttpClient, private aTokenService : AccessTokenService) {
+    this.BaseUrlLogin = BASE_API_URL + '/auth/login';
+
+    aTokenService.TokenExpired.subscribe(() => {
+      this.logout();
+    })
+  }
+
+  public login(login, password) {
+
+    this.http.post(
+      this.BaseUrlLogin,
+      JSON.stringify({ password: password, email: login }),
+      { headers: new HttpHeaders({ "Content-Type": "application/json", "Accept": "application/json" }) }
+      )
+      .subscribe((response: Response) => {
+        this.aTokenService.writeToken(response.toString());
+        this.fillRoles();
+        this.AuthChanged.emit('Logged in');
+      }, error => Observable.throw(error.error || 'Server error'));
+  }
+
+  public logout() {
+    this.aTokenService.deleteToken();
+    this.clearRoles();
+    this.AuthChanged.emit('Logged out');
+  }
+
+  private roleAdminCache?: boolean = null;
+  private roleUserCache?: boolean = null;
+  private fillRoles() {
+    if (this.roleUserCache === null) {
+      
+      let tokenRoles = this.aTokenService.readRoles();
+
+      if (tokenRoles != undefined) {
+        this.roleAdminCache = this.roleUserCache = false;
+
+        for (let role of tokenRoles) {
+          if (role == "User")
+            this.roleUserCache = true;
+          else if (role == "Admin")
+            this.roleAdminCache = true;
+        }
+      }
     }
-
-    return this.http.post(this.BaseUrlLogin, JSON.stringify(postData), {
-      headers: headers
-    }).map((response: Response) => response)
-      .catch((error: any) =>
-        Observable.throw(error.error || 'Server error'));
   }
-
-  setToken(accessToken: string): void {
-    localStorage.setItem('accessToken', accessToken);
+  private clearRoles() {
+    this.roleAdminCache = this.roleUserCache = null;
   }
-
-  removeToken(): void {
-    localStorage.removeItem('accessToken');
-  }
-
-  getEncodeToken() {
-    try {
-      let token = localStorage.getItem('accessToken');
-      return jwt_decode(token);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  checkAuth() {
-    if (this.getEncodeToken() !== false) {
-      let tokenInfo = this.getEncodeToken();
-      return tokenInfo.sub;
-    }
-    return false;
-  }
-
 }

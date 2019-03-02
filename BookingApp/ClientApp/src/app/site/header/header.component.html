@@ -1,0 +1,39 @@
+<header class="header-site">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-3">
+        <a routerLink="/"><h1 class="logo">Booking</h1></a>
+      </div>
+
+      <div class="col-lg-9">
+        <div style="float: left; margin-right: 20px;">
+          <a href="swagger" class="btn btn-success">Swagger</a>
+        </div>
+
+        <div class="cabinets" *ngIf="authService.isUser" style="float: left; margin-right: 20px;">
+          <a class="btn btn-outline-secondary" routerLink="cabinet">User Cabinet</a>
+          <a class="btn btn-outline-primary" routerLink="admin" *ngIf="authService.isAdmin">Admin Panel</a>
+        </div>
+
+        <div *ngIf="!authService.isUser" style="float: left; margin-right: 20px;">
+          <button *ngIf="!authService.isUser" (click)="authUser()" class="btn btn-secondary">User</button>
+          <button *ngIf="!authService.isAdmin" (click)="authAdmin()" class="btn btn-primary">Admin</button>
+        </div>
+
+
+
+        <div *ngIf="authService.isUser" style="float: left; margin-right: 20px;">
+          <button (click)="logout()" class="btn btn-danger">Logout</button>
+        </div>
+
+        <!--<div style="float: left; margin-right: 20px;">
+          <a routerLink="/register" class="btn btn-outline-secondary">SignUp</a>
+        </div>
+        <div>
+          <a routerLink="/login" class="btn btn-outline-success">SignIn</a>
+        </div>-->
+
+      </div>
+    </div>
+  </div>
+</header>

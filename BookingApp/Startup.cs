@@ -39,11 +39,11 @@ namespace BookingApp
             services.AddTransient<IResourcesService, ResourcesService>();
             services.AddTransient<IResourcesRepository, ResourcesRepository>();
 
-            services.AddTransient<FolderService>();
+            services.AddTransient<IFolderService, FolderService>();
             services.AddTransient<FolderRepository>();
 
-            services.AddTransient<BookingsService>();
-            services.AddTransient<BookingsRepository>();
+            services.AddTransient<IBookingsService, BookingsService>();
+            services.AddTransient<IBookingsRepository, BookingsRepository>();
 
             services.AddTransient<IJwtService, JwtService>();
             services.AddTransient<IMessageService, MailMessageService>();
@@ -52,8 +52,8 @@ namespace BookingApp
             services.AddTransient<IUserService,UserService>();
             services.AddTransient<IUserRepository,UserRepository>();
 
-            services.AddTransient<RuleService>();
-            services.AddTransient<RuleRepository>();
+            services.AddTransient<IRuleService, RuleService>();
+            services.AddTransient<IRuleRepository, RuleRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 

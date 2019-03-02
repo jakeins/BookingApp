@@ -6,7 +6,9 @@ using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace BookingApp.Controllers
 {
@@ -14,10 +16,10 @@ namespace BookingApp.Controllers
     [ApiController]
     public class BookingsController : EntityControllerBase
     {
-        private readonly BookingsService bookingService;
+        private readonly IBookingsService bookingService;
         private readonly IMapper dtoMapper;
 
-        public BookingsController(BookingsService bookingService)
+        public BookingsController(IBookingsService bookingService)
         {
             this.bookingService = bookingService;
 
@@ -161,6 +163,35 @@ namespace BookingApp.Controllers
             {
                 throw new Exceptions.OperationRestrictedException("Can delete not owned booking");
             }
+        }
+
+        /// <summary>
+        /// Return list of all <see cref="Booking"/>
+        /// </summary>
+        /// <param name="startTime">Optional start time</param>
+        /// <param name="endTime">Optional end time</param>
+        /// <returns>List of all <see cref="Booking"/></returns>
+        /// <response code="200">Success</response>
+        /// <response code="401">Error. Access denied</response>
+        /// <respomse code="404">Error. Non exist booking id passed</respomse>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
+        [HttpGet()]
+        [Authorize(Roles = RoleTypes.Admin)]
+        public async Task<IActionResult> GetAll([FromQuery]DateTime? startTime, [FromQuery]DateTime? endTime)
+        {
+            var bookings = await bookingService.ListBookings(startTime ?? DateTime.Now, endTime??DateTime.MaxValue);
+
+            var dtos = new List<BookingAdminDTO>();
+
+            foreach (var booking in bookings)
+            {
+                dtos.Add(dtoMapper.Map<BookingAdminDTO>(booking));
+            }
+
+            return Ok(dtos);
         }
 
         #endregion CRUD actions

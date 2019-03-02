@@ -1,0 +1,53 @@
+<a [routerLink]="['']"><i class="fas fa-home fa-lg"></i></a> &nbsp; &#12297;
+<span>Resource details</span>
+
+<div *ngIf="resource">
+  <span class="resource-modifies fright" *ngIf="authService.isAdmin">
+    <a title="Edit resource" [routerLink]="['/admin/resources', resource.id, 'edit']"><i class="fas fa-wrench fa-lg"></i></a>
+  </span>
+  <h1>
+    {{ resource.title }}
+    <span class="redundand" *ngIf="resource.isActive != true"> (inactive)</span>
+  </h1>
+  
+  <p>{{ resource.description }}</p>
+</div>
+
+
+<div class="alert alert-warning">
+  Booking <strong>Rule</strong> to which this resource adheres to goes here.
+</div>
+
+<hr />
+
+
+<div class="bookings-mock">
+  <h3>Bookings:</h3>
+  <div class="alert alert-primary" role="alert">
+    This is a primary alert—check it out!
+  </div>
+  <div class="alert alert-secondary" role="alert">
+    This is a secondary alert—check it out!
+  </div>
+  <div class="alert alert-success" role="alert">
+    This is a success alert—check it out!
+  </div>
+  <div class="alert alert-danger" role="alert">
+    This is a danger alert—check it out!
+  </div>
+  <div class="alert alert-warning" role="alert">
+    This is a warning alert—check it out!
+  </div>
+  <div class="alert alert-info" role="alert">
+    This is a info alert—check it out!
+  </div>
+  <!--<div class="alert alert-light" role="alert">
+    This is a light alert—check it out!
+  </div>-->
+  <div class="alert alert-dark" role="alert">
+    This is a dark alert—check it out!
+  </div>
+</div>
+
+
+

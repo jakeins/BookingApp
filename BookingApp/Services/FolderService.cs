@@ -1,6 +1,5 @@
 ﻿using BookingApp.Data.Models;
 using BookingApp.Repositories;
-using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,15 +7,13 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-    public class FolderService
+    public class FolderService : IFolderService
     {
         FolderRepository repository;
-        readonly UserManager<ApplicationUser> userManager;
 
-        public FolderService(FolderRepository r, UserManager<ApplicationUser> um)
+        public FolderService(FolderRepository r)
         {
             repository = r;
-            userManager = um;
         }
 
         public async Task<IEnumerable<Folder>> GetFoldersActive()
@@ -54,5 +51,15 @@ namespace BookingApp.Services
             await repository.DeleteAsync(id);
         } 
 
+    }
+
+    public interface IFolderService
+    {
+        Task Create(string userId, Folder Folder);
+        Task<IEnumerable<Folder>> GetFoldersActive();
+        Task<IEnumerable<Folder>> GetFolders();
+        Task<Folder> GetDetail(int folderId);
+        Task Update(int currentFolderId, string userId, Folder Folder);
+        Task Delete(int folderId);
     }
 }
