@@ -18,4 +18,8 @@
     <ProjectReference Include="..\BookingApp\BookingApp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middleware\" />
+  </ItemGroup>
+
 </Project>
