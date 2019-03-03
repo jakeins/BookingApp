@@ -20,3 +20,4 @@ namespace BookingApp.Repositories
         /// </summary>
         Task<IEnumerable<Resource>> ListByFolderKeyAsync(int folderId);
     }
+}
