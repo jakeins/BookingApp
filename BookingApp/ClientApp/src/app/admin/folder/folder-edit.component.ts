@@ -3,10 +3,10 @@ import { FolderService } from '../../services/folder.service';
 import { Folder } from '../../models/folder';
 
 @Component({
-  selector: 'app-folder',
-  templateUrl: './folder.component.html'
+  selector: 'app-folder-edit',
+  templateUrl: './folder-edit.component.html'
 })
-export class FolderComponent implements OnInit {
+export class FolderEditComponent implements OnInit {
 
   folders: Folder;
 

@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -11,9 +9,9 @@ namespace BookingApp.Middlewares
 {
     public class ErrorHandlingMiddleware
     {
-        readonly RequestDelegate next;
-        readonly bool IsDevelopment;
-        readonly ILogger<ErrorHandlingMiddleware> logger;
+        private readonly RequestDelegate next;
+        private readonly bool IsDevelopment;
+        private readonly ILogger<ErrorHandlingMiddleware> logger;
 
         public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger, bool IsDevelopment)
         {
@@ -51,43 +49,30 @@ namespace BookingApp.Middlewares
 
             switch (exception)
             {
-                case Exceptions.CurrentEntryNotFoundException detailed:
+                case Exceptions.FieldValueTimeInvalidException _:
+                case Exceptions.RelatedEntryNotFoundException _:
+                    code = HttpStatusCode.BadRequest;
+                    break;
+
+                case Exceptions.CurrentEntryNotFoundException _:
+                case Exceptions.EntryNotFoundException _:
+                case NullReferenceException _:
                     code = HttpStatusCode.NotFound;
                     break;
-                case Exceptions.FieldValueTimeInvalidException detailed:
-                    code = HttpStatusCode.BadRequest;
-                    break;
-                case Exceptions.RelatedEntryNotFoundException detailed:
-                    code = HttpStatusCode.BadRequest;
-                    break;
-                case Exceptions.OperationRestrictedRelationException detailed:
+
+                case Exceptions.OperationRestrictedRelationException _:
                     code = HttpStatusCode.Forbidden;
                     break;
-                case Exceptions.OperationRestrictedException detailed:
+
+                case Exceptions.OperationRestrictedException _:
+                case UnauthorizedAccessException _:
                     code = HttpStatusCode.Unauthorized;
                     break;
-                case Exceptions.EntryNotFoundException detailed:
-                    code = HttpStatusCode.NotFound;
-                    break;
-                case Exceptions.OperationFailedException detailed:
-                    code = HttpStatusCode.BadRequest;
-                    break;
-                case InvalidProgramException detailed:
-                    code = HttpStatusCode.InternalServerError;
-                    break;
-                case NullReferenceException detailed:
-                    code = HttpStatusCode.NotFound;
-                    break;
-                case UnauthorizedAccessException detailed:
-                    code = HttpStatusCode.Unauthorized;
-                    break;
-                case Exceptions.UserEmailException detailed:
-                    code = HttpStatusCode.BadRequest;
-                    break;
-                case Exceptions.UserNameException detailed:
-                    code = HttpStatusCode.BadRequest;
-                    break;
-                case Exceptions.UserPasswordException detailed:
+
+                case Exceptions.OperationFailedException _:
+                case Exceptions.UserEmailException _:
+                case Exceptions.UserNameException _:
+                case Exceptions.UserPasswordException _:
                     code = HttpStatusCode.BadRequest;
                     break;
 
@@ -117,7 +102,7 @@ namespace BookingApp.Middlewares
             return context.Response.WriteAsync(result);
         }
 
-        class ExceptionInfo
+        private class ExceptionInfo
         {
             public string Message { get; set; }
 
@@ -127,7 +112,7 @@ namespace BookingApp.Middlewares
             }
         }
 
-        class DevelopmentExceptionInfo : ExceptionInfo
+        private class DevelopmentExceptionInfo : ExceptionInfo
         {
             public string StackTrace { get; set; }
 

@@ -186,7 +186,7 @@ namespace BookingApp.Controllers
         [HttpGet("api/user/{userId}/bookings")]
         public async Task<IActionResult> GetBookings([FromRoute]string userId, [FromQuery]DateTime? startTime, [FromQuery]DateTime? endTime)
         {
-            var bookings = await bookingsService.ListBookingForSpecificUser(userId, startTime, endTime);
+            var bookings = await bookingsService.ListBookingForSpecificUser(userId, startTime ?? DateTime.Now, endTime ?? DateTime.MaxValue);
             var dtos = new List<BookingOwnerDTO>();
 
             foreach (var booking in bookings)

@@ -17,59 +17,97 @@ namespace BookingApp.Controllers
     [ApiController]
     public class RuleController : EntityControllerBase
     {
-        RuleService _ruleService;
-        IMapper mapper;
+        readonly IRuleService _ruleService;
+        readonly IMapper mapper;
 
-        public RuleController(RuleService ruleService)
+        public RuleController(IRuleService ruleService)
         {
             _ruleService = ruleService;
 
             mapper = new Mapper(new MapperConfiguration(c =>
             {
-                c.CreateMap<Rule, RuleBasicDTO>().ReverseMap();
-                c.CreateMap<Rule, RuleDetailedDTO>();
+                c.CreateMap<Rule, RuleBasicDTO>();
+                c.CreateMap<Rule, RuleAdminDTO>();
+                c.CreateMap<Rule, RuleDetailedDTO>().ReverseMap();
             }));
         }
 
+        /// <summary>
+        /// Returns list of rules. GET: api/rules
+        /// </summary>
+        /// <returns>Http response code/// </returns>
+        /// <response code ="200">Successfull operation</response>
+        /// <response code ="500">Internal server error</response>
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Rules()
         {
-            var rules = await _ruleService.GetList();
-
             if (IsAdmin)
             {
-                var dtos = mapper.Map<IEnumerable<RuleDetailedDTO>>(rules);
+                var rules = await _ruleService.GetList();
+                var dtos = mapper.Map<IEnumerable<RuleAdminDTO>>(rules);
                 return Ok(dtos);
             }
             else
             {
+                var rules = await _ruleService.GetActiveList();
                 var dtos = mapper.Map<IEnumerable<RuleBasicDTO>>(rules);
                 return Ok(dtos);
             }
         }
 
+
+        /// <summary>
+        /// Return rule. GET: api/rules/{id}
+        /// </summary>
+        /// <param name="id">Rule id</param>
+        /// <returns>///Http response code</returns>
+        /// <response code ="200">Successfull operation</response>
+        /// <response code ="500">Internal server error</response>
+        /// <response code ="404">Rule not found</response>
+        /// <response code ="400">Incorrect Id</response>
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [Route("{id}")]
-        //[Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> GetRule(int id)
+        public async Task<IActionResult> GetRule([FromRoute]int id)
         {
-            var rule = await _ruleService.Get(id);
+            
             if (IsAdmin)
             {
-                var dtor = mapper.Map<RuleDetailedDTO>(rule);
+                var rule = await _ruleService.Get(id);
+                var dtor = mapper.Map<RuleAdminDTO>(rule);
                 return Ok(dtor);
             }
-            if (IsUser)
+            else
             {
+                bool existsActive = await _ruleService.GetActive(id);
+                if (!existsActive)
+                    return BadRequest();
+                var rule = await _ruleService.Get(id);
                 var dtor = mapper.Map<RuleBasicDTO>(rule);
                 return Ok(dtor);
             }
-            else return BadRequest();
         }
 
+        /// <summary>
+        /// Return rule. Post: api/rules/{id}
+        /// </summary>
+        /// <param name="id">Rule id</param>
+        /// <param name="dtos">RuleDetailedDTO</param>
+        /// <returns>///Http response code</returns>
+        /// <response code ="200">Successfull operation</response>
+        /// <response code ="500">Internal server error</response>
+        /// <response code ="401">Unauthorized.Only admin can create rule.</response>
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(401)]
         [Authorize(Roles = RoleTypes.Admin)]
-        public async Task<IActionResult> CreateRule([FromBody] RuleBasicDTO dtos)
+        public async Task<IActionResult> CreateRule([FromBody] RuleDetailedDTO dtos)
         {
             if (!ModelState.IsValid)
             {
@@ -77,26 +115,59 @@ namespace BookingApp.Controllers
             }
 
             var rule = mapper.Map<Rule>(dtos);
-            rule.CreatedUserId = rule.UpdatedUserId = UserId;                         //fix time
+            rule.CreatedUserId = rule.UpdatedUserId = UserId;                        
             rule.CreatedTime = rule.UpdatedTime = DateTime.Now;
             await _ruleService.Create(rule);
             return Ok(rule);
 
         }
 
+        /// <summary>
+        /// Return rule. Delete: api/rules/{id}
+        /// </summary>
+        /// <param name="id">Rule id</param>
+        /// <returns>///Http response code</returns>
+        /// <response code ="200">Successfull operation</response>
+        /// <response code ="500">Internal server error</response>
+        /// <response code ="404">Rule not found</response>
+        /// <response code ="401">Unauthorized.Only admin can delete rule.</response>
+        /// <response code ="403">Error, can't delete rule, relative to resources</response>
         [HttpDelete]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         [Authorize(Roles = RoleTypes.Admin)]
         [Route("{id}")]
-        public async Task<IActionResult> DeleteRule(int id)
+        public async Task<IActionResult> DeleteRule([FromRoute]int id)
         {
             await _ruleService.Delete(id);
             return Ok("Rule's been deleted");
         }
 
+        /// <summary>
+        /// Return rule. Put: api/rules/{id}
+        /// </summary>
+        /// <param name="id">Rule id</param>
+        /// <param name="dtos">RuleDetailedDTO</param>
+        /// <returns>///Http response code</returns>
+        /// <response code ="200">Successfull operation</response>
+        /// <response code ="500">Internal server error</response>
+        /// <response code ="401">Unauthorized.Only admin can create rule.</response>
+        /// <response code ="400">Incorrect id</response>
+        /// <response code ="404">Rule not found</response>
+        /// <response code ="403">Error, can't update rule, relative to resources</response>
         [HttpPut]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         [Authorize(Roles = RoleTypes.Admin)]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateRule(int id, [FromBody]RuleBasicDTO dtos)
+        public async Task<IActionResult> UpdateRule([FromRoute]int id, [FromBody]RuleDetailedDTO dtos)
         {
             if (!ModelState.IsValid)
             {
@@ -104,13 +175,38 @@ namespace BookingApp.Controllers
             }
 
             var rule = mapper.Map<Rule>(dtos);
-            rule.UpdatedTime = rule.CreatedTime = DateTime.Now;              //need createdtime and createduser to update
-            rule.UpdatedUserId = rule.CreatedUserId = UserId;
+            rule.UpdatedTime = DateTime.Now;              
+            rule.UpdatedUserId = UserId;                 
             rule.Id = id;
 
             await _ruleService.Update(rule);
             return Ok("Rule's been updated");
 
+        }
+
+        /// <summary>
+        /// Return rule. Get: api/rules/{id}/resources
+        /// </summary>
+        /// <param name="id">Rule id</param>
+        /// <returns>///Http response code</returns>
+        /// <response code ="200">Successfull operation</response>
+        /// <response code ="500">Internal server error</response>
+        /// <response code ="401">Unauthorized.Only admin can receive list of resources for rule.</response>
+        /// <response code ="400">Incorrect id</response>
+        /// <response code ="404">Rule not found</response>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [Authorize(Roles = RoleTypes.Admin)]
+        [Route("{id}/resources")]
+        public async Task<IActionResult> GetResourcesByRule([FromRoute]int id, [FromServices]IResourcesService _resourcesService)
+        {
+            var res = await _resourcesService.ListByRuleKey(id);
+            var resD = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(res);
+            return Ok(resD);
         }
     }
 }

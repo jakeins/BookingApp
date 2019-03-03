@@ -19,7 +19,7 @@ export class ResourceComponent implements OnInit {
   id: number;
 
   constructor(
-    private folderService: ResourceService,
+    private resourceService: ResourceService,
     private actRoute: ActivatedRoute,
     private authService: AuthService,
     private router: Router
@@ -42,7 +42,7 @@ export class ResourceComponent implements OnInit {
   };
 
   resetData() {
-    this.folderService.getResource(this.id).subscribe((response: Resource) => {
+    this.resourceService.getResource(this.id).subscribe((response: Resource) => {
       this.resource = response;
     }, error => { this.router.navigate(['/error']); });
   }

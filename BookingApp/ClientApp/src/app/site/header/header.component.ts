@@ -11,15 +11,15 @@ export class AppHeaderComponent implements OnInit {
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    this.authService.resetTokenRoles();
+
   }
 
   authAdmin() {
-    this.authService.authAsAdmin();
+    this.authService.login("superadmin@admin.cow", "SuperAdmin");
   }
 
   authUser() {
-    this.authService.authAsUser();
+    this.authService.login("lion@user.cow", "Lion");
   }
 
   logout() {
