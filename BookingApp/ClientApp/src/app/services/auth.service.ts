@@ -42,7 +42,8 @@ export class AuthService {
       { headers: new HttpHeaders({ "Content-Type": "application/json", "Accept": "application/json" }) }
       )
       .subscribe((response: Response) => {
-        this.aTokenService.writeToken(response.toString());
+        let refreshToken = response['refreshToken'];// Forethought
+        this.aTokenService.writeToken(response['accessToken'], Date.parse(response['expireOn']));
         this.fillRoles();
         this.AuthChanged.emit('Logged in');
       }, error => { Logger.error("Login failed, "); Logger.error(error); });
