@@ -12,7 +12,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BookingAppTests
+namespace BookingAppTests.Controllers
 {
     public class FolderControllerTest
     {
