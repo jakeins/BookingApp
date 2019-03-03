@@ -127,6 +127,12 @@ namespace BookingApp.Services
             }
             else
             {
+                userRefreshToken = new UserRefreshToken
+                {
+                    UserId = userId,
+                    RefreshToken = refreshToken,
+                    ExpireOn = DateTime.Now.AddMonths(3)
+                };
                 await refreshRepository.CreateAsync(userRefreshToken);
             }
         }
