@@ -114,7 +114,7 @@ namespace BookingApp.Repositories
             await SaveVerboseAsync(EntityName + " Update");
         }
 
-        public async Task SaveVerboseAsync(string saveReasonTitle)
+        public virtual async Task SaveVerboseAsync(string saveReasonTitle)
         {
             try
             {
