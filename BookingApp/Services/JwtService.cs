@@ -22,6 +22,7 @@ namespace BookingApp.Services
         ClaimsPrincipal GetPrincipalFromExpiredAccessToken(string accessToken);
         Task LoginByRefreshTokenAsync(string userId, string refreshToken);
         Task<string> UpdateRefreshTokenAsync(string refreshToken, ClaimsPrincipal userPrincipal);
+        Task DeleteRefreshTokenAsync(ClaimsPrincipal userPrincipal);
     }
 
     public class JwtService : IJwtService
@@ -30,13 +31,26 @@ namespace BookingApp.Services
         private readonly IUserService userService;
         private readonly IConfiguration configuration;
 
-        public JwtService(IUserService userService, IConfiguration configuration)
+        public JwtService(IUserRefreshTokenRepository refreshRepository, IUserService userService, IConfiguration configuration)
         {
+            this.refreshRepository = refreshRepository;
             this.userService = userService;
             this.configuration = configuration;
         }
 
         public DateTime ExpirationTime => DateTime.Now.AddMinutes(120);
+
+        public async Task DeleteRefreshTokenAsync(ClaimsPrincipal userPrincipal)
+        {
+            if (!userPrincipal.HasClaim(c => c.Type == "uid"))
+            {
+                throw new SecurityTokenException("Invalid access token");
+            }
+
+            var userId = userPrincipal.FindFirst(c => c.Type == "uid").Value;
+            var refreshToken = await refreshRepository.GetByUserIdAsync(userId);
+            await refreshRepository.DeleteAsync(refreshToken.Id);
+        }
 
         public string GenerateJwtAccessToken(IEnumerable<Claim> claims)
         {
@@ -104,15 +118,11 @@ namespace BookingApp.Services
 
         public async Task LoginByRefreshTokenAsync(string userId, string refreshToken)
         {
-            var userRefreshToken = new UserRefreshToken
+            var userRefreshToken = await refreshRepository.GetByUserIdAsync(userId);
+            if (userRefreshToken != null)
             {
-                UserId = userId,
-                RefreshToken = refreshToken,
-                ExpireOn = DateTime.Now.AddMonths(3)
-            };
-
-            if (refreshRepository.GetByUserIdAsync(userId) != null)
-            {
+                userRefreshToken.RefreshToken = refreshToken;
+                userRefreshToken.ExpireOn = DateTime.Now.AddMonths(3);
                 await refreshRepository.UpdateAsync(userRefreshToken);
             }
             else
@@ -125,12 +135,12 @@ namespace BookingApp.Services
         {
             if (!userPrincipal.HasClaim(c => c.Type == "uid"))
             {
-                throw new SecurityTokenException("Invalid refresh token");
+                throw new SecurityTokenException("Invalid access token");
             }
 
             var userId = userPrincipal.FindFirst(c => c.Type == "uid").Value;
             var savedRefreshToken = await refreshRepository.GetByUserIdAsync(userId);
-            if (oldRefreshToken != savedRefreshToken.RefreshToken)
+            if (oldRefreshToken != savedRefreshToken?.RefreshToken)
             {
                 throw new SecurityTokenException("Invalid refresh token");
             }

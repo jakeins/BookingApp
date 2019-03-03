@@ -1,5 +1,6 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,27 +24,37 @@ namespace BookingApp.Repositories
 
         public async Task CreateAsync(UserRefreshToken model)
         {
-            await db.UserRefreshTokens.AddAsync(model); //Create stored procedure
+            await db.UserRefreshTokens.AddAsync(model);
         }
 
-        public Task DeleteAsync(int key)
+        public async Task DeleteAsync(int key)
         {
-            throw new NotImplementedException();
+            var model = await GetAsync(key);
+
+            if (model != null)
+            {
+                db.UserRefreshTokens.Remove(model);
+                await SaveAsync();
+            }
+            else
+            {
+                throw new Exceptions.EntryNotFoundException();
+            }
         }
 
-        public Task<UserRefreshToken> GetAsync(int key)
+        public async Task<UserRefreshToken> GetAsync(int key)
         {
-            throw new NotImplementedException();
+            return await db.UserRefreshTokens.FindAsync(key);
         }
 
         public async Task<UserRefreshToken> GetByUserIdAsync(string userId)
         {
-            return db.UserRefreshTokens.FirstOrDefault(token => token.UserId == userId); 
+            return await db.UserRefreshTokens.FirstOrDefaultAsync(token => token.UserId == userId); 
         }
 
-        public Task<IEnumerable<UserRefreshToken>> GetListAsync()
+        public async Task<IEnumerable<UserRefreshToken>> GetListAsync()
         {
-            throw new NotImplementedException();
+            return await db.UserRefreshTokens.ToListAsync();
         }
 
         public async Task SaveAsync()
@@ -53,7 +64,7 @@ namespace BookingApp.Repositories
 
         public async Task UpdateAsync(UserRefreshToken model)
         {
-            db.UserRefreshTokens.Update(model); //Create stored procedure
+            db.UserRefreshTokens.Update(model);
             await SaveAsync();
         }
     }

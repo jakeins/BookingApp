@@ -11,7 +11,7 @@ namespace BookingApp.Data.Models
         public int Id { get; set; }
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
-        [StringLength(32)]
+        [MaxLength(60)]
         public string RefreshToken { get; set; }
         public DateTime ExpireOn { get; set; }
     }

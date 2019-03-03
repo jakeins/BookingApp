@@ -45,7 +45,7 @@ namespace BookingApp.Controllers
 
             var user = await userService.GetUserByEmail(dto.Email);
 
-            if (user == null || !await userService.CheckPassword(user, dto.Password))
+            if (!await userService.CheckPassword(user, dto.Password))
             {
                 ModelState.AddModelError("login_failure", "Invalid email or password");
                 return BadRequest(ModelState);
@@ -76,6 +76,16 @@ namespace BookingApp.Controllers
 
             return Ok(tokens);
         }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await jwtService.DeleteRefreshTokenAsync(User);
+
+            return Ok();
+        }
+
 
         [AllowAnonymous]
         [HttpPost("register")]
