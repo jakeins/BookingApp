@@ -21,6 +21,7 @@ var FolderFormControl = /** @class */ (function (_super) {
         _this.typeField = typeField;
         _this.label = label;
         _this.modelProperty = property;
+        _this.valueField = value;
         return _this;
     }
     FolderFormControl.prototype.getValidationMessages = function () {
@@ -47,16 +48,16 @@ var FolderFormControl = /** @class */ (function (_super) {
 exports.FolderFormControl = FolderFormControl;
 var FolderFormGroup = /** @class */ (function (_super) {
     __extends(FolderFormGroup, _super);
-    function FolderFormGroup() {
+    function FolderFormGroup(folder) {
         return _super.call(this, {
-            title: new FolderFormControl("text", "Title", "title", "", forms_1.Validators.compose([
+            title: new FolderFormControl("text", "Title", "title", folder.title, forms_1.Validators.compose([
                 forms_1.Validators.required,
                 forms_1.Validators.minLength(3),
                 forms_1.Validators.maxLength(64)
             ])),
-            parentFolderId: new FolderFormControl("select", "Parent Folder", "parentFolderId", "", false),
-            defaultRuleId: new FolderFormControl("select", "Rule", "defaultRuleId", "", false),
-            isActive: new FolderFormControl("checkbox", "Is active", "isActive", "", false),
+            parentFolderId: new FolderFormControl("select", "Parent Folder", "parentFolderId", folder.parentFolderId, false),
+            defaultRuleId: new FolderFormControl("select", "Rule", "defaultRuleId", folder.defaultRuleId, false),
+            isActive: new FolderFormControl("checkbox", "Is active", "isActive", folder.isActive, false),
         }) || this;
     }
     Object.defineProperty(FolderFormGroup.prototype, "folderControls", {
