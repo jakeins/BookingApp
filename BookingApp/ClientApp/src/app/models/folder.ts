@@ -1,8 +1,9 @@
 export class Folder {
   constructor(
-    public id: number,
     public title: string,
-    public isActive: boolean,
-    public parentFolderId?: number
+    public parentFolderId?: number,
+    public defaultRuleId?: number,
+    public isActive: boolean = false,
+    public id?: number
   ) {}
 }

@@ -28,8 +28,20 @@ export class FolderService {
         Observable.throw(error.error || 'Server error'));
   }
 
+  createFolder(folder: Folder): Observable<any> {
+    return this.http.post(this.BaseUrlFolder, folder);
+  }
+
   public newRoot() {
-    return new Folder(0, "root", true, null);
+    return new Folder("root", null, null, false, 0);
+  }
+
+  public getMockRules() {
+    return [
+      { "id": 1, "title": "Rule 1" },
+      { "id": 2, "title": "Rule 2" },
+      { "id": 3, "title": "Rule 3" }
+    ];
   }
 
 }

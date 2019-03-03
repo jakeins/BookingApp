@@ -1,9 +1,63 @@
-<h2>{{ href }}</h2>
-<ul class="list-unstyled">
-    <li><a routerLink='/cabinet'>Cabinet</a></li>
-    <li><a routerLink='/admin'>Admin</a></li>
-    <hr />
-    <li *ngFor="let folder of folders">
-      <a href="#">{{ folder.title }}</a>
-    </li>
-  </ul>
+<div *ngIf="IsCreate; else edit">
+  <h1>Create</h1>
+
+  <form novalidate [formGroup]="form" (ngSubmit)="submitForm(form)">
+    <div class="alert alert-danger" role="alert" *ngIf="formSubmitted && form.invalid">
+      Errors
+      <ul>
+        <li *ngFor="let error of form.getFormValidationMessages()">
+          {{error}}
+        </li>
+      </ul>
+    </div>
+
+    <div class="form-group" *ngFor="let control of form.folderControls">
+        <label>{{control.label}}</label>
+
+        <div *ngIf="control.typeField == 'text'">
+          <input class="form-control" type="{{ control.type }}"
+                 [(ngModel)]="newFolder[control.modelProperty]"
+                 formControlName="{{control.modelProperty}}" />
+          <ul class="text-danger list-unstyled"
+              *ngIf="(formSubmitted || control.dirty) && control.invalid">
+            <li *ngFor="let error of control.getValidationMessages()">
+              {{error}}
+            </li>
+          </ul>
+        </div>
+
+        <div *ngIf="control.typeField == 'select' && control.modelProperty == 'parentFolderId'">
+          <select class="form-control" formControlName="{{control.modelProperty}}" [(ngModel)]="newFolder[control.modelProperty]">
+            <option *ngFor="let folder of folders" [value]="folder.id">{{ folder.title }}</option>
+          </select>
+        </div>
+
+        <div *ngIf="control.typeField == 'select' && control.modelProperty == 'defaultRuleId'">
+          <select class="form-control" formControlName="{{control.modelProperty}}" [(ngModel)]="newFolder[control.modelProperty]">
+            <option *ngFor="let rule of folderService.getMockRules()">{{ rule.title }}</option>
+          </select>
+        </div>
+
+        <div *ngIf="control.typeField == 'checkbox'">
+          <input type="checkbox" name="{{control.modelProperty}}" [(ngModel)]="newFolder[control.modelProperty]" formControlName="{{control.modelProperty}}" />
+        </div>
+
+  </div>
+    <button class="btn btn-primary" type="submit"
+            [disabled]="formSubmitted && form.invalid"
+            [class.btn-secondary]="formSubmitted && form.invalid">
+      Create
+    </button>
+  </form>
+
+</div>
+
+
+
+
+
+<ng-template #edit>
+  <div>
+    <h1>Edit</h1>
+  </div>
+</ng-template>
