@@ -36,7 +36,6 @@ export class AuthService {
   }
 
   public login(login, password) {
-
     this.http.post(
       this.BaseUrlLogin,
       JSON.stringify({ password: password, email: login }),
@@ -46,7 +45,7 @@ export class AuthService {
         this.aTokenService.writeToken(response.toString());
         this.fillRoles();
         this.AuthChanged.emit('Logged in');
-      }, error => Observable.throw(error.error || 'Server error'));
+      }, error => { Logger.error("Login failed, "); Logger.error(error); });
   }
 
   public logout() {
