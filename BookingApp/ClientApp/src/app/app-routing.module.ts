@@ -8,7 +8,6 @@ import { CabinetGuard } from './cabinet/cabinet.guard';
 import { AdminGuard } from './admin/admin.guard';
 import { ErrorComponent } from './site/error/error.component';
 import { ResourceComponent } from './site/resource/resource.component';
-import { ResourceEditComponent } from './site/resource/resource-edit.component';
 import { TreeComponent } from './site/tree/tree.component';
 import { CabinetModule } from './cabinet/cabinet.module';
 import { AdminModule } from './admin/admin.module';
@@ -23,38 +22,36 @@ const routes: Routes = [
   { path: 'forget', component: ForgetComponent },
   { path: 'reset', component: ResetComponent },
   { path: 'resources/:id', component: ResourceComponent },
-  { path: 'resources/:id/edit', component: ResourceEditComponent, canActivate: [AdminGuard] },
-
   { path: 'tree', component: TreeComponent },
   {
-      path: 'cabinet',
-      loadChildren: () => CabinetModule,
-      //loadChildren: './cabinet/cabinet.module#CabinetModule',
-      canLoad: [CabinetGuard]
+    path: 'cabinet',
+    loadChildren: () => CabinetModule,
+    //loadChildren: './cabinet/cabinet.module#CabinetModule',
+    canLoad: [CabinetGuard]
   },
   {
-      path: 'admin',
-      loadChildren: () => AdminModule,
-      //loadChildren: './admin/admin.module#AdminModule',
-      canLoad: [AdminGuard]
+    path: 'admin',
+    loadChildren: () => AdminModule,
+    //loadChildren: './admin/admin.module#AdminModule',
+    canLoad: [AdminGuard]
   },
   {
-      path: '**',
-      redirectTo: 'error/404'
+    path: '**',
+    redirectTo: 'error/404'
   }
 ];
 
 @NgModule({
-    /*
-    imports: [
-        RouterModule.forRoot(routes,
-            {
-                preloadingStrategy: PreloadAllModules
-            })
-    ],
-    */
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule],
-    providers: [ CabinetGuard, AdminGuard ],
+  /*
+  imports: [
+      RouterModule.forRoot(routes,
+          {
+              preloadingStrategy: PreloadAllModules
+          })
+  ],
+  */
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+  providers: [CabinetGuard, AdminGuard],
 })
 export class AppRoutingModule { }
