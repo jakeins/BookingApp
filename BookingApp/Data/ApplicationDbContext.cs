@@ -16,6 +16,7 @@ namespace BookingApp.Data
         public virtual DbSet<Resource> Resources { get; set; }
         public virtual DbSet<Rule> Rules { get; set; }
         public virtual DbSet<Folder> Folders { get; set; }
+        public virtual DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
