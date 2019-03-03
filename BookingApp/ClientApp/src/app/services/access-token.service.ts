@@ -11,9 +11,9 @@ export class AccessTokenService {
 
   @Output() TokenExpired: EventEmitter<any> = new EventEmitter();
 
-  public writeToken(accessToken: string): void {
+  public writeToken(accessToken: string, expiration: number): void {
     localStorage.setItem(this.accTokenName, accessToken);
-    localStorage.setItem(this.accTokenExpName, (Date.now() + 1000 * 60 * 15).toString() ); // 15-minute STUB
+    localStorage.setItem(this.accTokenExpName, expiration.toString() );
   }
 
   public readToken(): string {
@@ -37,10 +37,15 @@ export class AccessTokenService {
   private readTokenDecoded() {
     let rawToken = this.readToken();
 
-    if (rawToken == undefined)
-      return undefined;
-    else
-      return jwt_decode(this.readToken());
+    let response;
+
+    if (rawToken != undefined) {
+      try {
+        response = jwt_decode(rawToken);
+      }
+      catch (e) { }
+    }
+    return response;
   }
 
   readUsername() {

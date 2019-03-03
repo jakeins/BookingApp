@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Net;
@@ -74,6 +75,9 @@ namespace BookingApp.Middlewares
                 case Exceptions.UserNameException _:
                 case Exceptions.UserPasswordException _:
                     code = HttpStatusCode.BadRequest;
+                    break;
+                case SecurityTokenException detailed:
+                    code = HttpStatusCode.Unauthorized;
                     break;
 
                 default:
