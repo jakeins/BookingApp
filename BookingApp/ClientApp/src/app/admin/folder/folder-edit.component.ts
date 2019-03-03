@@ -32,12 +32,8 @@ export class FolderEditComponent implements OnInit {
     if (this.IsCreate) {
       this.form = new FolderFormGroup(this.newFolder);
     } else {
-      /*
-      this.folderService.getFolder(1).subscribe(folder: Folder) => {
-        this.form = new FolderFormGroup(folder);
-      });
-      */
-      let folder = new Folder("Town", 1, 1, false); //Тимчасово
+     
+      let folder = new Folder("Town", 1, 1, false);
       this.form = new FolderFormGroup(folder);
     }
     
@@ -76,6 +72,7 @@ export class FolderEditComponent implements OnInit {
     this.newFolder.id = this.folderId;
     this.folderService.updateFolder(this.newFolder)
       .subscribe(result => {
+
       }, error => error);
   }
 
