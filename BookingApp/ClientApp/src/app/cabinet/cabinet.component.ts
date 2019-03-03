@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-cabinet',
@@ -6,9 +8,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CabinetComponent implements OnInit {
 
-    constructor() { }
+    authChangedSubscription: any;
 
+    constructor(private authService: AuthService, private router: Router) { }
+    
     ngOnInit() {
+      this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => {
+        if (!this.authService.isUser) {
+          this.router.navigate(['/error/401']);
+        }
+      });
     }
+
+    ngOnDestroy() {
+      this.authChangedSubscription.unsubscribe();
+    };
 
 }

@@ -10,18 +10,17 @@
 
     <div class="fleft" [style.padding-left.px]="30*node.nesting">
 
-      
-      <span title="This is a root pesudo-folder" *ngIf="node.nesting === 0">⭐️</span>
+      <a id="Folder-{{node.item.id}}"></a>
+      <span title="Root pesudo-folder" *ngIf="node.nesting === 0"><i class="far fa-star fa-lg" style="color:#ddd"></i></span>
       <span *ngIf="node.nesting != 0">
-        <span title="This is a folder" *ngIf="node.item.isFolder">📦</span>
-        <span title="This is a resource" *ngIf="!node.item.isFolder">🍎</span>
+        <span title="Folder #{{node.item.id}}" *ngIf="node.item.isFolder"><i class="far fa-folder-open fa-lg" style="color:#ddd"></i></span>
+        <span title="Resource #{{node.item.id}}" *ngIf="!node.item.isFolder"><i class="fas fa-chevron-right fa-xs" style="color:#ddd"></i></span>
       </span>
 
       <span *ngIf="node.item.isFolder">{{ node.item.title }}</span>
       <a *ngIf="!node.item.isFolder" [routerLink]="['/resources', node.item.id]">{{ node.item.title }}</a>
 
       <span class="redundand" *ngIf="node.item.isActive != true" style="padding-left:12px;"> (inactive)</span>
-      <!--<span class="redundand" style="padding-left:12px;">#{{ node.item.id }}</span>-->
     </div>
 
     <div class="indicator fright" *ngIf="node.item.occupancy != null" title="{{node.item.occupancyTitle}}">
@@ -31,15 +30,17 @@
     <div class="control fright" *ngIf="authService.isAdmin">
       <span class="folder-modifies controls" *ngIf="node.item.isFolder">
         <span class="folder-modifies" *ngIf="node.nesting != 0">
-          <a title="Edit folder" [routerLink]="['/folders', node.item.id, 'edit']">⚙️</a>
+          <a title="Edit folder" [routerLink]="['/admin/folders', node.item.id, 'edit']"><i class="fas fa-sliders-h fa-lg"></i> </a>
         </span>
+        &nbsp;
         <span class="nested-creates">
-          <a title="Create nested resource" [routerLink]="['/resources','create']" [queryParams]="{parentFolderId: node.item.id}">🍏</a>
-          <a title="Create nested folder" [routerLink]="['/folders', 'create']" [queryParams]="{parentFolderId: node.item.id}">📦</a>
+          <a title="Add Resource" [routerLink]="['/admin/resources','create']" [queryParams]="{parentFolderId: node.item.id}"><i class="far fa-plus-square fa-lg"></i></a>
+          &nbsp;
+          <a title="Add Subfolder" [routerLink]="['/admin/folders', 'create']" [queryParams]="{parentFolderId: node.item.id}"><i class="fas fa-folder-plus fa-lg"></i></a>
         </span>
       </span>
       <span class="resource-modifies" *ngIf="!node.item.isFolder">
-        <a title="Edit resource" [routerLink]="['/resources', node.item.id, 'edit']">⚙️</a>
+        <a title="Edit resource" [routerLink]="['/admin/resources', node.item.id, 'edit']"><i class="fas fa-wrench fa-lg"></i></a>
       </span>
     </div>
   </div>

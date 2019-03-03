@@ -7,10 +7,7 @@ body {
 a:hover {
     text-decoration: none;
 }
-
-
 /* Reset */
-
 
 
 /* Main */
@@ -23,6 +20,7 @@ a:hover {
     margin-bottom: 20px;
 }
 /* Main */
+
 /* Register */
 .fa-facebook-square {
   font-size: 30px;
