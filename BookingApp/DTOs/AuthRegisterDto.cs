@@ -4,8 +4,8 @@ namespace BookingApp.DTOs
 {
     public class AuthRegisterDto : AuthLoginDto
     {
-        public string UserName { get; set; }
+        public virtual string UserName { get; set; }
         [Compare("Password", ErrorMessage = "Passwords don't match")]
-        public string ConfirmPassword { get; set; }
+        public virtual string ConfirmPassword { get; set; }
     }
 }
