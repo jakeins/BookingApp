@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FolderService } from '../../services/folder.service';
 import { Folder } from '../../models/folder';
 import { FolderFormGroup } from '../../models/folder-form.model';
@@ -13,6 +13,8 @@ import { NgForm } from '@angular/forms';
 export class FolderEditComponent implements OnInit {
 
   titleMessage: string = "Create";
+  flashMessage: string = "";
+  apiError: string = "";
   IsCreate: boolean = true;
   form: FolderFormGroup;
   newFolder: Folder;
@@ -21,7 +23,7 @@ export class FolderEditComponent implements OnInit {
   folderId: number;
   folders: Folder[];
 
-  constructor(private folderService: FolderService, private actRoute: ActivatedRoute) { }
+  constructor(private folderService: FolderService, private router: Router, private actRoute: ActivatedRoute) { }
 
   ngOnInit() {
 
@@ -30,11 +32,12 @@ export class FolderEditComponent implements OnInit {
     this.newFolder = new Folder("", this.parentFolder, 1, false);
 
     if (!this.IsCreate) {
-      this.folderService.getFolder(3).subscribe((folder: Folder) => {
+      this.folderService.getFolder(this.folderId).subscribe((folder: Folder) => {
+        if (folder.parentFolderId == undefined) folder.parentFolderId = 0;
         this.newFolder = folder;
       });
     }
-
+    
     this.form = new FolderFormGroup();
 
     this.folderService.getList().subscribe((folders: Folder[]) => {
@@ -63,17 +66,28 @@ export class FolderEditComponent implements OnInit {
     if (this.parentFolder == 0) this.newFolder.parentFolderId = undefined;
     this.folderService.createFolder(this.newFolder)
       .subscribe(result => {
-        console.log(result['folderId']);
-      }, error => error);
+        if (result['folderId'] != undefined) {
+          this.apiError = "";
+          this.flashMessage = "You succesfull added Folder";
+        }
+      }, error => this.handleError(error));
   }
 
   updateFolder() {
-    console.log(this.newFolder);
+    if (this.newFolder.parentFolderId == 0) this.newFolder.parentFolderId = undefined;
+    if (this.newFolder.defaultRuleId == null || this.newFolder.defaultRuleId == 0) this.newFolder.defaultRuleId = undefined;
     this.newFolder.id = this.folderId;
     this.folderService.updateFolder(this.newFolder)
       .subscribe(result => {
+        this.apiError = "";
+        this.flashMessage = "You succesfull updated Folder";
+      }, error => this.handleError(error));
+  }
 
-      }, error => error);
+  delete() {
+    this.folderService.deleteFolder(this.newFolder.id).subscribe(() => {
+      this.router.navigate(['']);
+    }, error => this.handleError(error));
   }
 
   submitForm(form: NgForm) {
@@ -83,6 +97,16 @@ export class FolderEditComponent implements OnInit {
       if (this.IsCreate) form.reset();
       this.formSubmitted = false;
     }
+  }
+
+  handleError(error: any) {
+    console.log(error);
+    this.apiError = error['status'];
+
+    if (error['error'] != undefined) {
+      this.flashMessage = "";
+      this.apiError += ': ' + error['error']['Message'];
+    }     
   }
 
 }

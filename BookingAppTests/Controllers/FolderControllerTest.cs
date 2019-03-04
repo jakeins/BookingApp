@@ -163,21 +163,6 @@ namespace BookingAppTests.Controllers
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
         }
-
-        //[Fact]
-        //public async void GetFolderByIdFailedUpdateFolderAsync()
-        //{
-        //    // Arrange
-        //    Mock<Folder> mockFolder = new Mock<Folder>();
-        //    Mock<FolderMinimalDto> mockDto = new Mock<FolderMinimalDto>();
-        //    mockFolderService.Setup(service => service.Update(It.IsAny<int>(), It.IsAny<string>(), mockFolder.Object)).Throws(new CurrentEntryNotFoundException("Specified Folder not found"));
-
-        //    Mock<FolderController> mockController = new Mock<FolderController>(mockFolderService.Object) { CallBase = true };
-        //    mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
-            
-        //    var ex = await Assert.ThrowsAsync<CurrentEntryNotFoundException>(() => mockController.Object.Update(It.IsAny<int>(), mockDto.Object));
-        //    Assert.Equal("Specified Folder not found", ex.Message);
-        //}
         #endregion FolderController.Update
 
         #region FolderController.Delete
@@ -230,17 +215,6 @@ namespace BookingAppTests.Controllers
             return new FolderMinimalDto
             {
                 Title = "Folder 1",
-                ParentFolderId = 1,
-                DefaultRuleId = 1,
-                IsActive = true
-            };
-        }
-
-        private FolderMinimalDto GetDtoInCorrect()
-        {
-            return new FolderMinimalDto
-            {
-                Title = "F",
                 ParentFolderId = 1,
                 DefaultRuleId = 1,
                 IsActive = true
