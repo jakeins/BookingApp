@@ -7,6 +7,6 @@ namespace BookingApp.DTOs
 {
     public class UserRoleDto
     {
-        public string Role { get; set; }
+        public virtual string Role { get; set; }
     }
 }
