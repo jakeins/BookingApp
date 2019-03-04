@@ -13,7 +13,7 @@ using Xunit;
 
 namespace BookingAppTests.Controllers
 {
-    public class ResourcesControllerTest
+    public class ResourcesControllerTests
     {
         #region List() tests
         [Fact]
@@ -439,7 +439,8 @@ namespace BookingAppTests.Controllers
 
             //Assert 
             var okResult = Assert.IsType<OkObjectResult>(actionResult);
-            var dto = Assert.IsAssignableFrom<IEnumerable<BookingMinimalDTO>>(okResult.Value);
+            var dtos = Assert.IsAssignableFrom<IEnumerable<BookingMinimalDTO>>(okResult.Value);
+            Assert.NotEmpty(dtos);
             bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>()), Times.Once());
         }
 
@@ -469,7 +470,8 @@ namespace BookingAppTests.Controllers
 
             //Assert 
             var okResult = Assert.IsType<OkObjectResult>(actionResult);
-            Assert.IsAssignableFrom<IEnumerable<BookingAdminDTO>>(okResult.Value);
+            var dtos = Assert.IsAssignableFrom<IEnumerable<BookingAdminDTO>>(okResult.Value);
+            Assert.NotEmpty(dtos);
             bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>()), Times.Once());
         }
 
@@ -496,7 +498,8 @@ namespace BookingAppTests.Controllers
             //Assert 
             var okResult = Assert.IsType<OkObjectResult>(actionResult);
             var minimalDtos = Assert.IsAssignableFrom<IEnumerable<BookingMinimalDTO>>(okResult.Value);
-            Assert.IsAssignableFrom<IEnumerable<BookingOwnerDTO>>(minimalDtos.Cast<BookingOwnerDTO>());
+            var dtos = Assert.IsAssignableFrom<IEnumerable<BookingOwnerDTO>>(minimalDtos.Cast<BookingOwnerDTO>());
+            Assert.NotEmpty(dtos);
             bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>()), Times.Once());
         }
         #endregion
