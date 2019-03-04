@@ -58,4 +58,17 @@ constructor(private http: HttpClient) {
     return this.http.get<Resource>(this.path + '/' + id);
   }
 
+
+  createResource(resource: Resource): Observable<any> {
+    return this.http.post(this.path, resource);
+  }
+
+  updateResource(resource: Resource): Observable<any> {
+    return this.http.put(this.path + '/' + resource.id, resource);
+  }
+
+  deleteResource(id: number): Observable<any> {
+    return this.http.delete(this.path + '/' + id);
+  }
+
 }

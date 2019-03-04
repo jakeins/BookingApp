@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BookingApp.DTOs;
 
 namespace BookingApp.Data.Models
 {
@@ -102,6 +103,11 @@ namespace BookingApp.Data.Models
         /// </summary>
         [ForeignKey("UpdatedUserId")]
         public virtual ApplicationUser Updater { get; set; }
+
+        public static explicit operator Folder(FolderMinimalDto v)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

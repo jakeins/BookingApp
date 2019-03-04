@@ -1,125 +1,80 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Response } from '@angular/http';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
 import { Observable } from 'rxjs/Observable';
-import * as jwt_decode from "jwt-decode";
-import { DOCUMENT } from '@angular/common';
 import { Logger } from './logger.service';
-
-
+import { BASE_API_URL } from '../globals';
+import { AccessTokenService } from './access-token.service';
 
 @Injectable()
 export class AuthService {
 
   private BaseUrlLogin: string;
-
-  constructor(private http: HttpClient, @Inject(DOCUMENT) private document: any) {
-    this.BaseUrlLogin = document.location.protocol + '/api/auth/login';
+  @Output() AuthChanged: EventEmitter<any> = new EventEmitter();
+  
+  public get isAdmin() : boolean {
+    this.fillRoles();
+    return this.roleAdminCache === true;
   }
 
-  login(login, password) {
-
-    var headers = new HttpHeaders({
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    });
-    let postData = {
-      password: password,
-      email: login
-    }
-
-    return this.http.post(this.BaseUrlLogin, JSON.stringify(postData), {
-      headers: headers
-    }).map((response: Response) => {
-
-      //Logger.log(response);
-
-      this.setToken(response.toString());
-      return response;
-      })
-      .catch((error: any) =>
-        Observable.throw(error.error || 'Server error'));
+  public get isUser(): boolean {
+    this.fillRoles();
+    return this.roleUserCache === true;
   }
 
-  setToken(accessToken: string): void {
-    localStorage.setItem('accessToken', accessToken);
+  public get isAnon(): boolean {
+    this.fillRoles();
+    return this.roleUserCache !== true;
   }
 
-  removeToken(): void {
-    localStorage.removeItem('accessToken');
+  constructor(private http: HttpClient, private aTokenService : AccessTokenService) {
+    this.BaseUrlLogin = BASE_API_URL + '/auth/login';
+
+    aTokenService.TokenExpired.subscribe(() => {
+      this.logout();
+    })
   }
 
-  getEncodeToken() {
-    try {
-      let token = localStorage.getItem('accessToken');
-      return jwt_decode(token);
-    } catch (e) {
-      return false;
-    }
+  public login(login, password) {
+
+    this.http.post(
+      this.BaseUrlLogin,
+      JSON.stringify({ password: password, email: login }),
+      { headers: new HttpHeaders({ "Content-Type": "application/json", "Accept": "application/json" }) }
+      )
+      .subscribe((response: Response) => {
+        this.aTokenService.writeToken(response.toString());
+        this.fillRoles();
+        this.AuthChanged.emit('Logged in');
+      }, error => Observable.throw(error.error || 'Server error'));
   }
 
-  getUserName() {
-    if (this.getEncodeToken() !== false) {
-      let tokenInfo = this.getEncodeToken();
-      return tokenInfo.sub;
-    }
-    return false;
+  public logout() {
+    this.aTokenService.deleteToken();
+    this.clearRoles();
+    this.AuthChanged.emit('Logged out');
   }
 
+  private roleAdminCache?: boolean = null;
+  private roleUserCache?: boolean = null;
+  private fillRoles() {
+    if (this.roleUserCache === null) {
+      
+      let tokenRoles = this.aTokenService.readRoles();
 
-  isAdmin: boolean = false;
-  isUser: boolean = false;
+      if (tokenRoles != undefined) {
+        this.roleAdminCache = this.roleUserCache = false;
 
-  authAsAdmin() {
-    let login = "superadmin@admin.cow";
-    let password = "SuperAdmin";
-    this.login(login, password)
-      .subscribe(res => {
-        if (res != null) {
-          this.isAdmin = true;
-          this.isUser = true;
+        for (let role of tokenRoles) {
+          if (role == "User")
+            this.roleUserCache = true;
+          else if (role == "Admin")
+            this.roleAdminCache = true;
         }
-      });
-  }
-
-  authAsUser() {
-    let login = "lion@user.cow";
-    let password = "Lion";
-    this.login(login, password)
-      .subscribe(res => {
-        if (res != null) {
-          this.isUser = true;
-          this.isAdmin = false;
-        }
-      });
-  }
-
-  logout() {
-    this.removeToken();
-    this.isAdmin = false;
-    this.isUser = false;
-  }
-
-
-  resetAuthFlags() {
-    let userName = this.getUserName();
-
-      if (userName == "Lion") {
-        this.isAdmin = false;
-        this.isUser = true;
       }
-      else if (userName == "SuperAdmin") {
-        this.isAdmin = true;
-        this.isUser = true;
-      }
-      else {
-        this.isAdmin = false;
-        this.isUser = false;
-      }
+    }
   }
-
-
-
+  private clearRoles() {
+    this.roleAdminCache = this.roleUserCache = null;
+  }
 }
