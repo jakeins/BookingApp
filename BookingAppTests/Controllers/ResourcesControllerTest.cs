@@ -410,9 +410,95 @@ namespace BookingAppTests.Controllers
 
 
         #region ListRelatedBookings() tests
+        // ReturnsSomeDTOs_OnAllowedResource
+        [Theory]
+        [InlineData(false, true, false)]
+        [InlineData(false, true, true)]
+        [InlineData(true, false, false)]
+        [InlineData(true, false, true)]
+        [InlineData(true, true, false)]
+        [InlineData(true, true, true)]
+        public async void ListRelatedBookings_ReturnsSomeDTOs_OnAllowedResource(bool isActive, bool isAdmin, bool isUser)
+        {
+            // Arrange
+            var resServiceMock = new Mock<IResourcesService>();
+            resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(isActive);
 
-        // ReturnsSomeBookings
+            var bookServiceMock = new Mock<IBookingsService>();
+            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(TestBookings);
 
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
+            resControllerMock.SetupGet(mock => mock.IsUser).Returns(isUser);
+            resControllerMock.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
+
+            var fakeResController = resControllerMock.Object;
+
+            // Act
+            var actionResult = await fakeResController.ListRelatedBookings(It.IsAny<int>());
+
+            //Assert 
+            var okResult = Assert.IsType<OkObjectResult>(actionResult);
+            var dto = Assert.IsAssignableFrom<IEnumerable<BookingMinimalDTO>>(okResult.Value);
+            bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>()), Times.Once());
+        }
+
+        [Theory]
+        [InlineData(false, true, false)]
+        [InlineData(false, true, true)]
+        [InlineData(true, true, false)]
+        [InlineData(true, true, true)]
+        public async void ListRelatedBookings_ReturnAdminDTOs(bool isActive, bool isAdmin, bool isUser)
+        {
+            // Arrange
+            var resServiceMock = new Mock<IResourcesService>();
+            resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(isActive);
+
+            var bookServiceMock = new Mock<IBookingsService>();
+            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(TestBookings);
+
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
+            resControllerMock.SetupGet(mock => mock.IsUser).Returns(isUser);
+            resControllerMock.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
+
+            var fakeResController = resControllerMock.Object;
+
+            // Act
+            var actionResult = await fakeResController.ListRelatedBookings(It.IsAny<int>());
+
+            //Assert 
+            var okResult = Assert.IsType<OkObjectResult>(actionResult);
+            Assert.IsAssignableFrom<IEnumerable<BookingAdminDTO>>(okResult.Value);
+            bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>()), Times.Once());
+        }
+
+        [Fact]
+        public async void ListRelatedBookings_ReturnOwnerDTOs_OnOwnedBookings()
+        {
+            // Arrange
+            var resServiceMock = new Mock<IResourcesService>();
+            resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(true);
+
+            var bookServiceMock = new Mock<IBookingsService>();
+            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(TestBookings);
+
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(false);
+            resControllerMock.SetupGet(mock => mock.IsUser).Returns(true);
+            resControllerMock.SetupGet(mock => mock.UserId).Returns(this.soleBookingCreator);
+
+            var fakeResController = resControllerMock.Object;
+
+            // Act
+            var actionResult = await fakeResController.ListRelatedBookings(It.IsAny<int>());
+
+            //Assert 
+            var okResult = Assert.IsType<OkObjectResult>(actionResult);
+            var minimalDtos = Assert.IsAssignableFrom<IEnumerable<BookingMinimalDTO>>(okResult.Value);
+            Assert.IsAssignableFrom<IEnumerable<BookingOwnerDTO>>(minimalDtos.Cast<BookingOwnerDTO>());
+            bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>()), Times.Once());
+        }
         #endregion
 
         #region AuthorizeForSingleResource() [helper] test
@@ -444,7 +530,8 @@ namespace BookingAppTests.Controllers
         IEnumerable<Resource> TestResources => testResources ?? FormTestResources();
         IEnumerable<Resource> FormTestResources()
         {
-            testResources = new [] {
+            testResources = new [] 
+            {
                   new Resource() { Id = 1, Title = "Nothern View", IsActive = true, RuleId = 1 },
                   new Resource() { Id = 2, Title = "Southern View", IsActive = true },
                   new Resource() { Id = 3, Title = "Flag", IsActive = true },
@@ -465,6 +552,33 @@ namespace BookingAppTests.Controllers
                   new Resource() { Id = 13, Title = "Mountain Bike Roger", IsActive = false },
             };
             return testResources;
+        }
+
+        string soleBookingCreator = "SoleBookingCreator";
+        IEnumerable<Booking> testBookings;
+        IEnumerable<Booking> TestBookings => testBookings ?? FormTestBookings();
+        IEnumerable<Booking> FormTestBookings()
+        { 
+            var sampleSize = 5;
+            var newBookings = new Booking[sampleSize];
+            var now = DateTime.Now;
+
+            for (int i = 1; i <= sampleSize; i++)
+            {
+                var curBook = new Booking
+                {
+                    Id = i,
+                    Note = "Note_" + i,
+                    ResourceId = 1,
+                    CreatedUserId = soleBookingCreator,
+                    UpdatedUserId = "Updater_" + i
+                };
+                curBook.CreatedTime = curBook.StartTime = curBook.EndTime = curBook.UpdatedTime = now;
+                newBookings[i-1] = curBook;
+            }
+
+            testBookings = newBookings;
+            return testBookings;
         }
         #endregion
     }
