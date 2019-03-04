@@ -88,7 +88,7 @@ namespace BookingApp.Controllers
 
             var models = await bookService.ListBookingOfResource(resourceId, IsAdmin);
 
-            IEnumerable<object> dtos;
+            IEnumerable<BookingMinimalDTO> dtos;
 
             if (IsAdmin)
             {
@@ -98,11 +98,11 @@ namespace BookingApp.Controllers
             {
                 if (IsUser && models.Any(b => b.CreatedUserId == UserId))
                 {
-                    var diffList = new List<object>();
+                    var diffList = new List<BookingMinimalDTO>();
                     var currentUserId = UserId;
                     foreach (var model in models)
                     {
-                        object suitableDto;
+                        BookingMinimalDTO suitableDto;
 
                         if (model.CreatedUserId == currentUserId)
                             suitableDto = dtoMapper.Map<BookingOwnerDTO>(model);
@@ -229,7 +229,8 @@ namespace BookingApp.Controllers
         /// Throws Not Found if current user hasn't enough rights for viewing the specified resource.
         /// Throws Not Found if current resource not found.
         /// </summary>
-        async Task AuthorizeForSingleResource(int resourceId)
+        [NonAction]
+        public async Task AuthorizeForSingleResource(int resourceId)
         {
             bool isAuthorized = IsAdmin || await resService.IsActive(resourceId);
 
