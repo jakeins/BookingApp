@@ -19,6 +19,7 @@ namespace BookingApp.Controllers
     {
         readonly IRuleService _ruleService;
         readonly IMapper mapper;
+        public virtual bool existsActive { get; set; }               
 
         public RuleController(IRuleService ruleService)
         {
@@ -35,7 +36,7 @@ namespace BookingApp.Controllers
         /// <summary>
         /// Returns list of rules. GET: api/rules
         /// </summary>
-        /// <returns>Http response code/// </returns>
+        /// <returns>Http response code</returns>
         /// <response code ="200">Successfull operation</response>
         /// <response code ="500">Internal server error</response>
         [HttpGet]
@@ -62,7 +63,7 @@ namespace BookingApp.Controllers
         /// Return rule. GET: api/rules/{id}
         /// </summary>
         /// <param name="id">Rule id</param>
-        /// <returns>///Http response code</returns>
+        /// <returns>Http response code</returns>
         /// <response code ="200">Successfull operation</response>
         /// <response code ="500">Internal server error</response>
         /// <response code ="404">Rule not found</response>
@@ -84,7 +85,7 @@ namespace BookingApp.Controllers
             }
             else
             {
-                bool existsActive = await _ruleService.GetActive(id);
+                 existsActive = await _ruleService.GetActive(id);
                 if (!existsActive)
                     return BadRequest();
                 var rule = await _ruleService.Get(id);
@@ -98,10 +99,11 @@ namespace BookingApp.Controllers
         /// </summary>
         /// <param name="id">Rule id</param>
         /// <param name="dtos">RuleDetailedDTO</param>
-        /// <returns>///Http response code</returns>
+        /// <returns>Http response code</returns>
         /// <response code ="200">Successfull operation</response>
         /// <response code ="500">Internal server error</response>
         /// <response code ="401">Unauthorized.Only admin can create rule.</response>
+        /// <response code = "400">Invalid dtos</response>
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
@@ -126,7 +128,7 @@ namespace BookingApp.Controllers
         /// Return rule. Delete: api/rules/{id}
         /// </summary>
         /// <param name="id">Rule id</param>
-        /// <returns>///Http response code</returns>
+        /// <returns>Http response code</returns>
         /// <response code ="200">Successfull operation</response>
         /// <response code ="500">Internal server error</response>
         /// <response code ="404">Rule not found</response>
@@ -151,7 +153,7 @@ namespace BookingApp.Controllers
         /// </summary>
         /// <param name="id">Rule id</param>
         /// <param name="dtos">RuleDetailedDTO</param>
-        /// <returns>///Http response code</returns>
+        /// <returns>Http response code</returns>
         /// <response code ="200">Successfull operation</response>
         /// <response code ="500">Internal server error</response>
         /// <response code ="401">Unauthorized.Only admin can create rule.</response>
@@ -188,7 +190,7 @@ namespace BookingApp.Controllers
         /// Return rule. Get: api/rules/{id}/resources
         /// </summary>
         /// <param name="id">Rule id</param>
-        /// <returns>///Http response code</returns>
+        /// <returns>Http response code</returns>
         /// <response code ="200">Successfull operation</response>
         /// <response code ="500">Internal server error</response>
         /// <response code ="401">Unauthorized.Only admin can receive list of resources for rule.</response>
