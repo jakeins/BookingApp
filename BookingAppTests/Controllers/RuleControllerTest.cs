@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using BookingApp.DTOs;
 using System.Linq;
 
-namespace BookingAppTests
+namespace BookingAppTests.Controllers
 {
     public class RuleControllerTest
     {
