@@ -12,6 +12,7 @@ import { NgForm } from '@angular/forms';
 })
 export class FolderEditComponent implements OnInit {
 
+  titleMessage: string = "Create";
   IsCreate: boolean = true;
   form: FolderFormGroup;
   newFolder: Folder;
@@ -25,18 +26,16 @@ export class FolderEditComponent implements OnInit {
   ngOnInit() {
 
     this.setParentFolderParam(+this.actRoute.snapshot.queryParams['parentFolderId']);
-    this.newFolder = new Folder("", this.parentFolder, 1, false);
-    
-
     this.isCreate(+this.actRoute.snapshot.params['id']);
-    if (this.IsCreate) {
-      this.form = new FolderFormGroup(this.newFolder);
-    } else {
-     
-      let folder = new Folder("Town", 1, 1, false);
-      this.form = new FolderFormGroup(folder);
+    this.newFolder = new Folder("", this.parentFolder, 1, false);
+
+    if (!this.IsCreate) {
+      this.folderService.getFolder(3).subscribe((folder: Folder) => {
+        this.newFolder = folder;
+      });
     }
-    
+
+    this.form = new FolderFormGroup();
 
     this.folderService.getList().subscribe((folders: Folder[]) => {
       folders.unshift(new Folder("Root", null, null, false, 0));
@@ -48,6 +47,7 @@ export class FolderEditComponent implements OnInit {
     this.folderId = id;
     if (!isNaN(id)) {
       this.IsCreate = false;
+      this.titleMessage = "Update";
     }
   }
 
@@ -60,7 +60,7 @@ export class FolderEditComponent implements OnInit {
   }
 
   createFolder() {
-    console.log(this.newFolder);
+    if (this.parentFolder == 0) this.newFolder.parentFolderId = undefined;
     this.folderService.createFolder(this.newFolder)
       .subscribe(result => {
         console.log(result['folderId']);
@@ -80,7 +80,7 @@ export class FolderEditComponent implements OnInit {
     this.formSubmitted = true;
     if (form.valid) {
       (this.IsCreate) ? this.createFolder() : this.updateFolder();
-      form.reset();
+      if (this.IsCreate) form.reset();
       this.formSubmitted = false;
     }
   }

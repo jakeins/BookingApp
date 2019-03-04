@@ -1,5 +1,5 @@
 <div>
-  <h1>Create</h1>
+  <h1>{{ titleMessage }}</h1>
 
   <form novalidate [formGroup]="form" (ngSubmit)="submitForm(form)">
     <div class="alert alert-danger" role="alert" *ngIf="formSubmitted && form.invalid">
@@ -16,7 +16,7 @@
 
         <div *ngIf="control.typeField == 'text'">
           <input class="form-control" type="{{ control.type }}" 
-                 [(ngModel)]="newFolder[control.modelProperty] = control.valueField"
+                 [(ngModel)]="newFolder[control.modelProperty] = newFolder.title"
                  formControlName="{{control.modelProperty}}" />
           <ul class="text-danger list-unstyled"
               *ngIf="(formSubmitted || control.dirty) && control.invalid">
@@ -27,19 +27,19 @@
         </div>
 
         <div *ngIf="control.typeField == 'select' && control.modelProperty == 'parentFolderId'">
-          <select class="form-control" formControlName="{{control.modelProperty}}" [(ngModel)]="newFolder[control.modelProperty] = control.valueField">
+          <select class="form-control" formControlName="{{control.modelProperty}}" [(ngModel)]="newFolder[control.modelProperty] = newFolder.parentFolderId">
             <option *ngFor="let folder of folders" [value]="folder.id">{{ folder.title }}</option>
           </select>
         </div>
 
         <div *ngIf="control.typeField == 'select' && control.modelProperty == 'defaultRuleId'">
-          <select class="form-control" formControlName="{{control.modelProperty}}" [(ngModel)]="newFolder[control.modelProperty] = control.valueField">
+          <select class="form-control" formControlName="{{control.modelProperty}}" [(ngModel)]="newFolder[control.modelProperty] = newFolder.defaultRuleId">
             <option *ngFor="let rule of folderService.getMockRules()" [value]="rule.id">{{ rule.title }}</option>
           </select>
         </div>
 
         <div *ngIf="control.typeField == 'checkbox'">
-          <input type="checkbox" name="{{control.modelProperty}}" [(ngModel)]="newFolder[control.modelProperty] = control.valueField" formControlName="{{control.modelProperty}}" />
+          <input type="checkbox" name="{{control.modelProperty}}" [(ngModel)]="newFolder[control.modelProperty] = newFolder.isActive" formControlName="{{control.modelProperty}}" />
         </div>
 
   </div>

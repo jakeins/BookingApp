@@ -1,18 +1,15 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { Folder } from "./folder";
 
 export class FolderFormControl extends FormControl {
   typeField: string;
   label: string;
   modelProperty: string;
-  valueField: any;
 
   constructor(typeField: string, label: string, property: string, value: any, validator: any) {
     super(value, validator);
     this.typeField = typeField;
     this.label = label;
     this.modelProperty = property;
-    this.valueField = value;
   }
 
   getValidationMessages() {
@@ -43,17 +40,17 @@ export class FolderFormControl extends FormControl {
 
 
 export class FolderFormGroup extends FormGroup {
-  constructor(folder: Folder) {
+  constructor() {
     super({
-      title: new FolderFormControl("text", "Title", "title", folder.title,
+      title: new FolderFormControl("text", "Title", "title", "",
         Validators.compose([
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(64)
         ])),
-      parentFolderId: new FolderFormControl("select", "Parent Folder", "parentFolderId", folder.parentFolderId, false),
-      defaultRuleId: new FolderFormControl("select", "Rule", "defaultRuleId", folder.defaultRuleId, false),
-      isActive: new FolderFormControl("checkbox", "Is active", "isActive", folder.isActive, false),
+      parentFolderId: new FolderFormControl("select", "Parent Folder", "parentFolderId", null, false),
+      defaultRuleId: new FolderFormControl("select", "Rule", "defaultRuleId", null, false),
+      isActive: new FolderFormControl("checkbox", "Is active", "isActive", null, false),
     });
   }
 
