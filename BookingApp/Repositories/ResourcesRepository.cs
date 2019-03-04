@@ -23,5 +23,11 @@ namespace BookingApp.Repositories
         public async Task<IEnumerable<Resource>> ListByRuleKeyAsync(int ruleId) => await Resources.Where(r => r.RuleId == ruleId).ToListAsync();
 
         public async Task<IEnumerable<Resource>> ListByFolderKeyAsync(int folderId) => await Resources.Where(r => r.FolderId == folderId).ToListAsync();
+
+        #region GetResourcesIncludingBookings
+
+        public async Task<IEnumerable<Resource>> ListIncludingBookings() => await Resources.Include(r=>r.Bookings).ToListAsync();
+
+        #endregion
     }
 }
