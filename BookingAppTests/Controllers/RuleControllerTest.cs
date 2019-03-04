@@ -12,17 +12,17 @@ using System.Linq;
 
 namespace BookingAppTests
 {
-    public class RuleControllerTesting
+    public class RuleControllerTest
     {
         #region Initialize
         private Mock<IRuleService> mockServ;
-        public RuleControllerTesting()
+        public RuleControllerTest()
         {
             mockServ = new Mock<IRuleService>();
         }
         #endregion
 
-        #region GetListRules
+        #region GetListOfRules
         [Fact]
         public async Task GetListOfRulesForAdmin()
         {
@@ -42,7 +42,7 @@ namespace BookingAppTests
         }
 
         [Fact]
-        public async Task GetListRulesOfForUser()
+        public async Task GetListOfRulesForUser()
         {
             //arrange
             mockServ.Setup(p => p.GetActiveList()).ReturnsAsync(initRules().Where(p => p.IsActive == true));
@@ -155,7 +155,7 @@ namespace BookingAppTests
         }
         #endregion
 
-        #region Delete Rule
+        #region DeleteRule
         [Theory]
         [InlineData(1)]
         public async Task DeleteRule(int id)
@@ -175,7 +175,7 @@ namespace BookingAppTests
 
         #endregion
 
-        #region Update Rule
+        #region UpdateRule
         [Fact]
         public async Task UpdateRuleWithBadModelReturnsBadRequest()
         {

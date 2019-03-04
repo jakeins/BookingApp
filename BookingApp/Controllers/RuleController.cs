@@ -19,7 +19,7 @@ namespace BookingApp.Controllers
     {
         readonly IRuleService _ruleService;
         readonly IMapper mapper;
-        public virtual bool existsActive { get; set; }                 //just for tests
+        public virtual bool existsActive { get; set; }               
 
         public RuleController(IRuleService ruleService)
         {
