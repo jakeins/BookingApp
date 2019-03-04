@@ -229,7 +229,7 @@ namespace BookingApp.Controllers
         /// Throws Not Found if current user hasn't enough rights for viewing the specified resource.
         /// Throws Not Found if current resource not found.
         /// </summary>
-        async Task AuthorizeForSingleResource(int resourceId)
+        public async Task AuthorizeForSingleResource(int resourceId)
         {
             bool isAuthorized = IsAdmin || await resService.IsActive(resourceId);
 
