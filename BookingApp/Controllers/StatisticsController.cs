@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using BookingApp.Services;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookingApp.Controllers
 {
     [Route("api/stats")]
     [ApiController]
-    public class StatisticsController : ControllerBase
+    public class StatisticsController : EntityControllerBase
     {
         readonly IResourcesService resourcesService;
 
@@ -24,6 +26,10 @@ namespace BookingApp.Controllers
         }
 
         [HttpGet("bookings")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(401)]
+        [Authorize(Roles = RoleTypes.Admin)]
         public async Task<IActionResult> BookingsPerResource(
             [FromQuery] DateTime? startTime, 
             [FromQuery] DateTime? endTime, 
