@@ -6,9 +6,9 @@ using AutoMapper;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
 using BookingApp.Helpers;
+using BookingApp.Services.Interfaces;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookingApp.Controllers

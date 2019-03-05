@@ -5,11 +5,16 @@ using System.Threading.Tasks;
 
 namespace BookingApp.DTOs
 {
-    public class AuthTokensDto
+    public class AuthTokensDto : ICloneable
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
         public DateTime ExpireOn { get; set; }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
 
         public override bool Equals(object obj)
         {

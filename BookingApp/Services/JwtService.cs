@@ -1,6 +1,6 @@
 ﻿using BookingApp.Data.Models;
 using BookingApp.Repositories;
-using Microsoft.AspNetCore.Identity;
+using BookingApp.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -13,18 +13,6 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-    public interface IJwtService
-    {
-        DateTime ExpirationTime { get; }
-        string GenerateJwtAccessToken(IEnumerable<Claim> claims);
-        Task<Claim[]> GetClaimsAsync(ApplicationUser userInfo);
-        string GenerateJwtRefreshToken();
-        ClaimsPrincipal GetPrincipalFromExpiredAccessToken(string accessToken);
-        Task LoginByRefreshTokenAsync(string userId, string refreshToken);
-        Task<string> UpdateRefreshTokenAsync(string refreshToken, ClaimsPrincipal userPrincipal);
-        Task DeleteRefreshTokenAsync(ClaimsPrincipal userPrincipal);
-    }
-
     public class JwtService : IJwtService
     {
         private readonly IUserRefreshTokenRepository refreshRepository;
