@@ -17,7 +17,7 @@ namespace BookingApp.Controllers
         readonly IResourcesService resourcesService;
 
         IEnumerable<Resource> resources;
-
+        
         public StatisticsController(IResourcesService service)
         {
             resourcesService = service;            
@@ -35,13 +35,17 @@ namespace BookingApp.Controllers
 
             resources = await resourcesService.ListIncludingBookings();
 
+            int intervals = GetIntervalsNumber(start, end, interval) + 1;            
+
             if (checkStatus)
             {
-                return Ok(GetStatusDTOs(start, end, interval));
+                List<BookingsPerResourceBaseDTO> stats = GetStatusDTOs(start, end, interval, intervals);
+                return Ok(new BookingStatsDTO(stats,GetIntervalValues(start,interval,intervals)));
             }
             else
             {
-                return Ok(GetBaseDTOs(start, end, interval));
+                List<BookingsPerResourceBaseDTO> stats = GetBaseDTOs(start, end, interval, intervals);
+                return Ok(new BookingStatsDTO(stats, GetIntervalValues(start, interval, intervals)));
             }  
         }
 
@@ -63,20 +67,48 @@ namespace BookingApp.Controllers
                     number = (int)(end - start).TotalDays;
                     break;
                 case "hour":
+                    if ((end - start).TotalDays > 30)
+                        throw new ApplicationException("'Hour' interval is only allowed for time spans under 31 days.");
                     number = (int)(end - start).TotalHours;
                     break;
                 default:
-                    // error
-                    break;
+                    throw new ApplicationException($"Wrong interval ({interval}) for statistical data." +
+                        "\nOnly 'month' 'week' 'day' or 'hour'is allowed");
             }
 
             return number;
         }
 
-        private List<BookingsPerResourceBaseDTO> GetBaseDTOs(DateTime start,DateTime end,string interval)
+        private DateTime[] GetIntervalValues(DateTime start, string interval, int intervals)
         {
-            var result = new List<BookingsPerResourceBaseDTO>();
-            int intervals = GetIntervalsNumber(start, end, interval) + 1;
+            DateTime[] dates = new DateTime[intervals];
+
+            for (int i = 0; i < intervals; i++)
+            {
+                switch (interval)
+                {
+                    case "month":
+                        dates[i] = start.AddMonths(i);
+                        break;
+                    case "week":
+                        DateTime monday = GetStartOfWeek(start);
+                        dates[i] = monday.AddDays(7*i);
+                        break;
+                    case "day":
+                        dates[i] = start.AddDays(i);
+                        break;
+                    case "hour":                        
+                        dates[i] = start.AddHours(i);
+                        break;                    
+                }
+            }
+
+            return dates;
+        }
+
+        private List<BookingsPerResourceBaseDTO> GetBaseDTOs(DateTime start,DateTime end,string interval, int intervals)
+        {
+            var result = new List<BookingsPerResourceBaseDTO>();            
 
             foreach (var resource in resources)
             {
@@ -99,10 +131,9 @@ namespace BookingApp.Controllers
             return result;
         }
 
-        private List<BookingsPerResourceBaseDTO> GetStatusDTOs(DateTime start, DateTime end, string interval)
+        private List<BookingsPerResourceBaseDTO> GetStatusDTOs(DateTime start, DateTime end, string interval, int intervals)
         {
             var result = new List<BookingsPerResourceBaseDTO>();
-            int intervals = GetIntervalsNumber(start, end, interval) + 1;
 
             foreach (var resource in resources)
             {
