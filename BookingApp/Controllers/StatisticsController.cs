@@ -54,7 +54,7 @@ namespace BookingApp.Controllers
                 return Ok(new BookingStatsDTO(stats, GetIntervalValues(start, interval, intervals)));
             }  
         }
-
+        
         #region Helpers
 
         private int GetIntervalsNumber(DateTime start, DateTime end, string interval)
@@ -78,8 +78,7 @@ namespace BookingApp.Controllers
                     number = (int)(end - start).TotalHours;
                     break;
                 default:
-                    throw new ApplicationException($"Wrong interval ({interval}) for statistical data." +
-                        "\nOnly 'month' 'week' 'day' or 'hour'is allowed");
+                    throw new ApplicationException($"Wrong interval ({interval??"null"}) for statistical data. Only 'month' 'week' 'day' or 'hour' is allowed.");
             }
 
             return number;
