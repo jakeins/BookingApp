@@ -21,9 +21,10 @@ namespace BookingApp.Repositories
         Task<IEnumerable<Resource>> ListByFolderKeyAsync(int folderId);
 
 
-        #region GetResourcesIncludingBookings
+        #region MethodsForStatisticsController
 
         Task<IEnumerable<Resource>> ListIncludingBookings();
+        Task<IEnumerable<Resource>> ListIncludingBookingsAndRules();
 
         #endregion
     }

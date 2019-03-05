@@ -33,9 +33,11 @@ namespace BookingApp.Services
         /// </summary>
         Task<IEnumerable<Resource>> ListByFolderKey(int folderId);
 
-        #region GetResourcesIncludingBookings
+        #region MethodsForStatisticsController
 
         Task<IEnumerable<Resource>> ListIncludingBookings();
+
+        Task<IEnumerable<Resource>> ListIncludingBookingsAndRules();
 
         #endregion
     }
