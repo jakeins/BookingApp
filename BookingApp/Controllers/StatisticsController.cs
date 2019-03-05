@@ -14,6 +14,7 @@ namespace BookingApp.Controllers
 {
     [Route("api/stats")]
     [ApiController]
+    [Authorize(Roles = RoleTypes.Admin)]
     public class StatisticsController : EntityControllerBase
     {
         readonly IResourcesService resourcesService;
@@ -28,8 +29,7 @@ namespace BookingApp.Controllers
         [HttpGet("bookings")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        [ProducesResponseType(401)]
-        [Authorize(Roles = RoleTypes.Admin)]
+        [ProducesResponseType(401)]        
         public async Task<IActionResult> BookingsPerResource(
             [FromQuery] DateTime? startTime, 
             [FromQuery] DateTime? endTime, 
@@ -58,8 +58,7 @@ namespace BookingApp.Controllers
         [HttpGet("resources")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        [ProducesResponseType(401)]
-        [Authorize(Roles = RoleTypes.Admin)]
+        [ProducesResponseType(401)]        
         public async Task<IActionResult> ResourcesUsage()
         {
             resources = await resourcesService.ListIncludingBookingsAndRules();
