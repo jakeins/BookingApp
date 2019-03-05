@@ -11,7 +11,7 @@ namespace BookingApp.Data
         : base(options)
         {
         }
-
+        
         public virtual DbSet<Booking> Bookings { get; set; }
         public virtual DbSet<Resource> Resources { get; set; }
         public virtual DbSet<Rule> Rules { get; set; }
