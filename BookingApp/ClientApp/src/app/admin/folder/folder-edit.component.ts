@@ -63,7 +63,7 @@ export class FolderEditComponent implements OnInit {
   }
 
   createFolder() {
-    if (this.parentFolder == 0) this.newFolder.parentFolderId = undefined;
+    if (this.newFolder.parentFolderId == 0) this.newFolder.parentFolderId = undefined;
     this.folderService.createFolder(this.newFolder)
       .subscribe(result => {
         if (result['folderId'] != undefined) {
