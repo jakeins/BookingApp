@@ -71,9 +71,7 @@ namespace BookingApp.Middlewares
                     break;
 
                 case Exceptions.OperationFailedException _:
-                case Exceptions.UserEmailException _:
-                case Exceptions.UserNameException _:
-                case Exceptions.UserPasswordException _:
+                case Exceptions.UserException _:
                     code = HttpStatusCode.BadRequest;
                     break;
                 case SecurityTokenException detailed:

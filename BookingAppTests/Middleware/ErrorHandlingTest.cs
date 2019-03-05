@@ -79,47 +79,11 @@ namespace BookingAppTests.Middleware
         }
 
         [Fact]
-        public async Task UserEmailExceptionHandling()
+        public async Task UserExceptionHandling()
         {
             //Arrange
             var middleware = new ErrorHandlingMiddleware(
-            next: (innerHttpContext) => throw new UserEmailException(),
-            logger: loggerMock.Object,
-            IsDevelopment: isDevelopment);
-
-            var context = new DefaultHttpContext();
-
-            //Act
-            await middleware.Invoke(context);
-
-            //Asert
-            Assert.Equal((int)HttpStatusCode.BadRequest, context.Response.StatusCode);
-        }
-
-        [Fact]
-        public async Task UserNameExceptionHandling()
-        {
-            //Arrange
-            var middleware = new ErrorHandlingMiddleware(
-            next: (innerHttpContext) => throw new UserNameException(),
-            logger: loggerMock.Object,
-            IsDevelopment: isDevelopment);
-
-            var context = new DefaultHttpContext();
-
-            //Act
-            await middleware.Invoke(context);
-
-            //Asert
-            Assert.Equal((int)HttpStatusCode.BadRequest, context.Response.StatusCode);
-        }
-
-        [Fact]
-        public async Task UserPasswordExceptionHandling()
-        {
-            //Arrange
-            var middleware = new ErrorHandlingMiddleware(
-            next: (innerHttpContext) => throw new UserPasswordException(),
+            next: (innerHttpContext) => throw new UserException(),
             logger: loggerMock.Object,
             IsDevelopment: isDevelopment);
 
