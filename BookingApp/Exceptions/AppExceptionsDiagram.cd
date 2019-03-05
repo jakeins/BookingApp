@@ -73,7 +73,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="BookingApp.Exceptions.UserException" Collapsed="true">
-    <Position X="27.25" Y="1.25" Width="1.5" />
+    <Position X="32.5" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Exceptions\UserException.cs</FileName>
