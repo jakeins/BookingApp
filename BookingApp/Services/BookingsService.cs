@@ -37,7 +37,15 @@ namespace BookingApp.Services
         /// <param name="startTime">Optional startTime of bookings</param>
         /// <param name="endTime">Optional endTime of bookings</param>
         /// <returns>List of <see cref="Booking"></see></returns>
-        Task<IEnumerable<Booking>> ListBookingForSpecificUser(string userId, DateTime? startTime, DateTime? endTime);
+        Task<IEnumerable<Booking>> ListBookingForSpecificUser(string userId, DateTime startTime, DateTime endTime);
+
+        /// <summary>
+        /// Return list <see cref="Booking"></see>
+        /// </summary>
+        /// <param name="startTime">Optional startTime of bookings</param>
+        /// <param name="endTime">Optional endTime of bookings</param>
+        /// <returns>List of <see cref="Booking"></see></returns>
+        Task<IEnumerable<Booking>> ListBookings(DateTime startTime, DateTime endTime);
 
         /// <summary>
         /// Return list <see cref="Booking"></see> of specific  <see cref="Resource"></see>
@@ -111,16 +119,20 @@ namespace BookingApp.Services
         /// <param name="startTime">Optional startTime of bookings</param>
         /// <param name="endTime">Optional endTime of bookings</param>
         /// <returns>List of <see cref="Booking"></see></returns>
-        public async Task<IEnumerable<Booking>> ListBookingForSpecificUser(string userId, DateTime? startTime, DateTime? endTime)
+        public async Task<IEnumerable<Booking>> ListBookingForSpecificUser(string userId, DateTime startTime, DateTime endTime)
         {
-            if (startTime == null && endTime == null)
-                return await bookingsRepo.GetAllUserBookingsFromNow(userId);
-            else if (startTime == null)
-                return await bookingsRepo.GetAllUserBookingsFromNow(userId, endTime.Value);
-            else if (endTime == null)
-                return await bookingsRepo.GetAllUserBookingsFrom(userId, startTime.Value);
-            else
-                return await bookingsRepo.GetAllUserBookingsFrom(userId, startTime.Value, endTime.Value);
+            return await bookingsRepo.GetAllUserBookings(userId, startTime, endTime);
+        }
+
+        /// <summary>
+        /// Return list <see cref="Booking"></see>
+        /// </summary>
+        /// <param name="startTime">Optional startTime of bookings</param>
+        /// <param name="endTime">Optional endTime of bookings</param>
+        /// <returns>List of <see cref="Booking"></see></returns>
+        public async Task<IEnumerable<Booking>> ListBookings(DateTime startTime, DateTime endTime)
+        {
+            return await bookingsRepo.GetAllBookings(startTime, endTime);
         }
 
         /// <summary>

@@ -92,7 +92,7 @@ namespace BookingApp.Controllers
             await service.Create(UserId, itemModel);
             return Created(
                 this.BaseApiUrl + "/" + itemModel.Id,
-                new { ResourceId = itemModel.Id }
+                new { FolderId = itemModel.Id }
             );
         }
 

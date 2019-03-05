@@ -27,30 +27,7 @@ namespace BookingApp.Repositories
         /// <param name="note">Optional new <see cref="Booking.Note"></see></param>
         /// <returns></returns>
         Task UpdateAsync(int id, DateTime? startTime, DateTime? endTime, string editUser, string note);
-
-        /// <summary>
-        /// Return all booking from current server time
-        /// </summary>
-        /// <param name="userId">Id of <see cref="ApplicationUser"/></param>
-        /// <returns>List of <see cref="Booking"/></returns>
-        Task<IEnumerable<Booking>> GetAllUserBookingsFromNow(string userId);
-
-        /// <summary>
-        /// Returns all booking from now to specific server time
-        /// </summary>
-        /// <param name="userId">Id of <see cref="ApplicationUser"/></param>
-        /// <param name="endTime">End time of bookings</param>
-        /// <returns>List of <see cref="Booking"/></returns>
-        Task<IEnumerable<Booking>> GetAllUserBookingsFromNow(string userId, DateTime endTime);
-
-        /// <summary>
-        /// Return all bookings from specific time
-        /// </summary>
-        /// <param name="userId">Id of <see cref="ApplicationUser"/></param>
-        /// <param name="startTime">Start time of bookings</param>
-        /// <returns>List of <see cref="Booking"/></returns>
-        Task<IEnumerable<Booking>> GetAllUserBookingsFrom(string userId, DateTime startTime);
-
+        #region Get bookings for specific user
         /// <summary>
         /// Return all bookings in specific time range [StartTime,EndTime]
         /// </summary>
@@ -58,8 +35,17 @@ namespace BookingApp.Repositories
         /// <param name="startTime">Start time of bookings</param>
         /// <param name="endTime">End time of bookings</param>
         /// <returns>List of <see cref="Booking"/></returns>
-        Task<IEnumerable<Booking>> GetAllUserBookingsFrom(string userId, DateTime startTime, DateTime endTime);
-
+        Task<IEnumerable<Booking>> GetAllUserBookings(string userId, DateTime startTime, DateTime endTime);
+        #endregion
+        #region Get all bookings
+        /// <summary>
+        /// Return all bookings in specific time range [StartTime,EndTime]
+        /// </summary>
+        /// <param name="startTime">Start time of bookings</param>
+        /// <param name="endTime">End time of bookings</param>
+        /// <returns>List of <see cref="Booking"/></returns>
+        Task<IEnumerable<Booking>> GetAllBookings(DateTime startTime, DateTime endTime);
+        #endregion
         /// <summary>
         /// Get <see cref="Booking"></see> of specified <see cref="Resource"></see> and active now or in future
         /// </summary>
@@ -343,34 +329,7 @@ namespace BookingApp.Repositories
                 throw new Exceptions.EntryNotFoundException("Can not terminate not exist booking");
         }
 
-        /// <summary>
-        /// Return all booking from current server time
-        /// </summary>
-        /// <param name="userId">Id of <see cref="ApplicationUser"/></param>
-        /// <returns>List of <see cref="Booking"/></returns>
-        public async Task<IEnumerable<Booking>> GetAllUserBookingsFromNow(string userId) => await ActualBookings
-                .Where(b => b.CreatedUserId == userId && (b.TerminationTime ?? b.EndTime) < DateTime.Now)
-                .ToListAsync();
-
-        /// <summary>
-        /// Returns all booking from now to specific server time
-        /// </summary>
-        /// <param name="userId">Id of <see cref="ApplicationUser"/></param>
-        /// <param name="endTime">End time of bookings</param>
-        /// <returns>List of <see cref="Booking"/></returns>
-        public async Task<IEnumerable<Booking>> GetAllUserBookingsFromNow(string userId, DateTime endTime) => await ActualBookings
-                .Where(b => b.CreatedUserId == userId && (b.TerminationTime ?? b.EndTime) < DateTime.Now && b.EndTime < endTime)
-                .ToListAsync();
-
-        /// <summary>
-        /// Return all bookings from specific time
-        /// </summary>
-        /// <param name="userId">Id of <see cref="ApplicationUser"/></param>
-        /// <param name="startTime">Start time of bookings</param>
-        /// <returns>List of <see cref="Booking"/></returns>
-        public async Task<IEnumerable<Booking>> GetAllUserBookingsFrom(string userId, DateTime startTime) => await ActualBookings
-                .Where(b => b.CreatedUserId == userId && b.StartTime >= startTime)
-                .ToListAsync();
+        #region Get all bookings for specific user 
 
         /// <summary>
         /// Return all bookings in specific time range [StartTime,EndTime]
@@ -379,9 +338,22 @@ namespace BookingApp.Repositories
         /// <param name="startTime">Start time of bookings</param>
         /// <param name="endTime">End time of bookings</param>
         /// <returns>List of <see cref="Booking"/></returns>
-        public async Task<IEnumerable<Booking>> GetAllUserBookingsFrom(string userId, DateTime startTime, DateTime endTime) => await ActualBookings
+        public async Task<IEnumerable<Booking>> GetAllUserBookings(string userId, DateTime startTime, DateTime endTime) => await ActualBookings
                 .Where(b => b.CreatedUserId == userId && (b.TerminationTime ?? b.EndTime) <= endTime && b.StartTime >= startTime)
                 .ToListAsync();
+        #endregion
+        #region Get all bookings
+
+        /// <summary>
+        /// Return all bookings in specific time range [StartTime,EndTime]
+        /// </summary>
+        /// <param name="startTime">Start time of bookings</param>
+        /// <param name="endTime">End time of bookings</param>
+        /// <returns>List of <see cref="Booking"/></returns>
+        public async Task<IEnumerable<Booking>> GetAllBookings(DateTime startTime, DateTime endTime) => await Bookings
+            .Where(b => (b.TerminationTime ?? b.EndTime) < startTime && b.StartTime < endTime)
+            .ToListAsync();
+        #endregion
 
         #endregion Extensions
     }

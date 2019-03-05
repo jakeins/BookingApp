@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace BookingApp.DTOs
 {
-    public class AuthTokensDto
+    public class UserRoleDto
     {
-        public virtual string AccessToken { get; set; }
+        public virtual string Role { get; set; }
     }
 }
