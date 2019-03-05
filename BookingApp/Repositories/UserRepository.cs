@@ -146,23 +146,23 @@ namespace BookingApp.Services
                 switch (item.Code)
                 {
                     case "DuplicateUserName":
-                        throw new UserNameException("User with this Username already created");
+                        throw new UserException("User with this Username already created");
                     case "DuplicateEmail":
-                        throw new UserEmailException("Email already registered");
+                        throw new UserException("Email already registered");
                     case "InvalidEmail":
-                        throw new UserEmailException("Invalid email");
+                        throw new UserException("Invalid email");
                     case "InvalidUserName":
-                        throw new UserNameException("Invalid Username");
+                        throw new UserException("Invalid Username");
                     case "PasswordTooShort":
-                        throw new UserPasswordException("Password too short");
+                        throw new UserException("Password too short");
                     case "PasswordRequiresNonAlphanumeric":
-                        throw new UserPasswordException("Password requires non alphanumeric");
+                        throw new UserException("Password requires non alphanumeric");
                     case "PasswordRequiresDigit":
-                        throw new UserPasswordException("Password requires digit");
+                        throw new UserException("Password requires digit");
                     case "PasswordRequiresLower":
-                        throw new UserPasswordException("Password requires lower");
+                        throw new UserException("Password requires lower");
                     case "PasswordRequiresUpper":
-                        throw new UserPasswordException("Password requires upper");
+                        throw new UserException("Password requires upper");
                     default:
                         throw new UserException("Default User Exception");
                 }
