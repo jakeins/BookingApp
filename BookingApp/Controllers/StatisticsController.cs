@@ -34,7 +34,7 @@ namespace BookingApp.Controllers
             [FromQuery] DateTime? startTime, 
             [FromQuery] DateTime? endTime, 
             [FromQuery] string interval, 
-            [FromQuery] bool checkStatus=false)
+            [FromQuery] bool divideByStatus=false)
         {
             DateTime start = startTime ?? DateTime.Now.AddYears(-1);
             DateTime end = endTime ?? DateTime.Now;
@@ -43,7 +43,7 @@ namespace BookingApp.Controllers
 
             int intervals = GetIntervalsNumber(start, end, interval) + 1;            
 
-            if (checkStatus)
+            if (divideByStatus)
             {
                 List<BookingsPerResourceBaseDTO> stats = GetStatusDTOs(start, end, interval, intervals);
                 return Ok(new BookingStatsDTO(stats,GetIntervalValues(start,interval,intervals)));
