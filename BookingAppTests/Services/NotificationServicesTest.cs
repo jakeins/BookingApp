@@ -1,6 +1,7 @@
 ﻿using BookingApp.Data.Models;
 using BookingApp.Helpers;
 using BookingApp.Services;
+using BookingApp.Services.Interfaces;
 using Moq;
 using System;
 using System.Collections.Generic;

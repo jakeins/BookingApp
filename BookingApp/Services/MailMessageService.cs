@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using BookingApp.Helpers;
+using BookingApp.Services.Interfaces;
 
 namespace BookingApp.Services
 {

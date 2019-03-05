@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace BookingApp.Services
+namespace BookingApp.Services.Interfaces
 {
     public interface ISmtpService
     {
