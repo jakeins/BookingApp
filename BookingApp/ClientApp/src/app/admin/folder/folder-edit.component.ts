@@ -28,12 +28,14 @@ export class FolderEditComponent implements OnInit {
   ngOnInit() {
 
     this.setParentFolderParam(+this.actRoute.snapshot.queryParams['parentFolderId']);
+    console.log(this.parentFolder);
     this.isCreate(+this.actRoute.snapshot.params['id']);
     this.newFolder = new Folder("", this.parentFolder, 1, false);
 
     if (!this.IsCreate) {
       this.folderService.getFolder(this.folderId).subscribe((folder: Folder) => {
         if (folder.parentFolderId == undefined) folder.parentFolderId = 0;
+        if (folder.defaultRuleId == undefined) folder.defaultRuleId = 1;
         this.newFolder = folder;
       });
     }
@@ -42,6 +44,16 @@ export class FolderEditComponent implements OnInit {
 
     this.folderService.getList().subscribe((folders: Folder[]) => {
       folders.unshift(new Folder("Root", null, null, false, 0));
+      /*
+      let fId = this.folderId;
+      folders(fId).forEach(function (item, index, object) {
+        if (item.id == fId) {
+          object.splice(index, 1);
+        }
+      });
+      */
+
+      console.log(folders);
       this.folders = folders;
     });
   }
@@ -79,6 +91,7 @@ export class FolderEditComponent implements OnInit {
     this.newFolder.id = this.folderId;
     this.folderService.updateFolder(this.newFolder)
       .subscribe(result => {
+        if (this.newFolder.parentFolderId == undefined) this.newFolder.parentFolderId = 0;
         this.apiError = "";
         this.flashMessage = "You succesfull updated Folder";
       }, error => this.handleError(error));

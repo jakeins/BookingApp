@@ -63,7 +63,9 @@ export class FolderService {
       { "id": 1, "title": "Default"},
       { "id": 2, "title": "Rule 2" },
       { "id": 3, "title": "Rule 3" },
-      { "id": 4, "title": "Rule 4" }
+      { "id": 4, "title": "Rule 4" },
+      { "id": 5, "title": "Rule 5" },
+      { "id": 6, "title": "Rule 6" },
     ];
   }
 
