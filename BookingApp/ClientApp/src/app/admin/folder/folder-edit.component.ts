@@ -28,7 +28,6 @@ export class FolderEditComponent implements OnInit {
   ngOnInit() {
 
     this.setParentFolderParam(+this.actRoute.snapshot.queryParams['parentFolderId']);
-    console.log(this.parentFolder);
     this.isCreate(+this.actRoute.snapshot.params['id']);
     this.newFolder = new Folder("", this.parentFolder, 1, false);
 
@@ -110,7 +109,6 @@ export class FolderEditComponent implements OnInit {
   }
 
   handleError(error: any) {
-    console.log(error);
     this.apiError = error['status'];
 
     if (error['error'] != undefined) {
