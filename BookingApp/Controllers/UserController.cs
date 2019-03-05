@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.Helpers;
 using BookingApp.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -46,6 +48,7 @@ namespace BookingApp.Controllers
             return BadRequest("Error valid");
         }
 
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPost("api/user/create-admin")]
         public async Task<IActionResult> CreateAdmin([FromBody] AuthRegisterDto user)
         {
@@ -123,10 +126,15 @@ namespace BookingApp.Controllers
         [HttpPut("api/user/{userId}/change-password")]
         public async Task<IActionResult> ChangePassword([FromBody]UserPasswordChangeDTO userDTO, [FromRoute]string userId)
         {
-            await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
-            return Ok("Password changed");
+            if (ModelState.IsValid)
+            {
+                await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
+                return Ok("Password changed");
+            }
+            return BadRequest("Model is not valid");
         }
 
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/add-role")]
         public async Task<IActionResult> AddRole([FromRoute]string userId, [FromBody]UserRoleDto roleDto)
         {
@@ -145,21 +153,25 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody]UserApprovalDto userApprovalDto)
         {
             await userService.UserApproval(userId, userApprovalDto.IsApproved);
-            return Ok();
+            return Ok("User approved");
         }
 
         [HttpPut("api/user/{userId}/blocking")]
         public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]UserBlockingDto userBlockingDTO)
         {
             await userService.UserBlocking(userId, userBlockingDTO.IsBlocked);
-            return Ok();
+            return Ok("User blocked");
         }
 
         [HttpPut("api/user/{userId}/reset-password")]
         public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
         {
-            await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
+                return Ok();
+            }
+            return BadRequest("Model is not valid");
         }
 
         #region Bookings
