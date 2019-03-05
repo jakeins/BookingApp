@@ -99,7 +99,7 @@ namespace BookingAppTests.Repositories
                 //Assert
                 Assert.NotEmpty(result);
                 Assert.IsAssignableFrom<IEnumerable<int>>(result);
-                Assert.Equal(1, result.Count());
+                Assert.Single(result);
             }
         }
         #endregion
@@ -132,7 +132,7 @@ namespace BookingAppTests.Repositories
                 //Assert
                 Assert.IsAssignableFrom<bool>(resultKeyed);
                 Assert.Equal(expected, resultKeyed);
-                Assert.IsAssignableFrom<bool>(resultKeyed);
+                Assert.IsAssignableFrom<bool>(resultModeled);
                 Assert.Equal(expected, resultModeled);
             }
         }
@@ -230,7 +230,7 @@ namespace BookingAppTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                context.Resources.AddRange(ResourceUtils.TestSet);
+                context.Resources.Add(ResourceUtils.TestSet.First());
                 context.SaveChanges();
             }
 
@@ -243,7 +243,7 @@ namespace BookingAppTests.Repositories
                 //Assert
                 Assert.NotEmpty(result);
                 Assert.IsAssignableFrom<IEnumerable<Resource>>(result);
-                Assert.Equal(ResourceUtils.TestSet.Where(r => r.UpdatedUserId == updater).Count(), result.Count());
+                Assert.Single(result);
             }
         }
         #endregion
