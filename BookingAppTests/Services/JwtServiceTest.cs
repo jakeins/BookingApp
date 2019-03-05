@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Xunit;
@@ -19,6 +20,7 @@ namespace BookingAppTests.Services
         private readonly Mock<IConfiguration> mockConfiguration;
         private readonly Mock<ClaimsPrincipal> mockClaimsPrincipal;
         private readonly Mock<UserRefreshToken> mockUserRefreshToken;
+        private readonly Mock<ApplicationUser> mockUser;
 
         public JwtServiceTest()
         {
@@ -27,6 +29,7 @@ namespace BookingAppTests.Services
             mockConfiguration = new Mock<IConfiguration>();
             mockClaimsPrincipal = new Mock<ClaimsPrincipal>();
             mockUserRefreshToken = new Mock<UserRefreshToken>();
+            mockUser = new Mock<ApplicationUser>();
         }
 
         [Fact]
@@ -121,6 +124,103 @@ namespace BookingAppTests.Services
             var actualRefreshToken = await jwtService.UpdateRefreshTokenAsync("token", mockClaimsPrincipal.Object);
             
             mockRefreshRepository.Verify(refreshRepository => refreshRepository.UpdateAsync(userRefreshToken), Times.Once);
+        }
+
+        [Fact]
+        public async void GetClaimsMustWriteUserNameInClaims()
+        {
+            var roles = new List<string> { "somerole" };
+            mockUserService.Setup(userService => userService.GetUserRoles(mockUser.Object)).ReturnsAsync(roles);
+            mockUser.SetupGet(user => user.UserName).Returns("userName");
+            mockUser.SetupGet(user => user.Email).Returns("email");
+            mockUser.SetupGet(user => user.Id).Returns("id");
+
+            JwtService jwtService = new JwtService(mockRefreshRepository.Object, mockUserService.Object, mockConfiguration.Object);
+            var actualClaims = await jwtService.GetClaimsAsync(mockUser.Object);
+            var existsUserName = new List<Claim>(actualClaims)
+                .Exists(claim => claim.Type == JwtRegisteredClaimNames.Sub && claim.Value == "userName");
+
+            mockUserService.Verify();
+            mockUser.Verify();
+            Assert.True(existsUserName);
+        }
+
+        [Fact]
+        public async void GetClaimsMustWriteEmailInClaims()
+        {
+            var roles = new List<string> { "somerole" };
+            mockUserService.Setup(userService => userService.GetUserRoles(mockUser.Object)).ReturnsAsync(roles);
+            mockUser.SetupGet(user => user.UserName).Returns("userName");
+            mockUser.SetupGet(user => user.Email).Returns("email");
+            mockUser.SetupGet(user => user.Id).Returns("id");
+
+            JwtService jwtService = new JwtService(mockRefreshRepository.Object, mockUserService.Object, mockConfiguration.Object);
+            var actualClaims = await jwtService.GetClaimsAsync(mockUser.Object);
+            var expectedClaim = new Claim(JwtRegisteredClaimNames.Email, "email");
+            var existsEmail = new List<Claim>(actualClaims)
+                .Exists(claim => claim.Type == JwtRegisteredClaimNames.Email && claim.Value == "email");
+
+            mockUserService.Verify();
+            mockUser.Verify();
+            Assert.True(existsEmail);
+        }
+
+        [Fact]
+        public async void GetClaimsMustWriteIdInClaims()
+        {
+            var roles = new List<string> { "somerole" };
+            mockUserService.Setup(userService => userService.GetUserRoles(mockUser.Object)).ReturnsAsync(roles);
+            mockUser.SetupGet(user => user.UserName).Returns("userName");
+            mockUser.SetupGet(user => user.Email).Returns("email");
+            mockUser.SetupGet(user => user.Id).Returns("id");
+
+            JwtService jwtService = new JwtService(mockRefreshRepository.Object, mockUserService.Object, mockConfiguration.Object);
+            var actualClaims = await jwtService.GetClaimsAsync(mockUser.Object);
+            var expectedClaim = new Claim("uid", "id");
+            var existsId = new List<Claim>(actualClaims)
+                .Exists(claim => claim.Type == "uid" && claim.Value == "id");
+
+            mockUserService.Verify();
+            mockUser.Verify();
+            Assert.True(existsId);
+        }
+
+        [Fact]
+        public async void GetClaimsMustWriteRoleInClaims()
+        {
+            var roles = new List<string> { "somerole" };
+            mockUserService.Setup(userService => userService.GetUserRoles(mockUser.Object)).ReturnsAsync(roles);
+            mockUser.SetupGet(user => user.UserName).Returns("userName");
+            mockUser.SetupGet(user => user.Email).Returns("email");
+            mockUser.SetupGet(user => user.Id).Returns("id");
+
+            JwtService jwtService = new JwtService(mockRefreshRepository.Object, mockUserService.Object, mockConfiguration.Object);
+            var actualClaims = await jwtService.GetClaimsAsync(mockUser.Object);
+            var existsRole = new List<Claim>(actualClaims)
+                .Exists(claim => claim.Type == ClaimTypes.Role && claim.Value == "somerole");
+
+            mockUserService.Verify();
+            mockUser.Verify();
+            Assert.True(existsRole);
+        }
+
+        [Fact]
+        public async void GetClaimsMustGenerateJtiInClaims()
+        {
+            var roles = new List<string> { "somerole" };
+            mockUserService.Setup(userService => userService.GetUserRoles(mockUser.Object)).ReturnsAsync(roles);
+            mockUser.SetupGet(user => user.UserName).Returns("userName");
+            mockUser.SetupGet(user => user.Email).Returns("email");
+            mockUser.SetupGet(user => user.Id).Returns("id");
+
+            JwtService jwtService = new JwtService(mockRefreshRepository.Object, mockUserService.Object, mockConfiguration.Object);
+            var actualClaims = await jwtService.GetClaimsAsync(mockUser.Object);
+            var existsJti = new List<Claim>(actualClaims)
+                .Exists(claim => claim.Type == JwtRegisteredClaimNames.Jti);
+
+            mockUserService.Verify();
+            mockUser.Verify();
+            Assert.True(existsJti);
         }
     }
 }
