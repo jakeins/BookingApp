@@ -1,9 +1,4 @@
-﻿using BookingApp.Data;
-using BookingApp.Data.Models;
-using BookingApp.Exceptions;
-using BookingApp.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+﻿using BookingApp.Data.Models;
 using System.Collections.Generic;
 
 namespace TestingUtilities
@@ -16,9 +11,12 @@ namespace TestingUtilities
         {
             testResources = new[]
             {
-                  new Resource() { Id = 1, Title = "Nothern View", IsActive = true, RuleId = 1 },
-                  new Resource() { Id = 2, Title = "Southern View", IsActive = true },
-                  new Resource() { Id = 3, Title = "Flag", IsActive = true },
+                  new Resource() { Id = 1, Title = "Nothern View",  IsActive = true, RuleId = 1, Description = "Oculus Diabolus",
+                      CreatedUserId = VincentVanGogh, UpdatedUserId = VincentVanGogh },
+                  new Resource() { Id = 2, Title = "Southern View", IsActive = true,
+                      CreatedUserId = GustaveEiffel, UpdatedUserId = VincentVanGogh },
+                  new Resource() { Id = 3, Title = "Flag", IsActive = true,
+                      CreatedUserId = VincentVanGogh, UpdatedUserId = GustaveEiffel },
 
                   new Resource() { Id = 4, Title = "Trumpet Ensemble", IsActive = true },
 
@@ -33,11 +31,15 @@ namespace TestingUtilities
                   new Resource() { Id = 10, Title = "Cruiser Bicycle #2000", IsActive = true },
                   new Resource() { Id = 11, Title = "Cruiser Bicycle #46", IsActive = true },
                   new Resource() { Id = 12, Title = "Ukraine Tier0 Bicycle", IsActive = true },
-                  new Resource() { Id = 13, Title = "Mountain Bike Roger", IsActive = false },
+                  new Resource() { Id = 13, Title = "Mountain Bike Roger", IsActive = false, Description = "Petro Deus",
+                      CreatedUserId = GustaveEiffel, UpdatedUserId = GustaveEiffel },
             };
             return testResources;
         }
 
+        public static string VincentVanGogh => "Vincent van Gogh";
+        public static string GustaveEiffel => "Gustave Eiffel";
+        
         public static int NonExistentId => 100500;
     }
 }

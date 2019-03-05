@@ -115,7 +115,7 @@ namespace BookingAppTests.Repositories
 
         #region UpdateAsync() tests
         [Fact]
-        public async void UpdateAsync_ChangesQuantityAndFields()
+        public async void UpdateAsync_ChangesFields()
         {
             //Arrange
             var contextOptions = InMemoryUtils.ProduceFreshDbContextOptions();
