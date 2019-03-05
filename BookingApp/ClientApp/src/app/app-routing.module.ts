@@ -24,34 +24,34 @@ const routes: Routes = [
   { path: 'resources/:id', component: ResourceComponent },
   { path: 'tree', component: TreeComponent },
   {
-      path: 'cabinet',
-      loadChildren: () => CabinetModule,
-      //loadChildren: './cabinet/cabinet.module#CabinetModule',
-      canLoad: [CabinetGuard]
+    path: 'cabinet',
+    loadChildren: () => CabinetModule,
+    //loadChildren: './cabinet/cabinet.module#CabinetModule',
+    canLoad: [CabinetGuard]
   },
   {
-      path: 'admin',
-      loadChildren: () => AdminModule,
-      //loadChildren: './admin/admin.module#AdminModule',
-      canLoad: [AdminGuard]
+    path: 'admin',
+    loadChildren: () => AdminModule,
+    //loadChildren: './admin/admin.module#AdminModule',
+    canLoad: [AdminGuard]
   },
   {
-      path: '**',
-      redirectTo: 'error/404'
+    path: '**',
+    redirectTo: 'error/404'
   }
 ];
 
 @NgModule({
-    /*
-    imports: [
-        RouterModule.forRoot(routes,
-            {
-                preloadingStrategy: PreloadAllModules
-            })
-    ],
-    */
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule],
-    providers: [ CabinetGuard, AdminGuard ],
+  /*
+  imports: [
+      RouterModule.forRoot(routes,
+          {
+              preloadingStrategy: PreloadAllModules
+          })
+  ],
+  */
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+  providers: [CabinetGuard, AdminGuard],
 })
 export class AppRoutingModule { }
