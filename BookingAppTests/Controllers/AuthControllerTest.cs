@@ -196,7 +196,7 @@ namespace BookingAppTests.Controllers
             AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
             var result = await authController.Forget(mockUserDto.Object);
 
-            mockNotificationService.Verify(notificationService => notificationService.ForgetPasswordMail(mockUser.Object));
+            mockNotificationService.Verify(notificationService => notificationService.ForgetPasswordMail(mockUser.Object), Times.Once);
         }
     }
 }
