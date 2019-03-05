@@ -9,6 +9,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TestingUtilities;
 using Xunit;
 
 namespace BookingAppTests.Controllers
@@ -23,8 +24,8 @@ namespace BookingAppTests.Controllers
             bool isAdmin = It.IsAny<bool>();
 
             var resServiceMock = new Mock<IResourcesService>();
-            resServiceMock.Setup(service => service.GetList()).ReturnsAsync(TestResources);
-            resServiceMock.Setup(service => service.ListActive()).ReturnsAsync(TestResources.Where(r => r.IsActive == true));
+            resServiceMock.Setup(service => service.GetList()).ReturnsAsync(ResourceUtils.TestSet);
+            resServiceMock.Setup(service => service.ListActive()).ReturnsAsync(ResourceUtils.TestSet.Where(r => r.IsActive == true));
 
             var bookServiceMock = new Mock<IBookingsService>();
 
@@ -51,7 +52,7 @@ namespace BookingAppTests.Controllers
             bool isAdmin = true;
 
             var resServiceMock = new Mock<IResourcesService>();
-            resServiceMock.Setup(service => service.GetList()).ReturnsAsync(TestResources);
+            resServiceMock.Setup(service => service.GetList()).ReturnsAsync(ResourceUtils.TestSet);
 
             var bookServiceMock = new Mock<IBookingsService>();
 
@@ -66,7 +67,7 @@ namespace BookingAppTests.Controllers
             //Assert 
             var okResult = Assert.IsType<OkObjectResult>(actionResult);
             var dtos = Assert.IsAssignableFrom<IEnumerable<ResourceBriefDto>>(okResult.Value);
-            Assert.Equal(TestResources.Count(), dtos.Count());
+            Assert.Equal(ResourceUtils.TestSet.Count(), dtos.Count());
             resServiceMock.Verify(mock => mock.GetList(), Times.Once());
         }
 
@@ -76,7 +77,7 @@ namespace BookingAppTests.Controllers
             // Arrange
             bool isAdmin = It.IsAny<bool>();
             var resServiceMock = new Mock<IResourcesService>();
-            resServiceMock.Setup(service => service.ListActive()).ReturnsAsync(TestResources.Where(r=>r.IsActive == true));
+            resServiceMock.Setup(service => service.ListActive()).ReturnsAsync(ResourceUtils.TestSet.Where(r=>r.IsActive == true));
 
             var bookServiceMock = new Mock<IBookingsService>();
 
@@ -91,8 +92,8 @@ namespace BookingAppTests.Controllers
             //Assert 
             var okResult = Assert.IsType<OkObjectResult>(actionResult);
             var dtos = Assert.IsAssignableFrom<IEnumerable<ResourceBriefDto>>(okResult.Value);
-            Assert.True(TestResources.Count() > dtos.Count());
-            Assert.Equal(TestResources.Where(r => r.IsActive == true).Count(), dtos.Count());
+            Assert.True(ResourceUtils.TestSet.Count() > dtos.Count());
+            Assert.Equal(ResourceUtils.TestSet.Where(r => r.IsActive == true).Count(), dtos.Count());
             resServiceMock.Verify(mock => mock.ListActive(), Times.Once());
         }
         #endregion
@@ -105,7 +106,7 @@ namespace BookingAppTests.Controllers
         {
             // Arrange
             var resServiceMock = new Mock<IResourcesService>();
-            resServiceMock.Setup(service => service.Get(It.IsAny<int>())).ReturnsAsync(TestResources.First());
+            resServiceMock.Setup(service => service.Get(It.IsAny<int>())).ReturnsAsync(ResourceUtils.TestSet.First());
             resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(isActive);
 
             var bookServiceMock = new Mock<IBookingsService>();
@@ -140,7 +141,7 @@ namespace BookingAppTests.Controllers
             var fakeResController = resControllerMock.Object;
 
             IMapper dtoMapper = new Mapper(new MapperConfiguration(cfg => { cfg.CreateMap<Resource, ResourceDetailedDto>(); }));
-            var dto = dtoMapper.Map<ResourceDetailedDto>(TestResources.First());
+            var dto = dtoMapper.Map<ResourceDetailedDto>(ResourceUtils.TestSet.First());
 
             // Act
             var actionResult = await fakeResController.Create(dto);
@@ -186,7 +187,7 @@ namespace BookingAppTests.Controllers
             var fakeResController = resControllerMock.Object;
 
             IMapper dtoMapper = new Mapper(new MapperConfiguration(cfg => { cfg.CreateMap<Resource, ResourceDetailedDto>(); }));
-            var dto = dtoMapper.Map<ResourceDetailedDto>(TestResources.First());
+            var dto = dtoMapper.Map<ResourceDetailedDto>(ResourceUtils.TestSet.First());
 
             // Act
             var actionResult = await fakeResController.Update(It.IsAny<int>(), dto);
@@ -245,8 +246,8 @@ namespace BookingAppTests.Controllers
             bool isAdmin = It.IsAny<bool>();
 
             var resServiceMock = new Mock<IResourcesService>();
-            resServiceMock.Setup(service => service.ListKeys()).ReturnsAsync(TestResources.Select(r=>r.Id));
-            resServiceMock.Setup(service => service.ListActiveKeys()).ReturnsAsync(TestResources.Where(r => r.IsActive == true).Select(r => r.Id));
+            resServiceMock.Setup(service => service.ListKeys()).ReturnsAsync(ResourceUtils.TestSet.Select(r=>r.Id));
+            resServiceMock.Setup(service => service.ListActiveKeys()).ReturnsAsync(ResourceUtils.TestSet.Where(r => r.IsActive == true).Select(r => r.Id));
 
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.OccupancyByResource(It.IsAny<int>())).ReturnsAsync(It.IsAny<double?>());
@@ -274,8 +275,8 @@ namespace BookingAppTests.Controllers
             bool isAdmin = It.IsAny<bool>();
 
             var resServiceMock = new Mock<IResourcesService>();
-            resServiceMock.Setup(service => service.ListKeys()).ReturnsAsync(TestResources.Select(r => r.Id));
-            resServiceMock.Setup(service => service.ListActiveKeys()).ReturnsAsync(TestResources.Where(r => r.IsActive == true).Select(r => r.Id));
+            resServiceMock.Setup(service => service.ListKeys()).ReturnsAsync(ResourceUtils.TestSet.Select(r => r.Id));
+            resServiceMock.Setup(service => service.ListActiveKeys()).ReturnsAsync(ResourceUtils.TestSet.Where(r => r.IsActive == true).Select(r => r.Id));
             
             foreach (Exception ex in new Exception[] { new KeyNotFoundException(), new FieldValueAbsurdException()})
             {
@@ -300,8 +301,8 @@ namespace BookingAppTests.Controllers
             bool isAdmin = It.IsAny<bool>();
 
             var resServiceMock = new Mock<IResourcesService>();
-            resServiceMock.Setup(service => service.ListKeys()).ReturnsAsync(TestResources.Select(r => r.Id));
-            resServiceMock.Setup(service => service.ListActiveKeys()).ReturnsAsync(TestResources.Where(r => r.IsActive == true).Select(r => r.Id));
+            resServiceMock.Setup(service => service.ListKeys()).ReturnsAsync(ResourceUtils.TestSet.Select(r => r.Id));
+            resServiceMock.Setup(service => service.ListActiveKeys()).ReturnsAsync(ResourceUtils.TestSet.Where(r => r.IsActive == true).Select(r => r.Id));
 
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.OccupancyByResource(It.IsAny<int>())).ThrowsAsync(new Exception());
@@ -326,8 +327,8 @@ namespace BookingAppTests.Controllers
             bool isAdmin = true;
 
             var resServiceMock = new Mock<IResourcesService>();
-            resServiceMock.Setup(service => service.ListKeys()).ReturnsAsync(TestResources.Select(r => r.Id));
-            resServiceMock.Setup(service => service.ListActiveKeys()).ReturnsAsync(TestResources.Where(r => r.IsActive == true).Select(r => r.Id));
+            resServiceMock.Setup(service => service.ListKeys()).ReturnsAsync(ResourceUtils.TestSet.Select(r => r.Id));
+            resServiceMock.Setup(service => service.ListActiveKeys()).ReturnsAsync(ResourceUtils.TestSet.Where(r => r.IsActive == true).Select(r => r.Id));
 
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.OccupancyByResource(It.IsAny<int>())).ReturnsAsync(It.IsAny<int>());
@@ -343,7 +344,7 @@ namespace BookingAppTests.Controllers
             //Assert 
             var okResult = Assert.IsType<OkObjectResult>(actionResult);
             var map = Assert.IsAssignableFrom<Dictionary<int, double?>>(okResult.Value);
-            int expectedCount = TestResources.Count();
+            int expectedCount = ResourceUtils.TestSet.Count();
             Assert.Equal(expectedCount, map.Count());
             resServiceMock.Verify(mock => mock.ListKeys(), Times.Once());
             bookServiceMock.Verify(mock => mock.OccupancyByResource(It.IsAny<int>()), Times.Exactly(expectedCount));
@@ -356,8 +357,8 @@ namespace BookingAppTests.Controllers
             bool isAdmin = It.IsAny<bool>();
 
             var resServiceMock = new Mock<IResourcesService>();
-            resServiceMock.Setup(service => service.ListKeys()).ReturnsAsync(TestResources.Select(r => r.Id));
-            resServiceMock.Setup(service => service.ListActiveKeys()).ReturnsAsync(TestResources.Where(r => r.IsActive == true).Select(r => r.Id));
+            resServiceMock.Setup(service => service.ListKeys()).ReturnsAsync(ResourceUtils.TestSet.Select(r => r.Id));
+            resServiceMock.Setup(service => service.ListActiveKeys()).ReturnsAsync(ResourceUtils.TestSet.Where(r => r.IsActive == true).Select(r => r.Id));
 
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.OccupancyByResource(It.IsAny<int>())).ReturnsAsync(It.IsAny<int>());
@@ -373,7 +374,7 @@ namespace BookingAppTests.Controllers
             //Assert 
             var okResult = Assert.IsType<OkObjectResult>(actionResult);
             var map = Assert.IsAssignableFrom<Dictionary<int, double?>>(okResult.Value);
-            int expectedCount = TestResources.Where(r => r.IsActive == true).Count();
+            int expectedCount = ResourceUtils.TestSet.Where(r => r.IsActive == true).Count();
             Assert.Equal(expectedCount, map.Count());
             resServiceMock.Verify(mock => mock.ListActiveKeys(), Times.Once());
             bookServiceMock.Verify(mock => mock.OccupancyByResource(It.IsAny<int>()), Times.Exactly(expectedCount));
@@ -425,7 +426,7 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(isActive);
 
             var bookServiceMock = new Mock<IBookingsService>();
-            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(TestBookings);
+            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(BookingUtils.TestSet);
 
             var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
@@ -456,7 +457,7 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(isActive);
 
             var bookServiceMock = new Mock<IBookingsService>();
-            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(TestBookings);
+            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(BookingUtils.TestSet);
 
             var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
@@ -483,12 +484,12 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(true);
 
             var bookServiceMock = new Mock<IBookingsService>();
-            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(TestBookings);
+            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(BookingUtils.TestSet);
 
             var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(false);
             resControllerMock.SetupGet(mock => mock.IsUser).Returns(true);
-            resControllerMock.SetupGet(mock => mock.UserId).Returns(this.soleBookingCreator);
+            resControllerMock.SetupGet(mock => mock.UserId).Returns(BookingUtils.SoleBookingCreator);
 
             var fakeResController = resControllerMock.Object;
 
@@ -525,63 +526,6 @@ namespace BookingAppTests.Controllers
 
             //Assert
             resServiceMock.Verify(mock => mock.IsActive(It.IsAny<int>()), Times.Once());
-        }
-        #endregion
-
-        #region Utilities
-        IEnumerable<Resource> testResources;
-        IEnumerable<Resource> TestResources => testResources ?? FormTestResources();
-        IEnumerable<Resource> FormTestResources()
-        {
-            testResources = new [] 
-            {
-                  new Resource() { Id = 1, Title = "Nothern View", IsActive = true, RuleId = 1 },
-                  new Resource() { Id = 2, Title = "Southern View", IsActive = true },
-                  new Resource() { Id = 3, Title = "Flag", IsActive = true },
-
-                  new Resource() { Id = 4, Title = "Trumpet Ensemble", IsActive = true },
-
-                  new Resource() { Id = 5, Title = "First Floor Hallway", IsActive = true },
-
-                  new Resource() { Id = 6, Title = "Natural Museum", IsActive = false },
-                  new Resource() { Id = 7, Title = "Art Museum", IsActive = false },
-                  new Resource() { Id = 8, Title = "History Museum", IsActive = true },
-
-                  new Resource() { Id = 9, Title = "Civil Defence Alarm", IsActive = true },
-
-                  new Resource() { Id = 10, Title = "Cruiser Bicycle #2000", IsActive = true },
-                  new Resource() { Id = 11, Title = "Cruiser Bicycle #46", IsActive = true },
-                  new Resource() { Id = 12, Title = "Ukraine Tier0 Bicycle", IsActive = true },
-                  new Resource() { Id = 13, Title = "Mountain Bike Roger", IsActive = false },
-            };
-            return testResources;
-        }
-
-        string soleBookingCreator = "SoleBookingCreator";
-        IEnumerable<Booking> testBookings;
-        IEnumerable<Booking> TestBookings => testBookings ?? FormTestBookings();
-        IEnumerable<Booking> FormTestBookings()
-        { 
-            var sampleSize = 5;
-            var newBookings = new Booking[sampleSize];
-            var now = DateTime.Now;
-
-            for (int i = 1; i <= sampleSize; i++)
-            {
-                var curBook = new Booking
-                {
-                    Id = i,
-                    Note = "Note_" + i,
-                    ResourceId = 1,
-                    CreatedUserId = soleBookingCreator,
-                    UpdatedUserId = "Updater_" + i
-                };
-                curBook.CreatedTime = curBook.StartTime = curBook.EndTime = curBook.UpdatedTime = now;
-                newBookings[i-1] = curBook;
-            }
-
-            testBookings = newBookings;
-            return testBookings;
         }
         #endregion
     }
