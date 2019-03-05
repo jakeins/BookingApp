@@ -36,25 +36,25 @@ namespace BookingApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IResourcesService, ResourcesService>();
-            services.AddTransient<IResourcesRepository, ResourcesRepository>();
+            services.AddScoped<IResourcesService, ResourcesService>();
+            services.AddScoped<IResourcesRepository, ResourcesRepository>();
 
-            services.AddTransient<IFolderService, FolderService>();
-            services.AddTransient<FolderRepository>();
+            services.AddScoped<IFolderService, FolderService>();
+            services.AddScoped<FolderRepository>();
 
-            services.AddTransient<IBookingsService, BookingsService>();
-            services.AddTransient<IBookingsRepository, BookingsRepository>();
+            services.AddScoped<IBookingsService, BookingsService>();
+            services.AddScoped<IBookingsRepository, BookingsRepository>();
 
-            services.AddTransient<IJwtService, JwtService>();
-            services.AddTransient<IMessageService, MailMessageService>();
-            services.AddTransient<INotificationService, NotificationService>();
-            services.AddTransient<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IMessageService, MailMessageService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
 
-            services.AddTransient<IUserService,UserService>();
-            services.AddTransient<IUserRepository,UserRepository>();
+            services.AddScoped<IUserService,UserService>();
+            services.AddScoped<IUserRepository,UserRepository>();
 
-            services.AddTransient<IRuleService, RuleService>();
-            services.AddTransient<IRuleRepository, RuleRepository>();
+            services.AddScoped<IRuleService, RuleService>();
+            services.AddScoped<IRuleRepository, RuleRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
