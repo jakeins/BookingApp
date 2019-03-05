@@ -44,16 +44,13 @@ export class FolderEditComponent implements OnInit {
 
     this.folderService.getList().subscribe((folders: Folder[]) => {
       folders.unshift(new Folder("Root", null, null, false, 0));
-      /*
       let fId = this.folderId;
-      folders(fId).forEach(function (item, index, object) {
+      folders.forEach(function (item, index, object) {
         if (item.id == fId) {
           object.splice(index, 1);
         }
-      });
-      */
-
-      console.log(folders);
+      }, fId);
+      
       this.folders = folders;
     });
   }
