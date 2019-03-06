@@ -50,11 +50,12 @@ namespace BookingAppTests.Controllers
             mockUserService.Setup(service => service.GetUserById(It.IsAny<string>())).ReturnsAsync(new ApplicationUser());
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
+            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
 
             // Act
-            var result = await controller.GetUserById(It.IsAny<string>()) as OkObjectResult;
+            var result = await mockController.Object.GetUserById(It.IsAny<string>()) as OkObjectResult;
 
             //Assert 
             Assert.NotNull(result.Value);
@@ -107,11 +108,12 @@ namespace BookingAppTests.Controllers
             mockUserService.Setup(service => service.GetUserById(It.IsAny<string>())).Throws(new NullReferenceException("Can not find user with this id"));
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
+            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
 
             // Act and Assert
-            var ex = await Assert.ThrowsAsync<NullReferenceException>(() => controller.GetUserById(It.IsAny<string>()));
+            var ex = await Assert.ThrowsAsync<NullReferenceException>(() => mockController.Object.GetUserById(It.IsAny<string>()));
             Assert.Equal("Can not find user with this id", ex.Message);
         }
         #endregion
@@ -349,10 +351,11 @@ namespace BookingAppTests.Controllers
             mockUserService.Setup(service => service.UpdateUser(mockApplicationUser.Object)).Returns(Task.CompletedTask);
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
+            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
             // Act 
-            var result = await controller.UpdateUser(mockUserUpdateDTO.Object, It.IsAny<string>()) as OkObjectResult;
+            var result = await mockController.Object.UpdateUser(mockUserUpdateDTO.Object, It.IsAny<string>()) as OkObjectResult;
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -369,10 +372,11 @@ namespace BookingAppTests.Controllers
             mockUserService.Setup(service => service.UpdateUser(mockApplicationUser.Object)).Returns(Task.CompletedTask);
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
-
+            
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
+            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
             // Act and Assert
-            var ex = await Assert.ThrowsAsync<NullReferenceException>(() => controller.UpdateUser(mockUserUpdateDTO.Object, It.IsAny<string>()));
+            var ex = await Assert.ThrowsAsync<NullReferenceException>(() => mockController.Object.UpdateUser(mockUserUpdateDTO.Object, It.IsAny<string>()));
             Assert.Equal("Can not find user with this id", ex.Message);  
         }
 
@@ -387,10 +391,11 @@ namespace BookingAppTests.Controllers
             mockUserService.Setup(service => service.UpdateUser(mockApplicationUser.Object)).Throws(new UserException("Default User Exception"));
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
+            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
             // Act and Assert
-            var ex = await Assert.ThrowsAsync<UserException>(() => controller.UpdateUser(mockUserUpdateDTO.Object, It.IsAny<string>()));
+            var ex = await Assert.ThrowsAsync<UserException>(() => mockController.Object.UpdateUser(mockUserUpdateDTO.Object, It.IsAny<string>()));
             Assert.Equal("Default User Exception", ex.Message);
         }
 

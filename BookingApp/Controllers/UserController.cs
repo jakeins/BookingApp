@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.Exceptions;
 using BookingApp.Helpers;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -39,26 +40,22 @@ namespace BookingApp.Controllers
         [HttpPost("api/user")]
         public async Task<IActionResult> CreateUser([FromBody] AuthRegisterDto user)
         {
-            if (ModelState.IsValid)
-            {
-                ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
-                await userService.CreateUser(appUser, user.Password);
-                return Ok("User created");
-            }
-            return BadRequest("Error valid");
+            if (!ModelState.IsValid) 
+                return BadRequest(ModelState);
+            ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
+            await userService.CreateUser(appUser, user.Password);
+            return Ok("User created");
         }
 
         [Authorize(Roles = RoleTypes.Admin)]
         [HttpPost("api/user/create-admin")]
         public async Task<IActionResult> CreateAdmin([FromBody] AuthRegisterDto user)
         {
-            if (ModelState.IsValid)
-            {
-                ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
-                await userService.CreateUser(appUser, user.Password);
-                return Ok("User created");
-            }
-            return BadRequest("Error valid");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
+            await userService.CreateAdmin(appUser, user.Password);
+            return Ok("User created");       
         }
 
         [Authorize(Roles = RoleTypes.User)]
@@ -144,7 +141,7 @@ namespace BookingApp.Controllers
                 await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
                 return Ok("Password changed");
             }
-            return BadRequest("Model is not valid");
+            return BadRequest(ModelState);
         }
 
         //[Authorize(Roles = RoleTypes.Admin)]
@@ -184,7 +181,7 @@ namespace BookingApp.Controllers
                 await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
                 return Ok();
             }
-            return BadRequest("Model is not valid");
+            return BadRequest(ModelState);
         }
 
         #region Bookings

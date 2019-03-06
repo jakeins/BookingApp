@@ -27,6 +27,7 @@ namespace BookingApp.Services
         Task<IList<string>> GetUserRolesById(string userId);
         Task<IEnumerable<ApplicationUser>> GetUsersList();
         Task<bool> IsInRoleAsync(ApplicationUser user, string role);
+        Task<bool> IsEmailExist(string email);
         Task RemoveUserRoleAsync(string userId, string role);
         Task RemoveUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles);
         Task ResetUserPassword(string userId, string token, string newPassword);
@@ -179,6 +180,14 @@ namespace BookingApp.Services
                   await  RemoveUserRoleAsync(userId, role);
                 }
            }
+        }
+
+        public async Task<bool> IsEmailExist(string email)
+        {
+            if (await GetUserByEmail(email) != null)
+                return true;
+            else
+                return false;
         }
     }
 }
