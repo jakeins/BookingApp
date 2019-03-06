@@ -233,22 +233,6 @@ namespace BookingAppTests.Controllers
             Assert.IsType<OkObjectResult>(result);
         }
 
-        [Fact]
-        public async void Get_UserExceptions_WhenCalled_CreateUser()
-        {
-            // Arrange
-            var mockApplicaitonUser = new Mock<ApplicationUser>();
-            var mockAuthRegisterDto = new Mock<AuthRegisterDto>();
-            var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.CreateUser(mockApplicaitonUser.Object, It.IsAny<string>())).Throws(new UserException("Default User Exception"));
-            var mockResourcesService = new Mock<IResourcesService>();
-            var mockBookingService = new Mock<IBookingsService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
-
-            // Act and Assert
-            var ex = await Assert.ThrowsAsync<UserException>(() => controller.CreateUser(mockAuthRegisterDto.Object));
-            Assert.Equal("Default User Exception", ex.Message);
-        }
         #endregion
 
         #region CreateAdmin
@@ -271,22 +255,6 @@ namespace BookingAppTests.Controllers
             Assert.IsType<OkObjectResult>(result);
         }
 
-        [Fact]
-        public async void Get_UserExceptions_WhenCalled_CreateAdmin()
-        {
-            // Arrange
-            var mockApplicaitonUser = new Mock<ApplicationUser>();
-            var mockAuthRegisterDto = new Mock<AuthRegisterDto>();
-            var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.CreateAdmin(mockApplicaitonUser.Object, It.IsAny<string>())).Throws(new UserException("Default User Exception"));
-            var mockResourcesService = new Mock<IResourcesService>();
-            var mockBookingService = new Mock<IBookingsService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
-
-            // Act and Assert
-            var ex = await Assert.ThrowsAsync<UserException>(() => controller.CreateAdmin(mockAuthRegisterDto.Object));
-            Assert.Equal("Default User Exception", ex.Message);
-        }
         #endregion
 
         #region DeleteUser

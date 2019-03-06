@@ -79,28 +79,6 @@
       <FileName>Exceptions\UserException.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BookingApp.Exceptions.UserPasswordException" Collapsed="true">
-    <Position X="35.25" Y="2.75" Width="2.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserPasswordException.cs</FileName>
-      <NewMemberFileName>Exceptions\UserNameException.cs</NewMemberFileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BookingApp.Exceptions.UserEmailException">
-    <Position X="32.5" Y="3.25" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserEmailException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BookingApp.Exceptions.UserNameException" Collapsed="true">
-    <Position X="29" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Exceptions\UserNameException.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="BookingApp.Exceptions.OperationRestrictedRelationException" Collapsed="true">
     <Position X="20.25" Y="5.75" Width="2.75" />
     <TypeIdentifier>
