@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace BookingApp.Controllers
 {
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : EntityControllerBase
     {
         private readonly IUserService userService;
         private readonly IMapper mapper;
@@ -48,7 +48,7 @@ namespace BookingApp.Controllers
             return BadRequest("Error valid");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPost("api/user/create-admin")]
         public async Task<IActionResult> CreateAdmin([FromBody] AuthRegisterDto user)
         {
@@ -61,15 +61,21 @@ namespace BookingApp.Controllers
             return BadRequest("Error valid");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}")]
         public async Task<IActionResult> GetUserById([FromRoute]string userId)
         {
-            ApplicationUser appuser = await userService.GetUserById(userId);
-            UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
-            return new OkObjectResult(user);
+            if (UserId == userId || IsAdmin)
+            {
+                ApplicationUser appuser = await userService.GetUserById(userId);
+                UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
+                return new OkObjectResult(user);
+            }
+            else
+                return BadRequest("Can not get information about this user");
         }
 
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("api/user/email/{userEmail}")]
         public async Task<IActionResult> GetUserByEmail([FromRoute]string userEmail)
         {
@@ -78,7 +84,7 @@ namespace BookingApp.Controllers
             return new OkObjectResult(user);
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        //[Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/users")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -91,18 +97,25 @@ namespace BookingApp.Controllers
         [HttpDelete("api/user/{userId}")]
         public async Task<IActionResult> DeleteUserById([FromRoute] string userId)
         {
+            //TODO: Delete all user bookings
+            await userService.RemoveAllRolesFromUser(userId);
             await userService.DeleteUser(userId);
             return new OkObjectResult("User deleted");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpPut("api/user/{userId}")]
         public async Task<IActionResult> UpdateUser([FromBody]UserUpdateDTO user, [FromRoute]string userId)
         {
-            ApplicationUser appuser = await userService.GetUserById(userId);
-            mapper.Map<UserUpdateDTO, ApplicationUser>(user, appuser);
-            await userService.UpdateUser(appuser);
-            return new OkObjectResult("User updated");
+            if (UserId == userId || IsAdmin)
+            {
+                ApplicationUser appuser = await userService.GetUserById(userId);
+                mapper.Map<UserUpdateDTO, ApplicationUser>(user, appuser);
+                await userService.UpdateUser(appuser);
+                return new OkObjectResult("User updated");
+            }
+            else
+                return BadRequest("Can not update this user");
         }
 
         //[Authorize(Roles = RoleTypes.Admin)]
@@ -134,7 +147,7 @@ namespace BookingApp.Controllers
             return BadRequest("Model is not valid");
         }
 
-        [Authorize(Roles = RoleTypes.Admin)]
+        //[Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/add-role")]
         public async Task<IActionResult> AddRole([FromRoute]string userId, [FromBody]UserRoleDto roleDto)
         {

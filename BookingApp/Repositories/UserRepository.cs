@@ -22,6 +22,7 @@ namespace BookingApp.Services
         Task DeleteAsync(ApplicationUser user);
         Task<string> GeneratePasswordResetToken(ApplicationUser user);
         Task<ApplicationUser> GetUserByEmailAsync(string email);
+        Task<ApplicationUser> GetUserByUserName(string userName);
         Task<IList<string>> GetUserRoles(ApplicationUser user);
         Task<IList<string>> GetUserRolesById(string userId);
         Task<bool> IsInRole(ApplicationUser user, string role);
@@ -99,6 +100,19 @@ namespace BookingApp.Services
             if (applicationUser == null)
             {
                 throw new NullReferenceException("Can not find user with this email");
+            }
+            else
+            {
+                return applicationUser;
+            }
+        }
+
+        public async Task<ApplicationUser> GetUserByUserName(string userName)
+        {
+            ApplicationUser applicationUser = await userManager.FindByNameAsync(userName);
+            if (applicationUser == null)
+            {
+                throw new NullReferenceException("Can not find user with this UserName");
             }
             else
             {
