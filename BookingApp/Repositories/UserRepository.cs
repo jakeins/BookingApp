@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-
     public interface IUserRepository : IBasicRepositoryAsync<ApplicationUser, string>
     {
         Task AddUserRole(ApplicationUser user, string role);

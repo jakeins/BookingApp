@@ -42,7 +42,7 @@ namespace BookingApp
             services.AddScoped<IResourcesRepository, ResourcesRepository>();
 
             services.AddScoped<IFolderService, FolderService>();
-            services.AddScoped<FolderRepository>();
+            services.AddScoped<IFolderRepository, FolderRepository>();
 
             services.AddScoped<IBookingsService, BookingsService>();
             services.AddScoped<IBookingsRepository, BookingsRepository>();
