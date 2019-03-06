@@ -22,9 +22,10 @@ namespace BookingApp.Repositories
 
 
         #region MethodsForStatisticsController
-
-        Task<IEnumerable<Resource>> ListIncludingBookings();
+        
         Task<IEnumerable<Resource>> ListIncludingBookingsAndRules();
+
+        Task<IEnumerable<Resource>> GetIncludingBookingsAndRules(int resourceID);
 
         #endregion
     }

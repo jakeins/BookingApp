@@ -12,10 +12,12 @@ namespace BookingApp.Services
     public class StatisticsService : IStatisticsService
     {
         private IBookingsRepository bookingsRepository;
+        private IResourcesRepository resourcesRepository;
 
-        public StatisticsService(IBookingsRepository bookingRepo)
+        public StatisticsService(IBookingsRepository bookingRepo, IResourcesRepository resourcesRepo)
         {
             bookingsRepository = bookingRepo;
+            resourcesRepository = resourcesRepo;
         }
 
         public async Task<BookingsStats> GetBookingsCancellations(DateTime start, DateTime end, string interval, int[] resourcesIDs)
@@ -49,6 +51,16 @@ namespace BookingApp.Services
                 bookings.Where(b => b.TerminationTime != null && b.TerminationTime >= start && b.TerminationTime <= end).Where(b => b.TerminationTime > b.StartTime);
             return GetBookingStats("termination", terminatedbookings, start, end, interval, resourcesIDs);
 
+        }
+
+        public Task<ResourceStats> GetResourceStats()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResourceStats> GetResourceStats(int resourceID)
+        {
+            throw new NotImplementedException();
         }
 
         #region Helpers
@@ -163,7 +175,7 @@ namespace BookingApp.Services
             end = GetStartOfWeek(end);
             int days = (int)(end - start).TotalDays;
             return (days / 7);
-        }
+        }        
 
         #endregion
     }

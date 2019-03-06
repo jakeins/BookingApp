@@ -29,15 +29,7 @@ namespace BookingApp.Services
 
         public async Task<IEnumerable<Resource>> ListByAssociatedUser(string userId) => await resourcesRepo.ListByAssociatedUser(userId);
         public async Task<IEnumerable<Resource>> ListByRuleKey(int ruleId) => await resourcesRepo.ListByRuleKeyAsync(ruleId);
-        public async Task<IEnumerable<Resource>> ListByFolderKey(int folderId) => await resourcesRepo.ListByFolderKeyAsync(folderId);
-
-        #region MethodsForStatisticsController
-
-        public async Task<IEnumerable<Resource>> ListIncludingBookings() => await resourcesRepo.ListIncludingBookings();
-
-        public async Task<IEnumerable<Resource>> ListIncludingBookingsAndRules() => await resourcesRepo.ListIncludingBookingsAndRules();
-
-        #endregion
+        public async Task<IEnumerable<Resource>> ListByFolderKey(int folderId) => await resourcesRepo.ListByFolderKeyAsync(folderId);        
 
     }
 }

@@ -97,11 +97,11 @@ namespace BookingApp.Controllers
         {
             resources = await resourcesService.ListIncludingBookingsAndRules();
 
-            List<ResourceUsageDTO> dTOs = new List<ResourceUsageDTO>();            
+            List<ResourceStatsDTO> dTOs = new List<ResourceStatsDTO>();            
 
             foreach(var resource in resources)
             {
-                ResourceUsageDTO dTO = new ResourceUsageDTO();
+                ResourceStatsDTO dTO = new ResourceStatsDTO();
                 List<long> timeSpansinTicks = new List<long>();
                 double cancellations=0;
 
