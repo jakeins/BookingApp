@@ -36,7 +36,7 @@ namespace BookingApp.Controllers
             }));
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        
         [HttpPost("api/user")]
         public async Task<IActionResult> CreateUser([FromBody] AuthRegisterDto user)
         {
@@ -72,13 +72,18 @@ namespace BookingApp.Controllers
                 return BadRequest("Can not get information about this user");
         }
 
-        [Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/email/{userEmail}")]
         public async Task<IActionResult> GetUserByEmail([FromRoute]string userEmail)
         {
-            ApplicationUser appuser = await userService.GetUserByEmail(userEmail);
-            UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
-            return new OkObjectResult(user);
+            ApplicationUser requestUser = await userService.GetUserByEmail(userEmail);
+            if (UserId == requestUser.Id || IsAdmin)
+            {
+                UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(requestUser);
+                return new OkObjectResult(user);
+            }
+            else
+                return BadRequest("Can not get information about this user");
         }
 
         //[Authorize(Roles = RoleTypes.User)]

@@ -72,11 +72,12 @@ namespace BookingAppTests.Controllers
             mockUserService.Setup(service => service.GetUserByEmail(It.IsAny<string>())).ReturnsAsync(mockApplicationUser.Object);
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
+            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
 
             // Act
-            var result = await controller.GetUserByEmail(It.IsAny<string>()) as OkObjectResult;
+            var result = await mockController.Object.GetUserByEmail(It.IsAny<string>()) as OkObjectResult;
 
             //Assert 
             Assert.NotNull(result.Value);
