@@ -41,18 +41,20 @@ namespace BookingApp.Controllers
 
             resources = await resourcesService.ListIncludingBookings();
 
-            int intervals = GetIntervalsNumber(start, end, interval) + 1;            
+            int intervals = GetIntervalsNumber(start, end, interval) + 1;
+
+            List<BookingsPerResourceBaseDTO> stats;
 
             if (divideByStatus)
             {
-                List<BookingsPerResourceBaseDTO> stats = GetStatusDTOs(start, end, interval, intervals);
-                return Ok(new BookingStatsDTO(stats,GetIntervalValues(start,interval,intervals)));
+                stats = GetStatusDTOs(start, end, interval, intervals);                
             }
             else
             {
-                List<BookingsPerResourceBaseDTO> stats = GetBaseDTOs(start, end, interval, intervals);
-                return Ok(new BookingStatsDTO(stats, GetIntervalValues(start, interval, intervals)));
-            }  
+                stats = GetBaseDTOs(start, end, interval, intervals);                
+            }
+
+            return Ok(new BookingStatsDTO(stats, GetIntervalValues(start, interval, intervals)));
         }
 
         [HttpGet("resources")]
