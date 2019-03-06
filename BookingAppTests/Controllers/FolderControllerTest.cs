@@ -96,6 +96,7 @@ namespace BookingAppTests.Controllers
         {
             // Arrange
             FolderMinimalDto FolderDto = GetDtoCorrect();
+            Mock<Folder> mockFolder = new Mock<Folder>();
             Mock<FolderController> mockControler = new Mock<FolderController>(mockFolderService.Object) { CallBase = true };
             mockControler.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
             mockControler.SetupGet(mock => mock.BaseApiUrl).Returns(It.IsAny<string>());
@@ -105,6 +106,8 @@ namespace BookingAppTests.Controllers
 
             // Assert
             Assert.IsType<CreatedResult>(result);
+            mockFolderService.Verify(
+                mock => mock.Create(It.IsAny<string>(), mockFolder.Object), Times.Never());
         }
 
         [Fact]
@@ -131,6 +134,7 @@ namespace BookingAppTests.Controllers
         {
             // Arrange
             FolderMinimalDto FolderDto = GetDtoCorrect();
+            Mock<Folder> mockFolder = new Mock<Folder>();
             Mock<FolderController> mockControler = new Mock<FolderController>(mockFolderService.Object) { CallBase = true };
             mockControler.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
 
@@ -139,6 +143,8 @@ namespace BookingAppTests.Controllers
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
+            mockFolderService.Verify(
+                mock => mock.Update(It.IsAny<int>(), It.IsAny<string>(), mockFolder.Object), Times.Never());
         }
 
         [Fact]
@@ -157,33 +163,6 @@ namespace BookingAppTests.Controllers
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
         }
-
-        //[Fact]
-        //public async void GetFolderByIdFailedUpdateFolderAsync()
-        //{
-        //    // Arrange
-        //    Mock<Folder> mockFolder = new Mock<Folder>();
-        //    Mock<FolderMinimalDto> mockDto = new Mock<FolderMinimalDto>();
-        //    mockFolderService.Setup(service => service.Update(It.IsAny<int>(), It.IsAny<string>(), mockFolder.Object)).Throws(new CurrentEntryNotFoundException("Specified Folder not found"));
-
-        //    //Mock<FolderController> mockControler = new Mock<FolderController>(mockFolderService.Object) { CallBase = true };
-        //    //mockControler.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
-
-        //    var controller = new FolderController(mockFolderService.Object);
-        //    controller.ControllerContext = new ControllerContext
-        //    {
-        //        HttpContext = new DefaultHttpContext
-        //        {
-        //            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-        //            {
-        //                new Claim("uid", "string")
-        //            }, "someAuthTypeName"))
-        //        }
-        //    };
-
-        //    var ex = await Assert.ThrowsAsync<CurrentEntryNotFoundException>(() => controller.Update(It.IsAny<int>(), mockDto.Object));
-        //    Assert.Equal("Specified Folder not found", ex.Message);  
-        //}
         #endregion FolderController.Update
 
         #region FolderController.Delete
@@ -198,6 +177,8 @@ namespace BookingAppTests.Controllers
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
+            mockFolderService.Verify(
+                mock => mock.Delete(It.IsAny<int>()));
         }
 
         [Fact]
@@ -234,17 +215,6 @@ namespace BookingAppTests.Controllers
             return new FolderMinimalDto
             {
                 Title = "Folder 1",
-                ParentFolderId = 1,
-                DefaultRuleId = 1,
-                IsActive = true
-            };
-        }
-
-        private FolderMinimalDto GetDtoInCorrect()
-        {
-            return new FolderMinimalDto
-            {
-                Title = "F",
                 ParentFolderId = 1,
                 DefaultRuleId = 1,
                 IsActive = true

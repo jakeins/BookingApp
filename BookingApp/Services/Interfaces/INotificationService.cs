@@ -1,4 +1,4 @@
-﻿using BookingApp.Helpers;
+﻿using BookingApp.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services.Interfaces
 {
-    public interface IMessageService
+    public interface INotificationService
     {
-        Task SendAsync(Message message);
+        Task ForgetPasswordMail(ApplicationUser user);
     }
 }

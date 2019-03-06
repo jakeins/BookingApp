@@ -1,5 +1,6 @@
 ﻿using BookingApp.Data.Models;
 using BookingApp.Helpers;
+using BookingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,6 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-    public interface INotificationService
-    {
-        Task ForgetPasswordMail(ApplicationUser user);
-    }
-
     public class NotificationService : INotificationService
     {
         private readonly IMessageService messageService;

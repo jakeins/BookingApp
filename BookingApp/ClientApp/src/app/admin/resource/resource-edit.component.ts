@@ -83,7 +83,7 @@ export class ResourceEditComponent implements OnInit {
     }
 
     //getting list of folders
-    this.folderService.getList().subscribe((result: Folder) => {
+    this.folderService.getList().subscribe((result: Folder[]) => {
       for (let key in result) {
         this.folders.push(result[key]);
       }

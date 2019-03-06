@@ -16,9 +16,9 @@ namespace BookingApp.Repositories
     /// <typeparam name="TUserModel">Type of the related user object.</typeparam>
     /// <typeparam name="TUserKey">Type of the primary id of the related user.</typeparam>
     public abstract class ActEntityRepositoryBase<TEntity, TEntityKey, TUserModel, TUserKey>
-        : EntityRepositoryBase<TEntity, TEntityKey, TUserModel, TUserKey>,
+        : TrackEntityRepositoryBase<TEntity, TEntityKey, TUserModel, TUserKey>,
         IActEntityRepository<TEntity, TEntityKey, TUserModel, TUserKey>
-        where TEntity : class, IEntity<TEntityKey, TUserModel, TUserKey>, IActivable
+        where TEntity : class, IIdentifiable<TEntityKey>, ITrackable<TUserModel, TUserKey>, IActivable
         where TEntityKey : IEquatable<TEntityKey>
         where TUserModel : class
         where TUserKey : IEquatable<TUserKey>
