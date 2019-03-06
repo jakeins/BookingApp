@@ -107,6 +107,7 @@ namespace BookingApp.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> ResourcesUsage([FromRoute] int id)
         {   
             ResourceStats resourceStats = await statisticsService.GetResourceStats(id);
