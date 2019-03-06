@@ -2,6 +2,7 @@
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
 using BookingApp.Exceptions;
+using BookingApp.Repositories.Bases;
 using System.Threading.Tasks;
 
 namespace BookingApp.Repositories

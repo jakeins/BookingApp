@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
+using BookingApp.Controllers.Bases;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.DTOs.Resource;
 using BookingApp.Helpers;
 using BookingApp.Services;
+using BookingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookingApp.Controllers

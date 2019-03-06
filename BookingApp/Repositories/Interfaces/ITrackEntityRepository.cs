@@ -1,9 +1,9 @@
-﻿using BookingApp.Data.Models;
+﻿using BookingApp.Data.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BookingApp.Repositories
+namespace BookingApp.Repositories.Interfaces
 {
     /// <summary>
     /// Trackable Entity repository interface.

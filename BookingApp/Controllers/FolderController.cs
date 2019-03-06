@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BookingApp.Controllers.Bases;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
 using BookingApp.Helpers;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BookingApp.Repositories
+namespace BookingApp.Repositories.Interfaces
 {
     /// <summary>
     /// Specific Resources Interface repository for the Booking App.

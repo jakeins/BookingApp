@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using BookingApp.DTOs;
 using BookingApp.Exceptions;
 using System.Threading.Tasks;
+using BookingApp.Services.Interfaces;
+using BookingApp.DTOs.Resource;
 
 namespace BookingAppTests.Controllers
 {

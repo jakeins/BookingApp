@@ -1,6 +1,8 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.Repositories.Bases;
+using BookingApp.Repositories.Interfaces;
 using System.Threading.Tasks;
 
 namespace BookingApp.Repositories

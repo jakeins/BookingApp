@@ -1,6 +1,7 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
-using BookingApp.Repositories;
+using BookingApp.Repositories.Interfaces;
+using BookingApp.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

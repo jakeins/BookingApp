@@ -1,12 +1,10 @@
-﻿using BookingApp.Data;
-using BookingApp.Data.Models;
+﻿using BookingApp.Data.Models;
 using BookingApp.Exceptions;
-using BookingApp.Repositories;
+using BookingApp.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace BookingApp.Services

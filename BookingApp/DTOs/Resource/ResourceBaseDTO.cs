@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookingApp.DTOs
+namespace BookingApp.DTOs.Resource
 {
     /// <summary>
     /// Suitable for writing basic properties. No ID.

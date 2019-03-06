@@ -19,6 +19,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using BookingApp.Helpers;
 using BookingApp.Services.Interfaces;
+using BookingApp.Repositories.Interfaces;
 
 namespace BookingApp
 {
