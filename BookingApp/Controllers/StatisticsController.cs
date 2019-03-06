@@ -17,13 +17,11 @@ namespace BookingApp.Controllers
     [Authorize(Roles = RoleTypes.Admin)]
     public class StatisticsController : EntityControllerBase
     {
-        readonly IResourcesService resourcesService;
         readonly IStatisticsService statisticsService;
         readonly IMapper dtoMapper;
         
-        public StatisticsController(IResourcesService service, IStatisticsService statisticsService)
+        public StatisticsController(IStatisticsService statisticsService)
         {
-            resourcesService = service;
             this.statisticsService = statisticsService;
             dtoMapper = new Mapper(new MapperConfiguration(cfg =>
             {
