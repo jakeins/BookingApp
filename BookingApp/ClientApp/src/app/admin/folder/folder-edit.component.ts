@@ -34,6 +34,7 @@ export class FolderEditComponent implements OnInit {
     if (!this.IsCreate) {
       this.folderService.getFolder(this.folderId).subscribe((folder: Folder) => {
         if (folder.parentFolderId == undefined) folder.parentFolderId = 0;
+        if (folder.defaultRuleId == undefined) folder.defaultRuleId = 1;
         this.newFolder = folder;
       });
     }
@@ -42,6 +43,13 @@ export class FolderEditComponent implements OnInit {
 
     this.folderService.getList().subscribe((folders: Folder[]) => {
       folders.unshift(new Folder("Root", null, null, false, 0));
+      let fId = this.folderId;
+      folders.forEach(function (item, index, object) {
+        if (item.id == fId) {
+          object.splice(index, 1);
+        }
+      }, fId);
+      
       this.folders = folders;
     });
   }
@@ -79,6 +87,7 @@ export class FolderEditComponent implements OnInit {
     this.newFolder.id = this.folderId;
     this.folderService.updateFolder(this.newFolder)
       .subscribe(result => {
+        if (this.newFolder.parentFolderId == undefined) this.newFolder.parentFolderId = 0;
         this.apiError = "";
         this.flashMessage = "You succesfull updated Folder";
       }, error => this.handleError(error));
@@ -100,7 +109,6 @@ export class FolderEditComponent implements OnInit {
   }
 
   handleError(error: any) {
-    console.log(error);
     this.apiError = error['status'];
 
     if (error['error'] != undefined) {
