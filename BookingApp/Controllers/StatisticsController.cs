@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BookingApp.Services;
 using BookingApp.Services.Interfaces;
-using BookingApp.Data.Models;
 using BookingApp.Entities.Statistics;
 using BookingApp.DTOs;
 using BookingApp.Helpers;
@@ -23,8 +20,6 @@ namespace BookingApp.Controllers
         readonly IResourcesService resourcesService;
         readonly IStatisticsService statisticsService;
         readonly IMapper dtoMapper;
-
-        IEnumerable<Resource> resources;
         
         public StatisticsController(IResourcesService service, IStatisticsService statisticsService)
         {
@@ -32,7 +27,8 @@ namespace BookingApp.Controllers
             this.statisticsService = statisticsService;
             dtoMapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<BookingsStats, BookingStatsDTO>();                
+                cfg.CreateMap<BookingsStats, BookingStatsDTO>();
+                cfg.CreateMap<ResourceStats, ResourceStatsDTO>();
             }));
         }
 
@@ -95,46 +91,29 @@ namespace BookingApp.Controllers
         [ProducesResponseType(401)]        
         public async Task<IActionResult> ResourcesUsage()
         {
-            resources = await resourcesService.ListIncludingBookingsAndRules();
+            List<ResourceStatsDTO> dTOs = new List<ResourceStatsDTO>();
 
-            List<ResourceStatsDTO> dTOs = new List<ResourceStatsDTO>();            
+            IEnumerable<ResourceStats> resourceStats = await statisticsService.GetResourceStats();
 
-            foreach(var resource in resources)
+            foreach(var item in resourceStats)
             {
-                ResourceStatsDTO dTO = new ResourceStatsDTO();
-                List<long> timeSpansinTicks = new List<long>();
-                double cancellations=0;
-
-                foreach (var booking in resource.Bookings)
-                {
-                    if(booking.TerminationTime==null||booking.TerminationTime>booking.StartTime)
-                    {
-                        timeSpansinTicks.Add((booking.EndTime - booking.StartTime).Ticks);
-                    }
-                    else
-                    {
-                        cancellations++;
-                    }
-                }
-                
-                long longAverageTicks = (long)timeSpansinTicks.Average();
-                long minTicks = timeSpansinTicks.Min();
-                long maxTicks = timeSpansinTicks.Max();
-                long modeTicks = timeSpansinTicks.GroupBy(n => n).OrderByDescending(g => g.Count()).Select(g => g.Key).FirstOrDefault();
-
-                long maxRuleTime = new TimeSpan(0, resource.Rule.MaxTime.GetValueOrDefault(),0).Ticks;
-
-                dTO.Title = resource.Title;
-                dTO.AverageTime = new TimeSpan(longAverageTicks);
-                dTO.MinTime = new TimeSpan(minTicks);
-                dTO.MaxTime = new TimeSpan(maxTicks);
-                dTO.ModeTime = new TimeSpan(modeTicks);
-                dTO.CancellationRate = cancellations / resource.Bookings.Count();
-                dTO.AverageUsageRate = (double)longAverageTicks / maxRuleTime;
-                dTOs.Add(dTO);
+                dTOs.Add(dtoMapper.Map<ResourceStatsDTO>(item));
             }
 
             return Ok(dTOs);
+        }
+
+        [HttpGet("resources/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> ResourcesUsage([FromRoute] int id)
+        {   
+            ResourceStats resourceStats = await statisticsService.GetResourceStats(id);
+
+            ResourceStatsDTO dTO = dtoMapper.Map<ResourceStatsDTO>(resourceStats);
+
+            return Ok(dTO);
         }
     }
 }

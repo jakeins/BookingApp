@@ -16,7 +16,7 @@ namespace BookingApp.Services.Interfaces
 
         Task<BookingsStats> GetBookingsCompletions(DateTime start, DateTime end, string interval, int[] resourcesIDs);
 
-        Task<ResourceStats> GetResourceStats();
+        Task<IEnumerable<ResourceStats>> GetResourceStats();
 
         Task<ResourceStats> GetResourceStats(int resourceID);
     }

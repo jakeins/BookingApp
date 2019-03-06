@@ -25,7 +25,7 @@ namespace BookingApp.Repositories
         
         Task<IEnumerable<Resource>> ListIncludingBookingsAndRules();
 
-        Task<IEnumerable<Resource>> GetIncludingBookingsAndRules(int resourceID);
+        Task<Resource> GetIncludingBookingsAndRules(int resourceID);
 
         #endregion
     }

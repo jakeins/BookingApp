@@ -53,14 +53,18 @@ namespace BookingApp.Services
 
         }
 
-        public Task<ResourceStats> GetResourceStats()
+        public async Task<IEnumerable<ResourceStats>> GetResourceStats()
         {
-            throw new NotImplementedException();
-        }
+            IEnumerable<Resource> resources = await resourcesRepository.ListIncludingBookingsAndRules();
+            
+            return GetResourceStatsCollection(resources);
+        }       
 
-        public Task<ResourceStats> GetResourceStats(int resourceID)
+        public async Task<ResourceStats> GetResourceStats(int resourceID)
         {
-            throw new NotImplementedException();
+            Resource resource = await resourcesRepository.GetIncludingBookingsAndRules(resourceID);
+
+            return GetSpecificResourceStats(resource);
         }
 
         #region Helpers
@@ -92,7 +96,85 @@ namespace BookingApp.Services
 
             return new BookingsStats(type, start, end, interval, intervalsValues, all, bookingsOfResource);
         }
-        
+
+        private List<ResourceStats> GetResourceStatsCollection(IEnumerable<Resource> resources)
+        {
+            List<ResourceStats> statsCollection = new List<ResourceStats>();
+            foreach (var resource in resources)
+            {
+                ResourceStats stats = new ResourceStats();
+                List<long> timeSpansinTicks = new List<long>();
+                double cancellations = 0;
+
+                foreach (var booking in resource.Bookings)
+                {
+                    if (booking.TerminationTime == null || booking.TerminationTime > booking.StartTime)
+                    {
+                        timeSpansinTicks.Add((booking.EndTime - booking.StartTime).Ticks);
+                    }
+                    else
+                    {
+                        cancellations++;
+                    }
+                }
+
+                long longAverageTicks = (long)timeSpansinTicks.Average();
+                long minTicks = timeSpansinTicks.Min();
+                long maxTicks = timeSpansinTicks.Max();
+                long modeTicks = timeSpansinTicks.GroupBy(n => n).OrderByDescending(g => g.Count()).Select(g => g.Key).FirstOrDefault();
+
+                long maxRuleTime = new TimeSpan(0, resource.Rule.MaxTime.GetValueOrDefault(), 0).Ticks;
+
+                stats.ResourceId = resource.Id;
+                stats.Title = resource.Title;
+                stats.AverageTime = new TimeSpan(longAverageTicks);
+                stats.MinTime = new TimeSpan(minTicks);
+                stats.MaxTime = new TimeSpan(maxTicks);
+                stats.ModeTime = new TimeSpan(modeTicks);
+                stats.CancellationRate = cancellations / resource.Bookings.Count();
+                stats.AverageUsageRate = (double)longAverageTicks / maxRuleTime;
+                statsCollection.Add(stats);
+            }
+            return statsCollection;
+        }
+
+        private ResourceStats GetSpecificResourceStats(Resource resource)
+        {            
+            ResourceStats stats = new ResourceStats();
+            List<long> timeSpansinTicks = new List<long>();
+            double cancellations = 0;
+
+            foreach (var booking in resource.Bookings)
+            {
+                if (booking.TerminationTime == null || booking.TerminationTime > booking.StartTime)
+                {
+                    timeSpansinTicks.Add((booking.EndTime - booking.StartTime).Ticks);
+                }
+                else
+                {
+                    cancellations++;
+                }
+            }
+
+            long longAverageTicks = (long)timeSpansinTicks.Average();
+            long minTicks = timeSpansinTicks.Min();
+            long maxTicks = timeSpansinTicks.Max();
+            long modeTicks = timeSpansinTicks.GroupBy(n => n).OrderByDescending(g => g.Count()).Select(g => g.Key).FirstOrDefault();
+
+            long maxRuleTime = new TimeSpan(0, resource.Rule.MaxTime.GetValueOrDefault(), 0).Ticks;
+
+            stats.ResourceId = resource.Id;
+            stats.Title = resource.Title;
+            stats.AverageTime = new TimeSpan(longAverageTicks);
+            stats.MinTime = new TimeSpan(minTicks);
+            stats.MaxTime = new TimeSpan(maxTicks);
+            stats.ModeTime = new TimeSpan(modeTicks);
+            stats.CancellationRate = cancellations / resource.Bookings.Count();
+            stats.AverageUsageRate = (double)longAverageTicks / maxRuleTime;
+
+            return stats;
+        }
+
         private DateTime GetBookingDateByType(Booking booking, string type)
         {
             switch(type)
