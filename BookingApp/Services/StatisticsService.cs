@@ -18,7 +18,7 @@ namespace BookingApp.Services
             bookingsRepository = bookingRepo;
         }
 
-        public async Task<BookingsStats> GetBookingsCancellations(DateTime start, DateTime end, string interval, params int[] resourcesIDs)
+        public async Task<BookingsStats> GetBookingsCancellations(DateTime start, DateTime end, string interval, int[] resourcesIDs)
         {
             IEnumerable<Booking> bookings = await bookingsRepository.GetListAsync();
             IEnumerable<Booking> cancelledbookings = 
@@ -26,7 +26,7 @@ namespace BookingApp.Services
             return GetBookingStats("cancellation", cancelledbookings, start, end, interval, resourcesIDs);
         }
 
-        public async Task<BookingsStats> GetBookingsCompletions(DateTime start, DateTime end, string interval, params int[] resourcesIDs)
+        public async Task<BookingsStats> GetBookingsCompletions(DateTime start, DateTime end, string interval, int[] resourcesIDs)
         {
             IEnumerable<Booking> bookings = await bookingsRepository.GetListAsync();
             IEnumerable<Booking> completedbookings =
@@ -34,7 +34,7 @@ namespace BookingApp.Services
             return GetBookingStats("completion", completedbookings, start, end, interval, resourcesIDs);
         }
 
-        public async Task<BookingsStats> GetBookingsCreations(DateTime start, DateTime end, string interval, params int[] resourcesIDs)
+        public async Task<BookingsStats> GetBookingsCreations(DateTime start, DateTime end, string interval, int[] resourcesIDs)
         {
             IEnumerable<Booking> bookings = await bookingsRepository.GetListAsync();
             IEnumerable<Booking> createdbookings =
@@ -42,7 +42,7 @@ namespace BookingApp.Services
             return GetBookingStats("creation", createdbookings, start, end, interval, resourcesIDs);
         }
 
-        public async Task<BookingsStats> GetBookingsTerminations(DateTime start, DateTime end, string interval, params int[] resourcesIDs)
+        public async Task<BookingsStats> GetBookingsTerminations(DateTime start, DateTime end, string interval, int[] resourcesIDs)
         {
             IEnumerable<Booking> bookings = await bookingsRepository.GetListAsync();
             IEnumerable<Booking> terminatedbookings =
@@ -55,7 +55,7 @@ namespace BookingApp.Services
 
         private BookingsStats GetBookingStats(string type, IEnumerable<Booking> bookings,DateTime start,DateTime end,string interval, int[] ids)
         {
-            int intervalsNumber = GetIntervalsNumber(start, end, interval);
+            int intervalsNumber = GetIntervalsNumber(start, end, interval) + 1;// adding 1 to include end
             DateTime[] intervalsValues = GetIntervalValues(start, interval, intervalsNumber);
             int[] all = new int[intervalsNumber];
             Dictionary<int, int[]> bookingsOfResource = new Dictionary<int, int[]>();
@@ -64,7 +64,7 @@ namespace BookingApp.Services
             {
                 int intervalIndex = GetIntervalsNumber(start, GetBookingDateByType(booking, type),interval);
                 all[intervalIndex]++;
-                if (ids == null || ids.Contains(booking.ResourceId))
+                if (ids.Length==0 || ids.Contains(booking.ResourceId))
                 {
                     if (bookingsOfResource.ContainsKey(booking.ResourceId))
                     {

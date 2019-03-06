@@ -8,12 +8,12 @@ namespace BookingApp.Services.Interfaces
 {
     public interface IStatisticsService
     {
-        Task<BookingsStats> GetBookingsCreations(DateTime start, DateTime end, string interval, params int[] resourcesIDs);
+        Task<BookingsStats> GetBookingsCreations(DateTime start, DateTime end, string interval, int[] resourcesIDs);
 
-        Task<BookingsStats> GetBookingsCancellations(DateTime start, DateTime end, string interval, params int[] resourcesIDs);
+        Task<BookingsStats> GetBookingsCancellations(DateTime start, DateTime end, string interval, int[] resourcesIDs);
 
-        Task<BookingsStats> GetBookingsTerminations(DateTime start, DateTime end, string interval, params int[] resourcesIDs);
+        Task<BookingsStats> GetBookingsTerminations(DateTime start, DateTime end, string interval, int[] resourcesIDs);
 
-        Task<BookingsStats> GetBookingsCompletions(DateTime start, DateTime end, string interval, params int[] resourcesIDs);
+        Task<BookingsStats> GetBookingsCompletions(DateTime start, DateTime end, string interval, int[] resourcesIDs);
     }
 }

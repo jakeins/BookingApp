@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BookingApp.Services;
+using BookingApp.Services.Interfaces;
 using BookingApp.Data.Models;
+using BookingApp.Entities.Statistics;
 using BookingApp.DTOs;
 using BookingApp.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace BookingApp.Controllers
 {
@@ -18,14 +21,73 @@ namespace BookingApp.Controllers
     public class StatisticsController : EntityControllerBase
     {
         readonly IResourcesService resourcesService;
+        readonly IStatisticsService statisticsService;
+        readonly IMapper dtoMapper;
 
         IEnumerable<Resource> resources;
         
-        public StatisticsController(IResourcesService service)
+        public StatisticsController(IResourcesService service, IStatisticsService statisticsService)
         {
-            resourcesService = service;            
+            resourcesService = service;
+            this.statisticsService = statisticsService;
+            dtoMapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<BookingsStats, BookingStatsDTO>();                
+            }));
         }
-        
+
+        [HttpGet("bookings-creations")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> BookingsCreations([FromQuery] DateTime? startTime,[FromQuery] DateTime? endTime,[FromQuery] string interval,[FromQuery] int[] resourcesIDs)
+        {
+            DateTime start = startTime ?? DateTime.Now.AddDays(-7);
+            DateTime end = endTime ?? DateTime.Now;
+            BookingsStats stats = await statisticsService.GetBookingsCreations(start, end, interval, resourcesIDs);
+            BookingStatsDTO dto = dtoMapper.Map<BookingStatsDTO>(stats);
+            return Ok(dto);
+        }
+
+        [HttpGet("bookings-cancellations")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> BookingsCancellations([FromQuery] DateTime? startTime, [FromQuery] DateTime? endTime, [FromQuery] string interval, [FromQuery] int[] resourcesIDs)
+        {
+            DateTime start = startTime ?? DateTime.Now.AddDays(-7);
+            DateTime end = endTime ?? DateTime.Now;
+            BookingsStats stats = await statisticsService.GetBookingsCancellations(start, end, interval, resourcesIDs);
+            BookingStatsDTO dto = dtoMapper.Map<BookingStatsDTO>(stats);
+            return Ok(dto);
+        }
+
+        [HttpGet("bookings-terminations")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> BookingsTerminations([FromQuery] DateTime? startTime, [FromQuery] DateTime? endTime, [FromQuery] string interval, [FromQuery] int[] resourcesIDs)
+        {
+            DateTime start = startTime ?? DateTime.Now.AddDays(-7);
+            DateTime end = endTime ?? DateTime.Now;
+            BookingsStats stats = await statisticsService.GetBookingsTerminations(start, end, interval, resourcesIDs);
+            BookingStatsDTO dto = dtoMapper.Map<BookingStatsDTO>(stats);
+            return Ok(dto);
+        }
+
+        [HttpGet("bookings-completions")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> BookingsCompletions([FromQuery] DateTime? startTime, [FromQuery] DateTime? endTime, [FromQuery] string interval, [FromQuery] int[] resourcesIDs)
+        {
+            DateTime start = startTime ?? DateTime.Now.AddDays(-7);
+            DateTime end = endTime ?? DateTime.Now;
+            BookingsStats stats = await statisticsService.GetBookingsCompletions(start, end, interval, resourcesIDs);
+            BookingStatsDTO dto = dtoMapper.Map<BookingStatsDTO>(stats);
+            return Ok(dto);
+        }
+
 
         [HttpGet("resources")]
         [ProducesResponseType(200)]
