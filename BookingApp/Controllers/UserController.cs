@@ -86,7 +86,7 @@ namespace BookingApp.Controllers
                 return BadRequest("Can not get information about this user");
         }
 
-        //[Authorize(Roles = RoleTypes.User)]
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("api/users")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -95,7 +95,7 @@ namespace BookingApp.Controllers
             return new OkObjectResult(users);
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpDelete("api/user/{userId}")]
         public async Task<IActionResult> DeleteUserById([FromRoute] string userId)
         {
@@ -120,36 +120,49 @@ namespace BookingApp.Controllers
                 return BadRequest("Can not update this user");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}/roles")]
         public async Task<IActionResult> GetUserRoleById([FromRoute]string userId)
         {
-            var userRoles = await userService.GetUserRolesById(userId);
-            return Ok(userRoles);
+            if (UserId == userId || IsAdmin)
+            {
+                var userRoles = await userService.GetUserRolesById(userId);
+                return new OkObjectResult(userRoles);
+            }
+            else
+                return BadRequest("Can not get roles for this user");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}/resources")]
         public async Task<IActionResult> GetResources([FromRoute]string userId)
         {
-            var resources = await resourcesService.ListByAssociatedUser(userId);
-            var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(resources);
-            return Ok(userResources);
+            if (UserId == userId || IsAdmin)
+            {
+                var resources = await resourcesService.ListByAssociatedUser(userId);
+                var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(resources);
+                return new OkObjectResult(userResources);
+            }
+            else
+                return BadRequest("Can not get resource for this user");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpPut("api/user/{userId}/change-password")]
         public async Task<IActionResult> ChangePassword([FromBody]UserPasswordChangeDTO userDTO, [FromRoute]string userId)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if (UserId == userId)
             {
                 await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
-                return Ok("Password changed");
+                return new OkObjectResult("Password changed");
             }
-            return BadRequest(ModelState);
+            else
+                return BadRequest("Can not change for this user");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/add-role")]
         public async Task<IActionResult> AddRole([FromRoute]string userId, [FromBody]UserRoleDto roleDto)
         {
@@ -157,6 +170,7 @@ namespace BookingApp.Controllers
             return Ok("Role added");
         }
 
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/remove-role")]
         public async Task<IActionResult> RemoveRole([FromRoute]string userId, [FromBody]UserRoleDto roleDto)
         {
@@ -164,6 +178,7 @@ namespace BookingApp.Controllers
             return Ok("Role removed");
         }
 
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/approval")]
         public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody]UserApprovalDto userApprovalDto)
         {
@@ -171,6 +186,7 @@ namespace BookingApp.Controllers
             return Ok("User approved");
         }
 
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/blocking")]
         public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]UserBlockingDto userBlockingDTO)
         {
@@ -178,15 +194,20 @@ namespace BookingApp.Controllers
             return Ok("User blocked");
         }
 
+        [Authorize(Roles = RoleTypes.User)]
         [HttpPut("api/user/{userId}/reset-password")]
         public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if (UserId == userId)
             {
+          
                 await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
-                return Ok();
-            }
-            return BadRequest(ModelState);
+                return new OkObjectResult("Password have been reset");
+            }    
+            else
+                return BadRequest("Can not reset password for this user");
         }
 
         #region Bookings
