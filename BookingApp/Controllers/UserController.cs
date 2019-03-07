@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.Exceptions;
 using BookingApp.Helpers;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 namespace BookingApp.Controllers
 {
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : EntityControllerBase
     {
         private readonly IUserService userService;
         private readonly IMapper mapper;
@@ -35,50 +36,57 @@ namespace BookingApp.Controllers
             }));
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        
         [HttpPost("api/user")]
         public async Task<IActionResult> CreateUser([FromBody] AuthRegisterDto user)
         {
-            if (ModelState.IsValid)
-            {
-                ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
-                await userService.CreateUser(appUser, user.Password);
-                return Ok("User created");
-            }
-            return BadRequest("Error valid");
+            if (!ModelState.IsValid) 
+                return BadRequest(ModelState);
+            ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
+            await userService.CreateUser(appUser, user.Password);
+            return Ok("User created");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPost("api/user/create-admin")]
         public async Task<IActionResult> CreateAdmin([FromBody] AuthRegisterDto user)
         {
-            if (ModelState.IsValid)
-            {
-                ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
-                await userService.CreateUser(appUser, user.Password);
-                return Ok("User created");
-            }
-            return BadRequest("Error valid");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
+            await userService.CreateAdmin(appUser, user.Password);
+            return Ok("User created");       
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}")]
         public async Task<IActionResult> GetUserById([FromRoute]string userId)
         {
-            ApplicationUser appuser = await userService.GetUserById(userId);
-            UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
-            return new OkObjectResult(user);
+            if (UserId == userId || IsAdmin)
+            {
+                ApplicationUser appuser = await userService.GetUserById(userId);
+                UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
+                return new OkObjectResult(user);
+            }
+            else
+                return BadRequest("Can not get information about this user");
         }
 
+        [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/email/{userEmail}")]
         public async Task<IActionResult> GetUserByEmail([FromRoute]string userEmail)
         {
-            ApplicationUser appuser = await userService.GetUserByEmail(userEmail);
-            UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
-            return new OkObjectResult(user);
+            ApplicationUser requestUser = await userService.GetUserByEmail(userEmail);
+            if (UserId == requestUser.Id || IsAdmin)
+            {
+                UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(requestUser);
+                return new OkObjectResult(user);
+            }
+            else
+                return BadRequest("Can not get information about this user");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpGet("api/users")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -87,51 +95,71 @@ namespace BookingApp.Controllers
             return new OkObjectResult(users);
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpDelete("api/user/{userId}")]
         public async Task<IActionResult> DeleteUserById([FromRoute] string userId)
         {
+            //TODO: Delete all user bookings
+            await userService.RemoveAllRolesFromUser(userId);
             await userService.DeleteUser(userId);
             return new OkObjectResult("User deleted");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpPut("api/user/{userId}")]
         public async Task<IActionResult> UpdateUser([FromBody]UserUpdateDTO user, [FromRoute]string userId)
         {
-            ApplicationUser appuser = await userService.GetUserById(userId);
-            mapper.Map<UserUpdateDTO, ApplicationUser>(user, appuser);
-            await userService.UpdateUser(appuser);
-            return new OkObjectResult("User updated");
+            if (UserId == userId || IsAdmin)
+            {
+                ApplicationUser appuser = await userService.GetUserById(userId);
+                mapper.Map<UserUpdateDTO, ApplicationUser>(user, appuser);
+                await userService.UpdateUser(appuser);
+                return new OkObjectResult("User updated");
+            }
+            else
+                return BadRequest("Can not update this user");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}/roles")]
         public async Task<IActionResult> GetUserRoleById([FromRoute]string userId)
         {
-            var userRoles = await userService.GetUserRolesById(userId);
-            return Ok(userRoles);
+            if (UserId == userId || IsAdmin)
+            {
+                var userRoles = await userService.GetUserRolesById(userId);
+                return new OkObjectResult(userRoles);
+            }
+            else
+                return BadRequest("Can not get roles for this user");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}/resources")]
         public async Task<IActionResult> GetResources([FromRoute]string userId)
         {
-            var resources = await resourcesService.ListByAssociatedUser(userId);
-            var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(resources);
-            return Ok(userResources);
+            if (UserId == userId || IsAdmin)
+            {
+                var resources = await resourcesService.ListByAssociatedUser(userId);
+                var userResources = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(resources);
+                return new OkObjectResult(userResources);
+            }
+            else
+                return BadRequest("Can not get resource for this user");
         }
 
-        //[Authorize(Roles = RoleTypes.Admin)]
+        [Authorize(Roles = RoleTypes.User)]
         [HttpPut("api/user/{userId}/change-password")]
         public async Task<IActionResult> ChangePassword([FromBody]UserPasswordChangeDTO userDTO, [FromRoute]string userId)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if (UserId == userId)
             {
                 await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
-                return Ok("Password changed");
+                return new OkObjectResult("Password changed");
             }
-            return BadRequest("Model is not valid");
+            else
+                return BadRequest("Can not change for this user");
         }
 
         [Authorize(Roles = RoleTypes.Admin)]
@@ -142,6 +170,7 @@ namespace BookingApp.Controllers
             return Ok("Role added");
         }
 
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/remove-role")]
         public async Task<IActionResult> RemoveRole([FromRoute]string userId, [FromBody]UserRoleDto roleDto)
         {
@@ -149,6 +178,7 @@ namespace BookingApp.Controllers
             return Ok("Role removed");
         }
 
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/approval")]
         public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody]UserApprovalDto userApprovalDto)
         {
@@ -156,6 +186,7 @@ namespace BookingApp.Controllers
             return Ok("User approved");
         }
 
+        [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/blocking")]
         public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]UserBlockingDto userBlockingDTO)
         {
@@ -163,15 +194,20 @@ namespace BookingApp.Controllers
             return Ok("User blocked");
         }
 
+        [Authorize(Roles = RoleTypes.User)]
         [HttpPut("api/user/{userId}/reset-password")]
         public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if (UserId == userId)
             {
+          
                 await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
-                return Ok();
-            }
-            return BadRequest("Model is not valid");
+                return new OkObjectResult("Password have been reset");
+            }    
+            else
+                return BadRequest("Can not reset password for this user");
         }
 
         #region Bookings

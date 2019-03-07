@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using BookingApp.Helpers;
+using BookingApp.Services.Interfaces;
 
 namespace BookingApp
 {
@@ -46,6 +47,7 @@ namespace BookingApp
             services.AddScoped<IBookingsRepository, BookingsRepository>();
 
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<ISmtpService, GoogleSmtpService>();
             services.AddScoped<IMessageService, MailMessageService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
@@ -55,6 +57,8 @@ namespace BookingApp
 
             services.AddScoped<IRuleService, RuleService>();
             services.AddScoped<IRuleRepository, RuleRepository>();
+
+            services.AddScoped<IStatisticsService, StatisticsService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
