@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BookingApp.Controllers.Bases;
 
 namespace BookingApp.Controllers
 {

@@ -20,13 +20,16 @@ namespace BookingApp.Services.Interfaces
         Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user);
         Task<ApplicationUser> GetUserByEmail(string email);
         Task<ApplicationUser> GetUserById(string id);
+        Task<ApplicationUser> GetUserByName(string userName);
         Task<IList<string>> GetUserRoles(ApplicationUser user);
         Task<IList<string>> GetUserRolesById(string userId);
         Task<IEnumerable<ApplicationUser>> GetUsersList();
         Task<bool> IsInRoleAsync(ApplicationUser user, string role);
+        Task<bool> IsEmailExist(string email);
         Task RemoveUserRoleAsync(string userId, string role);
         Task RemoveUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles);
         Task ResetUserPassword(string userId, string token, string newPassword);
+        Task RemoveAllRolesFromUser(string userId);
         Task UpdateUser(ApplicationUser user);
         Task UserApproval(string userId, bool IsApproved);
         Task UserBlocking(string userId, bool IsBlocked);

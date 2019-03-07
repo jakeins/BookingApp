@@ -16,6 +16,7 @@ namespace BookingApp.Repositories.Interfaces
         Task DeleteAsync(ApplicationUser user);
         Task<string> GeneratePasswordResetToken(ApplicationUser user);
         Task<ApplicationUser> GetUserByEmailAsync(string email);
+        Task<ApplicationUser> GetUserByUserName(string userName);
         Task<IList<string>> GetUserRoles(ApplicationUser user);
         Task<IList<string>> GetUserRolesById(string userId);
         Task<bool> IsInRole(ApplicationUser user, string role);
