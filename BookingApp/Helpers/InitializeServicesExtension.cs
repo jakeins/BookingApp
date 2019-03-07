@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BookingApp.Helpers
 {
-    public static class InitializeSerivicesExtension
+    public static class InitializeServicesExtension
     {
         public static void InitializeServices(this IServiceCollection services)
         {
