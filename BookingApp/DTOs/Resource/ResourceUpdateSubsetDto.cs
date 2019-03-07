@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BookingApp.DTOs
+namespace BookingApp.DTOs.Resource
 {
     /// <summary>
     /// Helper object, lists all update properties.

@@ -1,5 +1,7 @@
 ﻿using BookingApp.Data.Models;
 using BookingApp.Repositories;
+using BookingApp.Repositories.Interfaces;
+using BookingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -8,31 +10,7 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-    public interface IUserService
-    {
-        Task AddUserRoleAsync(string userId, string role);
-        Task AddUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles);
-        Task ChangePassword(string userId, string currentpassword, string newpassword);
-        Task<bool> CheckPassword(ApplicationUser user, string password);
-        Task CreateAdmin(ApplicationUser user, string password);
-        Task CreateUser(ApplicationUser user);
-        Task CreateUser(ApplicationUser user, string password);
-        Task DeleteUser(ApplicationUser user);
-        Task DeleteUser(string id);
-        Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user);
-        Task<ApplicationUser> GetUserByEmail(string email);
-        Task<ApplicationUser> GetUserById(string id);
-        Task<IList<string>> GetUserRoles(ApplicationUser user);
-        Task<IList<string>> GetUserRolesById(string userId);
-        Task<IEnumerable<ApplicationUser>> GetUsersList();
-        Task<bool> IsInRoleAsync(ApplicationUser user, string role);
-        Task RemoveUserRoleAsync(string userId, string role);
-        Task RemoveUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles);
-        Task ResetUserPassword(string userId, string token, string newPassword);
-        Task UpdateUser(ApplicationUser user);
-        Task UserApproval(string userId, bool IsApproved);
-        Task UserBlocking(string userId, bool IsBlocked);
-    }
+   
 
     public class UserService : IUserService
     {
@@ -77,6 +55,11 @@ namespace BookingApp.Services
         public async Task<ApplicationUser> GetUserById(string id)
         {
             return await userRepository.GetAsync(id);
+        }
+
+        public async Task<ApplicationUser> GetUserByName(string userName)
+        {
+            return await userRepository.GetUserByUserName(userName);
         }
 
         public async Task<ApplicationUser> GetUserByEmail(string email)
@@ -160,6 +143,26 @@ namespace BookingApp.Services
             ApplicationUser user = await GetUserById(userId);
             user.IsBlocked = IsBlocked;
             await userRepository.UpdateAsync(user);
+        }
+
+        public async Task RemoveAllRolesFromUser(string userId)
+        {
+           IList<string>  list = await GetUserRolesById(userId);
+           if(list != null)
+           {
+                foreach (var role in list)
+                {
+                  await  RemoveUserRoleAsync(userId, role);
+                }
+           }
+        }
+
+        public async Task<bool> IsEmailExist(string email)
+        {
+            if (await GetUserByEmail(email) != null)
+                return true;
+            else
+                return false;
         }
     }
 }

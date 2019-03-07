@@ -13,12 +13,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
 using BookingApp.Services;
-using BookingApp.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using BookingApp.Helpers;
-using BookingApp.Services.Interfaces;
 
 namespace BookingApp
 {
@@ -37,29 +35,7 @@ namespace BookingApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IResourcesService, ResourcesService>();
-            services.AddScoped<IResourcesRepository, ResourcesRepository>();
-
-            services.AddScoped<IFolderService, FolderService>();
-            services.AddScoped<FolderRepository>();
-
-            services.AddScoped<IBookingsService, BookingsService>();
-            services.AddScoped<IBookingsRepository, BookingsRepository>();
-
-            services.AddScoped<IJwtService, JwtService>();
-            services.AddScoped<ISmtpService, GoogleSmtpService>();
-            services.AddScoped<IMessageService, MailMessageService>();
-            services.AddScoped<INotificationService, NotificationService>();
-            services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
-
-            services.AddScoped<IUserService,UserService>();
-            services.AddScoped<IUserRepository,UserRepository>();
-
-            services.AddScoped<IRuleService, RuleService>();
-            services.AddScoped<IRuleRepository, RuleRepository>();
-
-            services.AddScoped<IStatisticsService, StatisticsService>();
-
+            services.InitializeServices();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDbContext<ApplicationDbContext>(options =>

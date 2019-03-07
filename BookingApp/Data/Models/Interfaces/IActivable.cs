@@ -1,4 +1,4 @@
-﻿namespace BookingApp.Data.Models
+﻿namespace BookingApp.Data.Models.Interfaces
 {
     /// <summary>
     /// Defines an object that exposes 3-state activation status.
