@@ -4,11 +4,11 @@ using BookingApp.DTOs;
 using BookingApp.Helpers;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using BookingApp.Controllers.Bases;
 
 namespace BookingApp.Controllers
 {
