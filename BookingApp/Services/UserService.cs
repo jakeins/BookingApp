@@ -57,6 +57,11 @@ namespace BookingApp.Services
             return await userRepository.GetAsync(id);
         }
 
+        public async Task<ApplicationUser> GetUserByName(string userName)
+        {
+            return await userRepository.GetUserByUserName(userName);
+        }
+
         public async Task<ApplicationUser> GetUserByEmail(string email)
         {
             return await userRepository.GetUserByEmailAsync(email);
@@ -138,6 +143,26 @@ namespace BookingApp.Services
             ApplicationUser user = await GetUserById(userId);
             user.IsBlocked = IsBlocked;
             await userRepository.UpdateAsync(user);
+        }
+
+        public async Task RemoveAllRolesFromUser(string userId)
+        {
+           IList<string>  list = await GetUserRolesById(userId);
+           if(list != null)
+           {
+                foreach (var role in list)
+                {
+                  await  RemoveUserRoleAsync(userId, role);
+                }
+           }
+        }
+
+        public async Task<bool> IsEmailExist(string email)
+        {
+            if (await GetUserByEmail(email) != null)
+                return true;
+            else
+                return false;
         }
     }
 }

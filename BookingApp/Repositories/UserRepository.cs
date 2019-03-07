@@ -30,6 +30,8 @@ namespace BookingApp.Services
 
         public async Task CreateAsync(ApplicationUser user, string password)
         {
+            if (userManager.FindByEmailAsync(user.Email) != null)
+                throw new UserException("User with this email already registered");
             IdentityResult result = await userManager.CreateAsync(user, password);
             if (!result.Succeeded)
             {
@@ -80,6 +82,19 @@ namespace BookingApp.Services
             if (applicationUser == null)
             {
                 throw new NullReferenceException("Can not find user with this email");
+            }
+            else
+            {
+                return applicationUser;
+            }
+        }
+
+        public async Task<ApplicationUser> GetUserByUserName(string userName)
+        {
+            ApplicationUser applicationUser = await userManager.FindByNameAsync(userName);
+            if (applicationUser == null)
+            {
+                throw new NullReferenceException("Can not find user with this UserName");
             }
             else
             {

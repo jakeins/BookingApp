@@ -12,6 +12,7 @@ import { FolderService } from './services/folder.service';
 import { ResourceService } from './services/resource.service';
 import { TokenInterceptor } from './services/token.interceptor';
 import { AccessTokenService } from './services/access-token.service';
+import { UserService } from './services/user.service';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { AccessTokenService } from './services/access-token.service';
     AuthService,
     AccessTokenService,
     FolderService,
+    UserService,
     ResourceService,
     {
       provide: HTTP_INTERCEPTORS,
