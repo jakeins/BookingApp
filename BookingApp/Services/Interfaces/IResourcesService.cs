@@ -32,5 +32,6 @@ namespace BookingApp.Services
         /// Lists all resources having specified parent tree group. 
         /// </summary>
         Task<IEnumerable<Resource>> ListByFolderKey(int folderId);
+       
     }
 }

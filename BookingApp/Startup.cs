@@ -58,6 +58,8 @@ namespace BookingApp
             services.AddScoped<IRuleService, RuleService>();
             services.AddScoped<IRuleRepository, RuleRepository>();
 
+            services.AddScoped<IStatisticsService, StatisticsService>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDbContext<ApplicationDbContext>(options =>
