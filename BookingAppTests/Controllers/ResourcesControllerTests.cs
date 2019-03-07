@@ -30,8 +30,9 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.ListActive()).ReturnsAsync(ResourceUtils.TestSet.Where(r => r.IsActive == true));
 
             var bookServiceMock = new Mock<IBookingsService>();
+            var mappServiceMock = new Mock<IMapperService>();
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
 
             var fakeResController = resControllerMock.Object;
@@ -57,6 +58,7 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.GetList()).ReturnsAsync(ResourceUtils.TestSet);
 
             var bookServiceMock = new Mock<IBookingsService>();
+            var mappServiceMock = new Mock<IMapperService>();
 
             var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
@@ -82,8 +84,9 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.ListActive()).ReturnsAsync(ResourceUtils.TestSet.Where(r=>r.IsActive == true));
 
             var bookServiceMock = new Mock<IBookingsService>();
+            var mappServiceMock = new Mock<IMapperService>();
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
 
             var fakeResController = resControllerMock.Object;
@@ -112,8 +115,9 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(isActive);
 
             var bookServiceMock = new Mock<IBookingsService>();
+            var mappServiceMock = new Mock<IMapperService>();
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
 
             var fakeResController = resControllerMock.Object;
@@ -135,15 +139,18 @@ namespace BookingAppTests.Controllers
             // Arrange
             var resServiceMock = new Mock<IResourcesService>();
             var bookServiceMock = new Mock<IBookingsService>();
+            var mappServiceMock = new Mock<IMapperService>();
+            mappServiceMock.Setup(service => service.Map<Resource>(It.IsAny<object>())).Returns(It.IsAny<Resource>());
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
             resControllerMock.SetupGet(mock => mock.BaseApiUrl).Returns(It.IsAny<string>());
 
             var fakeResController = resControllerMock.Object;
 
-            IMapper dtoMapper = new Mapper(new MapperConfiguration(cfg => { cfg.CreateMap<Resource, ResourceDetailedDto>(); }));
-            var dto = dtoMapper.Map<ResourceDetailedDto>(ResourceUtils.TestSet.First());
+            //IMapper dtoMapper = new Mapper(new MapperConfiguration(cfg => { cfg.CreateMap<Resource, ResourceDetailedDto>(); }));
+            var dto = new MapperService().Map<ResourceDetailedDto>(ResourceUtils.TestSet.First());
 
             // Act
             var actionResult = await fakeResController.Create(dto);
@@ -161,8 +168,9 @@ namespace BookingAppTests.Controllers
             // Arrange
             var resServiceMock = new Mock<IResourcesService>();
             var bookServiceMock = new Mock<IBookingsService>();
+            var mappServiceMock = new Mock<IMapperService>();
 
-            var subjectResController = new ResourcesController(resServiceMock.Object, bookServiceMock.Object);
+            var subjectResController = new ResourcesController(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object);
             subjectResController.ModelState.AddModelError("blah", "blah");
 
             // Act
@@ -181,8 +189,9 @@ namespace BookingAppTests.Controllers
             // Arrange
             var resServiceMock = new Mock<IResourcesService>();
             var bookServiceMock = new Mock<IBookingsService>();
+            var mappServiceMock = new Mock<IMapperService>();
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
             resControllerMock.SetupGet(mock => mock.BaseApiUrl).Returns(It.IsAny<string>());
 
@@ -206,8 +215,8 @@ namespace BookingAppTests.Controllers
             // Arrange
             var resServiceMock = new Mock<IResourcesService>();
             var bookServiceMock = new Mock<IBookingsService>();
-
-            var subjectResController = new ResourcesController(resServiceMock.Object, bookServiceMock.Object);
+            var mappServiceMock = new Mock<IMapperService>();
+            var subjectResController = new ResourcesController(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object);
             subjectResController.ModelState.AddModelError("blah", "blah");
 
             // Act
@@ -227,7 +236,8 @@ namespace BookingAppTests.Controllers
             var resServiceMock = new Mock<IResourcesService>();
             var bookServiceMock = new Mock<IBookingsService>();
 
-            var subjectResController = new ResourcesController(resServiceMock.Object, bookServiceMock.Object);
+            var mappServiceMock = new Mock<IMapperService>();
+            var subjectResController = new ResourcesController(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object);
 
             // Act
             var actionResult = await subjectResController.Delete(It.IsAny<int>());
@@ -254,7 +264,9 @@ namespace BookingAppTests.Controllers
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.OccupancyByResource(It.IsAny<int>())).ReturnsAsync(It.IsAny<double?>());
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var mappServiceMock = new Mock<IMapperService>();
+
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
 
             var fakeResController = resControllerMock.Object;
@@ -286,7 +298,9 @@ namespace BookingAppTests.Controllers
                 var bookServiceMock = new Mock<IBookingsService>();
                 bookServiceMock.Setup(service => service.OccupancyByResource(It.IsAny<int>())).ThrowsAsync(ex);
 
-                var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+                var mappServiceMock = new Mock<IMapperService>();
+
+                var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object, mappServiceMock.Object) { CallBase = true };
                 resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
 
                 var fakeResController = resControllerMock.Object;
@@ -335,7 +349,9 @@ namespace BookingAppTests.Controllers
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.OccupancyByResource(It.IsAny<int>())).ReturnsAsync(It.IsAny<int>());
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var mappServiceMock = new Mock<IMapperService>();
+
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
 
             var fakeResController = resControllerMock.Object;
@@ -365,7 +381,9 @@ namespace BookingAppTests.Controllers
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.OccupancyByResource(It.IsAny<int>())).ReturnsAsync(It.IsAny<int>());
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var mappServiceMock = new Mock<IMapperService>();
+
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
 
             var fakeResController = resControllerMock.Object;
@@ -396,7 +414,9 @@ namespace BookingAppTests.Controllers
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.OccupancyByResource(It.IsAny<int>())).ReturnsAsync(It.IsAny<double>());
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var mappServiceMock = new Mock<IMapperService>();
+
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
 
             var fakeResController = resControllerMock.Object;
@@ -430,7 +450,9 @@ namespace BookingAppTests.Controllers
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(BookingUtils.TestSet);
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var mappServiceMock = new Mock<IMapperService>();
+
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
             resControllerMock.SetupGet(mock => mock.IsUser).Returns(isUser);
             resControllerMock.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
@@ -461,7 +483,9 @@ namespace BookingAppTests.Controllers
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(BookingUtils.TestSet);
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var mappServiceMock = new Mock<IMapperService>();
+
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
             resControllerMock.SetupGet(mock => mock.IsUser).Returns(isUser);
             resControllerMock.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
@@ -488,7 +512,9 @@ namespace BookingAppTests.Controllers
             var bookServiceMock = new Mock<IBookingsService>();
             bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(BookingUtils.TestSet);
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var mappServiceMock = new Mock<IMapperService>();
+
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(false);
             resControllerMock.SetupGet(mock => mock.IsUser).Returns(true);
             resControllerMock.SetupGet(mock => mock.UserId).Returns(BookingUtils.SoleBookingCreator);
@@ -517,8 +543,9 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(isActive);
 
             var bookServiceMock = new Mock<IBookingsService>();
+            var mappServiceMock = new Mock<IMapperService>();
 
-            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object) { CallBase = true };
+            var resControllerMock = new Mock<ResourcesController>(resServiceMock.Object, bookServiceMock.Object, mappServiceMock.Object) { CallBase = true };
             resControllerMock.SetupGet(mock => mock.IsAdmin).Returns(isAdmin);
 
             var fakeResController = resControllerMock.Object;
