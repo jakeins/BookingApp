@@ -2,8 +2,10 @@
 using BookingApp.Controllers;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.DTOs.Resource;
 using BookingApp.Exceptions;
 using BookingApp.Services;
+using BookingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;

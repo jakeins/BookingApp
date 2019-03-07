@@ -1,6 +1,7 @@
 ﻿using BookingApp.Data.Models;
 using BookingApp.Repositories;
 using BookingApp.Services;
+using BookingApp.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Moq;

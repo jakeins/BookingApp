@@ -1,5 +1,6 @@
 ﻿using BookingApp.Data.Models;
 using BookingApp.Exceptions;
+using BookingApp.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

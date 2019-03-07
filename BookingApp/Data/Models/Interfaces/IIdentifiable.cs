@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BookingApp.Data.Models
+namespace BookingApp.Data.Models.Interfaces
 {
     /// <summary>
     /// Object that has id.

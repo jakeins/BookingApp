@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
+using BookingApp.Controllers.Bases;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.DTOs.Resource;
 using BookingApp.Helpers;
-using BookingApp.Services;
+using BookingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookingApp.Controllers
@@ -19,7 +20,7 @@ namespace BookingApp.Controllers
     {
         readonly IRuleService _ruleService;
         readonly IMapper mapper;
-        public virtual bool existsActive { get; set; }               
+        public virtual bool ExistsActive { get; set; }               
 
         public RuleController(IRuleService ruleService)
         {
@@ -85,8 +86,8 @@ namespace BookingApp.Controllers
             }
             else
             {
-                 existsActive = await _ruleService.GetActive(id);
-                if (!existsActive)
+                 ExistsActive = await _ruleService.GetActive(id);
+                if (!ExistsActive)
                     return BadRequest();
                 var rule = await _ruleService.Get(id);
                 var dtor = mapper.Map<RuleBasicDTO>(rule);

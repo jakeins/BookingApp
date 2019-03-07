@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BookingApp.Data.Models;
-using BookingApp.Services;
+using BookingApp.Services.Interfaces;
 using AutoMapper;
 using BookingApp.DTOs;
 using BookingApp.Exceptions;
@@ -10,6 +10,9 @@ using BookingApp.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Linq;
+using BookingApp.Services;
+using BookingApp.Controllers.Bases;
+using BookingApp.DTOs.Resource;
 
 namespace BookingApp.Controllers
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BookingApp.Services
+namespace BookingApp.Services.Interfaces
 {
     public interface IResourcesService
     {
