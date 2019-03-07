@@ -13,8 +13,8 @@ namespace BookingApp.Repositories
     /// <typeparam name="TUserModel">Type of the related user object.</typeparam>
     /// <typeparam name="TUserKey">Type of the primary id of the related user.</typeparam>
     public interface IActEntityRepository<TEntity, TEntityKey, TUserModel, TUserKey>
-        : IEntityRepository<TEntity, TEntityKey, TUserModel, TUserKey>
-        where TEntity : class, IEntity<TEntityKey, TUserModel, TUserKey>, IActivable
+        : ITrackEntityRepository<TEntity, TEntityKey, TUserModel, TUserKey>
+        where TEntity : class, ITrackable<TUserModel, TUserKey>, IActivable
         where TEntityKey : IEquatable<TEntityKey>
         where TUserModel : class
         where TUserKey : IEquatable<TUserKey>

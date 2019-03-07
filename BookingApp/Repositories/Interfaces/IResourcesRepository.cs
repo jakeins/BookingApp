@@ -19,5 +19,14 @@ namespace BookingApp.Repositories
         /// Lists all resources having specified parent tree group.
         /// </summary>
         Task<IEnumerable<Resource>> ListByFolderKeyAsync(int folderId);
+
+
+        #region MethodsForStatisticsController
+        
+        Task<IEnumerable<Resource>> ListIncludingBookingsAndRules();
+
+        Task<Resource> GetIncludingBookingsAndRules(int resourceID);
+
+        #endregion
     }
 }
