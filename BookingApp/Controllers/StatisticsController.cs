@@ -9,6 +9,7 @@ using BookingApp.DTOs;
 using BookingApp.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using BookingApp.Controllers.Bases;
 
 namespace BookingApp.Controllers
 {

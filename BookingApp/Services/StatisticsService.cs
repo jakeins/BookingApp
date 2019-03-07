@@ -6,6 +6,7 @@ using BookingApp.Data.Models;
 using BookingApp.Entities.Statistics;
 using BookingApp.Services.Interfaces;
 using BookingApp.Repositories;
+using BookingApp.Repositories.Interfaces;
 
 namespace BookingApp.Services
 {

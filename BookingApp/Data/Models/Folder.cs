@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BookingApp.Data.Models.Interfaces;
 using BookingApp.DTOs;
+using BookingApp.DTOs.Folder;
 
 namespace BookingApp.Data.Models
 {
