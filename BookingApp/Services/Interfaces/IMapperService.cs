@@ -10,11 +10,6 @@ namespace BookingApp.Services.Interfaces
         TDestination Map<TDestination>(object source);
 
         /// <summary>
-        /// Execute a mapping from the source object to the existing destination object. The source type is inferred from the source object.
-        /// </summary>
-        TDestination Map<TDestination>(object source, TDestination destination);
-
-        /// <summary>
         /// Execute a mapping from the source object to a new destination object.
         /// </summary>
         TDestination Map<TSource, TDestination>(TSource source);

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
-using BookingApp.DTOs.Resource;
 using BookingApp.Services.Interfaces;
 using System;
 
@@ -23,11 +22,6 @@ namespace BookingApp.Services
         /// Internal wrapper.
         /// </summary>
         public TDestination Map<TDestination>(object source) => (TDestination)Map(source, source.GetType(), typeof(TDestination));
-
-        /// <summary>
-        /// Internal wrapper.
-        /// </summary>
-        public TDestination Map<TDestination>(object source, TDestination destination) => (TDestination)Map(source, destination, source.GetType(), typeof(TDestination));
 
         /// <summary>
         /// Internal wrapper.
