@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.DTOs.Folder;
+using BookingApp.DTOs.Resource;
 using BookingApp.Services.Interfaces;
 using System;
 
@@ -12,9 +14,16 @@ namespace BookingApp.Services
 
         public MapperService()
         {
-            autoMapperInstance = new Mapper(new MapperConfiguration(cfg => {
-                cfg.ValidateInlineMaps = false;
+            autoMapperInstance = new Mapper(new MapperConfiguration(cfg => {              
+                cfg.CreateMap<Folder, FolderBaseDto>();
+                cfg.CreateMap<Folder, FolderMinimalDto>().ReverseMap();
+
+                cfg.CreateMap<Rule, RuleAdminDTO>();
+                cfg.CreateMap<Rule, RuleDetailedDTO>().ReverseMap();
+
                 cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap().ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
+                cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
+                cfg.CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
             }));
         }
 
