@@ -89,7 +89,7 @@ namespace BookingApp.Middlewares
             if (IsDevelopment)
             {
                 data = new DevelopmentExceptionInfo(exception.Message, exception.StackTrace);
-                logger.LogDebug($"Catched exception. Message: {exception.Message}. Stacktrace: {exception.StackTrace}");
+                logger.LogDebug($"Catched {exception.GetType()} exception. Message: {exception.Message}. Stacktrace: {exception.StackTrace}");
             }
             else
             {
