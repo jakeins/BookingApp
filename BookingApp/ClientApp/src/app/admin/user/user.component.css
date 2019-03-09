@@ -3,3 +3,22 @@ body {
 ul{
   list-style: none;
 }
+.fa-lock {
+  color: #FF3737!important;
+}
+.fa-lock:hover {
+    transform: scale(1.2);
+}
+.fa-lock-open:hover {
+  transform: scale(1.2);
+}
+.fa-lock-open {
+  color: #2acc56 !important;
+}
+.right
+{
+  float:right;
+  display:inline-block;
+  width:5px;
+}
+

@@ -50,7 +50,7 @@ namespace BookingApp.Services
 
         public async Task CreateAsync(ApplicationUser user, string password)
         {
-            if (userManager.FindByEmailAsync(user.Email) != null)
+            if (await userManager.FindByEmailAsync(user.Email) != null)
                 throw new UserException("User with this email already registered");
             IdentityResult result = await userManager.CreateAsync(user, password);
             if (!result.Succeeded)

@@ -1,5 +1,8 @@
 <ul>
   <li *ngFor="let user of users">
-    {{user.userName}}
+    <span>
+      {{user.userName}}
+      <i (click)="blockButton(user.id)" class="right" [ngClass]="user.isBlocked ? 'fas fa-lock' : 'fas fa-lock-open'"></i>
+    </span>
   </li>
 </ul>
