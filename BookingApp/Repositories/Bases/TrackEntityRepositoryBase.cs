@@ -1,13 +1,13 @@
 ﻿using BookingApp.Data;
-using BookingApp.Data.Models;
+using BookingApp.Data.Models.Interfaces;
+using BookingApp.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BookingApp.Repositories
+namespace BookingApp.Repositories.Bases
 {
     /// <summary>
     /// Base class for entity repository that uses EF.

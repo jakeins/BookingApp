@@ -1,6 +1,8 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
-using BookingApp.DTOs;
+using BookingApp.DTOs.Resource;
+using BookingApp.Repositories.Bases;
+using BookingApp.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;

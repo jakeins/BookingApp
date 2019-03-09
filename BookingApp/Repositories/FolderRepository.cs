@@ -1,13 +1,16 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
-using BookingApp.DTOs;
+using BookingApp.DTOs.Folder;
 using BookingApp.Exceptions;
+using BookingApp.Repositories.Bases;
+using BookingApp.Repositories.Interfaces;
 using System.Threading.Tasks;
 
 namespace BookingApp.Repositories
 {
-    public class FolderRepository 
-        : ActEntityRepositoryBase<Folder, int, ApplicationUser, string>
+    public class FolderRepository
+        : ActEntityRepositoryBase<Folder, int, ApplicationUser, string>, 
+        IFolderRepository
     {
         public FolderRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
