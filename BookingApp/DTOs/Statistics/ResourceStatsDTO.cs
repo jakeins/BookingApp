@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BookingApp.DTOs
+namespace BookingApp.DTOs.Statistics
 {
     public class ResourceStatsDTO
     {

@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using BookingApp.Services;
 using BookingApp.Services.Interfaces;
 using BookingApp.Entities.Statistics;
-using BookingApp.DTOs;
+using BookingApp.DTOs.Statistics;
 using BookingApp.Helpers;
 using Microsoft.AspNetCore.Authorization;
-using AutoMapper;
 using BookingApp.Controllers.Bases;
 
 namespace BookingApp.Controllers
@@ -19,16 +17,12 @@ namespace BookingApp.Controllers
     public class StatisticsController : EntityControllerBase
     {
         readonly IStatisticsService statisticsService;
-        readonly IMapper dtoMapper;
+        readonly IMapperService dtoMapper;
         
-        public StatisticsController(IStatisticsService statisticsService)
+        public StatisticsController(IStatisticsService statisticsService, IMapperService mapperService)
         {
             this.statisticsService = statisticsService;
-            dtoMapper = new Mapper(new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<BookingsStats, BookingStatsDTO>();
-                cfg.CreateMap<ResourceStats, ResourceStatsDTO>();
-            }));
+            dtoMapper = mapperService;
         }
 
         [HttpGet("bookings-creations")]
@@ -90,14 +84,11 @@ namespace BookingApp.Controllers
         [ProducesResponseType(401)]        
         public async Task<IActionResult> ResourcesUsage()
         {
-            List<ResourceStatsDTO> dTOs = new List<ResourceStatsDTO>();
+            IEnumerable<ResourceStatsDTO> dTOs;
 
             IEnumerable<ResourceStats> resourceStats = await statisticsService.GetResourceStats();
 
-            foreach(var item in resourceStats)
-            {
-                dTOs.Add(dtoMapper.Map<ResourceStatsDTO>(item));
-            }
+            dTOs = dtoMapper.Map<IEnumerable<ResourceStatsDTO>>(resourceStats);
 
             return Ok(dTOs);
         }
