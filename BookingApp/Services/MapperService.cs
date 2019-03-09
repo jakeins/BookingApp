@@ -30,7 +30,6 @@ namespace BookingApp.Services
 
                 cfg.CreateMap<BookingsStats, BookingStatsDTO>();
                 cfg.CreateMap<ResourceStats, ResourceStatsDTO>();
-                cfg.CreateMap<IEnumerable<ResourceStats>, IEnumerable<ResourceStatsDTO>>();
             }));
         }
 
