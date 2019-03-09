@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BookingApp.Repositories
+namespace BookingApp.Repositories.Interfaces
 {
     /// <summary>
     /// Repository with basic functionality.

@@ -1,6 +1,7 @@
 ﻿using BookingApp.Data;
 using BookingApp.Data.Models;
-using BookingApp.Repositories;
+using BookingApp.Repositories.Interfaces;
+using BookingApp.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -29,7 +30,7 @@ namespace BookingApp.Services
 
         public async Task<IEnumerable<Resource>> ListByAssociatedUser(string userId) => await resourcesRepo.ListByAssociatedUser(userId);
         public async Task<IEnumerable<Resource>> ListByRuleKey(int ruleId) => await resourcesRepo.ListByRuleKeyAsync(ruleId);
-        public async Task<IEnumerable<Resource>> ListByFolderKey(int folderId) => await resourcesRepo.ListByFolderKeyAsync(folderId);
-        
+        public async Task<IEnumerable<Resource>> ListByFolderKey(int folderId) => await resourcesRepo.ListByFolderKeyAsync(folderId);        
+
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace BookingApp.DTOs
+﻿namespace BookingApp.DTOs.Resource
 {
     /// <summary>
     /// Suitable for reading into the concise list. Has ID.

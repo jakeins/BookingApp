@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BookingApp.Services
+namespace BookingApp.Services.Interfaces
 {
     public interface IResourcesService
     {
@@ -32,5 +32,6 @@ namespace BookingApp.Services
         /// Lists all resources having specified parent tree group. 
         /// </summary>
         Task<IEnumerable<Resource>> ListByFolderKey(int folderId);
+       
     }
 }
