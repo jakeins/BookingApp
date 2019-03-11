@@ -1,5 +1,5 @@
-﻿using BookingApp.Data.Models;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -10,7 +10,7 @@ namespace BookingAppIntegrationTests.Scenarios
     {
 
         private readonly WebApplicationFactory<BookingApp.Startup> _factory;
-
+        
         public FolderControllerTest(WebApplicationFactory<BookingApp.Startup> factory)
         {
             _factory = factory;
@@ -39,8 +39,7 @@ namespace BookingAppIntegrationTests.Scenarios
             // Arrange
             var client = _factory.CreateClient();
 
-            // Act
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTdXBlckFkbWluIiwiZW1haWwiOiJzdXBlcmFkbWluQGFkbWluLmNvdyIsImp0aSI6IjZjOTI4MzY0LWNkMTAtNDE5NC05ZTQzLTNhNmYwMDZjNDk0YSIsInVpZCI6IjkyZjA0Y2U3LTkwZDItNGNiMy05NmMwLWViOWE0MTNhMzA2ZCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJBZG1pbiIsIlVzZXIiXSwiZXhwIjoxNTUyMjI2MzMxLCJpc3MiOiJCb29raW5nQXBwIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCJ9.-L8NN1-t-8-9Azqoxxe6Soxd5PZPeMNnTFRPqCANuVY");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
             var response = await client.GetAsync(url);
 
             // Assert
@@ -49,7 +48,16 @@ namespace BookingAppIntegrationTests.Scenarios
                 response.Content.Headers.ContentType.ToString());
         }
 
-
+        private async Task<string> getToken()
+        {
+            var client = _factory.CreateClient();
+            var responseToken = await client.PostAsJsonAsync("/api/auth/login", new
+            {
+                Password = "SuperAdmin",
+                Email = "superadmin@admin.cow"
+            });
+            return (((responseToken.Content.ReadAsStringAsync().Result).Substring(16)).Split(',')[0]).Trim('"');
+        }
 
     }
 }
