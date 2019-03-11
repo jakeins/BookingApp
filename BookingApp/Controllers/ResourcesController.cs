@@ -49,25 +49,8 @@ namespace BookingApp.Controllers
         // Filtered access: Guest/Admin.
         public async Task<IActionResult> ListOccupancy()
         {
-            var idsList = await (IsAdmin ? resService.ListKeys() : resService.ListActiveKeys());
-
-            var map = new Dictionary<int, double?>();
-
-            foreach (int resourceId in idsList)
-            {
-                map.Add(resourceId, null);
-
-                try
-                {
-                    map[resourceId] = await bookService.OccupancyByResource(resourceId);
-                }
-                catch (Exception ex) when (ex is KeyNotFoundException || ex is FieldValueAbsurdException)
-                {
-                    //silently swallowing disjoint values
-                }
-            }
-
-            return Ok(map);
+            var result = await (IsAdmin ? resService.GetOccupancies() : resService.GetActiveOccupancies());
+            return Ok(result);
         }
 
         [HttpGet("{resourceId}/bookings")]
@@ -138,7 +121,7 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> SingleOccupancy([FromRoute] int resourceId)
         {
             await AuthorizeForSingleResource(resourceId);
-            return Ok(await bookService.OccupancyByResource(resourceId));
+            return Ok(await resService.OccupancyByResource(resourceId));
         }
         #endregion
 

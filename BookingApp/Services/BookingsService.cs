@@ -61,14 +61,6 @@ namespace BookingApp.Services
         /// <param name="id"><see cref="Booking.Id"></see> of exist <see cref="Booking"></see></param>
         /// <param name="user">ID of <see cref="ApplicationUser"> which terminate booking</see></param>
         /// <returns></returns>
-        Task<double?> OccupancyByResource(int resourceId);
-
-        /// <summary>
-        /// Terminate specific <see cref="Booking"></see>
-        /// </summary>
-        /// <param name="id"><see cref="Booking.Id"></see> of exist <see cref="Booking"></see></param>
-        /// <param name="user">ID of <see cref="ApplicationUser"> which terminate booking</see></param>
-        /// <returns></returns>
         Task Terminate(int id, string userId);
 
         /// <summary>
@@ -172,17 +164,9 @@ namespace BookingApp.Services
         {
             await bookingsRepo.DeleteAsync(id);
         }
-
         #endregion CRUD operations
 
         #region Extensions
-
-        #region Occupancy
-
-        public async Task<double?> OccupancyByResource(int resourceId) => await bookingsRepo.OccupancyByResourceAsync(resourceId);
-
-        #endregion Occupancy
-
         /// <summary>
         /// Terminate specific <see cref="Booking"></see>
         /// </summary>
@@ -193,7 +177,6 @@ namespace BookingApp.Services
         {
             await bookingsRepo.Terminate(id, userId);
         }
-
         #endregion Extensions
     }
 }
