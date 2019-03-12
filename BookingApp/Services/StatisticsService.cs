@@ -7,6 +7,7 @@ using BookingApp.Entities.Statistics;
 using BookingApp.Services.Interfaces;
 using BookingApp.Repositories;
 using BookingApp.Repositories.Interfaces;
+using BookingApp.Helpers;
 
 namespace BookingApp.Services
 {
@@ -26,7 +27,7 @@ namespace BookingApp.Services
             IEnumerable<Booking> bookings = await bookingsRepository.GetListAsync();
             IEnumerable<Booking> cancelledbookings = 
                 bookings.Where(b => b.TerminationTime != null && b.TerminationTime >= start && b.TerminationTime <= end).Where(b=>b.TerminationTime<b.StartTime);
-            return GetBookingStats("cancellation", cancelledbookings, start, end, interval, resourcesIDs);
+            return GetBookingStats(BookingStatsTypes.Cancellations, cancelledbookings, start, end, interval, resourcesIDs);
         }
 
         public async Task<BookingsStats> GetBookingsCompletions(DateTime start, DateTime end, string interval, int[] resourcesIDs)
@@ -34,7 +35,7 @@ namespace BookingApp.Services
             IEnumerable<Booking> bookings = await bookingsRepository.GetListAsync();
             IEnumerable<Booking> completedbookings =
                 bookings.Where(b => b.TerminationTime == null && b.EndTime >= start && b.EndTime <= end);
-            return GetBookingStats("completion", completedbookings, start, end, interval, resourcesIDs);
+            return GetBookingStats(BookingStatsTypes.Completions, completedbookings, start, end, interval, resourcesIDs);
         }
 
         public async Task<BookingsStats> GetBookingsCreations(DateTime start, DateTime end, string interval, int[] resourcesIDs)
@@ -42,7 +43,7 @@ namespace BookingApp.Services
             IEnumerable<Booking> bookings = await bookingsRepository.GetListAsync();
             IEnumerable<Booking> createdbookings =
                 bookings.Where(b => b.CreatedTime >= start && b.CreatedTime <= end);
-            return GetBookingStats("creation", createdbookings, start, end, interval, resourcesIDs);
+            return GetBookingStats(BookingStatsTypes.Creations, createdbookings, start, end, interval, resourcesIDs);
         }
 
         public async Task<BookingsStats> GetBookingsTerminations(DateTime start, DateTime end, string interval, int[] resourcesIDs)
@@ -50,7 +51,7 @@ namespace BookingApp.Services
             IEnumerable<Booking> bookings = await bookingsRepository.GetListAsync();
             IEnumerable<Booking> terminatedbookings =
                 bookings.Where(b => b.TerminationTime != null && b.TerminationTime >= start && b.TerminationTime <= end).Where(b => b.TerminationTime > b.StartTime);
-            return GetBookingStats("termination", terminatedbookings, start, end, interval, resourcesIDs);
+            return GetBookingStats(BookingStatsTypes.Terminations, terminatedbookings, start, end, interval, resourcesIDs);
 
         }
 
@@ -70,28 +71,24 @@ namespace BookingApp.Services
 
         #region Helpers
 
-        private BookingsStats GetBookingStats(string type, IEnumerable<Booking> bookings,DateTime start,DateTime end,string interval, int[] ids)
+        private BookingsStats GetBookingStats(BookingStatsTypes type, IEnumerable<Booking> bookings,DateTime start,DateTime end,string interval, int[] ids)
         {
-            int intervalsNumber = GetIntervalsNumber(start, end, interval) + 1;// adding 1 to include end
+            int intervalsNumber = GetIntervalsNumber(start, end, interval);
             DateTime[] intervalsValues = GetIntervalValues(start, interval, intervalsNumber);
             int[] all = new int[intervalsNumber];
             Dictionary<int, int[]> bookingsOfResource = new Dictionary<int, int[]>();
 
             foreach(var booking in bookings)
             {
-                int intervalIndex = GetIntervalsNumber(start, GetBookingDateByType(booking, type),interval);
+                int intervalIndex = GetIntervalIndex(start, GetBookingDateByType(booking, type),interval);
                 all[intervalIndex]++;
                 if (ids.Length==0 || ids.Contains(booking.ResourceId))
                 {
-                    if (bookingsOfResource.ContainsKey(booking.ResourceId))
-                    {
-                        bookingsOfResource[booking.ResourceId][intervalIndex]++;
-                    }
-                    else
+                    if (!bookingsOfResource.ContainsKey(booking.ResourceId))
                     {
                         bookingsOfResource.Add(booking.ResourceId, new int[intervalsNumber]);
-                        bookingsOfResource[booking.ResourceId][intervalIndex]++;
-                    }
+                    }                    
+                    bookingsOfResource[booking.ResourceId][intervalIndex]++;
                 }
             }
 
@@ -176,16 +173,16 @@ namespace BookingApp.Services
             return stats;
         }
 
-        private DateTime GetBookingDateByType(Booking booking, string type)
+        private DateTime GetBookingDateByType(Booking booking, BookingStatsTypes type)
         {
             switch(type)
             {
-                case "creation":
+                case BookingStatsTypes.Creations:
                     return booking.CreatedTime;
-                case "cancellation":                    
-                case "termination":
+                case BookingStatsTypes.Cancellations:                    
+                case BookingStatsTypes.Terminations:
                     return booking.TerminationTime.Value;
-                case "completion":
+                case BookingStatsTypes.Completions:
                     return booking.EndTime;
                 default:
                     throw new ApplicationException("Only creation, cancellation, termination, cmpletion type is allowed");
@@ -205,15 +202,38 @@ namespace BookingApp.Services
                     number = GetWeeks(start, end);
                     break;
                 case "day":
-                    number = (int)(end - start).TotalDays;
+                    number = (int)Math.Ceiling((end - start).TotalDays);
                     break;
                 case "hour":
                     if ((end - start).TotalDays > 30)
                         throw new ApplicationException("'Hour' interval is only allowed for time spans under 31 days.");
-                    number = (int)(end - start).TotalHours;
+                    number = (int)Math.Ceiling((end - start).TotalHours);
                     break;
                 default:
                     throw new ApplicationException($"Wrong interval ({interval ?? "null"}) for statistical data. Only 'month' 'week' 'day' or 'hour' is allowed.");
+            }
+
+            return number;
+        }
+
+        private int GetIntervalIndex(DateTime start, DateTime end, string interval)
+        {
+            int number = 0;
+
+            switch (interval)
+            {
+                case "month":
+                    number = (end.Year - start.Year) * 12 + end.Month - start.Month;
+                    break;
+                case "week":
+                    number = GetWeekIndex(start, end);
+                    break;
+                case "day":
+                    number = (int)(end - start).TotalDays;
+                    break;
+                case "hour":                   
+                    number = (int)(end - start).TotalHours;
+                    break;                
             }
 
             return number;
@@ -228,7 +248,8 @@ namespace BookingApp.Services
                 switch (interval)
                 {
                     case "month":
-                        dates[i] = start.AddMonths(i);
+                        DateTime monthStart = GetStartOfMonth(start);
+                        dates[i] = monthStart.AddMonths(i);
                         break;
                     case "week":
                         DateTime monday = GetStartOfWeek(start);
@@ -246,19 +267,32 @@ namespace BookingApp.Services
             return dates;
         }
 
+        private DateTime GetStartOfMonth(DateTime input)
+        {
+            int dayOfMonth = input.Day;
+            return input.Date.AddDays(1-dayOfMonth);
+        }
+
         private DateTime GetStartOfWeek(DateTime input)
         {
             int dayOfWeek = (((int)input.DayOfWeek) + 6) % 7;
             return input.Date.AddDays(-dayOfWeek);
         }
 
-        private int GetWeeks(DateTime start, DateTime end)
+        private int GetWeekIndex(DateTime start, DateTime end)
         {
             start = GetStartOfWeek(start);
             end = GetStartOfWeek(end);
             int days = (int)(end - start).TotalDays;
             return (days / 7);
-        }        
+        }
+
+        private int GetWeeks(DateTime start, DateTime end)
+        {
+            DateTime startDay = GetStartOfWeek(start);
+            double days = (end - startDay).TotalDays;
+            return (int)Math.Ceiling(days / 7);
+        }
 
         #endregion
     }
