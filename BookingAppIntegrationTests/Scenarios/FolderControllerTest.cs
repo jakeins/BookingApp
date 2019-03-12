@@ -1,33 +1,30 @@
-﻿using BookingApp.Data.Models;
+﻿using BookingApp;
+using BookingApp.Data.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 
 namespace BookingAppIntegrationTests.Scenarios
 {
-    public class FolderControllerTest : IClassFixture<WebApplicationFactory<BookingApp.Startup>>
+    public class FolderControllerTest : IClassFixture<WebApplicationFactory<Startup>>
     {
-
-        private readonly WebApplicationFactory<BookingApp.Startup> _factory;
+        private readonly HttpClient _client;
         
-        public FolderControllerTest(WebApplicationFactory<BookingApp.Startup> factory)
+        public FolderControllerTest(WebApplicationFactory<Startup> factory)
         {
-            _factory = factory;
+            _client = factory.CreateClient();
         }
 
         [Theory]
         [InlineData("/api/folder")]
         public async Task GetFolders(string url)
         {
-            // Arrange
-            var client = _factory.CreateClient();
-
-            // Act
-            var response = await client.GetAsync(url);
+            var response = await _client.GetAsync(url);
 
             // Assert
             var stringResponse = await response.Content.ReadAsStringAsync();
@@ -43,11 +40,8 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("/api/folder/1")]
         public async Task GetFolderById(string url)
         {
-            // Arrange
-            var client = _factory.CreateClient();
-
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
-            var response = await client.GetAsync(url);
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            var response = await _client.GetAsync(url);
 
             // Assert
             var folder = JsonConvert.DeserializeObject<Folder>(await response.Content.ReadAsStringAsync());
@@ -62,27 +56,38 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("/api/folder/122")]
         public async Task GetFaildedFolderById(string url)
         {
-            // Arrange
-            var client = _factory.CreateClient();
-
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
-            var response = await client.GetAsync(url);
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            var response = await _client.GetAsync(url);
 
             // Assert
-
             var statusCod = response.StatusCode.ToString();
             Assert.Equal("NotFound", statusCod);
         }
 
         //[Theory]
+        //[InlineData("/api/folder")]
+        //public async Task GetCreateFolder(string url)
+        //{
+        //    _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+
+        //    Folder folder = new Folder { Title = "Folder new" };
+        //    var content = JsonConvert.SerializeObject(folder);
+        //    HttpContent httpContent = new StringContent(content, Encoding.UTF8, "application/json");
+        //    var response = await _client.PostAsJsonAsync(url, folder);
+
+        //    // Assert
+        //    var statusCod = response.StatusCode.ToString();
+        //    Assert.Equal("Created", statusCod);
+        //    response.EnsureSuccessStatusCode();
+        //}
+
+
+        //[Theory]
         //[InlineData("/api/folder/5")]
         //public async Task GetDeleteFolder(string url)
         //{
-        //    // Arrange
-        //    var client = _factory.CreateClient();
-
-        //    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
-        //    var response = await client.DeleteAsync(url);
+        //    _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+        //    var response = await _client.DeleteAsync(url);
 
         //    // Assert
 
@@ -96,8 +101,7 @@ namespace BookingAppIntegrationTests.Scenarios
         #region Utility
         private async Task<string> getToken()
         {
-            var client = _factory.CreateClient();
-            var responseToken = await client.PostAsJsonAsync("/api/auth/login", new
+            var responseToken = await _client.PostAsJsonAsync("/api/auth/login", new
             {
                 Password = "SuperAdmin",
                 Email = "superadmin@admin.cow"
