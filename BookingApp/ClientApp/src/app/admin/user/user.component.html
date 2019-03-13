@@ -1,8 +1,23 @@
-<ul>
-  <li *ngFor="let user of users">
-    <span>
+<div *ngIf="loaded">
+  <ul  onload="getUserPages(1,10)">
+    <li class="user-item" *ngFor="let user of userPage.items">
       {{user.userName}}
-      <i (click)="blockButton(user.id)" class="right" [ngClass]="user.isBlocked ? 'fas fa-lock' : 'fas fa-lock-open'"></i>
-    </span>
-  </li>
-</ul>
+      {{user.isBlocked}}
+      {{user.approvalStatus}}
+      <span>
+        <i (click)="blockButton(user.id)" class="right" [ngClass]="user.isBlocked ? 'fas fa-lock' : 'fas fa-lock-open'"></i>
+        <span *ngIf="user.approvalStatus == null">
+          <i class="right fas fa-times"></i>
+          <i class="right fas fa-check"></i>
+        </span>
+      </span>
+
+    </li>
+  </ul>
+  <ul>
+    <li class="pagination" [ngClass]="page == i+1 ? 'pagination pagination-blue' : 'pagination'" *ngFor="let p of userPage.paging.arrayTotalPages; let i=index" (click)="getUserPages(i+1,10) ">
+      {{i+1}}
+    </li>
+  </ul>
+</div>
+

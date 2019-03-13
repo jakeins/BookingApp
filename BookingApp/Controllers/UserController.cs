@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.DTOs.User;
 using BookingApp.Exceptions;
 using BookingApp.Helpers;
 using BookingApp.Services;
@@ -53,6 +54,7 @@ namespace BookingApp.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            //TODO: Set admin role
             ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
             await userService.CreateAdmin(appUser, user.Password);
             return Ok("User created");       
@@ -93,6 +95,22 @@ namespace BookingApp.Controllers
             IEnumerable<ApplicationUser> appusers = await userService.GetUsersList();
             IEnumerable<UserMinimalDto> users = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserMinimalDto>>(appusers);
             return new OkObjectResult(users);
+        }
+
+        [Authorize(Roles = RoleTypes.Admin)]
+        [HttpGet("api/users-page")]
+        public async Task<IActionResult> GetAllUsers([FromQuery]UserPagingParamsDto pagingParams)
+        {
+            var model = await userService.GetUsersList(pagingParams);
+
+            var outputModel = new UserMinimalPageDto
+            {
+                Paging = model.GetHeader(),
+                Items = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserMinimalDto>>(model.List),
+            };
+            Response.Headers.Add("X-Pagination", model.GetHeader().ToJson());
+
+            return new OkObjectResult(outputModel);
         }
 
         [Authorize(Roles = RoleTypes.Admin)]

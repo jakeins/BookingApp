@@ -1,4 +1,5 @@
 ﻿using BookingApp.Data.Models;
+using BookingApp.Helpers;
 using BookingApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -26,6 +27,7 @@ namespace BookingApp.Services
         Task<IList<string>> GetUserRoles(ApplicationUser user);
         Task<IList<string>> GetUserRolesById(string userId);
         Task<IEnumerable<ApplicationUser>> GetUsersList();
+        Task<PagedList<ApplicationUser>> GetUsersList(UserPagingParamsDto pagingParams);
         Task<bool> IsInRoleAsync(ApplicationUser user, string role);
         Task<bool> IsEmailExist(string email);
         Task RemoveUserRoleAsync(string userId, string role);
@@ -95,6 +97,13 @@ namespace BookingApp.Services
         public async Task<IEnumerable<ApplicationUser>> GetUsersList()
         {
             return await userRepository.GetListAsync();
+        }
+
+        public async Task<PagedList<ApplicationUser>> GetUsersList(UserPagingParamsDto pagingParams)
+        {
+            IEnumerable<ApplicationUser> user = await userRepository.GetListAsync(pagingParams.PageNumber, pagingParams.PageSize);
+            PagedList<ApplicationUser> pagedList = new PagedList<ApplicationUser>(user, pagingParams.PageNumber, pagingParams.PageSize);
+            return pagedList;
         }
 
         public async Task<bool> CheckPassword(ApplicationUser user, string password)

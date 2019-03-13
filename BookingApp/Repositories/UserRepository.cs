@@ -19,6 +19,7 @@ namespace BookingApp.Services
         Task ChangePassword(ApplicationUser user, string currentpassword, string newpassword);
         Task<bool> CheckPassword(ApplicationUser user, string password);
         Task CreateAsync(ApplicationUser user, string password);
+        Task<IEnumerable<ApplicationUser>> GetListAsync(int page, int pageSize);
         Task DeleteAsync(ApplicationUser user);
         Task<string> GeneratePasswordResetToken(ApplicationUser user);
         Task<ApplicationUser> GetUserByEmailAsync(string email);
@@ -124,6 +125,12 @@ namespace BookingApp.Services
 
         public Task<IEnumerable<ApplicationUser>> GetListAsync()
         {
+            return Task.FromResult(userManager.Users.ToList().AsEnumerable());
+        }
+
+        public Task<IEnumerable<ApplicationUser>> GetListAsync(int page,int pageSize)
+        {
+           // return Task.FromResult(userManager.Users.Skip(pageSize * (page - 1)).Take(pageSize).ToList().AsEnumerable());
             return Task.FromResult(userManager.Users.ToList().AsEnumerable());
         }
 
