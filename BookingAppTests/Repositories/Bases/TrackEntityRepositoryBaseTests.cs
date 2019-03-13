@@ -2,6 +2,7 @@
 using BookingApp.Data.Models;
 using BookingApp.Exceptions;
 using BookingApp.Repositories;
+using BookingApp.Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using TestingUtilities;

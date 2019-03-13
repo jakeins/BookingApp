@@ -3,7 +3,7 @@ using BookingApp.Helpers;
 using System.Linq;
 using System;
 
-namespace BookingApp.Controllers
+namespace BookingApp.Controllers.Bases
 {
     /// <summary>
     /// Base controller class having cross-entity functional.

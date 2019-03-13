@@ -9,6 +9,8 @@ using BookingApp.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using BookingApp.DTOs;
 using System.Linq;
+using BookingApp.Services.Interfaces;
+using BookingApp.DTOs.Resource;
 
 namespace BookingAppTests.Controllers
 {
@@ -87,7 +89,7 @@ namespace BookingAppTests.Controllers
             //arrange
             mockServ.Setup(p => p.Get(id)).ReturnsAsync(initRules().Single(p => p.Id == id));
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.SetupGet(p => p.existsActive).Returns(true);
+            controller.SetupGet(p => p.ExistsActive).Returns(true);
             controller.SetupGet(p => p.IsAdmin).Returns(false);
 
 
@@ -108,7 +110,7 @@ namespace BookingAppTests.Controllers
             //arrange
             mockServ.Setup(p => p.Get(id)).ReturnsAsync((Rule)null);
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.SetupGet(p => p.existsActive).Returns(false);
+            controller.SetupGet(p => p.ExistsActive).Returns(false);
             controller.SetupGet(p => p.IsAdmin).Returns(false);
 
             //act

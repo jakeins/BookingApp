@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BookingApp.Data.Models
+namespace BookingApp.Data.Models.Interfaces
 {
     /// <summary>
     /// Entity that can be trackable thanks to having primary id and created/updated user/time.

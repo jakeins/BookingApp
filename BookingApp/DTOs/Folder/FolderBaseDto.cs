@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookingApp.DTOs
+namespace BookingApp.DTOs.Folder
 {
     public class FolderBaseDto : FolderMinimalDto
     {
