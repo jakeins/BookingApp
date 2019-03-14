@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using BookingApp.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -11,6 +12,14 @@ namespace BookingAppIntegrationTests.Tests
     public class CustomWebApplicationFactory<TStartup>
         : WebApplicationFactory<TStartup> where TStartup : class
     {
+
+        DbInitializer _initializer;
+
+        protected virtual void ConfigureClient(HttpClient client, DbInitializer initializer)
+        {
+            _initializer = initializer;
+        }
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureServices(services =>
@@ -44,6 +53,7 @@ namespace BookingAppIntegrationTests.Tests
                     try
                     {
                         // Seed the database with some specific test data.
+                        //_initializer.Initialize().Wait();
                         SeedData.PopulateTestData(appDb);
                     }
                     catch (Exception ex)
