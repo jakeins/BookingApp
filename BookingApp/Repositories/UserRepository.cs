@@ -107,10 +107,11 @@ namespace BookingApp.Services
             return Task.FromResult(userManager.Users.ToList().AsEnumerable());
         }
 
-        public Task<IEnumerable<ApplicationUser>> GetListAsync(int page,int pageSize)
-        {
-           // return Task.FromResult(userManager.Users.Skip(pageSize * (page - 1)).Take(pageSize).ToList().AsEnumerable());
-            return Task.FromResult(userManager.Users.ToList().AsEnumerable());
+        public Task<IEnumerable<ApplicationUser>> GetListAsync(int pageNumber,int pageSize)
+        { 
+            return Task.FromResult(userManager.Users.Skip(pageSize * (pageNumber - 1))
+                            .Take(pageSize)
+                            .ToList().AsEnumerable());
         }
 
         public Task SaveAsync()
@@ -239,6 +240,11 @@ namespace BookingApp.Services
         public async Task<string> GeneratePasswordResetToken(ApplicationUser user)
         {
             return await userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public Task<int> GetCountOfUser()
+        {
+            return Task.FromResult(userManager.Users.Count());
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BookingApp.Data.Models;
+using BookingApp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace BookingApp.Services.Interfaces
         Task<ApplicationUser> GetUserByEmail(string email);
         Task<ApplicationUser> GetUserById(string id);
         Task<ApplicationUser> GetUserByName(string userName);
+        Task<PagedList<ApplicationUser>> GetUsersList(int pageNumber, int pageSize);
         Task<IList<string>> GetUserRoles(ApplicationUser user);
         Task<IList<string>> GetUserRolesById(string userId);
         Task<IEnumerable<ApplicationUser>> GetUsersList();

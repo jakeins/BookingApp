@@ -60,6 +60,8 @@ namespace BookingApp.Controllers
             //TODO: Set admin role
             ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
             await userService.CreateAdmin(appUser, user.Password);
+            ApplicationUser adminUser = await userService.GetUserByName(user.UserName);
+            await userService.AddUserRoleAsync(adminUser.Id,RoleTypes.Admin);
             return Ok("User created");       
         }
 
@@ -104,7 +106,7 @@ namespace BookingApp.Controllers
         [HttpGet("api/users-page")]
         public async Task<IActionResult> GetAllUsers([FromQuery]UserPagingParamsDto pagingParams)
         {
-            var model = await userService.GetUsersList(pagingParams);
+            var model = await userService.GetUsersList(pagingParams.PageNumber,pagingParams.PageSize);
 
             var outputModel = new UserMinimalPageDto
             {
@@ -201,17 +203,17 @@ namespace BookingApp.Controllers
 
         [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/approval")]
-        public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody]UserApprovalDto userApprovalDto)
+        public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody] bool IsApproved )
         {
-            await userService.UserApproval(userId, userApprovalDto.IsApproved);
+            await userService.UserApproval(userId, IsApproved);
             return Ok("User approved");
         }
 
         [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/blocking")]
-        public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]UserBlockingDto userBlockingDTO)
+        public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]bool IsBlocked)
         {
-            await userService.UserBlocking(userId, userBlockingDTO.IsBlocked);
+            await userService.UserBlocking(userId, IsBlocked);
             return Ok("User blocked");
         }
 

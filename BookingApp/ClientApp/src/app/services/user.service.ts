@@ -35,9 +35,13 @@ export class UserService {
     return this.http.get<UserPage>(this.baseApiUrl + '/' + 'users-page' + '?' + 'PageNumber=' + page + '&' + 'PageSize=' + pageSize);
   }
 
-  blockUser(userId: string, blocking: Blocking): Observable<Object> {
+  blockUser(userId: string, blocking: boolean): Observable<Object> {
    // this.blockingModel.Is
     console.log(blocking);
     return this.http.put(this.path + '/' + userId + '/blocking', blocking, { headers: this.headers});
+  }
+
+  approvalUser(userId: string, approval: boolean): Observable<Object> {
+    return this.http.put(this.path + '/' + userId + '/approval', approval, { headers: this.headers });
   }
 }

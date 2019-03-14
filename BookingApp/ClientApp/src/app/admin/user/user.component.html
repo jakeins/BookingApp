@@ -7,8 +7,14 @@
       <span>
         <i (click)="blockButton(user.id)" class="right" [ngClass]="user.isBlocked ? 'fas fa-lock' : 'fas fa-lock-open'"></i>
         <span *ngIf="user.approvalStatus == null">
-          <i class="right fas fa-times"></i>
+          <i (click)="approvalButton(user.id,false)" class="right fas fa-times"></i>
+          <i (click)="approvalButton(user.id,true)" class="right fas fa-check"></i>
+        </span>
+        <span *ngIf="user.approvalStatus == true">
           <i class="right fas fa-check"></i>
+        </span>
+        <span *ngIf="user.approvalStatus == false">
+          <i class="right fas fa-times"></i>
         </span>
       </span>
 

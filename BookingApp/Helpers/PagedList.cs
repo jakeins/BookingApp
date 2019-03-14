@@ -7,15 +7,13 @@ namespace BookingApp.Helpers
 {
     public class PagedList<T>
     {
-        public PagedList(IEnumerable<T> source, int pageNumber, int pageSize)
+        public PagedList(IEnumerable<T> source, int pageNumber, int pageSize, int totalItems)
         {
-            this.TotalItems = source.Count();
+            this.TotalItems = totalItems;
             this.PageNumber = pageNumber;
             this.PageSize = pageSize;
-            this.List = this.List = source
-                            .Skip(pageSize * (pageNumber - 1))
-                            .Take(pageSize)
-                            .ToList();
+            this.List = source;
+        
             GetTotalPages();
         }
 
@@ -34,8 +32,7 @@ namespace BookingApp.Helpers
                this.HasPreviousPage ? this.PageNumber - 1 : 1;
 
         public PagingHeader GetHeader()
-        {
-            
+        { 
             return new PagingHeader(
                  this.TotalItems, this.PageNumber,
                  this.PageSize, this.TotalPages, ArrayTotalPages);

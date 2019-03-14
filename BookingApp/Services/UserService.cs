@@ -73,10 +73,11 @@ namespace BookingApp.Services
             return await userRepository.GetListAsync();
         }
 
-        public async Task<PagedList<ApplicationUser>> GetUsersList(UserPagingParamsDto pagingParams)
+        public async Task<PagedList<ApplicationUser>> GetUsersList(int pageNumber, int pageSize)
         {
-            IEnumerable<ApplicationUser> user = await userRepository.GetListAsync(pagingParams.PageNumber, pagingParams.PageSize);
-            PagedList<ApplicationUser> pagedList = new PagedList<ApplicationUser>(user, pagingParams.PageNumber, pagingParams.PageSize);
+            IEnumerable<ApplicationUser> users = await userRepository.GetListAsync(pageNumber, pageSize);
+            int countOfUser = await userRepository.GetCountOfUser();
+            PagedList<ApplicationUser> pagedList = new PagedList<ApplicationUser>(users, pageNumber, pageSize, countOfUser);
             return pagedList;
         }
 
