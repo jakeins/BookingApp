@@ -2,7 +2,6 @@ import { Component, OnInit, Input } from '@angular/core';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
 import { Logger } from '../../services/logger.service';
-import { Blocking } from '../../models/UserBlockingDto';
 import { forEach } from '@angular/router/src/utils/collection';
 import { UserPage } from '../../models/user-page';
 import { error } from 'protractor';

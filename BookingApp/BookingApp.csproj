@@ -85,7 +85,6 @@
     <None Remove="ClientApp\src\app\models\tree-entry.ts" />
     <None Remove="ClientApp\src\app\models\tree-node.ts" />
     <None Remove="ClientApp\src\app\models\user-page.ts" />
-    <None Remove="ClientApp\src\app\models\UserBlockingDto.ts" />
     <None Remove="ClientApp\src\app\services\development.service.ts" />
     <None Remove="ClientApp\src\app\services\folder.service.ts" />
     <None Remove="ClientApp\src\app\services\logger.service.ts" />
@@ -121,7 +120,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-node.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-page.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\models\UserBlockingDto.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\folder.service.ts" />

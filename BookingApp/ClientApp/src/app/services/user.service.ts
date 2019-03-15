@@ -7,7 +7,6 @@ import { Observable } from 'rxjs/Observable';
 import { User } from '../models/user';
 import { BASE_API_URL } from '../globals';
 import { Resource } from '../models/resource';
-import { Blocking} from '../models/UserBlockingDto';
 import { UserPage } from '../models/user-page';
 
 
@@ -16,7 +15,6 @@ export class UserService {
   private defaultPath: string;
   private path: string;
   private baseApiUrl: string;
-  public blockingModel: Blocking;
   headers: HttpHeaders = new HttpHeaders({
     "Content-Type": "application/json",
     "Accept": "application/json"

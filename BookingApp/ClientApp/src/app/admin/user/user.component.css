@@ -3,7 +3,17 @@ body {
 ul{
   list-style: none;
 }
-
+tr th
+{
+  text-align:center;
+  width:250px;
+}
+.icon {
+  margin: 0 5%;
+}
+tr td {
+  text-align: center;
+}
 .user-item:hover {
   background-color: #f8f8f8;
 }
@@ -45,7 +55,7 @@ ul{
 {
   display:inline-block;
 }
-.pagination {
+.paginationLi {
   position:relative;
   display: inline-block;
   margin: 10px;
@@ -57,9 +67,9 @@ ul{
   border-color: #007bff;
   color: white;
 }
-  .pagination:hover {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: white;
-  }
+.paginationLi:hover {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
 
