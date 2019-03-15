@@ -25,6 +25,7 @@ namespace BookingApp.Services.Interfaces
         Task<PagedList<ApplicationUser>> GetUsersList(int pageNumber, int pageSize);
         Task<IList<string>> GetUserRoles(ApplicationUser user);
         Task<IList<string>> GetUserRolesById(string userId);
+        Task<IEnumerable<ApplicationUser>> GetUsersByRole(string roleName);
         Task<IEnumerable<ApplicationUser>> GetUsersList();
         Task<bool> IsInRoleAsync(ApplicationUser user, string role);
         Task<bool> IsEmailExist(string email);

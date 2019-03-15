@@ -19,6 +19,7 @@ namespace BookingApp.Repositories.Interfaces
         Task<ApplicationUser> GetUserByUserName(string userName);
         Task<IList<string>> GetUserRoles(ApplicationUser user);
         Task<IList<string>> GetUserRolesById(string userId);
+        Task<IEnumerable<ApplicationUser>> GetUsersByRole(string roleName);
         Task<int> GetCountOfUser();
         Task<IEnumerable<ApplicationUser>> GetListAsync(int page, int pageSize);
         Task<bool> IsInRole(ApplicationUser user, string role);

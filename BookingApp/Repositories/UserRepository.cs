@@ -102,6 +102,11 @@ namespace BookingApp.Services
             }
         }
 
+        public async Task<IEnumerable<ApplicationUser>> GetUsersByRole(string roleName)
+        {
+           return await userManager.GetUsersInRoleAsync(roleName);
+        }
+
         public Task<IEnumerable<ApplicationUser>> GetListAsync()
         {
             return Task.FromResult(userManager.Users.ToList().AsEnumerable());

@@ -102,6 +102,11 @@ namespace BookingApp.Services
             await userRepository.ChangePassword(user,currentpassword,newpassword);
         }
 
+        public async Task<IEnumerable<ApplicationUser>> GetUsersByRole(string roleName)
+        {
+            return await userRepository.GetUsersByRole(roleName);
+        }
+
         public async Task AddUserRoleAsync(string userId,string role)
         {
             ApplicationUser user = await GetUserById(userId);
