@@ -1,8 +1,12 @@
 ﻿using BookingApp;
 using BookingApp.Data.Models;
 using BookingAppIntegrationTests.Tests;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,10 +17,19 @@ namespace BookingAppIntegrationTests.Scenarios
 {
     public class FolderControllerTest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
+        private readonly TestServer _server;
         private readonly HttpClient _client;
         
         public FolderControllerTest(CustomWebApplicationFactory<Startup> factory)
         {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Path.GetFullPath(@"../../../"))
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables();
+
+            _server = new TestServer(new WebHostBuilder().UseConfiguration(builder.Build())
+                .UseEnvironment("Testing")
+                .UseStartup<Startup>());
             _client = factory.CreateClient();
         }
 
