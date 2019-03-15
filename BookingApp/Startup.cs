@@ -98,6 +98,9 @@ namespace BookingApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, DbInitializer initializer, IHostingEnvironment env)
         {
+            if (env.IsEnvironment("Testing")) {
+                Logger.LogInformation("In test enviroment");
+            }
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -146,8 +149,8 @@ namespace BookingApp
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
-
-            initializer.Initialize().Wait();
+            bool UseStoreProc = !env.IsEnvironment("Testing");
+            initializer.Initialize(UseStoreProc).Wait();
         }
     }
 }

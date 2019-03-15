@@ -28,7 +28,7 @@ namespace BookingApp.Data
         /// For debugging, adds dummy users and data.
         /// <para>Enable context.Database.EnsureDeleted() to force full reseeding with each run.</para>
         /// </summary>
-        public async Task Initialize()
+        public async Task Initialize(bool UseStoreProc = true)
         {
 #if DEBUG
             // WARNING! Wipes the entire database.
@@ -41,13 +41,17 @@ namespace BookingApp.Data
 #if DEBUG
             if (isDbFresh)
             {
-                await StoreProcFuncRepository.LoadAllToDb(context);
+                if(UseStoreProc)
+                    await StoreProcFuncRepository.LoadAllToDb(context);
                 await SeedDummyData();
 
             }
 #else
-            await StoreProcFuncRepository.DeleteAllFromDb(context);
-            await StoreProcFuncRepository.LoadAllToDb(context);
+            if(UseStoreProc)
+            {
+                await StoreProcFuncRepository.DeleteAllFromDb(context);
+                await StoreProcFuncRepository.LoadAllToDb(context);
+            }
 #endif
         }
 

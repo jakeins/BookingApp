@@ -12,6 +12,10 @@ namespace BookingAppIntegrationTests.Tests
     public class CustomWebApplicationFactory<TStartup>
         : WebApplicationFactory<TStartup> where TStartup : class
     {
+        public CustomWebApplicationFactory()
+        {
+
+        }
 
         DbInitializer _initializer;
 
@@ -28,6 +32,8 @@ namespace BookingAppIntegrationTests.Tests
                 var serviceProvider = new ServiceCollection()
                     .AddEntityFrameworkInMemoryDatabase()
                     .BuildServiceProvider();
+
+                builder.UseEnvironment("Testing");
 
                 // Add a database context (AppDbContext) using an in-memory database for testing.
                 services.AddDbContext<ApplicationDbContext>(options =>
