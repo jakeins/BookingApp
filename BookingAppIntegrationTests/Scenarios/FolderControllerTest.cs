@@ -30,7 +30,7 @@ namespace BookingAppIntegrationTests.Scenarios
             _server = new TestServer(new WebHostBuilder().UseConfiguration(builder.Build())
                 .UseEnvironment("Testing")
                 .UseStartup<Startup>());
-            _client = factory.CreateClient();
+            _client = _server.CreateClient();
         }
 
         [Theory]
