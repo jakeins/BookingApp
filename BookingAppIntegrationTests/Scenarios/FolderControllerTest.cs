@@ -1,12 +1,8 @@
 ﻿using BookingApp;
 using BookingApp.Data.Models;
 using BookingAppIntegrationTests.Tests;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,64 +13,60 @@ namespace BookingAppIntegrationTests.Scenarios
 {
     public class FolderControllerTest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private readonly TestServer _server;
         private readonly HttpClient _client;
         
         public FolderControllerTest(CustomWebApplicationFactory<Startup> factory)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Path.GetFullPath(@"../../../"))
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
-
-            _server = new TestServer(new WebHostBuilder().UseConfiguration(builder.Build())
-                .UseEnvironment("Testing")
-                .UseStartup<Startup>());
-            _client = _server.CreateClient();
+            _client = factory.CreateClient();  
         }
 
+        #region FolderController.Index
         [Theory]
         [InlineData("/api/folder")]
-        public async Task GetFoldersAll(string url)
+        public async Task GetFoldersAllTest(string url)
         {
             var response = await _client.GetAsync(url);
 
-            // Assert
             var stringResponse = await response.Content.ReadAsStringAsync();
-            var folders = JsonConvert.DeserializeObject<IEnumerable<Folder>>(stringResponse);
- 
+            var folders = JsonConvert.DeserializeObject<List<Folder>>(stringResponse);
+
+            // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.Equal("application/json; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
+            Assert.Equal(1, folders.Count);
         }
 
         [Theory]
         [InlineData("/api/folder")]
-        public async Task GetFoldersIsNotActive(string url)
+        public async Task GetFoldersIsNotActiveTest(string url)
         {
             _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
             var response = await _client.GetAsync(url);
+            
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var folders = JsonConvert.DeserializeObject<List<Folder>>(stringResponse);
 
             // Assert
-            var stringResponse = await response.Content.ReadAsStringAsync();
-            var folders = JsonConvert.DeserializeObject<IEnumerable<Folder>>(stringResponse);
-
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.Equal("application/json; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
+            Assert.Equal(4, folders.Count);
         }
+        #endregion FolderController.Index
 
+        #region FolderController.Detail
         [Theory]
         [InlineData("/api/folder/1")]
-        public async Task GetFolderById(string url)
+        public async Task GetFolderByIdTest(string url)
         {
             _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
             var response = await _client.GetAsync(url);
 
-            // Assert
             var folder = JsonConvert.DeserializeObject<Folder>(await response.Content.ReadAsStringAsync());
-            Assert.Contains(folder.Title, "Folder 1");
 
+            // Assert
+            Assert.Contains(folder.Title, "Town Hall");
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.Equal("application/json; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
@@ -82,7 +74,7 @@ namespace BookingAppIntegrationTests.Scenarios
 
         [Theory]
         [InlineData("/api/folder/122")]
-        public async Task GetFaildedFolderById(string url)
+        public async Task GetFaildedFolderByIdTest(string url)
         {
             _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
             var response = await _client.GetAsync(url);
@@ -91,10 +83,12 @@ namespace BookingAppIntegrationTests.Scenarios
             var statusCod = response.StatusCode.ToString();
             Assert.Equal("NotFound", statusCod);
         }
+        #endregion FolderController.Detail
 
+        #region FolderController.Create
         [Theory]
         [InlineData("/api/folder")]
-        public async Task CreateFolder(string url)
+        public async Task CreateFolderTest(string url)
         {
             _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
 
@@ -106,21 +100,44 @@ namespace BookingAppIntegrationTests.Scenarios
             Assert.Equal("Created", response.StatusCode.ToString());
         }
 
+        [Theory]
+        [InlineData("/api/folder")]
+        public async Task FailedValidationCreateFolderTest(string url)
+        {
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
 
+            var content = JsonConvert.SerializeObject(new Folder { Title = "Fo", IsActive = true });
+            var response = await _client.PostAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+
+            // Assert
+            Assert.Equal("BadRequest", response.StatusCode.ToString());
+        }
+        #endregion FolderController.Create
+
+        #region FolderController.Delete
         [Theory]
         [InlineData("/api/folder/2")]
-        public async Task DeleteFolder(string url)
+        public async Task DeleteFolderTest(string url)
         {
             _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
             var response = await _client.DeleteAsync(url);
 
             // Assert
-
-            var statusCod = response.StatusCode.ToString();
-            Assert.Equal("OK", statusCod);
             response.EnsureSuccessStatusCode();
         }
 
+        [Theory]
+        [InlineData("/api/folder/122")]
+        public async Task FailedDeleteFolderTest(string url)
+        {
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            var response = await _client.DeleteAsync(url);
+
+            // Assert
+            var statusCod = response.StatusCode.ToString();
+            Assert.Equal("NotFound", statusCod);
+        }
+        #endregion FolderController.Delete
 
 
         #region Utility

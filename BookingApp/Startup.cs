@@ -150,7 +150,8 @@ namespace BookingApp
                 }
             });
             bool UseStoreProc = !env.IsEnvironment("Testing");
-            initializer.Initialize(UseStoreProc).Wait();
+            initializer.Initialize(UseStoreProc);
+            //initializer.Initialize(UseStoreProc).Wait();
         }
     }
 }
