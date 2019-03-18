@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BookingApp.Repositories
+namespace BookingApp.Repositories.Interfaces
 {
     /// <summary>
     /// Specific Resources Interface repository for the Booking App.
@@ -19,5 +19,14 @@ namespace BookingApp.Repositories
         /// Lists all resources having specified parent tree group.
         /// </summary>
         Task<IEnumerable<Resource>> ListByFolderKeyAsync(int folderId);
+
+
+        #region MethodsForStatisticsController
+        
+        Task<IEnumerable<Resource>> ListIncludingBookingsAndRules();
+
+        Task<Resource> GetIncludingBookingsAndRules(int resourceID);
+
+        #endregion
     }
 }

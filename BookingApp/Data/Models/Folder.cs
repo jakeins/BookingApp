@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BookingApp.Data.Models.Interfaces;
 using BookingApp.DTOs;
+using BookingApp.DTOs.Folder;
 
 namespace BookingApp.Data.Models
 {
     /// <summary>
     /// Visual nesting entity, provides ability to *visually* group resources in a form of a nested set (tree).
     /// </summary>
-    public class Folder : IEntity<int, ApplicationUser, string>, IActivable
+    public class Folder : IIdentifiable<int>, ITrackable<ApplicationUser, string>, IActivable
     {
         /// <summary>
         /// Primary identity key for the tree group.

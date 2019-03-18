@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BookingApp.Data.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +9,7 @@ namespace BookingApp.Data.Models
     /// <summary>
     /// Valuable rentable entity that is being booked (and used) by the users over time.
     /// </summary>
-    public class Resource : IEntity<int, ApplicationUser, string>, IActivable
+    public class Resource : IIdentifiable<int>, ITrackable<ApplicationUser, string>, IActivable
     {
         /// <summary>
         /// Primary identity key for the resource.

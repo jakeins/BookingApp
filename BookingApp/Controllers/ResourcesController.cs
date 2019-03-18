@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BookingApp.Data.Models;
-using BookingApp.Services;
+using BookingApp.Services.Interfaces;
 using AutoMapper;
 using BookingApp.DTOs;
 using BookingApp.Exceptions;
@@ -10,6 +10,9 @@ using BookingApp.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Linq;
+using BookingApp.Services;
+using BookingApp.Controllers.Bases;
+using BookingApp.DTOs.Resource;
 
 namespace BookingApp.Controllers
 {
@@ -19,22 +22,13 @@ namespace BookingApp.Controllers
     {
         readonly IResourcesService resService;
         readonly IBookingsService bookService;
-        readonly IMapper dtoMapper;
+        readonly IMapperService mappService;
 
-        public ResourcesController(IResourcesService resService, IBookingsService bookService)
+        public ResourcesController(IResourcesService resService, IBookingsService bookService, IMapperService mappService)
         {
             this.resService = resService;
             this.bookService = bookService;
-
-            dtoMapper = new Mapper(new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Resource, ResourceBriefDto>();
-                cfg.CreateMap<Resource, ResourceMaxDto>();
-                cfg.CreateMap<ResourceDetailedDto,Resource>();
-                cfg.CreateMap<Booking, BookingMinimalDTO>();
-                cfg.CreateMap<Booking, BookingOwnerDTO>();
-                cfg.CreateMap<Booking, BookingAdminDTO>();
-            }));
+            this.mappService = mappService;
         }
 
         #region GETs
@@ -45,7 +39,7 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> List()
         {
             var models = IsAdmin ? await resService.GetList() : await resService.ListActive();
-            var dtos = dtoMapper.Map<IEnumerable<ResourceBriefDto>>(models);
+            var dtos = mappService.Map<IEnumerable<ResourceBriefDto>>(models);
             return Ok(dtos);
         }
 
@@ -55,25 +49,8 @@ namespace BookingApp.Controllers
         // Filtered access: Guest/Admin.
         public async Task<IActionResult> ListOccupancy()
         {
-            var idsList = await (IsAdmin ? resService.ListKeys() : resService.ListActiveKeys());
-
-            var map = new Dictionary<int, double?>();
-
-            foreach (int resourceId in idsList)
-            {
-                map.Add(resourceId, null);
-
-                try
-                {
-                    map[resourceId] = await bookService.OccupancyByResource(resourceId);
-                }
-                catch (Exception ex) when (ex is KeyNotFoundException || ex is FieldValueAbsurdException)
-                {
-                    //silently swallowing disjoint values
-                }
-            }
-
-            return Ok(map);
+            var result = await (IsAdmin ? resService.GetOccupancies() : resService.GetActiveOccupancies());
+            return Ok(result);
         }
 
         [HttpGet("{resourceId}/bookings")]
@@ -92,7 +69,7 @@ namespace BookingApp.Controllers
 
             if (IsAdmin)
             {
-                dtos = dtoMapper.Map<IEnumerable<BookingAdminDTO>>(models);
+                dtos = mappService.Map<IEnumerable<BookingAdminDTO>>(models);
             }
             else
             {
@@ -105,9 +82,9 @@ namespace BookingApp.Controllers
                         BookingMinimalDTO suitableDto;
 
                         if (model.CreatedUserId == currentUserId)
-                            suitableDto = dtoMapper.Map<BookingOwnerDTO>(model);
+                            suitableDto = mappService.Map<BookingOwnerDTO>(model);
                         else
-                            suitableDto = dtoMapper.Map<BookingMinimalDTO>(model);
+                            suitableDto = mappService.Map<BookingMinimalDTO>(model);
 
                         diffList.Add(suitableDto);
                     }
@@ -115,7 +92,7 @@ namespace BookingApp.Controllers
                 }
                 else
                 {
-                    dtos = dtoMapper.Map<IEnumerable<BookingMinimalDTO>>(models);
+                    dtos = mappService.Map<IEnumerable<BookingMinimalDTO>>(models);
                 }
             }
             return Ok(dtos);
@@ -130,9 +107,8 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> Single([FromRoute] int resourceId)
         {
             await AuthorizeForSingleResource(resourceId);
-
             var resourceModel = await resService.Get(resourceId);
-            var resourceDTO = dtoMapper.Map<ResourceMaxDto>(resourceModel);
+            var resourceDTO = mappService.Map<ResourceMaxDto>(resourceModel);
             return Ok(resourceDTO);
         }
 
@@ -145,7 +121,7 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> SingleOccupancy([FromRoute] int resourceId)
         {
             await AuthorizeForSingleResource(resourceId);
-            return Ok(await bookService.OccupancyByResource(resourceId));
+            return Ok(await resService.OccupancyByResource(resourceId));
         }
         #endregion
 
@@ -163,7 +139,7 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
 
             #region Mapping
-            var itemModel = dtoMapper.Map<Resource>(item);
+            var itemModel = mappService.Map<Resource>(item);
             itemModel.UpdatedUserId = itemModel.CreatedUserId = UserId;
             itemModel.UpdatedTime = itemModel.CreatedTime = DateTime.Now;
             #endregion
@@ -190,7 +166,7 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
 
             #region Mapping
-            var itemModel = dtoMapper.Map<Resource>(item);
+            var itemModel = mappService.Map<Resource>(item);
             itemModel.UpdatedUserId = UserId;
             itemModel.UpdatedTime = DateTime.Now;
             itemModel.Id = resourceId;

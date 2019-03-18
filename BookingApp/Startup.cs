@@ -13,7 +13,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
 using BookingApp.Services;
-using BookingApp.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
@@ -36,26 +35,7 @@ namespace BookingApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IResourcesService, ResourcesService>();
-            services.AddTransient<IResourcesRepository, ResourcesRepository>();
-
-            services.AddTransient<IFolderService, FolderService>();
-            services.AddTransient<FolderRepository>();
-
-            services.AddTransient<IBookingsService, BookingsService>();
-            services.AddTransient<IBookingsRepository, BookingsRepository>();
-
-            services.AddTransient<IJwtService, JwtService>();
-            services.AddTransient<IMessageService, MailMessageService>();
-            services.AddTransient<INotificationService, NotificationService>();
-            services.AddTransient<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
-
-            services.AddTransient<IUserService,UserService>();
-            services.AddTransient<IUserRepository,UserRepository>();
-
-            services.AddTransient<IRuleService, RuleService>();
-            services.AddTransient<IRuleRepository, RuleRepository>();
-
+            services.InitializeServices();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -118,10 +98,13 @@ namespace BookingApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, DbInitializer initializer, IHostingEnvironment env)
         {
+            if (env.IsEnvironment("Testing")) {
+                Logger.LogInformation("In test environment");
+            }
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                Logger.LogInformation("In development enviroment");
+                Logger.LogInformation("In development environment");
             }
             else
             {
@@ -167,7 +150,15 @@ namespace BookingApp
                 }
             });
 
-            initializer.Initialize().Wait();
+            bool UseStoreProc = !env.IsEnvironment("Testing");
+            if (env.IsEnvironment("Testing"))
+            {
+                initializer.Initialize(UseStoreProc);
+            }
+            else
+            {
+                initializer.Initialize(UseStoreProc).Wait();
+            }
         }
     }
 }

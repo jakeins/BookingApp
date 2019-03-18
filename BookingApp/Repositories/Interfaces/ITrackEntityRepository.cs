@@ -1,9 +1,9 @@
-﻿using BookingApp.Data.Models;
+﻿using BookingApp.Data.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BookingApp.Repositories
+namespace BookingApp.Repositories.Interfaces
 {
     /// <summary>
     /// Trackable Entity repository interface.
@@ -12,9 +12,9 @@ namespace BookingApp.Repositories
     /// <typeparam name="TEntityKey">Type of the entity primary id.</typeparam>
     /// <typeparam name="TUserModel">Type of the related user object.</typeparam>
     /// <typeparam name="TUserKey">Type of the primary id of the related user.</typeparam>
-    public interface IEntityRepository<TEntity, TEntityKey, TUserModel, TUserKey>
+    public interface ITrackEntityRepository<TEntity, TEntityKey, TUserModel, TUserKey>
         : IBasicRepositoryAsync<TEntity, TEntityKey>
-        where TEntity : class, IEntity<TEntityKey, TUserModel, TUserKey>
+        where TEntity : class, ITrackable<TUserModel, TUserKey>
         where TEntityKey : IEquatable<TEntityKey>
         where TUserModel : class
         where TUserKey : IEquatable<TUserKey>
@@ -53,11 +53,6 @@ namespace BookingApp.Repositories
         /// Lists identifiers of all entities.
         /// </summary>
         Task<IEnumerable<TEntityKey>> ListKeysAsync();
-
-        /// <summary>
-        /// Save changes do storage, wrapped in exception, verbose.
-        /// </summary>
-        Task SaveVerboseAsync(string saveReasonTitle);
 
         /// <summary>
         /// Updates only the properties, present in the provided <see cref="TSelectedProps"/>.

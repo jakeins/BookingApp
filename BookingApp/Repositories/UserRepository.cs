@@ -1,34 +1,15 @@
-﻿using BookingApp.Data;
-using BookingApp.Data.Models;
+﻿using BookingApp.Data.Models;
 using BookingApp.Exceptions;
-using BookingApp.Repositories;
+using BookingApp.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
 
-    public interface IUserRepository : IBasicRepositoryAsync<ApplicationUser, string>
-    {
-        Task AddUserRole(ApplicationUser user, string role);
-        Task AddUserRoles(ApplicationUser user, IEnumerable<string> roles);
-        Task ChangePassword(ApplicationUser user, string currentpassword, string newpassword);
-        Task<bool> CheckPassword(ApplicationUser user, string password);
-        Task CreateAsync(ApplicationUser user, string password);
-        Task DeleteAsync(ApplicationUser user);
-        Task<string> GeneratePasswordResetToken(ApplicationUser user);
-        Task<ApplicationUser> GetUserByEmailAsync(string email);
-        Task<IList<string>> GetUserRoles(ApplicationUser user);
-        Task<IList<string>> GetUserRolesById(string userId);
-        Task<bool> IsInRole(ApplicationUser user, string role);
-        Task RemoveUserRole(ApplicationUser user, string role);
-        Task RemoveUserRoles(ApplicationUser user, IEnumerable<string> roles);
-        Task ResetUserPassword(ApplicationUser user, string token, string newPassword);
-    }
     public class UserRepository : IUserRepository
     {
         private UserManager<ApplicationUser> userManager;
@@ -49,6 +30,8 @@ namespace BookingApp.Services
 
         public async Task CreateAsync(ApplicationUser user, string password)
         {
+            if (userManager.FindByEmailAsync(user.Email) != null)
+                throw new UserException("User with this email already registered");
             IdentityResult result = await userManager.CreateAsync(user, password);
             if (!result.Succeeded)
             {
@@ -106,6 +89,19 @@ namespace BookingApp.Services
             }
         }
 
+        public async Task<ApplicationUser> GetUserByUserName(string userName)
+        {
+            ApplicationUser applicationUser = await userManager.FindByNameAsync(userName);
+            if (applicationUser == null)
+            {
+                throw new NullReferenceException("Can not find user with this UserName");
+            }
+            else
+            {
+                return applicationUser;
+            }
+        }
+
         public Task<IEnumerable<ApplicationUser>> GetListAsync()
         {
             return Task.FromResult(userManager.Users.ToList().AsEnumerable());
@@ -146,23 +142,23 @@ namespace BookingApp.Services
                 switch (item.Code)
                 {
                     case "DuplicateUserName":
-                        throw new UserNameException("User with this Username already created");
+                        throw new UserException("User with this Username already created");
                     case "DuplicateEmail":
-                        throw new UserEmailException("Email already registered");
+                        throw new UserException("Email already registered");
                     case "InvalidEmail":
-                        throw new UserEmailException("Invalid email");
+                        throw new UserException("Invalid email");
                     case "InvalidUserName":
-                        throw new UserNameException("Invalid Username");
+                        throw new UserException("Invalid Username");
                     case "PasswordTooShort":
-                        throw new UserPasswordException("Password too short");
+                        throw new UserException("Password too short");
                     case "PasswordRequiresNonAlphanumeric":
-                        throw new UserPasswordException("Password requires non alphanumeric");
+                        throw new UserException("Password requires non alphanumeric");
                     case "PasswordRequiresDigit":
-                        throw new UserPasswordException("Password requires digit");
+                        throw new UserException("Password requires digit");
                     case "PasswordRequiresLower":
-                        throw new UserPasswordException("Password requires lower");
+                        throw new UserException("Password requires lower");
                     case "PasswordRequiresUpper":
-                        throw new UserPasswordException("Password requires upper");
+                        throw new UserException("Password requires upper");
                     default:
                         throw new UserException("Default User Exception");
                 }

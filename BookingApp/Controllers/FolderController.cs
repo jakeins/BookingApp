@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using BookingApp.Controllers.Bases;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.DTOs.Folder;
 using BookingApp.Helpers;
 using BookingApp.Services;
+using BookingApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -92,7 +95,7 @@ namespace BookingApp.Controllers
             await service.Create(UserId, itemModel);
             return Created(
                 this.BaseApiUrl + "/" + itemModel.Id,
-                new { ResourceId = itemModel.Id }
+                new { FolderId = itemModel.Id }
             );
         }
 
