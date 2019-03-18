@@ -13,6 +13,7 @@ import { ResourceService } from './services/resource.service';
 import { TokenInterceptor } from './services/token.interceptor';
 import { AccessTokenService } from './services/access-token.service';
 import { UserService } from './services/user.service';
+import { RuleService } from './services/rule.service';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { UserService } from './services/user.service';
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    }
+    },
+    RuleService
   ],
   bootstrap: [AppComponent]
 })
