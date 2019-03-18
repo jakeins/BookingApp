@@ -1,0 +1,59 @@
+<div class="btn btn-success btn-lg">
+  <a routerLink="['/admin/rules/add']"><i class="fas fa-plus-square fa-lg"></i></a>
+</div>
+<div class="row">
+  <ul class="rules">
+    <li *ngFor="let rule of rules" class="rules_rule">
+      <table class="table table-bordered table-hover">
+
+        <tbody>
+          <tr><td>Id</td><td>{{rule.id}}</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>Title</td><td>{{rule.title}}</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>Active?</td><td>{{rule.isActive}}</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>Min Time</td><td>{{rule.minTime}}sec</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>Max Time</td><td>{{rule.maxTime}}sec</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>Pre Order Time Limit</td><td>{{rule.preOrderTaimeLimit}}sec</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>Reuse Timeout</td><td>{{rule.reuseTimeout}}sec</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>Service Time</td><td>{{rule.serviceTime}}sec</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>StepTime</td><td>{{rule.stepTime}}sec</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>Created</td><td>{{getDateTime(rule.createdTime)}}</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>Created by(UserId)</td><td>{{rule.createdUserId}}</td></tr> <!--get user name instead of id?-->
+        </tbody>
+        <tbody>
+          <tr><td>Updated</td><td>{{getDateTime(rule.updatedTime)}}</td></tr>
+        </tbody>
+        <tbody>
+          <tr><td>Updated by(UserId)</td><td>{{rule.updatedUserId}}</td></tr>
+        </tbody>
+      </table>
+      <div class="edit-button">
+        <button class="btn btn-primary">
+          <a routerLink="['/admin/rules/edit']"><i class="fas fa-pen-square fa-lg"></i></a>
+        </button>
+        <button class="btn btn-danger" (click)="delete(rule)">Delete</button>
+      </div>
+    </li>
+  </ul>
+</div>
+
+

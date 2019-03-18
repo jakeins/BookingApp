@@ -8,6 +8,7 @@ import { UserComponent } from './user/user.component';
 import { AdminComponent } from './admin.component';
 import { ResourceEditComponent } from './resource/resource-edit.component';
 import { FolderEditComponent } from './folder/folder-edit.component';
+import { RulesComponent } from './rules/rules.component';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { FolderEditComponent } from './folder/folder-edit.component';
       HomeComponent,
       UserComponent,
       ResourceEditComponent,
-      FolderEditComponent
+      FolderEditComponent,
+      RulesComponent
   ]
 })
 export class AdminModule { }
