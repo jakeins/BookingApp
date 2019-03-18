@@ -99,12 +99,12 @@ namespace BookingApp
         public void Configure(IApplicationBuilder app, DbInitializer initializer, IHostingEnvironment env)
         {
             if (env.IsEnvironment("Testing")) {
-                Logger.LogInformation("In test enviroment");
+                Logger.LogInformation("In test environment");
             }
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                Logger.LogInformation("In development enviroment");
+                Logger.LogInformation("In development environment");
             }
             else
             {
@@ -149,10 +149,13 @@ namespace BookingApp
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+
             bool UseStoreProc = !env.IsEnvironment("Testing");
-            if (env.IsEnvironment("Testing")) {
+            if (env.IsEnvironment("Testing"))
+            {
                 initializer.Initialize(UseStoreProc);
-            } else
+            }
+            else
             {
                 initializer.Initialize(UseStoreProc).Wait();
             }

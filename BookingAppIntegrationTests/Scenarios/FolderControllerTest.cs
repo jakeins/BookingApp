@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-
 namespace BookingAppIntegrationTests.Scenarios
 {
     public class FolderControllerTest : IClassFixture<CustomWebApplicationFactory<Startup>>
@@ -25,7 +24,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder")]
         public async Task GetFoldersIsAdminTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var response = await _client.GetAsync(url);
             var stringResponse = await response.Content.ReadAsStringAsync();
             var folders = JsonConvert.DeserializeObject<List<Folder>>(stringResponse);
@@ -36,6 +35,8 @@ namespace BookingAppIntegrationTests.Scenarios
                 response.Content.Headers.ContentType.ToString());
             Assert.Equal(5, folders.Count);
         }
+
+
         #endregion FolderController.Index
 
         #region FolderController.Detail
@@ -43,7 +44,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/1")]
         public async Task GetFolderByIdTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var response = await _client.GetAsync(url);
             var folder = JsonConvert.DeserializeObject<Folder>(await response.Content.ReadAsStringAsync());
 
@@ -58,7 +59,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/122")]
         public async Task GetFaildedFolderByIdTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var response = await _client.GetAsync(url);
 
             // Assert
@@ -71,7 +72,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder")]
         public async Task CreateFolderTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var content = JsonConvert.SerializeObject(new Folder { Title = "Folder new", IsActive = true });
             var response = await _client.PostAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -84,7 +85,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder")]
         public async Task FailedValidationCreateFolderTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var content = JsonConvert.SerializeObject(new Folder { Title = "Fo", IsActive = true });
             var response = await _client.PostAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -98,7 +99,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/1")]
         public async Task UpdateFolderTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var content = JsonConvert.SerializeObject(new Folder { Title = "Folder new", IsActive = true });
             var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -110,7 +111,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/122")]
         public async Task FailedUpdateFolderTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var content = JsonConvert.SerializeObject(new Folder { Title = "Folder new", IsActive = true });
             var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -122,7 +123,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/1")]
         public async Task FailedValidationUpdateFolderTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var content = JsonConvert.SerializeObject(new Folder { Title = "Fo", IsActive = true });
             var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -134,7 +135,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/1")]
         public async Task IsParentInvalidUpdateFolderTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var content = JsonConvert.SerializeObject(new Folder { Title = "Folder 1", ParentFolderId = 3, IsActive = true });
             var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -148,7 +149,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/2")]
         public async Task DeleteFolderTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var response = await _client.DeleteAsync(url);
 
             // Assert
@@ -159,7 +160,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/122")]
         public async Task FailedDeleteFolderTest(string url)
         {
-            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.getToken()}");
+            await this.AddTokenBearerHeader();
             var response = await _client.DeleteAsync(url);
 
             // Assert
@@ -169,14 +170,28 @@ namespace BookingAppIntegrationTests.Scenarios
 
 
         #region Utility
-        private async Task<string> getToken()
+        private async Task AddTokenBearerHeader()
         {
-            var responseToken = await _client.PostAsJsonAsync("/api/auth/login", new
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await this.GetToken()}");
+        }
+
+        private string tokenCache;
+        private async Task<string> GetToken()
+        {
+            if (tokenCache == null)
             {
-                Password = "SuperAdmin",
-                Email = "superadmin@admin.cow"
-            });
-            return (((responseToken.Content.ReadAsStringAsync().Result).Substring(16)).Split(',')[0]).Trim('"');
+                var responseToken = await _client.PostAsJsonAsync("/api/auth/login", new
+                {
+                    Password = "SuperAdmin",
+                    Email = "superadmin@admin.cow"
+                });
+
+                var tokenJson = responseToken.Content.ReadAsStringAsync().Result;
+                var tokenMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(tokenJson);
+
+                tokenCache = tokenMap["accessToken"];
+            }
+            return tokenCache;
         }
         #endregion Utility
     }
