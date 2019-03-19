@@ -44,7 +44,7 @@ export class FolderService {
 
   updateFolder(folder: Folder): Observable<any> {
     return this.http.put(this.BaseUrlFolder + '/' + folder.id, folder, {
-      headers:this.headers
+      headers: this.headers
     })
   }
 

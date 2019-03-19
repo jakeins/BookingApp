@@ -37,30 +37,21 @@ describe('FolderService', function () {
         httpMock.verify();
     });
     it('should post the correct data', function () {
-        service.createFolder(new folder_1.Folder('Town Hall')).subscribe(function (data) {
-            expect(data.title).toBe('Town Hall');
-        });
+        service.createFolder(new folder_1.Folder('Town Hall')).subscribe();
         var req = httpMock.expectOne(BaseUrlFolder, 'post to api');
         expect(req.request.method).toBe('POST');
-        req.flush(new folder_1.Folder('Town Hall'));
         httpMock.verify();
     });
     it('should put the correct data', function () {
-        service.updateFolder(new folder_1.Folder('Town Hall')).subscribe(function (data) {
-            expect(data.title).toBe('Town Hall');
-        });
+        service.updateFolder(new folder_1.Folder('Town Hall', null, null, null, 1)).subscribe();
         var req = httpMock.expectOne(BaseUrlFolder + '/1', 'put to api');
         expect(req.request.method).toBe('PUT');
-        req.flush(new folder_1.Folder('Town Hall'));
         httpMock.verify();
     });
     it('should delete the correct data', function () {
-        service.deleteFolder(1).subscribe(function (data) {
-            expect(data).toBe(1);
-        });
+        service.deleteFolder(1).subscribe();
         var req = httpMock.expectOne(BaseUrlFolder + '/1', 'delete to api');
         expect(req.request.method).toBe('DELETE');
-        req.flush(1);
         httpMock.verify();
     });
 });

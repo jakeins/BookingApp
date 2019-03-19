@@ -87,6 +87,7 @@
     <None Remove="ClientApp\src\app\services\folder.service.ts" />
     <None Remove="ClientApp\src\app\services\logger.service.ts" />
     <None Remove="ClientApp\src\app\services\resource.service.ts" />
+    <None Remove="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
     <None Remove="ClientApp\src\app\services\token.interceptor.ts" />
     <None Remove="ClientApp\src\app\site\header\header.component.ts" />
     <None Remove="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
@@ -121,6 +122,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\folder.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\logger.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\development.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\token.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\site\header\header.component.ts" />
   </ItemGroup>
