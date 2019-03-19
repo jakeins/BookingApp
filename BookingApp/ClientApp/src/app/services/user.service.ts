@@ -29,6 +29,10 @@ export class UserService {
     this.baseApiUrl = BASE_API_URL;
   }
 
+  getUserById(userId: string): Observable<User> {
+    return this.http.get<User>(this.path + '/' + userId);
+  }
+
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.defaultPath);
   }

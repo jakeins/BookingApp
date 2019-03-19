@@ -15,7 +15,7 @@ import { error } from 'protractor';
 })
 export class UserComponent implements OnInit {
   users: User[];
- public userPage: UserPage;
+  public userPage: UserPage;
   page: number = 1;
   loaded: boolean;
   pageSize:number = 10;
@@ -69,7 +69,7 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit() {
-   this.getUserPages(this.page = 1, this.pageSize)
+    this.getUserPages(this.page = 1, this.pageSize) 
   }
 
   handleError(error: any) {

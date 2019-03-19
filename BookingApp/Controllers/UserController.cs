@@ -59,17 +59,17 @@ namespace BookingApp.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            //TODO: Set admin role
             ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
             await userService.CreateAdmin(appUser, user.Password);
             ApplicationUser adminUser = await userService.GetUserByName(user.UserName);
-            await userService.AddUserRoleAsync(adminUser.Id,RoleTypes.Admin);
+            await userService.AddUsersRoleAsync(adminUser, new List<string> { RoleTypes.Admin ,RoleTypes.User });
             return Ok("User created");       
         }
 
+
         [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}")]
-        public async Task<IActionResult> GetUserById([FromRoute]string userId)
+        public async Task<IActionResult> GetUserById([FromRoute] string userId)
         {
             if (UserId == userId || IsAdmin)
             {
@@ -81,9 +81,10 @@ namespace BookingApp.Controllers
                 return BadRequest("Can not get information about this user");
         }
 
-        [Authorize(Roles = RoleTypes.User)]
+        
         [HttpGet("api/user/email/{userEmail}")]
-        public async Task<IActionResult> GetUserByEmail([FromRoute]string userEmail)
+        [Authorize(Roles = RoleTypes.User)]
+        public async Task<IActionResult> GetUserByEmail([FromRoute] string userEmail)
         {
             ApplicationUser requestUser = await userService.GetUserByEmail(userEmail);
             if (UserId == requestUser.Id || IsAdmin)
