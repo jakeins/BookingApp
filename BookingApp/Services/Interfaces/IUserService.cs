@@ -12,6 +12,7 @@ namespace BookingApp.Services.Interfaces
         Task AddUserRoleAsync(string userId, string role);
         Task AddUsersRoleAsync(ApplicationUser user, IEnumerable<string> roles);
         Task ChangePassword(string userId, string currentpassword, string newpassword);
+        Task<IEnumerable<ApplicationUser>> GetUsersById(IEnumerable<string> usersId);
         Task<bool> CheckPassword(ApplicationUser user, string password);
         Task CreateAdmin(ApplicationUser user, string password);
         Task CreateUser(ApplicationUser user);

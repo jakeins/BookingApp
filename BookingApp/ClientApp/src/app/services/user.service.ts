@@ -3,7 +3,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Response } from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import * as jwt_decode from "jwt-decode";
 import { Observable } from 'rxjs/Observable';
+import { AccessTokenService } from './access-token.service';
 import { User } from '../models/user';
 import { BASE_API_URL } from '../globals';
 import { Resource } from '../models/resource';
@@ -15,11 +17,13 @@ export class UserService {
   private defaultPath: string;
   private path: string;
   private baseApiUrl: string;
+  //private tokenservice: AccessTokenService;
+
   headers: HttpHeaders = new HttpHeaders({
     "Content-Type": "application/json",
     "Accept": "application/json"
   });
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private tokenservice: AccessTokenService) {
     this.defaultPath = BASE_API_URL + '/users';
     this.path = BASE_API_URL + '/user';
     this.baseApiUrl = BASE_API_URL;
@@ -41,5 +45,9 @@ export class UserService {
 
   approvalUser(userId: string, approval: boolean): Observable<Object> {
     return this.http.put(this.path + '/' + userId + '/approval', approval, { headers: this.headers });
+  }
+
+  getUserName(): any {
+    return this.tokenservice.readUsername();
   }
 }

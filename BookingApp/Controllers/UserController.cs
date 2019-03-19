@@ -34,6 +34,8 @@ namespace BookingApp.Controllers
             {
                 cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap().ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
+                cfg.CreateMap<List<ApplicationUser>, List<UserMinimalDto>> ().ReverseMap();
+                cfg.CreateMap<List<UserMinimalDto>, List<ApplicationUser>> ().ReverseMap();
                 cfg.CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
                 cfg.CreateMap<Resource, ResourceMaxDto>().ReverseMap();
                 cfg.CreateMap<Booking, BookingOwnerDTO>();
@@ -99,6 +101,15 @@ namespace BookingApp.Controllers
         {
             IEnumerable<ApplicationUser> appusers = await userService.GetUsersList();
             IEnumerable<UserMinimalDto> users = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserMinimalDto>>(appusers);
+            return new OkObjectResult(users);
+        }
+
+        [Authorize(Roles = RoleTypes.Admin)]
+        [HttpPost("api/users-by-id")]
+        public async Task<IActionResult> GetAllUsers([FromBody]List<string> usersId)
+        {
+            IEnumerable<ApplicationUser> appusers = await userService.GetUsersById(usersId);
+           IEnumerable<UserMinimalDto> users = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserMinimalDto>>(appusers);
             return new OkObjectResult(users);
         }
 
