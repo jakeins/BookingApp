@@ -4,6 +4,7 @@ import { UserService } from '../../services/user.service';
 import { Logger } from '../../services/logger.service';
 import { forEach } from '@angular/router/src/utils/collection';
 import { UserPage } from '../../models/user-page';
+import { UserRegister } from '../../models/user-register';
 import { error } from 'protractor';
 
 
@@ -16,6 +17,7 @@ import { error } from 'protractor';
 export class UserComponent implements OnInit {
   users: User[];
   public userPage: UserPage;
+  userRegister: UserRegister;
   page: number = 1;
   loaded: boolean;
   pageSize:number = 10;
@@ -24,7 +26,7 @@ export class UserComponent implements OnInit {
  // pages: number;
  
   constructor(private userService: UserService) {
-    
+
   }
   public blocking: boolean;
 
@@ -69,7 +71,10 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getUserPages(this.page = 1, this.pageSize) 
+    this.getUserPages(this.page = 1, this.pageSize)
+    //this.userService.createUser(this.userRegister).subscribe((res) => {
+    //   console.log(res);
+    //});
   }
 
   handleError(error: any) {

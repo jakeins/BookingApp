@@ -106,7 +106,7 @@ namespace BookingApp.Controllers
         }
 
         [Authorize(Roles = RoleTypes.Admin)]
-        [HttpPost("api/users-by-id")]
+        [HttpPost("api/user/users-by-id")]
         public async Task<IActionResult> GetAllUsers([FromBody]List<string> usersId)
         {
             IEnumerable<ApplicationUser> appusers = await userService.GetUsersById(usersId);
@@ -115,7 +115,7 @@ namespace BookingApp.Controllers
         }
 
         [Authorize(Roles = RoleTypes.Admin)]
-        [HttpGet("api/users-page")]
+        [HttpGet("api/user/page")]
         public async Task<IActionResult> GetAllUsers([FromQuery]UserPagingParamsDto pagingParams)
         {
             var model = await userService.GetUsersList(pagingParams.PageNumber,pagingParams.PageSize);

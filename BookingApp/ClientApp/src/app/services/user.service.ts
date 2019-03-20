@@ -8,8 +8,9 @@ import { Observable } from 'rxjs/Observable';
 import { AccessTokenService } from './access-token.service';
 import { User } from '../models/user';
 import { BASE_API_URL } from '../globals';
-import { Resource } from '../models/resource';
+import { UserRegister } from '../models/user-register';
 import { UserPage } from '../models/user-page';
+import { UserUpdate } from '../models/user-update';
 
 
 @Injectable()
@@ -17,6 +18,7 @@ export class UserService {
   private defaultPath: string;
   private path: string;
   private baseApiUrl: string;
+  private userRegister: UserRegister;
   //private tokenservice: AccessTokenService;
 
   headers: HttpHeaders = new HttpHeaders({
@@ -29,16 +31,40 @@ export class UserService {
     this.baseApiUrl = BASE_API_URL;
   }
 
+  createUser(user: UserRegister): Observable<any> {
+    return this.http.post(this.path, user,  { headers: this.headers });
+  }
+
+  createAdmin(user: UserRegister): Observable<any> {
+    return this.http.post(this.path + '/crate-admin', user, { headers: this.headers });
+  }
+
+  updateUser(user: UserUpdate, userId: string) {
+    return this.http.put(this.path + '/' + userId, user, { headers: this.headers });
+  }
+
+  deleteUser(userId: string): Observable<any> {
+    return this.http.delete(this.path + '/' + userId);
+  }
+
   getUserById(userId: string): Observable<User> {
     return this.http.get<User>(this.path + '/' + userId);
+  }
+
+  getUserByEmail(userEmail: string): Observable<User> {
+    return this.http.get<User>(this.path + '/email/' + userEmail);
   }
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.defaultPath);
   }
 
+  getUsersById(usersId: string[]): Observable<User[]> {
+    return this.http.post<User[]>(this.path + '/users-by-id', usersId, { headers: this.headers });
+  }
+
   getUsersPage(page: number, pageSize: number): Observable<UserPage> {
-    return this.http.get<UserPage>(this.baseApiUrl + '/' + 'users-page' + '?' + 'PageNumber=' + page + '&' + 'PageSize=' + pageSize);
+    return this.http.get<UserPage>(this.path + '/page' + '?' + 'PageNumber=' + page + '&' + 'PageSize=' + pageSize);
   }
 
   blockUser(userId: string, blocking: boolean): Observable<Object> {
