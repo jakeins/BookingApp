@@ -77,6 +77,7 @@
     <None Remove="ClientApp\src\app\globals.ts" />
     <None Remove="ClientApp\src\app\models\folder-form.model.ts" />
     <None Remove="ClientApp\src\app\models\folder.ts" />
+    <None Remove="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
     <None Remove="ClientApp\src\app\models\tree-entry.ts" />
     <None Remove="ClientApp\src\app\models\tree-node.ts" />
@@ -113,6 +114,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folder-form.model.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\resource.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-entry.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-node.ts" />
