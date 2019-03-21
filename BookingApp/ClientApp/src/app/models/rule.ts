@@ -1,11 +1,11 @@
 export class rule {
-  Id: number;
-  Title: string;
-  MinTime: number;
-  MaxTime: number;
-  StepTime: number;
-  ServiceTime: number;
-  PreOrderTimeLimit: number;
-  ReuseTimeout: number;
+  id?: number;
+  title: string;
+  minTime: number;
+  maxTime: number;
+  stepTime: number;
+  serviceTime: number;
+  preOrderTimeLimit: number;
+  reuseTimeout: number;
   isActive: boolean
 }

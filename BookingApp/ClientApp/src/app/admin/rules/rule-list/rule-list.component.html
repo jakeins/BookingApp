@@ -1,0 +1,12 @@
+<table class="table table-hover">
+  <tr>
+      <th>Id</th>
+      <th>Activity</th>
+      <th></th>
+  </tr>
+  <tr *ngFor="let rule of service.Rules">
+    <td (click)="populateForm(rule)">{{rule.id}}</td>
+    <td (click)="populateForm(rule)">{{showActive(rule.isActive)}}</td>
+    <td (click)="onDelete(rule.id)"><button class="btn btn-sm btn-outline-danger">X</button></td>
+  </tr>
+</table>
