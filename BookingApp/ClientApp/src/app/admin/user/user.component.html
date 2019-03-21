@@ -1,5 +1,41 @@
-<ul>
-  <li *ngFor="let user of users">
-    {{user.userName}}
-  </li>
-</ul>
+<div *ngIf="loaded">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>UserName</th>
+        <th>Email</th>
+        <th>ApprovalStatus</th>
+        <th>Blocking</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="user-item" *ngFor="let user of userPage.items">
+        <td>{{user.userName}}</td>
+        <td>{{user.email}}</td>
+        <td>
+          <span *ngIf="user.approvalStatus == null">
+            <i (click)="approvalButton(user.id,true)" class="icon fas fa-check"></i>
+            <i (click)="approvalButton(user.id,false)" class="icon fas fa-times"></i>
+          </span>
+          <span *ngIf="user.approvalStatus == true">
+            <i class="fas fa-check"></i>
+          </span>
+          <span *ngIf="user.approvalStatus == false">
+            <i class="fas fa-times"></i>
+          </span>
+        </td>
+        <td>
+          <span>
+            <i (click)="blockButton(user.id)" [ngClass]="user.isBlocked ? 'fas fa-lock' : 'fas fa-lock-open'"></i>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <nav aria-label="Page navigation example" >
+    <ul class="pagination">
+      <li class="page-item page-link" *ngFor="let p of userPage.paging.arrayTotalPages; let i=index" (click)="getUserPages(i+1,10)">{{i+1}}</li>
+    </ul>
+  </nav>
+</div>
+

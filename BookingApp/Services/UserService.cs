@@ -1,4 +1,5 @@
 ﻿using BookingApp.Data.Models;
+using BookingApp.Helpers;
 using BookingApp.Repositories;
 using BookingApp.Repositories.Interfaces;
 using BookingApp.Services.Interfaces;
@@ -57,6 +58,11 @@ namespace BookingApp.Services
             return await userRepository.GetAsync(id);
         }
 
+        public async Task<IEnumerable<ApplicationUser>> GetUsersById(IEnumerable<string> usersId)
+        {
+            return await userRepository.GetUsersById(usersId);
+        }
+
         public async Task<ApplicationUser> GetUserByName(string userName)
         {
             return await userRepository.GetUserByUserName(userName);
@@ -70,6 +76,14 @@ namespace BookingApp.Services
         public async Task<IEnumerable<ApplicationUser>> GetUsersList()
         {
             return await userRepository.GetListAsync();
+        }
+
+        public async Task<PagedList<ApplicationUser>> GetUsersList(int pageNumber, int pageSize)
+        {
+            IEnumerable<ApplicationUser> users = await userRepository.GetListAsync(pageNumber, pageSize);
+            int countOfUser = await userRepository.GetCountOfUser();
+            PagedList<ApplicationUser> pagedList = new PagedList<ApplicationUser>(users, pageNumber, pageSize, countOfUser);
+            return pagedList;
         }
 
         public async Task<bool> CheckPassword(ApplicationUser user, string password)
@@ -91,6 +105,11 @@ namespace BookingApp.Services
         {
             ApplicationUser user = await GetUserById(userId);
             await userRepository.ChangePassword(user,currentpassword,newpassword);
+        }
+
+        public async Task<IEnumerable<ApplicationUser>> GetUsersByRole(string roleName)
+        {
+            return await userRepository.GetUsersByRole(roleName);
         }
 
         public async Task AddUserRoleAsync(string userId,string role)
