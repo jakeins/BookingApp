@@ -22,7 +22,6 @@ import { RuleService } from './services/rule.service';
   imports: [
       BrowserModule,
       HttpClientModule,
-
       RouterModule,
       AppRoutingModule,
       SiteModule
