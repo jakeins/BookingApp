@@ -39,7 +39,7 @@ export class UserService {
     return this.http.post(this.path + '/crate-admin', user, { headers: this.headers });
   }
 
-  updateUser(user: UserUpdate, userId: string) {
+  updateUser(user: UserUpdate, userId: string): Observable<any> {
     return this.http.put(this.path + '/' + userId, user, { headers: this.headers });
   }
 
@@ -49,6 +49,10 @@ export class UserService {
 
   getUserById(userId: string): Observable<User> {
     return this.http.get<User>(this.path + '/' + userId);
+  }
+
+  getUserRoleById(userId: string): Observable<string[]> {
+    return this.http.get<string[]>(this.path + '/' + userId + '/roles');
   }
 
   getUserByEmail(userEmail: string): Observable<User> {
