@@ -7,11 +7,14 @@ import { BASE_API_URL } from '../globals';
 
 @Injectable()
 export class RuleService {
+  showAdditionalInfo: boolean = false;
 
   Rule: rule;
   Rules: rule[];
   url: string = BASE_API_URL + '/rules';
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    ) { }
 
   refreshList(){
     this.http.get(this.url).toPromise().then((res: rule[]) => {

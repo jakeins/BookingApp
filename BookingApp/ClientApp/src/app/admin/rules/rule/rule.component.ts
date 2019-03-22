@@ -9,8 +9,6 @@ import { rule } from '../../../models/rule';
   styleUrls: ['./rule.component.css']
 })
 export class RuleComponent implements OnInit {
-  ruleToCheck: rule;
-  showAdditionalInfo = false;
   
   constructor(
     private service: RuleService
@@ -21,16 +19,19 @@ export class RuleComponent implements OnInit {
   }
 
   onSubmit(form: NgForm){
-    if(form.value.id == null)
-      this.insertRecord(form);
-    else
+    this.service.showAdditionalInfo=false;
       this.updateRecord(form);
   }
 
   onReset(form: NgForm){
+    this.service.showAdditionalInfo = false;
     this.resetForm(form);
   }
   
+  onAdd(form: NgForm){
+    this.insertRecord(form);
+    this.resetForm(form);
+  }
   insertRecord(form: NgForm){
     this.service.addRule(form.value).subscribe(res =>{
       console.log("rule was added");

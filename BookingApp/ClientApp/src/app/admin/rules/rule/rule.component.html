@@ -38,8 +38,8 @@
     <input type="checkbox" name="isActive"[(ngModel)]="service.Rule.isActive" class="form-check-input" >
  </div>
 
-<div class="row">
- <div class="form-group col-md-6">
+<div class="row" *ngIf="service.showAdditionalInfo==true" >
+ <div class="form-group col-md-6" >
     <label>Created</label>
     <input name="createdTime" [ngModel]="service.Rule.createdTime | date: 'dd-MMM-yyyy, hh:mm:ss'" class="form-control form-control-createdTime" readonly>
   </div>
@@ -48,7 +48,7 @@
     <input name="createdUserId" [ngModel]="service.Rule.createdUserId" class="form-control form-control-createdUserId" readonly>
   </div>
 </div>
-<div class="row">
+<div class="row" *ngIf="service.showAdditionalInfo==true">
   <div class="form-group col-md-6">
       <label>Updated</label>
       <input name="updatedTime" [ngModel]="service.Rule.updatedTime | date: 'dd-MMM-yyyy, hh:mm:ss'" class="form-control form-control-updatedTime" readonly>
@@ -62,8 +62,11 @@
     <div class="form-group col-md-6">
       <button (click)="onReset(form)" class="btn btn-block btn-danger">Reset</button>
     </div>
-    <div class="form-group col-md-6">
+    <div class="form-group col-md-6" *ngIf="service.showAdditionalInfo==true">
       <button (click)="onSubmit(form)" [disabled]="form.invalid" class="btn btn-submit btn-block btn-primary">Submit</button>
+    </div>
+    <div class="form-group col-md-6" *ngIf="service.showAdditionalInfo==false"> 
+      <button (click)="onAdd(form)" class="btn btn-submit btn-block btn-success">Add</button>
     </div>
 </div>
 </form>

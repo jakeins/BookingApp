@@ -17,14 +17,16 @@ export class RuleListComponent implements OnInit {
   }
 
   populateForm(rule: rule){
-
+    this.service.showAdditionalInfo = true;
     this.service.Rule = Object.assign({}, rule);
+    
   }
 
   onDelete(id:number){
     if(confirm('Are you sure to delete rule?')){
     this.service.deleteRule(id).subscribe( res => {
       console.log("rule was deleted");
+      this.service.showAdditionalInfo=false;
       this.service.refreshList();
     });
     }
