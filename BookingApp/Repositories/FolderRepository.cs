@@ -4,6 +4,7 @@ using BookingApp.DTOs.Folder;
 using BookingApp.Exceptions;
 using BookingApp.Repositories.Bases;
 using BookingApp.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace BookingApp.Repositories
@@ -33,24 +34,26 @@ namespace BookingApp.Repositories
             await UpdateSelectiveAsync<FolderUpdateSubsetDto>(Folder);
         }
 
-        public async Task<bool> IsParentValidAsync(int? newParentId, int? currentId)
+        public async Task IsParentValidAsync(int? newParentId, int? currentId)
         {
-            var currentParentId = newParentId;
+            await dbContext.Database.ExecuteSqlCommandAsync(
+                    $"EXEC [Folders.IsParentValid] {newParentId}, {currentId}");
+            //var currentParentId = newParentId;
 
-            while (true)
-            {
-                if (currentParentId == null)
-                    return true;
-                else
-                {
-                    if (currentParentId == currentId)
-                        throw new OperationRestrictedRelationException("Specified parent Folder can't be set because this would cause circluar dependency");
-                    else
-                    {
-                        currentParentId = (await GetAsync(currentParentId)).ParentFolderId;
-                    }
-                }
-            }
+            //while (true)
+            //{
+            //    if (currentParentId == null)
+            //        return true;
+            //    else
+            //    {
+            //        if (currentParentId == currentId)
+            //            throw new OperationRestrictedRelationException("Specified parent Folder can't be set because this would cause circluar dependency");
+            //        else
+            //        {
+            //            currentParentId = (await GetAsync(currentParentId)).ParentFolderId;
+            //        }
+            //    }
+            //}
         }
 
     }
