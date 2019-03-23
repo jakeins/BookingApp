@@ -32,6 +32,7 @@ export class RuleComponent implements OnInit {
     this.insertRecord(form);
     this.resetForm(form);
   }
+
   insertRecord(form: NgForm){
     this.service.addRule(form.value).subscribe(res =>{
       console.log("rule was added");
@@ -49,7 +50,7 @@ export class RuleComponent implements OnInit {
   }
 
   resetForm(form?: NgForm){
-    // if(form !=null)
+    // if(form !=null)           //total reset of each form field
     //  form.resetForm();
     this.service.Rule = {
       title: 'title',

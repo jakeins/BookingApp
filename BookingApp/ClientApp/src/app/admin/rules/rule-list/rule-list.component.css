@@ -1,3 +1,7 @@
 .btn-outline-danger{
     float: right;
 }
+
+.table tr.active td {
+    background-color: #7FFFD4;
+}
