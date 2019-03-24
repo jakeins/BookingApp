@@ -15,25 +15,46 @@
                 <div class="card-header">Sign In</div>
 
                 <div class="card-body">
-                    <form>
+                    <form [formGroup]="loginForm" (ngSubmit)="login()">
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label text-md-right">Email</label>
 
                             <div class="col-md-6">
-                                <input type="text" class="form-control underlined" id="email" placeholder="name@email.com" required>
+                                <input name="email" formControlName="email" type="text" class="form-control underlined"
+                                    id="email" placeholder="name@email.com">
+                            </div>
+                        </div>
+
+                        <div class="form-group row offset-md-4">
+                            <div class="alert alert-danger"
+                                *ngIf="loginForm.controls['email'].invalid && loginForm.controls['email'].touched">
+                                Not valid field
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label text-md-right">Password</label>
                             <div class="col-md-6">
-                                <input type="text" class="form-control underlined" id="password" placeholder="***" required>
+                                <input name="password" formControlName="password" type="password"
+                                    class="form-control underlined" id="password" placeholder="***">
                             </div>
+                        </div>
+
+                        <div class="form-group row offset-md-4">
+                            <div class="alert alert-danger"
+                                *ngIf="loginForm.controls['password'].invalid && loginForm.controls['password'].touched">
+                                Not valid field
+                            </div>
+                        </div>
+
+                        <div class="form-group row offset-md-2">
+                            <a routerLink="/forget">Forget password</a>
                         </div>
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">Sign In<span class="ti-user"></span></button>
+                                <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Sign
+                                    In<span class="ti-user"></span></button>
                             </div>
                         </div>
 
