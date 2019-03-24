@@ -30,7 +30,7 @@ namespace BookingApp.Services
 
         public async Task CreateAsync(ApplicationUser user, string password)
         {
-            if (userManager.FindByEmailAsync(user.Email) != null)
+            if (await userManager.FindByEmailAsync(user.Email) != null)
                 throw new UserException("User with this email already registered");
             IdentityResult result = await userManager.CreateAsync(user, password);
             if (!result.Succeeded)
@@ -102,9 +102,26 @@ namespace BookingApp.Services
             }
         }
 
+        public Task<IEnumerable<ApplicationUser>> GetUsersById(IEnumerable<string> usersId)
+        {
+           return Task.FromResult(userManager.Users.Where(user => usersId.Contains(user.Id)).ToList().AsEnumerable());
+        }
+
+        public async Task<IEnumerable<ApplicationUser>> GetUsersByRole(string roleName)
+        {
+           return await userManager.GetUsersInRoleAsync(roleName);
+        }
+
         public Task<IEnumerable<ApplicationUser>> GetListAsync()
         {
             return Task.FromResult(userManager.Users.ToList().AsEnumerable());
+        }
+
+        public Task<IEnumerable<ApplicationUser>> GetListAsync(int pageNumber,int pageSize)
+        { 
+            return Task.FromResult(userManager.Users.Skip(pageSize * (pageNumber - 1))
+                            .Take(pageSize)
+                            .ToList().AsEnumerable());
         }
 
         public Task SaveAsync()
@@ -233,6 +250,11 @@ namespace BookingApp.Services
         public async Task<string> GeneratePasswordResetToken(ApplicationUser user)
         {
             return await userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public Task<int> GetCountOfUser()
+        {
+            return Task.FromResult(userManager.Users.Count());
         }
     }
 }

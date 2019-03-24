@@ -22,7 +22,6 @@ import { UserInfoService } from './services/user-info.service';
   imports: [
       BrowserModule,
       HttpClientModule,
-
       RouterModule,
       AppRoutingModule,
       SiteModule

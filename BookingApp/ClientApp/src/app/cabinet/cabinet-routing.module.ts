@@ -6,13 +6,15 @@ import { CabinetGuard } from './cabinet.guard';
 import { HomeComponent } from './home/home.component';
 import { CabinetComponent } from './cabinet.component';
 import { BookingsComponent } from './bookings/bookings.component';
+import { UserEditComponent } from './user-edit/user-edit.component';
 
 
 const routesCabinet: Routes = [
     {
         path: '', component: CabinetComponent, canActivate: [CabinetGuard], children: [
             { path: '', component: HomeComponent },
-            { path: 'bookings', component: BookingsComponent },
+          { path: 'bookings', component: BookingsComponent },
+          { path: 'user-edit', component: UserEditComponent },
         ]
     }
 ];
