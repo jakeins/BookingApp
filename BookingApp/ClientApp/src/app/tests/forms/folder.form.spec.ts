@@ -6,7 +6,7 @@ import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { RouterTestingModule } from '@angular/router/testing';
 
 
-describe('Component: Folder Edit Component', () => {
+describe('Folder reactive form tests', () => {
 
   let component: FolderEditComponent;
   let fixture: ComponentFixture<FolderEditComponent>;
