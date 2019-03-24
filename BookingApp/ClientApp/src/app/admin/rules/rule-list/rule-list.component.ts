@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RuleService } from '../../../services/rule.service';
 import { rule } from '../../../models/rule';
+import { Logger } from '../../../services/logger.service';
 
 @Component({
   selector: 'app-rule-list',
@@ -8,7 +9,7 @@ import { rule } from '../../../models/rule';
   styleUrls: ['./rule-list.component.css']
 })
 export class RuleListComponent implements OnInit {
-
+  error: string;
   selectedRow: number;
   constructor(
     private service: RuleService
@@ -27,10 +28,12 @@ export class RuleListComponent implements OnInit {
   onDelete(id:number){
     if(confirm('Are you sure to delete rule?')){
     this.service.deleteRule(id).subscribe( res => {
-      console.log("rule was deleted");
       this.service.showAdditionalInfo = false;
-      this.service.refreshList(); 
-    });
+      this.service.refreshList();
+    },
+    error => { 
+      this.error = error.message.replace('https://', '');
+      Logger.error(error)})
     }
   }
 

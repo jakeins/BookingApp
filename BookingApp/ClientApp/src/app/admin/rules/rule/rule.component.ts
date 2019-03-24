@@ -35,7 +35,6 @@ export class RuleComponent implements OnInit {
 
   insertRecord(form: NgForm){
     this.service.addRule(form.value).subscribe(res =>{
-      console.log("rule was added");
       this.resetForm();
       this.service.refreshList();
     })
@@ -43,7 +42,6 @@ export class RuleComponent implements OnInit {
 
   updateRecord(form: NgForm){
     this.service.updateRule(form.value).subscribe(res =>{
-      console.log("rule was updated");
       this.resetForm();
       this.service.refreshList();
     })
