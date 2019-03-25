@@ -32,8 +32,10 @@ export class RuleListComponent implements OnInit {
       this.service.refreshList();
     },
     error => { 
-      this.error = error.message.replace('https://', '');
-      Logger.error(error)})
+      // this.error = error.message.replace('https://', '');
+      this.error = error['status'] + ': ' + error['error']['Message'];
+      Logger.error(error)
+    })
     }
   }
 
@@ -42,5 +44,9 @@ export class RuleListComponent implements OnInit {
       return 'active';
     else
       return 'not active';
+  }
+
+  onReset(){
+    this.error = null;
   }
 }
