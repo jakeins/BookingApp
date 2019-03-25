@@ -1,0 +1,23 @@
+
+
+<form  (ngSubmit)="onSubmit()">
+  <!--*ngIf="model && resourceForm"-->
+  <!--<h2>Hello {{user.userName}}</h2>-->
+  <div class="errors">
+    <p class="alert alert-danger" [hidden]="apiError == undefined">API error {{apiError}}</p>
+    <p class="alert alert-danger" [hidden]="!resourceForm.controls['title'].errors || resourceForm.controls['title'].pristine">Please keep length of 3 to 64 characters.</p>
+    <p class="alert alert-danger" [hidden]="!resourceForm.controls['description'].errors">Please keep description length less that 512 characters.</p>
+  </div>
+  <div>
+    UserName:<br />
+    <input type="text" formControlName="userName" class="form-control" minlength="3" maxlength="64" required />
+  </div>
+  <br />
+
+  <div>
+    Email:<br />
+    <input formControlName="email" class="form-control" minlength="5" maxlength="64" required />
+  </div>
+
+</form>
+

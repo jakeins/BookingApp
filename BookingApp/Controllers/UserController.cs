@@ -69,7 +69,7 @@ namespace BookingApp.Controllers
 
         [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}")]
-        public async Task<IActionResult> GetUserById([FromRoute] string userId)
+        public async Task<IActionResult> GetUserById([FromRoute]string userId)
         {
             if (UserId == userId || IsAdmin)
             {
@@ -81,6 +81,20 @@ namespace BookingApp.Controllers
                 return BadRequest("Can not get information about this user");
         }
 
+        [Authorize(Roles = RoleTypes.User)]
+        [HttpGet("api/user/user-name/{userName}")]
+        public async Task<IActionResult> GetUserByName([FromRoute]string userName)
+        {
+            ApplicationUser applicationUser = await userService.GetUserByName(userName); 
+            if (UserId == applicationUser.Id || IsAdmin)
+            {
+                ApplicationUser appuser = await userService.GetUserByName(userName);
+                UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
+                return new OkObjectResult(user);
+            }
+            else
+                return BadRequest("Can not get information about this user");
+        }
         
         [HttpGet("api/user/email/{userEmail}")]
         [Authorize(Roles = RoleTypes.User)]
