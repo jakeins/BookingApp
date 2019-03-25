@@ -32,6 +32,22 @@ namespace BookingApp.Services.Interfaces
         /// Lists all resources having specified parent tree group. 
         /// </summary>
         Task<IEnumerable<Resource>> ListByFolderKey(int folderId);
-       
+
+        #region Occupancy Interface
+        /// <summary>
+        /// Get ocuppancy calculation based on booking of the specified resource.
+        /// </summary>
+        Task<double?> OccupancyByResource(int resourceId);
+
+        /// <summary>
+        /// Get ocuppancies calculations based on all bookings.
+        /// </summary>
+        Task<Dictionary<int, double?>> GetOccupancies();
+
+        /// <summary>
+        /// Get ocuppancies calculations based on active bookings.
+        /// </summary>
+        Task<Dictionary<int, double?>> GetActiveOccupancies();
+        #endregion
     }
 }
