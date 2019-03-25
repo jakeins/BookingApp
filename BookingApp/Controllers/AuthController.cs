@@ -20,18 +20,14 @@ namespace BookingApp.Controllers
         private readonly INotificationService notificationService;
         private readonly IUserService userService;
         private readonly IJwtService jwtService;
-        private readonly IMapper mapper;
+        private readonly IMapperService mapper;
 
-        public AuthController(INotificationService notificationService, IUserService userService, IJwtService jwtService)
+        public AuthController(INotificationService notificationService, IUserService userService, IJwtService jwtService, IMapperService mapper)
         {
             this.notificationService = notificationService;
             this.userService = userService;
             this.jwtService = jwtService;
-
-            mapper = new Mapper(new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap();
-            }));
+            this.mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -77,11 +73,12 @@ namespace BookingApp.Controllers
             return Ok(tokens);
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout([FromBody]AuthTokensDto dto)
         {
-            await jwtService.DeleteRefreshTokenAsync(User);
+            var principal = jwtService.GetPrincipalFromExpiredAccessToken(dto.AccessToken);
+            await jwtService.DeleteRefreshTokenAsync(principal);
 
             return Ok();
         }
