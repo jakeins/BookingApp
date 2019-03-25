@@ -15,10 +15,10 @@
           <a class="btn btn-outline-primary" routerLink="admin" *ngIf="authService.isAdmin">Admin Panel</a>
         </div>
 
-        <div *ngIf="!authService.isUser" style="float: left; margin-right: 20px;">
+        <!-- <div *ngIf="!authService.isUser" style="float: left; margin-right: 20px;">
           <button *ngIf="!authService.isUser" (click)="authUser()" class="btn btn-secondary">User</button>
           <button *ngIf="!authService.isAdmin" (click)="authAdmin()" class="btn btn-primary">Admin</button>
-        </div>
+        </div> -->
 
 
 
@@ -26,12 +26,12 @@
           <button (click)="logout()" class="btn btn-danger">Logout</button>
         </div>
 
-        <!--<div style="float: left; margin-right: 20px;">
+        <div *ngIf="!authService.isUser" style="float: left; margin-right: 20px;">
           <a routerLink="/register" class="btn btn-outline-secondary">SignUp</a>
         </div>
-        <div>
+        <div *ngIf="!authService.isUser">
           <a routerLink="/login" class="btn btn-outline-success">SignIn</a>
-        </div>-->
+        </div>
 
       </div>
     </div>

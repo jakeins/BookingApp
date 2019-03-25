@@ -5,12 +5,12 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import * as jwt_decode from "jwt-decode";
 import { Observable } from 'rxjs/Observable';
-import { AccessTokenService } from './access-token.service';
 import { User } from '../models/user';
 import { BASE_API_URL } from '../globals';
 import { UserRegister } from '../models/user-register';
 import { UserPage } from '../models/user-page';
 import { UserUpdate } from '../models/user-update';
+import { UserInfoService } from './user-info.service';
 
 
 @Injectable()
@@ -25,7 +25,7 @@ export class UserService {
     "Content-Type": "application/json",
     "Accept": "application/json"
   });
-  constructor(private http: HttpClient, private tokenservice: AccessTokenService) {
+  constructor(private http: HttpClient, private userInfoService: UserInfoService) {
     this.defaultPath = BASE_API_URL + '/users';
     this.path = BASE_API_URL + '/user';
     this.baseApiUrl = BASE_API_URL;
@@ -82,6 +82,6 @@ export class UserService {
   }
 
   getUserName(): any {
-    return this.tokenservice.readUsername();
+    return this.userInfoService.username;
   }
 }

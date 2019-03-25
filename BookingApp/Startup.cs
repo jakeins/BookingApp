@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using BookingApp.Helpers;
+using BookingApp.Services.Interfaces;
 
 namespace BookingApp
 {
