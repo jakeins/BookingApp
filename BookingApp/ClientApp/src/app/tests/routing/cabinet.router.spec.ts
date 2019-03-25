@@ -11,13 +11,15 @@ import { HomeComponent } from "../../cabinet/home/home.component";
 import { BookingsComponent } from "../../cabinet/bookings/bookings.component";
 import { UserEditComponent } from "../../cabinet/user-edit/user-edit.component";
 import { AuthService } from "../../services/auth.service";
-import { AccessTokenService } from "../../services/access-token.service";
+import { TokenService } from "../../services/token.service";
+import { UserInfoService } from "../../services/user-info.service";
+import { UserService } from "../../services/user.service";
 
 
 
 const routesCabinet: Routes = [
   {
-    path: '', component: CabinetComponent, canActivate: [CabinetGuard], children: [
+    path: '', component: CabinetComponent, children: [
       { path: '', component: HomeComponent },
       { path: 'bookings', component: BookingsComponent },
       { path: 'user-edit', component: UserEditComponent },
@@ -41,7 +43,7 @@ describe('Router: Cabinet tests', () => {
         BookingsComponent,
         UserEditComponent
       ],
-      providers: [AuthService, AccessTokenService]
+      providers: [AuthService, TokenService, UserInfoService, UserService]
     });
 
     router = TestBed.get(Router);
@@ -49,25 +51,27 @@ describe('Router: Cabinet tests', () => {
 
     fixture = TestBed.createComponent(CabinetComponent);
     router.initialNavigation();
-
   });
 
 
   it('navigate to home cabinet', fakeAsync(() => {
-    router.navigate(["cabinet"]).then(() => {
-      expect(location.path()).toBe("/cabinet");
+    router.navigate([""]).then(() => {
+      fixture.detectChanges();
+      expect(location.path()).toBe("/");
     });
   }));
 
   it('navigate to cabinet -> bookings', fakeAsync(() => {
-    router.navigate(["cabinet/bookings"]).then(() => {
-      expect(location.path()).toBe("/cabinet/bookings");
+    router.navigate(["bookings"]).then(() => {
+      fixture.detectChanges();
+      expect(location.path()).toBe("/bookings");
     });
   }));
 
   it('navigate to cabinet -> user-edit', fakeAsync(() => {
-    router.navigate(["cabinet/user-edit"]).then(() => {
-      expect(location.path()).toBe("/cabinet/user-edit");
+    router.navigate(["user-edit"]).then(() => {
+      fixture.detectChanges();
+      expect(location.path()).toBe("/user-edit");
     });
   }));
 

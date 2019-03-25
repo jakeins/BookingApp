@@ -7,7 +7,6 @@ import { } from 'jasmine';
 
 
 import { AuthService } from "../../services/auth.service";
-import { AccessTokenService } from "../../services/access-token.service";
 import { AdminGuard } from "../../admin/admin.guard";
 import { AdminComponent } from "../../admin/admin.component";
 import { HomeComponent } from "../../admin/home/home.component";
@@ -15,11 +14,16 @@ import { UserComponent } from "../../admin/user/user.component";
 import { ResourceEditComponent } from "../../admin/resource/resource-edit.component";
 import { FolderEditComponent } from "../../admin/folder/folder-edit.component";
 import { ReactiveFormsModule } from "@angular/forms";
+import { TokenService } from "../../services/token.service";
+import { UserInfoService } from "../../services/user-info.service";
+import { UserService } from "../../services/user.service";
+import { FolderService } from "../../services/folder.service";
+import { ResourceService } from "../../services/resource.service";
 
 
 const routesAdmin: Routes = [
   {
-    path: '', component: AdminComponent, canActivate: [AdminGuard], children: [
+    path: '', component: AdminComponent, children: [
       { path: '', component: HomeComponent },
       { path: 'users', component: UserComponent },
       { path: 'resources/create', component: ResourceEditComponent },
@@ -47,7 +51,7 @@ describe('Router: Admin tests', () => {
         ResourceEditComponent,
         FolderEditComponent
       ],
-      providers: [AuthService, AccessTokenService]
+      providers: [AuthService, TokenService, UserInfoService, UserService, FolderService, ResourceService]
     });
 
     router = TestBed.get(Router);
@@ -55,43 +59,48 @@ describe('Router: Admin tests', () => {
 
     fixture = TestBed.createComponent(AdminComponent);
     router.initialNavigation();
-
   });
 
 
   it('navigate to home admin', fakeAsync(() => {
-    router.navigate(["admin"]).then(() => {
-      expect(location.path()).toBe("/admin");
+    router.navigate([""]).then(() => {
+      fixture.detectChanges();
+      expect(location.path()).toBe("/");
     });
   }));
 
   it('navigate to home admin -> users', fakeAsync(() => {
-    router.navigate(["admin/users"]).then(() => {
-      expect(location.path()).toBe("/admin/users");
+    router.navigate(["users"]).then(() => {
+      fixture.detectChanges();
+      expect(location.path()).toBe("/users");
     });
   }));
 
   it('navigate to home admin -> resources/create', fakeAsync(() => {
-    router.navigate(["admin/resources/create"]).then(() => {
-      expect(location.path()).toBe("/admin/resources/create");
+    router.navigate(["resources/create"]).then(() => {
+      fixture.detectChanges();
+      expect(location.path()).toBe("/resources/create");
     });
   }));
 
   it('navigate to home admin -> folders/create', fakeAsync(() => {
-    router.navigate(["admin/folders/create"]).then(() => {
-      expect(location.path()).toBe("/admin/folders/create");
+    router.navigate(["folders/create"]).then(() => {
+      fixture.detectChanges();
+      expect(location.path()).toBe("/folders/create");
     });
   }));
 
   it('navigate to home admin -> resources/:id/edit', fakeAsync(() => {
-    router.navigate(["admin/resources/1/edit"]).then(() => {
-      expect(location.path()).toBe("/admin/resources/1/edit");
+    router.navigate(["resources/1/edit"]).then(() => {
+      fixture.detectChanges();
+      expect(location.path()).toBe("/resources/1/edit");
     });
   }));
 
   it('navigate to home admin -> folders/:id/edit', fakeAsync(() => {
-    router.navigate(["admin/folders/1/edit"]).then(() => {
-      expect(location.path()).toBe("/admin/folders/1/edit");
+    router.navigate(["folders/1/edit"]).then(() => {
+      fixture.detectChanges();
+      expect(location.path()).toBe("/folders/1/edit");
     });
   }));
 
