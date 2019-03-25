@@ -4,12 +4,12 @@ import {
 } from '@angular/common/http/testing';
 import { } from 'jasmine';
 import { TestBed } from '@angular/core/testing';
-import { FolderService } from '../folder.service';
+import { FolderService } from '../../services/folder.service';
 import { BASE_API_URL } from '../../globals';
 import { Folder } from '../../models/folder';
 
 
-describe('FolderService', () => {
+describe('FolderService tests', () => {
   let service: FolderService;
   let httpMock: HttpTestingController;
   let BaseUrlFolder = BASE_API_URL + '/folder';

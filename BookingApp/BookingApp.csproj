@@ -75,14 +75,20 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\globals.ts" />
+    <None Remove="ClientApp\src\app\models\auth-login.ts" />
     <None Remove="ClientApp\src\app\models\folder-form.model.ts" />
     <None Remove="ClientApp\src\app\models\folder.ts" />
+    <None Remove="ClientApp\src\app\models\page.ts" />
+	<None Remove="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
     <None Remove="ClientApp\src\app\models\tree-entry.ts" />
     <None Remove="ClientApp\src\app\models\tree-node.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
     <None Remove="ClientApp\src\app\models\tree-entry.ts" />
     <None Remove="ClientApp\src\app\models\tree-node.ts" />
+    <None Remove="ClientApp\src\app\models\user-page.ts" />
+    <None Remove="ClientApp\src\app\models\user-register.ts" />
+    <None Remove="ClientApp\src\app\models\user-update.ts" />
     <None Remove="ClientApp\src\app\services\development.service.ts" />
     <None Remove="ClientApp\src\app\services\folder.service.ts" />
     <None Remove="ClientApp\src\app\services\logger.service.ts" />
@@ -90,6 +96,9 @@
     <None Remove="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
     <None Remove="ClientApp\src\app\services\token.interceptor.ts" />
     <None Remove="ClientApp\src\app\site\header\header.component.ts" />
+    <None Remove="ClientApp\src\app\tests\routing\admin.router.spec.ts" />
+    <None Remove="ClientApp\src\app\tests\routing\cabinet.router.spec.ts" />
+    <None Remove="ClientApp\src\app\tests\routing\site.router.spec.ts" />
     <None Remove="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
     <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
     <None Remove="Data\StoredProcedures\Booking\Terminate.sql" />
@@ -107,24 +116,34 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientApp\src\app\tests\components\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\auth-login.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folder-form.model.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\page.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\resource.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-entry.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-node.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folder.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\user-page.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\user-register.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\user-update.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\folder.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\logger.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\development.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
+	<TypeScriptCompile Include="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\token.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\site\header\header.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\tests\routing\admin.router.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\tests\routing\cabinet.router.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\tests\routing\site.router.spec.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
