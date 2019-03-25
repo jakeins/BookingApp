@@ -11,9 +11,9 @@ import { AuthService } from './services/auth.service';
 import { FolderService } from './services/folder.service';
 import { ResourceService } from './services/resource.service';
 import { TokenInterceptor } from './services/token.interceptor';
-import { AccessTokenService } from './services/access-token.service';
+import { TokenService } from './services/token.service';
 import { UserService } from './services/user.service';
-import { RuleService } from './services/rule.service';
+import { UserInfoService } from './services/user-info.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +28,8 @@ import { RuleService } from './services/rule.service';
   ],
   providers: [
     AuthService,
-    AccessTokenService,
+    TokenService,
+    UserInfoService,
     FolderService,
     UserService,
     ResourceService,
@@ -36,8 +37,7 @@ import { RuleService } from './services/rule.service';
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    },
-    RuleService
+    }
   ],
   bootstrap: [AppComponent]
 })
