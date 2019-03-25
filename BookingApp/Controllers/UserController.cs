@@ -69,7 +69,7 @@ namespace BookingApp.Controllers
 
         [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}")]
-        public async Task<IActionResult> GetUserById([FromRoute]string userId)
+        public async Task<IActionResult> GetUserById([FromRoute] string userId)
         {
             if (UserId == userId || IsAdmin)
             {

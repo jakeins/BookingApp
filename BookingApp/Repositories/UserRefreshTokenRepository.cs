@@ -24,6 +24,7 @@ namespace BookingApp.Repositories
         public async Task CreateAsync(UserRefreshToken model)
         {
             await db.UserRefreshTokens.AddAsync(model);
+            await SaveAsync();
         }
 
         public async Task DeleteAsync(int key)

@@ -11,8 +11,9 @@ import { AuthService } from './services/auth.service';
 import { FolderService } from './services/folder.service';
 import { ResourceService } from './services/resource.service';
 import { TokenInterceptor } from './services/token.interceptor';
-import { AccessTokenService } from './services/access-token.service';
+import { TokenService } from './services/token.service';
 import { UserService } from './services/user.service';
+import { UserInfoService } from './services/user-info.service';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { UserService } from './services/user.service';
   ],
   providers: [
     AuthService,
-    AccessTokenService,
+    TokenService,
+    UserInfoService,
     FolderService,
     UserService,
     ResourceService,

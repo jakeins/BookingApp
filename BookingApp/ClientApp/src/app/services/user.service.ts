@@ -11,6 +11,7 @@ import { BASE_API_URL } from '../globals';
 import { UserRegister } from '../models/user-register';
 import { UserPage } from '../models/user-page';
 import { UserUpdate } from '../models/user-update';
+import { UserInfoService } from './user-info.service';
 
 
 @Injectable()

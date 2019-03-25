@@ -18,6 +18,7 @@ namespace BookingAppTests.Controllers
         private readonly Mock<INotificationService> mockNotificationService;
         private readonly Mock<IUserService> mockUserService;
         private readonly Mock<IJwtService> mockJwtService;
+        private readonly Mock<IMapperService> mockMapperService;
         private readonly Mock<ApplicationUser> mockUser;
         private readonly Mock<AuthLoginDto> mockAuthLoginDto;
         private readonly Mock<AuthRegisterDto> mockAuthRegisterDto; 
@@ -27,6 +28,7 @@ namespace BookingAppTests.Controllers
             mockNotificationService = new Mock<INotificationService>();
             mockUserService = new Mock<IUserService>();
             mockJwtService = new Mock<IJwtService>();
+            mockMapperService = new Mock<IMapperService>();
             mockUser = new Mock<ApplicationUser>();
             mockAuthLoginDto = new Mock<AuthLoginDto>();
             mockAuthRegisterDto = new Mock<AuthRegisterDto>();
@@ -60,7 +62,7 @@ namespace BookingAppTests.Controllers
             mockJwtService.Setup(jwtService => jwtService.LoginByRefreshTokenAsync(Guid.NewGuid().ToString(), expectedRefreshToken));
             mockJwtService.Setup(jwtService => jwtService.ExpirationTime).Returns(expectedTime);
 
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
+            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
             var result = await authController.Login(mockAuthLoginDto.Object);
             
             var okResult = Assert.IsType<OkObjectResult>(result);
@@ -73,7 +75,7 @@ namespace BookingAppTests.Controllers
         {
             mockUserService.Setup(userService => userService.GetUserByEmail(It.IsAny<string>())).Throws(new NullReferenceException());
 
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
+            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
             
             await Assert.ThrowsAsync<NullReferenceException>(() => authController.Login(mockAuthLoginDto.Object));
             mockUserService.Verify(userService => userService.CheckPassword(mockUser.Object, It.IsAny<string>()), Times.Never);
@@ -85,7 +87,7 @@ namespace BookingAppTests.Controllers
             mockUserService.Setup(userService => userService.GetUserByEmail(It.IsAny<string>())).ReturnsAsync(mockUser.Object);
             mockUserService.Setup(userService => userService.CheckPassword(mockUser.Object, It.IsAny<string>())).ReturnsAsync(false);
 
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
+            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
             var result = await authController.Login(mockAuthLoginDto.Object);
 
             var badResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -98,7 +100,7 @@ namespace BookingAppTests.Controllers
             mockUserService.Setup(userService => userService.GetUserByEmail(It.IsAny<string>())).ReturnsAsync(mockUser.Object);
             mockUserService.Setup(userService => userService.CheckPassword(mockUser.Object, It.IsAny<string>())).ReturnsAsync(true);
 
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
+            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
             var result = await authController.Login(mockAuthLoginDto.Object);
 
             var badResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -112,7 +114,7 @@ namespace BookingAppTests.Controllers
             mockUserService.Setup(userService => userService.GetUserByEmail(It.IsAny<string>())).ReturnsAsync(mockUser.Object);
             mockUserService.Setup(userService => userService.CheckPassword(mockUser.Object, It.IsAny<string>())).ReturnsAsync(true);
 
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
+            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
             var result = await authController.Login(mockAuthLoginDto.Object);
 
             var badResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -121,11 +123,13 @@ namespace BookingAppTests.Controllers
         [Fact]
         public async Task RegisterMustCreateNewUserAsync()
         {
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
+            mockMapperService.Setup(mapperService => mapperService.Map<ApplicationUser>(mockAuthRegisterDto.Object)).Returns(mockUser.Object);
+
+            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
             var result = await authController.Register(mockAuthRegisterDto.Object);
             
-            mockUserService.Verify(userService => userService.CreateUser(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
-            mockUserService.Verify(userService => userService.AddUserRoleAsync(It.IsAny<string>(), RoleTypes.User), Times.Once);
+            mockUserService.Verify(userService => userService.CreateUser(mockUser.Object, mockAuthRegisterDto.Object.Password), Times.Once);
+            mockUserService.Verify(userService => userService.AddUserRoleAsync(mockUser.Object.Id, RoleTypes.User), Times.Once);
             var okResult = Assert.IsType<OkResult>(result);
         }
 
@@ -133,13 +137,15 @@ namespace BookingAppTests.Controllers
         public async Task LogoutMustDeleteRefreshTokenAsync()
         {
             var mockClaimsPrincipal = new Mock<ClaimsPrincipal>();
-            mockJwtService.Setup(jwtService => jwtService.DeleteRefreshTokenAsync(mockClaimsPrincipal.Object));
+            var mockTokens = new Mock<AuthTokensDto>();            
+            mockJwtService.Setup(jwtService => jwtService.GetPrincipalFromExpiredAccessToken(mockTokens.Object.AccessToken)).Returns(mockClaimsPrincipal.Object);
+            mockJwtService.Setup(jwtService => jwtService.DeleteRefreshTokenAsync(mockClaimsPrincipal.Object)).Returns(Task.CompletedTask);
 
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
-            var result = await authController.Logout();
+            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
+            var result = await authController.Logout(mockTokens.Object);
 
             Assert.IsType<OkResult>(result);
-            mockJwtService.Verify(jwtService => jwtService.DeleteRefreshTokenAsync(It.IsAny<ClaimsPrincipal>()), Times.Once);
+            mockJwtService.Verify();
         }
 
         [Fact]
@@ -153,7 +159,7 @@ namespace BookingAppTests.Controllers
             mockJwtService.Setup(jwtService => jwtService.UpdateRefreshTokenAsync(expectedTokens.RefreshToken, mockClaimsPrincipal.Object)).ReturnsAsync(It.IsAny<string>());
             mockJwtService.SetupGet(jwtService => jwtService.ExpirationTime).Returns(DateTime.Now.AddMinutes(120));
 
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
+            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
             var result = await authController.Refresh((AuthTokensDto)expectedTokens.Clone());
 
             mockJwtService.Verify();
@@ -171,7 +177,7 @@ namespace BookingAppTests.Controllers
         public async Task RefreshReturnsNewValuesAsync(string accessToken, string refreshToken)
         {
             var expectedTokens = new AuthTokensDto
-            { AccessToken = accessToken, RefreshToken = refreshToken, ExpireOn = DateTime.Now };
+            { AccessToken = accessToken, RefreshToken = refreshToken, ExpireOn = DateTime.Now.AddMinutes(120) };
             var mockClaimsPrincipal = new Mock<ClaimsPrincipal>();
             var mockTokens = new Mock<AuthTokensDto>();
             mockJwtService.Setup(jwtService => jwtService.GetPrincipalFromExpiredAccessToken(It.IsAny<string>())).Returns(mockClaimsPrincipal.Object);
@@ -179,7 +185,7 @@ namespace BookingAppTests.Controllers
             mockJwtService.Setup(jwtService => jwtService.UpdateRefreshTokenAsync(It.IsAny<string>(), mockClaimsPrincipal.Object)).ReturnsAsync(expectedTokens.RefreshToken);
             mockJwtService.SetupGet(jwtService => jwtService.ExpirationTime).Returns(DateTime.Now.AddMinutes(120));
 
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
+            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
             var result = await authController.Refresh(mockTokens.Object);
 
             mockJwtService.Verify();
@@ -194,7 +200,7 @@ namespace BookingAppTests.Controllers
             var mockUserDto = new Mock<AuthMinimalDto>();
             mockUserService.Setup(userService => userService.GetUserByEmail(It.IsAny<string>())).ReturnsAsync(mockUser.Object);
 
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object);
+            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
             var result = await authController.Forget(mockUserDto.Object);
 
             mockNotificationService.Verify(notificationService => notificationService.ForgetPasswordMail(mockUser.Object), Times.Once);
