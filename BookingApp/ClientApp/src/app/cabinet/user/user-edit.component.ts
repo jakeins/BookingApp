@@ -12,10 +12,9 @@ import { ActivatedRoute } from '@angular/router';
 export class UserEditComponent implements OnInit {
 
   userName: any;
-  userForm: FormGroup;
   user: User;
 
-
+  userForm: FormGroup
   constructor(private fb: FormBuilder,
     private userService: UserService,
      private actRoute: ActivatedRoute
@@ -25,17 +24,18 @@ export class UserEditComponent implements OnInit {
     this.userName = this.userService.getUserName();
     this.userService.getUserByUserName(this.userName).subscribe((res: User) => {
       this.user = res;
+      this.initializeForm();
     }, error => this.handleError(error));;
     console.log(this.actRoute.snapshot.params);
     console.log(this.actRoute.snapshot.params['some']);
   }
 
   initializeForm() {
-    this.userForm = this.fb.group({
-      userName: [this.user.userName, [Validators.required, Validators.minLength(3), Validators.maxLength(64)]],
-      email: [this.user.email, Validators.minLength(5), Validators.maxLength(64)],
+    this.userForm = new FormGroup({
+      userName: new FormControl(this.user.userName),
+      email: new FormControl(this.user.email),
     });
-
+    
     Logger.log('Form initialized.');
     Logger.log(this.userForm);
   }
