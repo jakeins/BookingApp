@@ -121,5 +121,20 @@ namespace BookingApp.Controllers
 
             return Ok(dTO);
         }
+
+        [HttpGet("users")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> UsersStats()
+        {
+            UsersStatsDTO dTO;
+
+            UsersStats userStats = await statisticsService.GetUsersStats();
+
+            dTO = dtoMapper.Map<UsersStatsDTO>(userStats);
+
+            return Ok(dTO);
+        }
     }
 }

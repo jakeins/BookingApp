@@ -15,12 +15,16 @@ namespace BookingApp.Services
     {
         private IBookingsRepository bookingsRepository;
         private IResourcesRepository resourcesRepository;
+        private IUserRepository userRepository;
 
-        public StatisticsService(IBookingsRepository bookingRepo, IResourcesRepository resourcesRepo)
+        public StatisticsService(IBookingsRepository bookingRepo, IResourcesRepository resourcesRepo, IUserRepository userRepo)
         {
             bookingsRepository = bookingRepo;
             resourcesRepository = resourcesRepo;
+            userRepository = userRepo;
         }
+
+        #region BookingsStats Methods
 
         public async Task<BookingsStats> GetBookingsCancellations(DateTime start, DateTime end, string interval, int[] resourcesIDs)
         {
@@ -55,6 +59,10 @@ namespace BookingApp.Services
 
         }
 
+        #endregion
+
+        #region ResourcesStats Methods
+
         public async Task<IEnumerable<ResourceStats>> GetResourceStats()
         {
             IEnumerable<Resource> resources = await resourcesRepository.ListIncludingBookingsAndRules();
@@ -75,6 +83,19 @@ namespace BookingApp.Services
 
             return GetResourceStatsCollectionOrderedByBookingsCount(resources);
         }
+
+        #endregion
+
+        #region UserStats Methods
+
+        public async Task<UsersStats> GetUsersStats()
+        {
+            IEnumerable<ApplicationUser> users = await userRepository.GetUsersByRole(RoleTypes.User);
+                       
+            return await GetUsersBasicStats(users);
+        }
+
+        #endregion
 
         #region Helpers
 
@@ -156,6 +177,33 @@ Id = resource.Id;
         {
             // better be done in db!
             return GetResourceStatsCollection(resources).OrderByDescending(c => c.BookingsCount).ToList();
+        }
+
+        private async Task<UsersStats> GetUsersBasicStats(IEnumerable<ApplicationUser> users)
+        {
+            UsersStats stats = new UsersStats();
+            foreach (var item in users)
+            {
+                if(item.ApprovalStatus==true)
+                {
+                    stats.RegisteredUsers++;
+                }
+
+                if(item.IsBlocked==true)
+                {
+                    stats.BlockedUsers++;
+                }
+                DateTime now = DateTime.Now;
+                DateTime startOfCurrentDay = new DateTime(now.Year, now.Month, now.Day);
+                IEnumerable<Booking> userBookings = await bookingsRepository.GetAllUserBookings(item.Id, startOfCurrentDay.AddDays(-30), startOfCurrentDay);
+
+                if (userBookings.Count()>0)
+                {
+                    stats.ActiveUsers++;
+                }                
+            }
+
+            return stats;
         }
 
         private DateTime GetBookingDateByType(Booking booking, BookingStatsTypes type)
