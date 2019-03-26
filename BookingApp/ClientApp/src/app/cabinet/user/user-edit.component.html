@@ -1,10 +1,10 @@
 
 
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="user">
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="user && userForm && !user.isBlocked">
   <!--*ngIf="model && resourceForm"-->
   <!--<h2>Hello {{user.userName}}</h2>-->
   <div class="errors">
-    <p class="alert alert-danger" [hidden]="!userForm.controls['userName'].errors || userForm.controls['title'].pristine">Please keep length of 3 to 64 characters.</p>
+    <p class="alert alert-danger" [hidden]="!userForm.controls['userName'].errors || userForm.controls['userName'].pristine">Please keep length of 3 to 64 characters.</p>
     <p class="alert alert-danger" [hidden]="!userForm.controls['email'].errors">Please keep description length less that 512 characters.</p>
   </div>
   <div>
@@ -18,5 +18,15 @@
     <input formControlName="email" class="form-control" minlength="5" maxlength="64" required />
   </div>
 
+  <div>
+    <button type="submit" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Post</button>
+  </div>
+
 </form>
+
+<div *ngIf="user && user.isBlocked">
+  <span class="alert-danger">
+    You have been blocked
+  </span>
+</div>
 

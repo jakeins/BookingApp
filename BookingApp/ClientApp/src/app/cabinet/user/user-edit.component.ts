@@ -3,7 +3,11 @@ import { UserService } from '../../services/user.service'
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { User } from '../../models/user';
 import { Logger } from '../../services/logger.service';
+import { UserInfoService } from '../../services/user-info.service';
+import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute } from '@angular/router';
+import { UserUpdate } from '../../models/user-update';
+import { userInfo } from 'os';
 
 @Component({
   selector: 'app-cabinet-edit-profile',
@@ -13,15 +17,18 @@ export class UserEditComponent implements OnInit {
 
   userName: any;
   user: User;
+  userUpdate: UserUpdate;
 
   userForm: FormGroup
   constructor(private fb: FormBuilder,
     private userService: UserService,
-     private actRoute: ActivatedRoute
+    private authService: AuthService,
+    private actRoute: ActivatedRoute,
+    private userInfoService: UserInfoService
   ) { }
 
   ngOnInit() {
-    this.userName = this.userService.getUserName();
+    this.userName = this.userInfoService.username;
     this.userService.getUserByUserName(this.userName).subscribe((res: User) => {
       this.user = res;
       this.initializeForm();
@@ -38,6 +45,32 @@ export class UserEditComponent implements OnInit {
     
     Logger.log('Form initialized.');
     Logger.log(this.userForm);
+  }
+
+  onSubmit() {
+    
+
+    let formData = this.userForm.value;
+
+    this.userUpdate = formData;
+    this.userUpdate.isBlocked = this.user.isBlocked;
+    this.userUpdate.approvalStatus = this.user.approvalStatus;
+    //this.userUpdate.userName = formData.userName;
+    //this.userUpdate.email = formData.email;
+    //this.userUpdate.isBlocked = false;
+    //this.userUpdate.approvalStatus = true;
+
+   
+    Logger.log(this.userUpdate);
+    console.log(this.userUpdate);
+    this.userService.updateUser(this.userUpdate, this.userInfoService.userId)
+        .subscribe(result => {
+          Logger.log(result);
+          console.log(result);
+          this.authService.refresh();
+        }, error => this.handleError(error));
+
+ 
   }
 
   handleError(error: any) {
