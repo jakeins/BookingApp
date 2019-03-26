@@ -29,11 +29,11 @@ namespace BookingApp.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         [ProducesResponseType(401)]
-        public async Task<IActionResult> BookingsCreations([FromQuery] DateTime? startTime,[FromQuery] DateTime? endTime,[FromQuery] string interval,[FromQuery] int[] resourcesIDs)
+        public async Task<IActionResult> BookingsCreations([FromQuery] DateTime? startTime,[FromQuery] DateTime? endTime,[FromQuery] string interval,[FromQuery] int[] rID)
         {
             DateTime start = startTime ?? DateTime.Now.AddDays(-7);
             DateTime end = endTime ?? DateTime.Now;
-            BookingsStats stats = await statisticsService.GetBookingsCreations(start, end, interval, resourcesIDs);
+            BookingsStats stats = await statisticsService.GetBookingsCreations(start, end, interval, rID);
             BookingStatsDTO dto = dtoMapper.Map<BookingStatsDTO>(stats);
             return Ok(dto);
         }
@@ -42,11 +42,11 @@ namespace BookingApp.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         [ProducesResponseType(401)]
-        public async Task<IActionResult> BookingsCancellations([FromQuery] DateTime? startTime, [FromQuery] DateTime? endTime, [FromQuery] string interval, [FromQuery] int[] resourcesIDs)
+        public async Task<IActionResult> BookingsCancellations([FromQuery] DateTime? startTime, [FromQuery] DateTime? endTime, [FromQuery] string interval, [FromQuery] int[] rID)
         {
             DateTime start = startTime ?? DateTime.Now.AddDays(-7);
             DateTime end = endTime ?? DateTime.Now;
-            BookingsStats stats = await statisticsService.GetBookingsCancellations(start, end, interval, resourcesIDs);
+            BookingsStats stats = await statisticsService.GetBookingsCancellations(start, end, interval, rID);
             BookingStatsDTO dto = dtoMapper.Map<BookingStatsDTO>(stats);
             return Ok(dto);
         }
@@ -55,11 +55,11 @@ namespace BookingApp.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         [ProducesResponseType(401)]
-        public async Task<IActionResult> BookingsTerminations([FromQuery] DateTime? startTime, [FromQuery] DateTime? endTime, [FromQuery] string interval, [FromQuery] int[] resourcesIDs)
+        public async Task<IActionResult> BookingsTerminations([FromQuery] DateTime? startTime, [FromQuery] DateTime? endTime, [FromQuery] string interval, [FromQuery] int[] rID)
         {
             DateTime start = startTime ?? DateTime.Now.AddDays(-7);
             DateTime end = endTime ?? DateTime.Now;
-            BookingsStats stats = await statisticsService.GetBookingsTerminations(start, end, interval, resourcesIDs);
+            BookingsStats stats = await statisticsService.GetBookingsTerminations(start, end, interval, rID);
             BookingStatsDTO dto = dtoMapper.Map<BookingStatsDTO>(stats);
             return Ok(dto);
         }
@@ -68,11 +68,11 @@ namespace BookingApp.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         [ProducesResponseType(401)]
-        public async Task<IActionResult> BookingsCompletions([FromQuery] DateTime? startTime, [FromQuery] DateTime? endTime, [FromQuery] string interval, [FromQuery] int[] resourcesIDs)
+        public async Task<IActionResult> BookingsCompletions([FromQuery] DateTime? startTime, [FromQuery] DateTime? endTime, [FromQuery] string interval, [FromQuery] int[] rID)
         {
             DateTime start = startTime ?? DateTime.Now.AddDays(-7);
             DateTime end = endTime ?? DateTime.Now;
-            BookingsStats stats = await statisticsService.GetBookingsCompletions(start, end, interval, resourcesIDs);
+            BookingsStats stats = await statisticsService.GetBookingsCompletions(start, end, interval, rID);
             BookingStatsDTO dto = dtoMapper.Map<BookingStatsDTO>(stats);
             return Ok(dto);
         }
