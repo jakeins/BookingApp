@@ -98,8 +98,6 @@
     <None Remove="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
     <None Remove="ClientApp\src\app\services\token.interceptor.ts" />
     <None Remove="ClientApp\src\app\site\header\header.component.ts" />
-    <None Remove="ClientApp\src\app\tests\routing\admin.router.spec.ts" />
-    <None Remove="ClientApp\src\app\tests\routing\cabinet.router.spec.ts" />
     <None Remove="ClientApp\src\app\tests\routing\site.router.spec.ts" />
     <None Remove="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
     <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
@@ -146,8 +144,6 @@
 	<TypeScriptCompile Include="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\token.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\site\header\header.component.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\tests\routing\admin.router.spec.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\tests\routing\cabinet.router.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\tests\routing\site.router.spec.ts" />
   </ItemGroup>
 

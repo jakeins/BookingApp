@@ -79,41 +79,41 @@ describe('Router: App tests', () => {
     });
   }));
 
-  //it('navigate to login', fakeAsync(() => {
-  //  router.navigate(["login"]).then(() => {
-  //    expect(location.path()).toBe("/login");
-  //  });
-  //}));
+  it('navigate to login', fakeAsync(() => {
+    router.navigate(["login"]).then(() => {
+      expect(location.path()).toBe("/login");
+    });
+  }));
 
-  //it('navigate to forget', fakeAsync(() => {
-  //  router.navigate(["forget"]).then(() => {
-  //    expect(location.path()).toBe("/forget");
-  //  });
-  //}));
+  it('navigate to forget', fakeAsync(() => {
+    router.navigate(["forget"]).then(() => {
+      expect(location.path()).toBe("/forget");
+    });
+  }));
 
-  //it('navigate to reset', fakeAsync(() => {
-  //  router.navigate(["reset"]).then(() => {
-  //    expect(location.path()).toBe("/reset");
-  //  });
-  //}));
+  it('navigate to reset', fakeAsync(() => {
+    router.navigate(["reset"]).then(() => {
+      expect(location.path()).toBe("/reset");
+    });
+  }));
 
-  //it('navigate to tree', fakeAsync(() => {
-  //  router.navigate(["tree"]).then(() => {
-  //    expect(location.path()).toBe("/tree");
-  //  });
-  //}));
+  it('navigate to tree', fakeAsync(() => {
+    router.navigate(["tree"]).then(() => {
+      expect(location.path()).toBe("/tree");
+    });
+  }));
 
-  //it('navigate to resources/1', fakeAsync(() => {
-  //  router.navigate(["resources/1"]).then(() => {
-  //    expect(location.path()).toBe("/resources/1");
-  //  });
-  //}));
+  it('navigate to resources/1', fakeAsync(() => {
+    router.navigate(["resources/1"]).then(() => {
+      expect(location.path()).toBe("/resources/1");
+    });
+  }));
 
-  //it('navigate to error page', fakeAsync(() => {
-  //  router.navigate(["resourcess"]).then(() => {
-  //    expect(location.path()).toBe("/error/404");
-  //  });
-  //}));
+  it('navigate to error page', fakeAsync(() => {
+    router.navigate(["resourcess"]).then(() => {
+      expect(location.path()).toBe("/error/404");
+    });
+  }));
 
 
 });
