@@ -100,38 +100,8 @@ namespace BookingApp.Services
             List<ResourceStats> statsCollection = new List<ResourceStats>();
             foreach (var resource in resources)
             {
-                ResourceStats stats = new ResourceStats();
-                List<long> timeSpansinTicks = new List<long>();
-                double cancellations = 0;
-
-                foreach (var booking in resource.Bookings)
-                {
-                    if (booking.TerminationTime == null || booking.TerminationTime > booking.StartTime)
-                    {
-                        timeSpansinTicks.Add((booking.EndTime - booking.StartTime).Ticks);
-                    }
-                    else
-                    {
-                        cancellations++;
-                    }
-                }
-
-                long longAverageTicks = (long)timeSpansinTicks.Average();
-                long minTicks = timeSpansinTicks.Min();
-                long maxTicks = timeSpansinTicks.Max();
-                long modeTicks = timeSpansinTicks.GroupBy(n => n).OrderByDescending(g => g.Count()).Select(g => g.Key).FirstOrDefault();
-
-                long maxRuleTime = new TimeSpan(0, resource.Rule.MaxTime.GetValueOrDefault(), 0).Ticks;
-
-                stats.ResourceId = resource.Id;
-                stats.Title = resource.Title;
-                stats.AverageTime = new TimeSpan(longAverageTicks);
-                stats.MinTime = new TimeSpan(minTicks);
-                stats.MaxTime = new TimeSpan(maxTicks);
-                stats.ModeTime = new TimeSpan(modeTicks);
-                stats.CancellationRate = cancellations / resource.Bookings.Count();
-                stats.AverageUsageRate = (double)longAverageTicks / maxRuleTime;
-                statsCollection.Add(stats);
+                ResourceStats stats = GetSpecificResourceStats(resource);
+                statsCollection.Add(stats);                
             }
             return statsCollection;
         }
@@ -163,6 +133,7 @@ namespace BookingApp.Services
 
             stats.ResourceId = resource.Id;
             stats.Title = resource.Title;
+            stats.BookingsCount = resource.Bookings.Count;
             stats.AverageTime = new TimeSpan(longAverageTicks);
             stats.MinTime = new TimeSpan(minTicks);
             stats.MaxTime = new TimeSpan(maxTicks);

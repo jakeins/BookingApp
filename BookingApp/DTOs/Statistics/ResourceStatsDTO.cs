@@ -10,6 +10,10 @@ namespace BookingApp.DTOs.Statistics
         public int ResourceId { get; set; }
         public string Title { get; set; }
         /// <summary>
+        /// All time count of bookings for the resource.
+        /// </summary>
+        public int BookingsCount { get; set; }
+        /// <summary>
         /// Average booking period for the resouce.
         /// </summary>
         public TimeSpan AverageTime { get; set; }

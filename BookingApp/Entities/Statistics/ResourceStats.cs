@@ -9,6 +9,7 @@ namespace BookingApp.Entities.Statistics
     {
         public int ResourceId { get; set; }
         public string Title { get; set; }
+        public int BookingsCount { get; set; }
         public TimeSpan AverageTime { get; set; }
         public TimeSpan MinTime { get; set; }
         public TimeSpan MaxTime { get; set; }
