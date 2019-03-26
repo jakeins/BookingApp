@@ -9,6 +9,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class ForgetComponent implements OnInit {
 
   private forgetForm: FormGroup;
+  private successSend = false;
 
   constructor(private authServie: AuthService) {
     this.forgetForm = new FormGroup({
@@ -20,6 +21,13 @@ export class ForgetComponent implements OnInit {
   }
 
   forget() {
-    this.authServie.forget(this.forgetForm.value.email);
+    this.authServie.forget(this.forgetForm.value.email)
+      .subscribe(data => this.successSend = true, err => {
+        console.log(err.message);
+        this.successSend = false;
+        this.forgetForm.setErrors({
+          'forgetError': true
+        });
+      });
   }
 }

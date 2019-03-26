@@ -37,6 +37,11 @@ namespace BookingApp.Services
 
             var userId = userPrincipal.FindFirst(c => c.Type == "uid").Value;
             var refreshToken = await refreshRepository.GetByUserIdAsync(userId);
+            if (refreshToken == null)
+            {
+                throw new SecurityTokenException("Invalid access token");
+            }
+
             await refreshRepository.DeleteAsync(refreshToken.Id);
         }
 
@@ -134,7 +139,7 @@ namespace BookingApp.Services
 
             var userId = userPrincipal.FindFirst(c => c.Type == "uid").Value;
             var savedRefreshToken = await refreshRepository.GetByUserIdAsync(userId);
-            if (oldRefreshToken != savedRefreshToken.RefreshToken)
+            if (oldRefreshToken != savedRefreshToken?.RefreshToken)
             {
                 throw new SecurityTokenException("Invalid refresh token");
             }
