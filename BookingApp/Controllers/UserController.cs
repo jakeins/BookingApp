@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.DTOs.User;
 using BookingApp.Exceptions;
 using BookingApp.DTOs.Resource;
 using BookingApp.Helpers;
@@ -33,6 +34,8 @@ namespace BookingApp.Controllers
             {
                 cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap().ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
+                cfg.CreateMap<List<ApplicationUser>, List<UserMinimalDto>> ().ReverseMap();
+                cfg.CreateMap<List<UserMinimalDto>, List<ApplicationUser>> ().ReverseMap();
                 cfg.CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
                 cfg.CreateMap<Resource, ResourceMaxDto>().ReverseMap();
                 cfg.CreateMap<Booking, BookingOwnerDTO>();
@@ -58,12 +61,15 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
             ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
             await userService.CreateAdmin(appUser, user.Password);
+            ApplicationUser adminUser = await userService.GetUserByName(user.UserName);
+            await userService.AddUsersRoleAsync(adminUser, new List<string> { RoleTypes.Admin ,RoleTypes.User });
             return Ok("User created");       
         }
 
+
         [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}")]
-        public async Task<IActionResult> GetUserById([FromRoute]string userId)
+        public async Task<IActionResult> GetUserById([FromRoute] string userId)
         {
             if (UserId == userId || IsAdmin)
             {
@@ -75,9 +81,10 @@ namespace BookingApp.Controllers
                 return BadRequest("Can not get information about this user");
         }
 
-        [Authorize(Roles = RoleTypes.User)]
+        
         [HttpGet("api/user/email/{userEmail}")]
-        public async Task<IActionResult> GetUserByEmail([FromRoute]string userEmail)
+        [Authorize(Roles = RoleTypes.User)]
+        public async Task<IActionResult> GetUserByEmail([FromRoute] string userEmail)
         {
             ApplicationUser requestUser = await userService.GetUserByEmail(userEmail);
             if (UserId == requestUser.Id || IsAdmin)
@@ -96,6 +103,31 @@ namespace BookingApp.Controllers
             IEnumerable<ApplicationUser> appusers = await userService.GetUsersList();
             IEnumerable<UserMinimalDto> users = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserMinimalDto>>(appusers);
             return new OkObjectResult(users);
+        }
+
+        [Authorize(Roles = RoleTypes.Admin)]
+        [HttpPost("api/user/users-by-id")]
+        public async Task<IActionResult> GetAllUsers([FromBody]List<string> usersId)
+        {
+            IEnumerable<ApplicationUser> appusers = await userService.GetUsersById(usersId);
+           IEnumerable<UserMinimalDto> users = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserMinimalDto>>(appusers);
+            return new OkObjectResult(users);
+        }
+
+        [Authorize(Roles = RoleTypes.Admin)]
+        [HttpGet("api/user/page")]
+        public async Task<IActionResult> GetAllUsers([FromQuery]UserPagingParamsDto pagingParams)
+        {
+            var model = await userService.GetUsersList(pagingParams.PageNumber,pagingParams.PageSize);
+
+            var outputModel = new UserMinimalPageDto
+            {
+                Paging = model.GetHeader(),
+                Items = mapper.Map<IEnumerable<ApplicationUser>, IEnumerable<UserMinimalDto>>(model.List),
+            };
+            Response.Headers.Add("X-Pagination", model.GetHeader().ToJson());
+
+            return new OkObjectResult(outputModel);
         }
 
         [Authorize(Roles = RoleTypes.Admin)]
@@ -183,17 +215,17 @@ namespace BookingApp.Controllers
 
         [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/approval")]
-        public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody]UserApprovalDto userApprovalDto)
+        public async Task<IActionResult> UserApproval([FromRoute]string userId, [FromBody] bool IsApproved )
         {
-            await userService.UserApproval(userId, userApprovalDto.IsApproved);
+            await userService.UserApproval(userId, IsApproved);
             return Ok("User approved");
         }
 
         [Authorize(Roles = RoleTypes.Admin)]
         [HttpPut("api/user/{userId}/blocking")]
-        public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]UserBlockingDto userBlockingDTO)
+        public async Task<IActionResult> UserBlocking([FromRoute]string userId, [FromBody]bool IsBlocked)
         {
-            await userService.UserBlocking(userId, userBlockingDTO.IsBlocked);
+            await userService.UserBlocking(userId, IsBlocked);
             return Ok("User blocked");
         }
 
