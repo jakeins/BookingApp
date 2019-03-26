@@ -1,6 +1,5 @@
 <form #form="ngForm" autocomplete="off">
   <input type="hidden" name="id" [ngModel]="service.Rule.id">
-
   <div class="form-group">
     <label>Title</label>
     <input name="title" #title="ngModel" [(ngModel)]="service.Rule.title" class="form-control" pattern="^[a-z0-9_-]{4,64}$" required>
@@ -67,7 +66,7 @@
   </div>
   <div class="form-group col-md-6">
     <label>Created by</label>
-    <input name="createdUserId" [ngModel]="service.Rule.createdUserId" class="form-control form-control-createdUserId" readonly>
+    <input name="createdUserId" [ngModel]="service.Rule.createdUserId | userName" class="form-control form-control-createdUserId" readonly>
   </div>
 </div>
 <div class="row" *ngIf="service.showAdditionalInfo==true">
@@ -77,7 +76,7 @@
     </div>
     <div class="form-group col-md-6">
       <label>Updated by</label>
-      <input name="updatedUserId" [ngModel]="service.Rule.updatedUserId" class="form-control form-control-updatedUserId" readonly>
+      <input name="updatedUserId" [ngModel]="service.Rule.updatedUserId | userName" class="form-control form-control-updatedUserId" readonly>
     </div>
 </div>
 <div class="row">

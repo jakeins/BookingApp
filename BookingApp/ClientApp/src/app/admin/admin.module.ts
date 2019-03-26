@@ -11,6 +11,7 @@ import { FolderEditComponent } from './folder/folder-edit.component';
 import { RulesComponent } from './rules/rules.component';
 import { RuleComponent } from './rules/rule/rule.component';
 import { RuleListComponent } from './rules/rule-list/rule-list.component';
+import { UserNamePipe } from './user-name.pipe';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { RuleListComponent } from './rules/rule-list/rule-list.component';
       FolderEditComponent,
       RulesComponent,
       RuleComponent,
-      RuleListComponent
+      RuleListComponent,
+      UserNamePipe
   ],
 })
 export class AdminModule { }

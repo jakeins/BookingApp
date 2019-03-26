@@ -4,9 +4,9 @@ namespace BookingApp.DTOs
 {
     public class RuleBasicDTO
     {
-        const string defaultConstraint = @"^[0-9]{1,}$";            
+        const string defaultConstraint = @"^[0-9]{1,}$";            //Only digits 0-9 allowed, and 1 digit minimum
 
-        [Required, MinLength(4, ErrorMessage = "Description is too small."), MaxLength(64, ErrorMessage = "Description is too big.")]
+        [Required, RegularExpression(@"^.{4,64}$")]                  //Min size - 4, max size - 64
         public string Title { get; set; }
 
         [Required, RegularExpression(defaultConstraint)]
