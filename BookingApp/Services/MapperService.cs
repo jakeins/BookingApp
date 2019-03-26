@@ -14,7 +14,13 @@ namespace BookingApp.Services
 
         public MapperService()
         {
-            autoMapperInstance = new Mapper(new MapperConfiguration(cfg => {              
+            autoMapperInstance = new Mapper(new MapperConfiguration(cfg => {
+
+                cfg.CreateMap<Resource, ResourceBaseDto>().ReverseMap();
+                cfg.CreateMap<Resource, ResourceBriefDto>().ReverseMap();
+                cfg.CreateMap<Resource, ResourceDetailedDto>().ReverseMap();
+                cfg.CreateMap<Resource, ResourceMaxDto>().ReverseMap();
+
                 cfg.CreateMap<Folder, FolderBaseDto>();
                 cfg.CreateMap<Folder, FolderMinimalDto>().ReverseMap();
 

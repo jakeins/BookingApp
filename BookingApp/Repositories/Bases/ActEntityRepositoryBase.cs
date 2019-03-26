@@ -27,7 +27,7 @@ namespace BookingApp.Repositories.Bases
         /// <summary>
         /// IQueryable shorthand for only active Entities.
         /// </summary>
-        protected IQueryable<TEntity> ActiveEntities => Entities.Where(e => e.IsActive == true);
+        protected IQueryable<TEntity> ActiveEntities => Entities.Where(e => e.IsActive != false);
 
         /// <summary>
         /// Constructor.
@@ -41,7 +41,7 @@ namespace BookingApp.Repositories.Bases
             var result = await Entities.Where(e => e.Id.Equals(id)).Select(e => new { e.IsActive }).SingleOrDefaultAsync();
 
             if (result != null)
-                return result.IsActive == true;
+                return result.IsActive != false;
             else
                 throw NewNotFoundException;
         }
