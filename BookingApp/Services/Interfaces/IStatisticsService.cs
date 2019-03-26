@@ -19,5 +19,7 @@ namespace BookingApp.Services.Interfaces
         Task<IEnumerable<ResourceStats>> GetResourceStats();
 
         Task<ResourceStats> GetResourceStats(int resourceID);
+
+        Task<IEnumerable<ResourceStats>> GetResourcesRating();
     }
 }

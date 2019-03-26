@@ -69,6 +69,13 @@ namespace BookingApp.Services
             return GetSpecificResourceStats(resource);
         }
 
+        public async Task<IEnumerable<ResourceStats>> GetResourcesRating()
+        {
+            IEnumerable<Resource> resources = await resourcesRepository.ListIncludingBookingsAndRules();
+
+            return GetResourceStatsCollectionOrderedByBookingsCount(resources);
+        }
+
         #region Helpers
 
         private BookingsStats GetBookingStats(BookingStatsTypes type, IEnumerable<Booking> bookings,DateTime start,DateTime end,string interval, int[] ids)
@@ -131,7 +138,8 @@ namespace BookingApp.Services
 
             long maxRuleTime = new TimeSpan(0, resource.Rule.MaxTime.GetValueOrDefault(), 0).Ticks;
 
-            stats.ResourceId = resource.Id;
+            stats.
+Id = resource.Id;
             stats.Title = resource.Title;
             stats.BookingsCount = resource.Bookings.Count;
             stats.AverageTime = new TimeSpan(longAverageTicks);
@@ -142,6 +150,12 @@ namespace BookingApp.Services
             stats.AverageUsageRate = (double)longAverageTicks / maxRuleTime;
 
             return stats;
+        }
+
+        private List<ResourceStats> GetResourceStatsCollectionOrderedByBookingsCount(IEnumerable<Resource> resources)
+        {
+            // better be done in db!
+            return GetResourceStatsCollection(resources).OrderByDescending(c => c.BookingsCount).ToList();
         }
 
         private DateTime GetBookingDateByType(Booking booking, BookingStatsTypes type)

@@ -93,6 +93,21 @@ namespace BookingApp.Controllers
             return Ok(dTOs);
         }
 
+        [HttpGet("resources-rating")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> ResourcesRating()
+        {
+            IEnumerable<ResourceStatsBriefDTO> dTOs;
+
+            IEnumerable<ResourceStats> resourceStats = await statisticsService.GetResourcesRating();
+
+            dTOs = dtoMapper.Map<IEnumerable<ResourceStatsBriefDTO>>(resourceStats);
+
+            return Ok(dTOs);
+        }
+
         [HttpGet("resources/{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
