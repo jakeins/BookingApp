@@ -10,9 +10,16 @@
     border-color: #dc3545;
 } 
 
-input.ng-dirty.ng-valid{
+/* input.ng-dirty.ng-valid{
     border-color: #008000;
-} 
+}  */
+
+div.validation-error{
+    width: 100%;
+    color: #dc3545;
+    margin-top: 0.2 rem;
+    font-size: 85%;
+}
 
 .form-control-createdTime,.form-control-createdUserId,.form-control-updatedTime,.form-control-updatedUserId{
     background-color: #fff;

@@ -1,36 +1,58 @@
 <form #form="ngForm" autocomplete="off">
-  <input type="hidden" name="id" [(ngModel)]="service.Rule.id">
+  <input type="hidden" name="id" [ngModel]="service.Rule.id">
 
   <div class="form-group">
     <label>Title</label>
-    <input name="title" [(ngModel)]="service.Rule.title" class="form-control" maxlength="64" minlength="4" required>
+    <input name="title" #title="ngModel" [(ngModel)]="service.Rule.title" class="form-control" pattern="^[a-z0-9_-]{4,64}$" required>
+    <div *ngIf="title.invalid && (title.dirty || title.touched)"  class="form-group validation-error">
+        <p>Incorrect title</p>
+    </div>
   </div>
+
   <div class="row">
   <div class="form-group col-md-4">
     <label>Min Time</label>
-    <input name="minTime"  [(ngModel)]="service.Rule.minTime" class="form-control">
+    <input name="minTime"  #minTime="ngModel"  [(ngModel)]="service.Rule.minTime" class="form-control" pattern="^[0-9]{1,}$" required> 
+    <div *ngIf="minTime.invalid && (minTime.dirty || minTime.touched)" class="form-group validation-error">
+      <p>Incorrect min time</p>
+  </div>
   </div>
   <div class="form-group col-md-4">
     <label>Max Time</label>
-    <input name="maxTime" [(ngModel)]="service.Rule.maxTime" class="form-control">
+    <input name="maxTime" #maxTime="ngModel" [(ngModel)]="service.Rule.maxTime" class="form-control" pattern="^[0-9]{1,}$" required>
+    <div *ngIf="maxTime.invalid && (maxTime.dirty || maxTime.touched)" class="form-group validation-error">
+      <p>Incorrect max time</p>
+    </div>
   </div>
   <div class="form-group col-md-4">
       <label>Step Time</label>
-      <input name="stepTime" [(ngModel)]="service.Rule.stepTime" class="form-control">
+      <input name="stepTime" #stepTime="ngModel" [(ngModel)]="service.Rule.stepTime" class="form-control" pattern="^[0-9]{1,}$" required>
+      <div *ngIf="stepTime.invalid && (stepTime.dirty || stepTime.touched)" class="form-group validation-error">
+        <p>Incorrect step time</p>
+    </div>
     </div>
   </div>
   <div class="row">
     <div class="form-group col-md-4">
       <label>Service Time</label>
-      <input name="serviceTime" [(ngModel)]="service.Rule.serviceTime" class="form-control">
+      <input name="serviceTime" #serviceTime="ngModel" [(ngModel)]="service.Rule.serviceTime" class="form-control" pattern="^[0-9]{1,}$" required>
+      <div *ngIf="serviceTime.invalid && (serviceTime.dirty || serviceTime.touched)" class="form-group validation-error">
+        <p>Incorrect service time</p>
+    </div>    
     </div>
     <div class="form-group col-md-4">
       <label>Pre order time Limit</label>
-      <input name="preOrderTimeLimit" [(ngModel)]="service.Rule.preOrderTimeLimit" class="form-control">
+      <input name="preOrderTimeLimit" #preOrderTimeLimit="ngModel" [(ngModel)]="service.Rule.preOrderTimeLimit" class="form-control" pattern="^[0-9]{1,}$" required>
+      <div *ngIf="preOrderTimeLimit.invalid && (preOrderTimeLimit.dirty || preOrderTimeLimit.touched)" class="form-group validation-error">
+        <p>Incorrect pre order time limit</p>
+    </div> 
     </div>
     <div class="form-group col-md-4">
       <label>Reuse Timeout</label>
-      <input name="reuseTimeout" [(ngModel)]="service.Rule.reuseTimeout" class="form-control">
+      <input name="reuseTimeout" #reuseTimeout="ngModel" [(ngModel)]="service.Rule.reuseTimeout" class="form-control" pattern="^[0-9]{1,10}$" required>
+      <div *ngIf="reuseTimeout.invalid && (reuseTimeout.dirty || reuseTimeout.touched)" class="form-group validation-error">
+        <p>Incorrect reuse timeout</p>
+    </div> 
     </div>
   </div>
   <div class="form-check  form-check-inline">

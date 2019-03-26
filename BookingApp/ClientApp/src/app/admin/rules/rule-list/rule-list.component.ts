@@ -32,7 +32,6 @@ export class RuleListComponent implements OnInit {
       this.service.refreshList();
     },
     error => { 
-      // this.error = error.message.replace('https://', '');
       this.error = error['status'] + ': ' + error['error']['Message'];
       Logger.error(error)
     })
