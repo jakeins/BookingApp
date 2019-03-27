@@ -1,10 +1,8 @@
-<div>
-  <h4>{{Rule.title}} rule.</h4>
-  <p>Minimum time for usage is {{Rule.minTime}} minute(s), maximum - {{Rule.maxTime}}.</p>
-  <p *ngIf="Rule.serviceTime !=0">This resource needs some {{Rule.serviceTime}} minute(s) for restoration.</p>
-  <p *ngIf="Rule.stepTime !=0">Keep in mind, that this resource has a step time, you must wait {{Rule.stepTime}} minute(s).</p>
-  <p *ngIf="Rule.reuseTimeout !=0">This resource has a constraint, you must wait {{Rule.reuseTimeout}} minutes before you can again book it.</p>
-  <p *ngIf="Rule.preOrderTimeLimit !=0">Notice, that you can book this resource at least before {{Rule.preOrderTimeLimit}} hours, to the start of usage</p>
-</div>
-
-<!-- TODO: make cleaner and user-friendly messages -->
+<h5>This resource has some rules, you should know about:</h5>
+<ul>
+  <li><p>Minimum time for usage is {{Rule.minTime}} minute(s), maximum - {{Rule.maxTime}}.</p></li>
+  <li *ngIf="Rule.serviceTime !=0"><p >This resource needs some {{Rule.serviceTime}} minute(s) for restoration.</p></li>
+  <li *ngIf="Rule.stepTime !=0"><p >Keep in mind, that this resource has a step time: {{Rule.stepTime}} minute(s).</p></li>
+  <li *ngIf="Rule.reuseTimeout !=0"><p >This resource has a constraint, you have to wait {{Rule.reuseTimeout}} minutes before you can book it again.</p></li>
+  <li *ngIf="Rule.preOrderTimeLimit !=0"><p >Notice, the most allowable timespan between booking and resource's using start time is {{Rule.preOrderTimeLimit}} hours.</p></li>
+</ul>
