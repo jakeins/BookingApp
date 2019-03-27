@@ -8,6 +8,7 @@ import { AdminComponent } from './admin.component';
 import { UserComponent } from './user/user.component';
 import { ResourceEditComponent } from './resource/resource-edit.component';
 import { FolderEditComponent } from './folder/folder-edit.component';
+import { RulesComponent } from './rules/rules.component';
 
 
 const routesAdmin: Routes = [
@@ -19,6 +20,7 @@ const routesAdmin: Routes = [
       { path: 'resources/:id/edit', component: ResourceEditComponent },
       { path: 'folders/create', component: FolderEditComponent },
       { path: 'folders/:id/edit', component: FolderEditComponent },
+      { path: 'rules', component: RulesComponent }
     ]
   }
 ];
