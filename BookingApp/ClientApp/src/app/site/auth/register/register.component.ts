@@ -26,7 +26,6 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
-    console.log(this.registerForm);
     this.authService.register(
       new RegisterFormModel(
         this.registerForm.value.userName,

@@ -17,13 +17,14 @@
                 <div class="card-body">
                     <form [formGroup]="loginForm" (ngSubmit)="login()">
                         <div class="form-group row offset-md-4">
-                            <div class="alert alert-danger"
-                                *ngIf="loginForm.hasError('loginFailure')">
+                            <div class="alert alert-danger" *ngIf="loginForm.hasError('loginFailure')">
                                 {{errorMessage}}
                             </div>
-                            <div class="alert alert-danger"
-                                *ngIf="loginForm.hasError('loginError')">
+                            <div class="alert alert-danger" *ngIf="loginForm.hasError('loginError')">
                                 Not correct email or password
+                            </div>
+                            <div class="alert alert-danger" *ngIf="authService.isUser">
+                                Firstly logout, please
                             </div>
                         </div>
 
@@ -70,7 +71,8 @@
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Sign
+                                <button type="submit" class="btn btn-primary"
+                                    [disabled]="loginForm.invalid || authService.isUser">Sign
                                     In<span class="ti-user"></span></button>
                             </div>
                         </div>

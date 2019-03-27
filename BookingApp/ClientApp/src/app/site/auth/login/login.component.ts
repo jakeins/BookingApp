@@ -24,22 +24,22 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    console.log(this.loginForm);
-    this.authService.login(this.loginForm.value.email, this.loginForm.value.password)
-      .subscribe(data => this.router.navigate(['/']),
-        err => {
-          console.log(err.message);
-          if (err.error['loginFaillure'] !== undefined) {
-            this.errorMessage = err.error['loginFailure'].toString();
-            this.loginForm.setErrors({
-              'loginFailure': true
-            });
-          } else {
-            this.loginForm.setErrors({
-              'loginError': true
-            });
-          }
-        });
+    if (!this.authService.isUser) {
+      this.authService.login(this.loginForm.value.email, this.loginForm.value.password)
+        .subscribe(data => this.router.navigate(['/']),
+          err => {
+            if (err.error['loginFaillure'] !== undefined) {
+              this.errorMessage = err.error['loginFailure'].toString();
+              this.loginForm.setErrors({
+                'loginFailure': true
+              });
+            } else {
+              this.loginForm.setErrors({
+                'loginError': true
+              });
+            }
+          });
+    }
   }
 
 }

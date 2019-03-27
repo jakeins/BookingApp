@@ -24,7 +24,7 @@ export class TokenInterceptor implements HttpInterceptor {
       expireOn = jwt.expireOn;
     }
 
-    if (accessToken != null) {
+    if (!request.url.includes('logout') && accessToken != null) {
       if (expireOn < new Date() && !this.isRefreshProccess) {
         this.isRefreshProccess = true;
         this.tokenService.TokenExpired.emit();
