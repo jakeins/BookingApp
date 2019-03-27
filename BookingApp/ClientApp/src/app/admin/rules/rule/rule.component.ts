@@ -18,6 +18,11 @@ export class RuleComponent implements OnInit {
     this.resetForm();
   }
 
+  ngOnDestroy(){
+    this.service.showAdditionalInfo=false;
+    this.resetForm();
+  }
+  
   onSubmit(form: NgForm){
     this.service.showAdditionalInfo=false;
       this.updateRecord(form);
