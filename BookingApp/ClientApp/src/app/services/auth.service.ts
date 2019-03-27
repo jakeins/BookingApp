@@ -6,6 +6,8 @@ import { BASE_API_URL } from '../globals';
 import { TokenService } from './token.service';
 import { UserInfoService } from './user-info.service';
 import { RegisterFormModel } from '../models/register-form.model';
+import { Observable } from 'rxjs/Observable';
+import { map, finalize } from 'rxjs/operators';
 
 @Injectable()
 export class AuthService {
@@ -44,12 +46,12 @@ export class AuthService {
     this.baseUrlForget = BASE_API_URL + '/auth/forget';
 
     tokenService.TokenExpired.subscribe(() => {
-      this.refresh();
+      this.refresh().subscribe(data => {}, err => console.log(err));
     });
   }
 
-  public register(registerFormModel: RegisterFormModel) {
-    this.http.post(
+  public register(registerFormModel: RegisterFormModel): Observable<any> {
+    return this.http.post(
       this.baseUrlRegister,
       JSON.stringify({
         userName: registerFormModel.userName,
@@ -58,30 +60,29 @@ export class AuthService {
         confirmPassword: registerFormModel.confirmPassword
       }),
       { headers: this.headers }
-    ).subscribe(response => {
-      }, err => { Logger.error('Register failed'); Logger.error(err); });
+    );
   }
 
   public login(email: string, password: string) {
-    this.http.post(
+    return this.http.post(
       this.baseUrlLogin,
       JSON.stringify({ password: password, email: email }),
       { headers: this.headers }
-    ).subscribe(response => {
-        const token: JwtToken = new JwtToken(
-          response['accessToken'],
-          response['refreshToken'],
-          response['expireOn']
-        );
-        this.tokenService.writeToken(token);
-        this.fillRoles();
-        this.AuthChanged.emit('Logged in');
-      }, err => { Logger.error('Login failed'); Logger.error(err); });
+    ).pipe(map(data => {
+      const token: JwtToken = new JwtToken(
+        data['accessToken'],
+        data['refreshToken'],
+        data['expireOn']
+      );
+      this.tokenService.writeToken(token);
+      this.fillRoles();
+      this.AuthChanged.emit('Logged in');
+    }));
   }
 
   public logout() {
     const jwtToken: JwtToken = this.tokenService.readJwtToken();
-    this.http.post(
+    return this.http.post(
       this.baseUrlLogout,
       JSON.stringify({
         accessToken: jwtToken.accessToken,
@@ -89,16 +90,16 @@ export class AuthService {
         expireOn: jwtToken.expireOn
       }),
       { headers: this.headers }
-    ).subscribe(() => {
+    ).pipe(finalize(() => {
       this.tokenService.deleteToken();
       this.clearRoles();
       this.AuthChanged.emit('Logged out');
-    }, err => { Logger.error('Logout failed'); Logger.error(err); });
+    }));
   }
 
   public refresh() {
     const jwtToken: JwtToken = this.tokenService.readJwtToken();
-    this.http.post(
+    return this.http.post(
       this.baseUrlRefresh,
       JSON.stringify({
         accessToken: jwtToken.accessToken,
@@ -106,23 +107,22 @@ export class AuthService {
         expireOn: jwtToken.expireOn
       }),
       { headers: this.headers }
-    ).subscribe(response => {
+    ).pipe(map(data => {
       const token: JwtToken = {
-        accessToken: response['accessToken'],
-        refreshToken: response['refreshToken'],
-        expireOn: response['expireOn']
+        accessToken: data['accessToken'],
+        refreshToken: data['refreshToken'],
+        expireOn: data['expireOn']
       };
       this.tokenService.writeToken(token);
-    });
+    }));
   }
 
-  public forget(email: string) {
-    this.http.post(
+  public forget(email: string): Observable<any> {
+    return this.http.post(
       this.baseUrlForget,
       JSON.stringify({ email: email }),
       { headers: this.headers }
-    ).subscribe(response => {
-      }, err => { Logger.error('Forget failed'); Logger.error(err); });
+    );
   }
 
   private fillRoles() {

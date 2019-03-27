@@ -3,7 +3,7 @@
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
                     <li class="breadcrumb-item"><a routerLink="/login">Sign In</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Forget password</li>
                 </ol>
@@ -17,6 +17,15 @@
 
                 <div class="card-body">
                     <form [formGroup]="forgetForm" (ngSubmit)="forget()">
+                        <div class="form-group row offset-md-4">
+                            <div class="alert alert-danger" *ngIf="forgetForm.hasError('forgetError')">
+                                Not correct email
+                            </div>
+                            <div class="alert alert-success" *ngIf="successSend">
+                                    Reset mail have been sent
+                                </div>
+                        </div>
+
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label text-md-right">Email</label>
 
