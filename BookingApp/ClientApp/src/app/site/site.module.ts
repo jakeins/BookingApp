@@ -11,6 +11,7 @@ import { ErrorComponent } from './error/error.component';
 import { ResourceComponent } from './resource/resource.component';
 import { TreeComponent } from './tree/tree.component';
 import { AppHeaderComponent } from './header/header.component';
+import { RuleComponent } from './rule/rule.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { AppHeaderComponent } from './header/header.component';
     ForgetComponent,
     ResetComponent,
     ErrorComponent,
-    AppHeaderComponent
+    AppHeaderComponent,
+    RuleComponent
   ],
   imports: [
     CommonModule,

@@ -74,6 +74,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\admin\rules\rules.component.ts" />
     <None Remove="ClientApp\src\app\globals.ts" />
     <None Remove="ClientApp\src\app\models\auth-login.ts" />
     <None Remove="ClientApp\src\app\models\folder-form.model.ts" />
@@ -81,6 +82,7 @@
     <None Remove="ClientApp\src\app\models\page.ts" />
     <None Remove="ClientApp\src\app\models\jwt-token.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
+    <None Remove="ClientApp\src\app\models\rule.ts" />
     <None Remove="ClientApp\src\app\models\tree-entry.ts" />
     <None Remove="ClientApp\src\app\models\tree-node.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
@@ -94,6 +96,7 @@
     <None Remove="ClientApp\src\app\services\logger.service.ts" />
     <None Remove="ClientApp\src\app\services\refresh.service.ts" />
     <None Remove="ClientApp\src\app\services\resource.service.ts" />
+    <None Remove="ClientApp\src\app\services\rule.service.ts" />
     <None Remove="ClientApp\src\app\services\token.interceptor.ts" />
     <None Remove="ClientApp\src\app\site\header\header.component.ts" />
     <None Remove="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
@@ -117,12 +120,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\admin\rules\rules.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\auth-login.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folder-form.model.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\jwt-token.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\page.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\resource.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\rule.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-entry.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-node.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folder.ts" />
@@ -134,6 +139,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\folder.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\logger.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\development.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\rule.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\token.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\site\header\header.component.ts" />
   </ItemGroup>
