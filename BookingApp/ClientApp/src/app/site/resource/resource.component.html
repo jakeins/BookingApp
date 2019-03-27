@@ -14,8 +14,8 @@
 </div>
 
 
-<div class="alert alert-warning">
-  Booking <strong>Rule</strong> to which this resource adheres to goes here.
+<div class="alert alert-warning" *ngIf="resource">
+  <app-rule [ruleId]="resource.ruleId"></app-rule>
 </div>
 
 <hr />
