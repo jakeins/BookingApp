@@ -21,10 +21,9 @@ export class CabinetComponent implements OnInit {
           this.router.navigate(['/error/401']);
         }
     });
-    let userName = this.userInfoService.username;
-    this.userService.getUserByUserName(userName).subscribe((res) => {
-      this.id = res.id;
-    });
+    let userId = this.userInfoService.userId;
+    this.id = userId;
+   
     }
 
     ngOnDestroy() {

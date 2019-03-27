@@ -18,6 +18,7 @@ export class UserEditComponent implements OnInit {
   userName: any;
   user: User;
   userUpdate: UserUpdate;
+  isAdmin: boolean;
 
   userForm: FormGroup
   constructor(private fb: FormBuilder,
@@ -28,13 +29,13 @@ export class UserEditComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.userName = this.userInfoService.username;
-    this.userService.getUserByUserName(this.userName).subscribe((res: User) => {
+    let userId = this.actRoute.snapshot.params['id'];
+    this.isAdmin = this.userInfoService.roles.includes('Admin');
+    this.userService.getUserById(userId).subscribe((res: User) => {
       this.user = res;
       this.initializeForm();
-    }, error => this.handleError(error));;
-    console.log(this.actRoute.snapshot.params);
-    console.log(this.actRoute.snapshot.params['some']);
+    }, error => this.handleError(error));
+    
   }
 
   initializeForm() {

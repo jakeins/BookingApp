@@ -18,6 +18,16 @@
     <input formControlName="email" class="form-control" minlength="5" maxlength="64" required />
   </div>
 
+  <br />
+  <div  *ngIf="isAdmin == true">
+    <div *ngIf="user.approvalStatus == null">
+      <button type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Approve</button>
+      <button type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Reject</button>
+    </div>
+  </div>
+
+  <br />
+
   <div>
     <button type="submit" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Post</button>
   </div>
