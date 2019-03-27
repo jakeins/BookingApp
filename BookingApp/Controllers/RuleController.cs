@@ -146,7 +146,7 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> DeleteRule([FromRoute]int id)
         {
             await _ruleService.Delete(id);
-            return Ok("Rule's been deleted");
+            return Ok();
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace BookingApp.Controllers
             rule.Id = id;
 
             await _ruleService.Update(rule);
-            return Ok("Rule's been updated");
+            return Ok();
 
         }
 

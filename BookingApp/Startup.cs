@@ -129,7 +129,7 @@ namespace BookingApp
                 c.RoutePrefix = "swagger";
             });
             // Enable midleware for handling exceptions
-            app.UseMiddleware<Middlewares.ErrorHandlingMiddleware>(env.IsDevelopment());
+            app.UseMiddleware<Middlewares.ErrorHandlingMiddleware>(!env.IsProduction());
 
             app.UseMvc(routes =>
             {
