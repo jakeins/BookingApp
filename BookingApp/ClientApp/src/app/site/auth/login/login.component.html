@@ -3,7 +3,7 @@
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Sign In</li>
                 </ol>
             </nav>
@@ -16,12 +16,30 @@
 
                 <div class="card-body">
                     <form [formGroup]="loginForm" (ngSubmit)="login()">
+                        <div class="form-group row offset-md-4">
+                            <div class="alert alert-danger" *ngIf="loginForm.hasError('loginFailure')">
+                                {{errorMessage}}
+                            </div>
+                            <div class="alert alert-danger" *ngIf="loginForm.hasError('loginError')">
+                                Not correct email or password
+                            </div>
+                            <div class="alert alert-danger" *ngIf="authService.isUser">
+                                Firstly logout, please
+                            </div>
+                        </div>
+
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label text-md-right">Email</label>
-
                             <div class="col-md-6">
                                 <input name="email" formControlName="email" type="text" class="form-control underlined"
                                     id="email" placeholder="name@email.com">
+                            </div>
+                        </div>
+
+                        <div class="form-group row offset-md-4">
+                            <div class="alert alert-danger"
+                                *ngIf="loginForm.controls['email'].invalid && loginForm.controls['email'].touched">
+                                Not valid field
                             </div>
                         </div>
 
@@ -53,7 +71,8 @@
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Sign
+                                <button type="submit" class="btn btn-primary"
+                                    [disabled]="loginForm.invalid || authService.isUser">Sign
                                     In<span class="ti-user"></span></button>
                             </div>
                         </div>

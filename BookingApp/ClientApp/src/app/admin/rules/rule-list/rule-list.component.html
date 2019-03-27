@@ -1,0 +1,16 @@
+<div class="alert alert-danger alert-dismissable" *ngIf="error!= null" role="alert">
+    <button (click)="onReset()" class="btn btn-sm btn-outline-danger b-reset">X</button>
+    <p>{{error}}</p>
+</div>
+<table class="table table-hover">
+  <tr>
+      <th>Id</th>
+      <th>Activity</th>
+      <th></th>
+  </tr>
+  <tr *ngFor="let rule of service.Rules;let i = index" (click)="populateForm(rule, i)" [class.active]="i == selectedRow">
+    <td >{{rule.id}}</td>
+    <td >{{showActive(rule.isActive)}}</td>
+    <td ><button (click)="onDelete(rule.id)" class="btn btn-sm btn-outline-danger">X</button></td>
+  </tr>
+</table>

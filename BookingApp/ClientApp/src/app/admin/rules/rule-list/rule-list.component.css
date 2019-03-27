@@ -1,0 +1,13 @@
+.btn-outline-danger{
+    float: right;
+}
+
+.table tr.active td {
+    background-color: #7FFFD4;
+}
+
+.b-reset{
+    position: absolute;
+    top: 0;
+    right: 0;
+}
