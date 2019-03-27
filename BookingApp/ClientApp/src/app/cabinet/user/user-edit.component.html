@@ -1,6 +1,6 @@
 
 
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="user && userForm && !user.isBlocked">
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="user && userForm && (!user.isBlocked || isAdmin == true)">
   <!--*ngIf="model && resourceForm"-->
   <!--<h2>Hello {{user.userName}}</h2>-->
   <div class="errors">
@@ -19,10 +19,20 @@
   </div>
 
   <br />
-  <div  *ngIf="isAdmin == true">
+  <div *ngIf="isAdmin == true">
     <div *ngIf="user.approvalStatus == null">
       <button type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Approve</button>
-      <button type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Reject</button>
+      <button type="button" class="btn btn-danger" style="width:200px;" [disabled]="!userForm.valid">Reject</button>
+    </div>
+    <br />
+    <div>
+      <button type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Block</button>
+      <button type="button" class="btn btn-danger" style="width:200px;" [disabled]="!userForm.valid">UnBlock</button>
+    </div>
+    <br />
+    <div>
+      <span *ngIf="user.approvalStatus == true" class="alert-success">User approved</span>
+      <span *ngIf="user.approvalStatus == false" class="alert-danger">User rejected</span>
     </div>
   </div>
 
@@ -34,7 +44,7 @@
 
 </form>
 
-<div *ngIf="user && user.isBlocked">
+<div *ngIf="user && user.isBlocked && isAdmin == false">
   <span class="alert-danger">
     You have been blocked
   </span>
