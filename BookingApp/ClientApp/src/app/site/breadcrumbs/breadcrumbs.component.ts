@@ -67,7 +67,7 @@ export class BreadcrumbsComponent implements OnInit {
               if (bcLabel == undefined)
                 bcLabel = componentName.replace('Component','').split(/(?=[A-Z])/).join(" ");
 
-              this.breadcrumbsInternal[localIndex] = new Breadcrumb(bcLabel, pathSegments.join('/');
+              this.breadcrumbsInternal[localIndex] = new Breadcrumb(bcLabel, pathSegments.join('/'));
 
               //Logger.log(this.breadcrumbsInternal);
 
@@ -93,7 +93,9 @@ export class BreadcrumbsComponent implements OnInit {
     if (tempBreadcrumbs.length > 1) {
       this.breadcrumbsClean = tempBreadcrumbs;
       this.breadcrumbsClean[this.breadcrumbsClean.length - 1].url = null;
-    }    
+    }
+    else
+      this.breadcrumbsClean = undefined;
   }
 
 
