@@ -21,18 +21,18 @@
   <br />
   <div *ngIf="isAdmin == true">
     <div *ngIf="user.approvalStatus == null">
-      <button type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Approve</button>
-      <button type="button" class="btn btn-danger" style="width:200px;" [disabled]="!userForm.valid">Reject</button>
-    </div>
-    <br />
-    <div>
-      <button type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Block</button>
-      <button type="button" class="btn btn-danger" style="width:200px;" [disabled]="!userForm.valid">UnBlock</button>
+      <button (click)="approveUser()" type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Approve</button>
+      <button (click)="rejectUser()" type="button" class="btn btn-danger" style="width:200px;" [disabled]="!userForm.valid">Reject</button>
     </div>
     <br />
     <div>
       <span *ngIf="user.approvalStatus == true" class="alert-success">User approved</span>
       <span *ngIf="user.approvalStatus == false" class="alert-danger">User rejected</span>
+    </div>
+    <br/>
+    <div>
+      <button (click)="blockUser()" *ngIf="user.isBlocked == false" type="button" class="btn btn-danger" style="width:200px;" [disabled]="!userForm.valid">Block</button>
+      <button (click)="unBlockUser()" *ngIf="user.isBlocked == true" type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">UnBlock</button>
     </div>
   </div>
 

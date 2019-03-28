@@ -19,6 +19,7 @@ export class UserEditComponent implements OnInit {
   user: User;
   userUpdate: UserUpdate;
   isAdmin: boolean;
+  userId: string;
 
   userForm: FormGroup
   constructor(private fb: FormBuilder,
@@ -29,9 +30,9 @@ export class UserEditComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    let userId = this.actRoute.snapshot.params['id'];
+    this.userId = this.actRoute.snapshot.params['id'];
     this.isAdmin = this.userInfoService.roles.includes('Admin');
-    this.userService.getUserById(userId).subscribe((res: User) => {
+    this.userService.getUserById(this.userId).subscribe((res: User) => {
       this.user = res;
       this.initializeForm();
     }, error => this.handleError(error));
@@ -56,15 +57,9 @@ export class UserEditComponent implements OnInit {
     this.userUpdate = formData;
     this.userUpdate.isBlocked = this.user.isBlocked;
     this.userUpdate.approvalStatus = this.user.approvalStatus;
-    //this.userUpdate.userName = formData.userName;
-    //this.userUpdate.email = formData.email;
-    //this.userUpdate.isBlocked = false;
-    //this.userUpdate.approvalStatus = true;
 
-   
     Logger.log(this.userUpdate);
-    console.log(this.userUpdate);
-    this.userService.updateUser(this.userUpdate, this.userInfoService.userId)
+    this.userService.updateUser(this.userUpdate, this.userId)
         .subscribe(result => {
           Logger.log(result);
           console.log(result);
@@ -72,6 +67,30 @@ export class UserEditComponent implements OnInit {
         }, error => this.handleError(error));
 
  
+  }
+
+  blockUser() {
+    this.userService.blockUser(this.userId, true).subscribe(() => {
+      this.user.isBlocked = true;
+    }, error => this.handleError(error));
+  }
+
+  unBlockUser() {
+    this.userService.blockUser(this.userId, false).subscribe(() => {
+      this.user.isBlocked = false;
+    }, error => this.handleError(error));
+  }
+
+  approveUser() {
+    this.userService.approvalUser(this.userId, true).subscribe(() => {
+      this.user.approvalStatus = true;
+    }, error => this.handleError(error));
+  }
+
+  rejectUser() {
+    this.userService.approvalUser(this.userId, false).subscribe(() => {
+      this.user.approvalStatus = false;
+    }, error => this.handleError(error));
   }
 
   handleError(error: any) {
