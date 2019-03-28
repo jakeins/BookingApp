@@ -15,6 +15,9 @@
 
 
 <div class="alert alert-warning" *ngIf="resource">
+  <span class="resource-modifies fright" *ngIf="authService.isAdmin">
+    <a title="Edit rule" [routerLink]="['/admin/rules', resource.ruleId, 'edit']"><i class="fas fa-wrench fa-lg"></i></a>
+  </span>
   <app-rule [ruleId]="resource.ruleId"></app-rule>
 </div>
 

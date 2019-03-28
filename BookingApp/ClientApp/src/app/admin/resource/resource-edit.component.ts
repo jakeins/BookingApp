@@ -8,6 +8,8 @@ import { FolderService } from '../../services/folder.service';
 import { Folder } from '../../models/folder';
 import { DevService } from '../../services/development.service';
 import { AuthService } from '../../services/auth.service';
+import { rule } from '../../models/rule';
+import { RuleService } from '../../services/rule.service';
 
 @Component({
   selector: 'app-resource-edit',
@@ -23,11 +25,13 @@ export class ResourceEditComponent implements OnInit {
     private router: Router,
     private actRoute: ActivatedRoute,
     private folderService: FolderService,
+    private ruleService: RuleService,
     private authService: AuthService
   )
   { }
 
   folders: Folder[] = [this.folderService.newRoot()];
+  rules: rule[] = [];
   resourceForm: FormGroup;
   parentFolderId: number;
   updateMode: boolean;
@@ -82,7 +86,12 @@ export class ResourceEditComponent implements OnInit {
       this.initializeForm();
     }
 
-    //getting list of folders
+    this.loadFolders();
+    this.loadRules();
+  }
+
+
+  loadFolders() {
     this.folderService.getList().subscribe((result: Folder[]) => {
       for (let key in result) {
         this.folders.push(result[key]);
@@ -91,9 +100,19 @@ export class ResourceEditComponent implements OnInit {
       //folder preseleciton during creation
       if (this.createMode)
         this.resourceForm.controls['folderId'].setValue(this.parentFolderId);
-
     });
   }
+
+  loadRules() {
+    this.ruleService.getRules().subscribe((result: rule[]) => {
+      for (let key in result) {
+        this.rules.push(result[key]);
+      }
+      Logger.log(this.rules);
+    });
+  }
+
+
 
 
 
