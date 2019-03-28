@@ -23,17 +23,20 @@ namespace BookingApp.Controllers
         private readonly IMapper mapper;
         private readonly IResourcesService resourcesService;
         private readonly IBookingsService bookingsService;
+        private readonly INotificationService notificationService;
 
-        public UserController(IUserService userService, IResourcesService resourcesService, IBookingsService bookingsService)
+        public UserController(IUserService userService, IResourcesService resourcesService, IBookingsService bookingsService, INotificationService notificationService)
         {
             this.userService = userService;
             this.resourcesService = resourcesService;
             this.bookingsService = bookingsService;
+            this.notificationService = notificationService;
 
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap().ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
+                cfg.CreateMap<AdminRegisterDTO, ApplicationUser>().ReverseMap();
                 cfg.CreateMap<List<ApplicationUser>, List<UserMinimalDto>> ().ReverseMap();
                 cfg.CreateMap<List<UserMinimalDto>, List<ApplicationUser>> ().ReverseMap();
                 cfg.CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
@@ -55,14 +58,15 @@ namespace BookingApp.Controllers
 
         [Authorize(Roles = RoleTypes.Admin)]
         [HttpPost("api/user/create-admin")]
-        public async Task<IActionResult> CreateAdmin([FromBody] AuthRegisterDto user)
+        public async Task<IActionResult> CreateAdmin([FromBody] AdminRegisterDTO user)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
-            await userService.CreateAdmin(appUser, user.Password);
+            ApplicationUser appUser = mapper.Map<AdminRegisterDTO, ApplicationUser>(user);
+            await userService.CreateAdmin(appUser);
             ApplicationUser adminUser = await userService.GetUserByName(user.UserName);
             await userService.AddUsersRoleAsync(adminUser, new List<string> { RoleTypes.Admin ,RoleTypes.User });
+            await notificationService.ForgetPasswordMail(adminUser);
             return Ok("User created");       
         }
 
@@ -81,6 +85,20 @@ namespace BookingApp.Controllers
                 return BadRequest("Can not get information about this user");
         }
 
+        [Authorize(Roles = RoleTypes.User)]
+        [HttpGet("api/user/user-name/{userName}")]
+        public async Task<IActionResult> GetUserByName([FromRoute]string userName)
+        {
+            ApplicationUser applicationUser = await userService.GetUserByName(userName); 
+            if (UserId == applicationUser.Id || IsAdmin)
+            {
+                ApplicationUser appuser = await userService.GetUserByName(userName);
+                UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
+                return new OkObjectResult(user);
+            }
+            else
+                return BadRequest("Can not get information about this user");
+        }
         
         [HttpGet("api/user/email/{userEmail}")]
         [Authorize(Roles = RoleTypes.User)]
@@ -134,7 +152,6 @@ namespace BookingApp.Controllers
         [HttpDelete("api/user/{userId}")]
         public async Task<IActionResult> DeleteUserById([FromRoute] string userId)
         {
-            //TODO: Delete all user bookings
             await userService.RemoveAllRolesFromUser(userId);
             await userService.DeleteUser(userId);
             return new OkObjectResult("User deleted");

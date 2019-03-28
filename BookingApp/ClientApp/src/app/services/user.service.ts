@@ -11,6 +11,7 @@ import { UserRegister } from '../models/user-register';
 import { UserPage } from '../models/user-page';
 import { UserUpdate } from '../models/user-update';
 import { UserInfoService } from './user-info.service';
+import { AdminRegister } from '../models/admin-register';
 
 
 @Injectable()
@@ -35,8 +36,8 @@ export class UserService {
     return this.http.post(this.path, user,  { headers: this.headers });
   }
 
-  createAdmin(user: UserRegister): Observable<any> {
-    return this.http.post(this.path + '/crate-admin', user, { headers: this.headers });
+  createAdmin(user: AdminRegister): Observable<any> {
+    return this.http.post(this.path + '/create-admin', user, { headers: this.headers });
   }
 
   updateUser(user: UserUpdate, userId: string): Observable<any> {
@@ -49,6 +50,10 @@ export class UserService {
 
   getUserById(userId: string): Observable<User> {
     return this.http.get<User>(this.path + '/' + userId);
+  }
+
+  getUserByUserName(userName: string): Observable<User> {
+    return this.http.get<User>(this.path + '/user-name/' + userName);
   }
 
   getUserRoleById(userId: string): Observable<string[]> {
@@ -71,6 +76,10 @@ export class UserService {
     return this.http.get<UserPage>(this.path + '/page' + '?' + 'PageNumber=' + page + '&' + 'PageSize=' + pageSize);
   }
 
+  getBookings(userId: string, startTime?: Date, endTime?: Date): Observable<any> {
+    return this.http.put(this.path + '/' + userId + '/bookings?' + 'startTime=' + startTime + '&' + 'endTime=' + endTime, { headers: this.headers });
+  }
+
   blockUser(userId: string, blocking: boolean): Observable<Object> {
    // this.blockingModel.Is
     console.log(blocking);
@@ -80,7 +89,7 @@ export class UserService {
   approvalUser(userId: string, approval: boolean): Observable<Object> {
     return this.http.put(this.path + '/' + userId + '/approval', approval, { headers: this.headers });
   }
-
+  
   getUserName(): any {
     return this.userInfoService.username;
   }

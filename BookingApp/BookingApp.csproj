@@ -76,6 +76,7 @@
   <ItemGroup>
     <None Remove="ClientApp\src\app\admin\rules\rules.component.ts" />
     <None Remove="ClientApp\src\app\globals.ts" />
+    <None Remove="ClientApp\src\app\models\admin-register.ts" />
     <None Remove="ClientApp\src\app\models\auth-login.ts" />
     <None Remove="ClientApp\src\app\models\breadcrumb.ts" />
     <None Remove="ClientApp\src\app\models\folder-form.model.ts" />
@@ -129,6 +130,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\admin\rules\rules.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\admin-register.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\auth-login.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folder-form.model.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\jwt-token.ts" />
