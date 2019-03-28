@@ -76,6 +76,10 @@ export class UserService {
     return this.http.get<UserPage>(this.path + '/page' + '?' + 'PageNumber=' + page + '&' + 'PageSize=' + pageSize);
   }
 
+  getBookings(userId: string, startTime?: Date, endTime?: Date): Observable<any> {
+    return this.http.put(this.path + '/' + userId + '/bookings?' + 'startTime=' + startTime + '&' + 'endTime=' + endTime, { headers: this.headers });
+  }
+
   blockUser(userId: string, blocking: boolean): Observable<Object> {
    // this.blockingModel.Is
     console.log(blocking);
@@ -85,7 +89,7 @@ export class UserService {
   approvalUser(userId: string, approval: boolean): Observable<Object> {
     return this.http.put(this.path + '/' + userId + '/approval', approval, { headers: this.headers });
   }
-
+  
   getUserName(): any {
     return this.userInfoService.username;
   }
