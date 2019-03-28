@@ -5,6 +5,7 @@ import { FolderService } from "../../services/folder.service";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Folder } from "../../models/folder";
+import { RuleService } from "../../services/rule.service";
 
 
 describe('Component: FolderEdit', () => {
@@ -16,7 +17,7 @@ describe('Component: FolderEdit', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule, ReactiveFormsModule],
       declarations: [FolderEditComponent],
-      providers: [FolderService]
+      providers: [FolderService, RuleService]
     });
     // create component and test fixture
     fixture = TestBed.createComponent(FolderEditComponent);

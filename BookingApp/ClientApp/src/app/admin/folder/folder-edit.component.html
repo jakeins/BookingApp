@@ -40,7 +40,7 @@
 
       <div *ngIf="control.typeField == 'select' && control.modelProperty == 'defaultRuleId'">
         <select class="form-control" formControlName="{{control.modelProperty}}" [(ngModel)]="newFolder[control.modelProperty] = newFolder.defaultRuleId">
-          <option *ngFor="let rule of folderService.getMockRules()" [value]="rule.id">{{ rule.title }}</option>
+          <option *ngFor="let rule of rules" [value]="rule.id">{{ rule.title }}</option>
         </select>
       </div>
 
