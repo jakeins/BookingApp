@@ -43,19 +43,19 @@ namespace BookingApp.Controllers
 
             if (!await userService.CheckPassword(user, dto.Password))
             {
-                ModelState.AddModelError("login_failure", "Invalid email or password");
+                ModelState.AddModelError("loginFailure", "Invalid email or password");
                 return BadRequest(ModelState);
             }
 
             if (!(user.ApprovalStatus ?? false))
             {
-                ModelState.AddModelError("login_failure", "Not approved yet");
+                ModelState.AddModelError("loginFailure", "Not approved yet");
                 return BadRequest(ModelState);
             }
 
             if (user.IsBlocked ?? false)
             {
-                ModelState.AddModelError("login_failure", "Account has been blocked");
+                ModelState.AddModelError("loginFailure", "Account has been blocked");
                 return BadRequest(ModelState);
             }
 
