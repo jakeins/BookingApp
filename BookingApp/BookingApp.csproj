@@ -78,10 +78,12 @@
     <None Remove="ClientApp\src\app\admin\stats\stats-bookings.component.ts" />
     <None Remove="ClientApp\src\app\globals.ts" />
     <None Remove="ClientApp\src\app\models\auth-login.ts" />
+    <None Remove="ClientApp\src\app\models\breadcrumb.ts" />
     <None Remove="ClientApp\src\app\models\folder-form.model.ts" />
     <None Remove="ClientApp\src\app\models\folder.ts" />
     <None Remove="ClientApp\src\app\models\page.ts" />
     <None Remove="ClientApp\src\app\models\jwt-token.ts" />
+	<None Remove="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
     <None Remove="ClientApp\src\app\models\rule.ts" />
     <None Remove="ClientApp\src\app\models\stats-booking.ts" />
@@ -99,12 +101,15 @@
     <None Remove="ClientApp\src\app\services\refresh.service.ts" />
     <None Remove="ClientApp\src\app\services\resource.service.ts" />
     <None Remove="ClientApp\src\app\services\rule.service.ts" />
+    <None Remove="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
     <None Remove="ClientApp\src\app\services\stats.service.ts" />
     <None Remove="ClientApp\src\app\services\token.interceptor.ts" />
+    <None Remove="ClientApp\src\app\site\breadcrumbs\breadcrumbs.component.ts" />
     <None Remove="ClientApp\src\app\site\header\header.component.ts" />
     <None Remove="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
     <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
     <None Remove="Data\StoredProcedures\Booking\Terminate.sql" />
+    <None Remove="Data\StoredProcedures\Folder\IsParentValid.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -116,9 +121,11 @@
     <EmbeddedResource Include="Data\StoredProcedures\Booking\Edit.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\OccupancyByResource.sql" />
+    <EmbeddedResource Include="Data\StoredProcedures\Folder\IsParentValid.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientApp\src\app\tests\components\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
@@ -131,6 +138,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\folder-form.model.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\jwt-token.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\page.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\breadcrumb.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\resource.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\rule.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-entry.ts" />
@@ -146,7 +154,10 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\logger.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\development.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\rule.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
+	<TypeScriptCompile Include="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\token.interceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\site\breadcrumbs\breadcrumbs.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\site\header\header.component.ts" />
   </ItemGroup>
 

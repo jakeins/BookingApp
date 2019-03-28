@@ -6,6 +6,6 @@ namespace BookingApp.Repositories.Interfaces
     public interface IFolderRepository
         : IActEntityRepository<Folder, int, ApplicationUser, string>
     {
-        Task<bool> IsParentValidAsync(int? newParentId, int? currentId);
+        Task IsParentValidAsync(int? newParentId, int currentId);
     }
 }
