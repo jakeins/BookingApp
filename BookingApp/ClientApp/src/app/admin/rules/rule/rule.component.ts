@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { RuleService } from '../../../services/rule.service';
 import { NgForm } from '@angular/forms';
 import { rule } from '../../../models/rule';
@@ -9,13 +9,18 @@ import { rule } from '../../../models/rule';
   styleUrls: ['./rule.component.css'],
 })
 export class RuleComponent implements OnInit {
-  
+  @Input() ruleId: number;
   constructor(
     private service: RuleService
   ) { }
 
   ngOnInit() {
     this.resetForm();
+    if(this.ruleId != null){
+      this.service.getRule(this.ruleId).subscribe((res: rule) =>{
+        this.service.Rule = res;
+      })
+    }
   }
 
   ngOnDestroy(){

@@ -61,11 +61,10 @@ export class RuleService {
      );
   }
 
-  //TODO: setup error handler
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       Logger.error(error); 
-      console.log(`${operation} failed: ${error.message}`); //for feature for development
+      console.log(`${operation} failed: ${error.message}`); //feature for development 
       return Observable.throw(error);
     };
   }

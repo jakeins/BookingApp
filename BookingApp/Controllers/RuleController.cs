@@ -19,14 +19,17 @@ namespace BookingApp.Controllers
     public class RuleController : EntityControllerBase
     {
         readonly IRuleService _ruleService;
-        readonly IMapperService _mapper;
-        //readonly IMapper mapper;
-        public virtual bool ExistsActive { get; set; }               
+        readonly IMapper _mapper;             
 
-        public RuleController(IRuleService ruleService, IMapperService mapper)
+        public RuleController(IRuleService ruleService)
         {
             _ruleService = ruleService;
-            _mapper = mapper;
+            _mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Rule, RuleBasicDTO>();
+                cfg.CreateMap<Rule, RuleAdminDTO>();
+                cfg.CreateMap<Rule, RuleDetailedDTO>().ReverseMap();
+            }));
         }
 
         /// <summary>
@@ -81,9 +84,9 @@ namespace BookingApp.Controllers
             }
             else
             {
-                 ExistsActive = await _ruleService.GetActive(id);
-                if (!ExistsActive)
+                if( await _ruleService.GetActive(id) == false)
                     return BadRequest();
+
                 var rule = await _ruleService.Get(id);
                 var dtor = _mapper.Map<RuleBasicDTO>(rule);
                 return Ok(dtor);

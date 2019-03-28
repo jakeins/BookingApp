@@ -6,17 +6,17 @@ import { User } from '../models/user';
   name: 'userName'
 })
 export class UserNamePipe implements PipeTransform {
-  //public user: User = new User();
-  static user: User; //TODO: fix temporary bug, that return undefined on the first loading only
+  static user: User ;    //TODO: fix temporary bug, that return undefined on the first loading only
+
   constructor(
     private userSerive: UserService
   ){}
-  transform(value: string) {
-     this.userSerive.getUserById(value).subscribe(((res:User) => {
+   transform(value: string):string {
+     this.userSerive.getUserById(value).subscribe( ((res:User) => {
         UserNamePipe.user = Object.assign({}, res);
-        console.log(UserNamePipe.user.userName);
+         console.log(UserNamePipe.user.userName);
       })
     )
-     return UserNamePipe.user.userName;
+      return UserNamePipe.user.userName;
   }
 }

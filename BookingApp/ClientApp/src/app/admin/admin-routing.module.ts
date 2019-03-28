@@ -20,7 +20,8 @@ const routesAdmin: Routes = [
       { path: 'resources/:id/edit', component: ResourceEditComponent },
       { path: 'folders/create', component: FolderEditComponent },
       { path: 'folders/:id/edit', component: FolderEditComponent },
-      { path: 'rules', component: RulesComponent }
+      { path: 'rules', component: RulesComponent },
+      { path: 'rules/:id/edit', component: RulesComponent }
     ]
   }
 ];
