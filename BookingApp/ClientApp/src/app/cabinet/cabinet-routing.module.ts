@@ -12,9 +12,9 @@ import { UserEditComponent } from './user-edit/user-edit.component';
 const routesCabinet: Routes = [
     {
         path: '', component: CabinetComponent, canActivate: [CabinetGuard], children: [
-          { path: '', component: HomeComponent },
+          { path: '', component: HomeComponent, data: { breadcrumbIgnore: true } },
           { path: 'bookings', component: BookingsComponent },
-          { path: 'user-edit', component: UserEditComponent },
+          { path: 'user-edit', component: UserEditComponent, data: { breadcrumbLabel: 'Personal Data' } },
         ]
     }
 ];

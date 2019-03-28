@@ -77,6 +77,7 @@
     <None Remove="ClientApp\src\app\admin\rules\rules.component.ts" />
     <None Remove="ClientApp\src\app\globals.ts" />
     <None Remove="ClientApp\src\app\models\auth-login.ts" />
+    <None Remove="ClientApp\src\app\models\breadcrumb.ts" />
     <None Remove="ClientApp\src\app\models\folder-form.model.ts" />
     <None Remove="ClientApp\src\app\models\folder.ts" />
     <None Remove="ClientApp\src\app\models\page.ts" />
@@ -100,6 +101,7 @@
     <None Remove="ClientApp\src\app\services\rule.service.ts" />
     <None Remove="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
     <None Remove="ClientApp\src\app\services\token.interceptor.ts" />
+    <None Remove="ClientApp\src\app\site\breadcrumbs\breadcrumbs.component.ts" />
     <None Remove="ClientApp\src\app\site\header\header.component.ts" />
     <None Remove="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
     <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
@@ -131,6 +133,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\folder-form.model.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\jwt-token.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\page.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\breadcrumb.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\resource.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\rule.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-entry.ts" />
@@ -148,6 +151,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
 	<TypeScriptCompile Include="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\token.interceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\site\breadcrumbs\breadcrumbs.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\site\header\header.component.ts" />
   </ItemGroup>
 
