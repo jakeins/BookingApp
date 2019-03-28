@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { StatsService } from '../../services/stats.service';
 import { BookingStats } from '../../models/stats-booking';
 import { Logger } from '../../services/logger.service';
-import { Data } from '@angular/router';
-import { logging } from 'protractor';
 
 
 @Component({
@@ -21,7 +19,9 @@ export class StatsBookingComponent implements OnInit {
   fromDateString: string;
   toDateString: string;
 
-  actionsTypeSelect: string = 'Creations';
+  intervalSelect: string = 'day';
+
+  actionsTypeSelect: string = 'creations';
 
   constructor(private statsService: StatsService ) {     
   }
@@ -43,7 +43,13 @@ export class StatsBookingComponent implements OnInit {
   }
 
   loadStats() {
-    this.statsService.getBookingStats(this.actionsTypeSelect).subscribe((res: BookingStats) => {
+
+    let start = this.stringToDate(this.fromDateString);
+    let end = this.stringToDate(this.toDateString);
+
+    Logger.log(start.toString());
+
+    this.statsService.getBookingStats(this.actionsTypeSelect, start, end, this.intervalSelect).subscribe((res: BookingStats) => {
       this.bookingStats = res;
     });
   }
@@ -53,5 +59,13 @@ export class StatsBookingComponent implements OnInit {
     let month = date.getMonth().toString().length < 2 ? '0' + (date.getMonth()+1).toString() : (date.getMonth()+1).toString();
     let day = date.getDate().toString().length < 2 ? '0' + date.getDate().toString() : date.getDate().toString();
     return year + '-' + month + '-' + day;
+  }
+
+  stringToDate(s: string) {
+    let year = Number(s.substr(0, 4));
+    let month = Number(s.substr(5, 2)) - 1;
+    let day = Number(s.substr(8, 2));    
+
+    return new Date(year, month, day);
   }
 }
