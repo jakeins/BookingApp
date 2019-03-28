@@ -44,7 +44,7 @@ export class FolderService {
 
   updateFolder(folder: Folder): Observable<any> {
     return this.http.put(this.BaseUrlFolder + '/' + folder.id, folder, {
-      headers:this.headers
+      headers: this.headers
     })
   }
 
@@ -56,17 +56,6 @@ export class FolderService {
 
   public newRoot() {
     return new Folder("root", null, null, false, 0);
-  }
-
-  public getMockRules() {
-    return [
-      { "id": 1, "title": "Default"},
-      { "id": 2, "title": "Rule 2" },
-      { "id": 3, "title": "Rule 3" },
-      { "id": 4, "title": "Rule 4" },
-      { "id": 5, "title": "Rule 5" },
-      { "id": 6, "title": "Rule 6" },
-    ];
   }
 
 }

@@ -82,7 +82,7 @@ export class AuthService {
 
   public logout() {
     const jwtToken: JwtToken = this.tokenService.readJwtToken();
-    this.http.post(
+    return this.http.post(
       this.baseUrlLogout,
       JSON.stringify({
         accessToken: jwtToken.accessToken,
