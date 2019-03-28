@@ -11,6 +11,7 @@ import { UserRegister } from '../models/user-register';
 import { UserPage } from '../models/user-page';
 import { UserUpdate } from '../models/user-update';
 import { UserInfoService } from './user-info.service';
+import { AdminRegister } from '../models/admin-register';
 
 
 @Injectable()
@@ -35,8 +36,8 @@ export class UserService {
     return this.http.post(this.path, user,  { headers: this.headers });
   }
 
-  createAdmin(user: UserRegister): Observable<any> {
-    return this.http.post(this.path + '/crate-admin', user, { headers: this.headers });
+  createAdmin(user: AdminRegister): Observable<any> {
+    return this.http.post(this.path + '/create-admin', user, { headers: this.headers });
   }
 
   updateUser(user: UserUpdate, userId: string): Observable<any> {

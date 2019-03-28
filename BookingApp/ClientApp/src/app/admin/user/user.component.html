@@ -35,10 +35,12 @@
       </tr>
     </tbody>
   </table>
-  <nav aria-label="Page navigation example" >
+  <nav aria-label="Page navigation example">
     <ul class="pagination">
       <li class="page-item page-link" *ngFor="let p of userPage.paging.arrayTotalPages; let i=index" (click)="getUserPages(i+1,10)">{{i+1}}</li>
     </ul>
   </nav>
 </div>
+<a [routerLink]="['/cabinet/user','create']" class="list-group-item list-group-item-action">Edit profile</a>
+<!--<button (click)="" type="button" class="btn btn-success" style="width:200px;">Create Admin</button>-->
 

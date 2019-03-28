@@ -15,6 +15,7 @@ const routesCabinet: Routes = [
           { path: '', component: HomeComponent },
           { path: 'bookings', component: BookingsComponent },
           { path: 'user', component: UserEditComponent },
+          { path: 'user/create', component: UserEditComponent },
           { path: 'user/:id/edit', component: UserEditComponent },
         ]
     }
