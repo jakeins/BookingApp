@@ -8,6 +8,7 @@ import { UserInfoService } from '../services/user-info.service';
     selector: 'app-cabinet',
     templateUrl: './cabinet.component.html'
 })
+
 export class CabinetComponent implements OnInit {
 
   authChangedSubscription: any;

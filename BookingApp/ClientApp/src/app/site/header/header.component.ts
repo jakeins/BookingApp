@@ -23,7 +23,7 @@ export class AppHeaderComponent implements OnInit {
   }
 
   logout() {
-    this.authService.logout().subscribe(data => {}, err => console.log(err));
+    this.authService.logout();
   }
 
 }
