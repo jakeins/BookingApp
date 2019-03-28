@@ -170,8 +170,8 @@ namespace BookingAppTests.Controllers
             var result = await controller.Object.DeleteRule(id);
 
             //assert
-            var ruleOk = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal("Rule's been deleted", ruleOk.Value);
+            var ruleOk = Assert.IsType<OkResult>(result);
+            Assert.Equal(200, ruleOk.StatusCode);
 
         }
 
@@ -204,9 +204,8 @@ namespace BookingAppTests.Controllers
             var result = await controller.Object.UpdateRule(1, someDTORule());
 
             //Assert
-            var ruleOk = Assert.IsType<OkObjectResult>(result);
-            var ruleModel = Assert.IsType<string>(ruleOk.Value);
-            Assert.Equal("Rule's been updated", ruleOk.Value);
+            var ruleOk = Assert.IsType<OkResult>(result);
+            Assert.Equal(200, ruleOk.StatusCode);
         }
         #endregion
 
