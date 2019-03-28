@@ -12,7 +12,7 @@ import { UserEditComponent } from './user-edit/user-edit.component';
 const routesCabinet: Routes = [
     {
         path: '', component: CabinetComponent, canActivate: [CabinetGuard], children: [
-            { path: '', component: HomeComponent },
+          { path: '', component: HomeComponent },
           { path: 'bookings', component: BookingsComponent },
           { path: 'user-edit', component: UserEditComponent },
         ]

@@ -40,7 +40,8 @@ namespace BookingApp.Services
 
         public async Task Update(int currentFolderId, string userId, Folder Folder)
         {
-            await repository.IsParentValidAsync(Folder.ParentFolderId, currentFolderId);    
+            if (Folder.ParentFolderId != null)
+                await repository.IsParentValidAsync(Folder.ParentFolderId, currentFolderId);    
 
             Folder.Id = currentFolderId;
             Folder.UpdatedUserId = userId;

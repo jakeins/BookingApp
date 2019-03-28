@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { RegisterFormModel } from '../../../models/register-form.model';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -12,7 +13,7 @@ export class RegisterComponent implements OnInit {
 
   private registerForm: FormGroup;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
     this.registerForm = new FormGroup({
       'userName': new FormControl('', [Validators.required, Validators.minLength(3)]),
       'email': new FormControl('', [Validators.required, Validators.email]),
@@ -25,7 +26,6 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
-    console.log(this.registerForm);
     this.authService.register(
       new RegisterFormModel(
         this.registerForm.value.userName,
@@ -33,7 +33,9 @@ export class RegisterComponent implements OnInit {
         this.registerForm.value.password,
         this.registerForm.value.confirmPassword
       )
-    );
+    ).subscribe(data => this.router.navigate(['/login']), err => {
+      console.log(err.message);
+    });
   }
 
   private comparePassword(group: FormGroup) {
