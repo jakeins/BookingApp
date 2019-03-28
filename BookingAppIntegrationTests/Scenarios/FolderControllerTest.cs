@@ -141,7 +141,7 @@ namespace BookingAppIntegrationTests.Scenarios
             var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
             // Assert
-            Assert.Equal("Forbidden", response.ReasonPhrase);
+            Assert.Equal("Internal Server Error", response.ReasonPhrase);
         }
         #endregion FolderController.Update
 

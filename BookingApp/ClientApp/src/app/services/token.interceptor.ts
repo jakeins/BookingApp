@@ -8,12 +8,13 @@ import {
 import { Observable } from 'rxjs/Observable';
 import { Logger } from './logger.service';
 import { TokenService } from './token.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   private isRefreshProccess = false;
 
-  constructor(private tokenService: TokenService) { }
+  constructor(private tokenService: TokenService, private authService: AuthService) { }
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const jwt = this.tokenService.readJwtToken();
     let accessToken = null;
@@ -23,7 +24,7 @@ export class TokenInterceptor implements HttpInterceptor {
       expireOn = jwt.expireOn;
     }
 
-    if (accessToken != null) {
+    if (!request.url.includes('logout') && accessToken != null) {
       if (expireOn < new Date() && !this.isRefreshProccess) {
         this.isRefreshProccess = true;
         this.tokenService.TokenExpired.emit();
@@ -38,6 +39,13 @@ export class TokenInterceptor implements HttpInterceptor {
       });
     }
 
-    return next.handle(request);
+    return next.handle(request).catch(err => {
+      if (!request.url.includes('logout')) {
+        if (err.status === 401) {
+          this.authService.logout().subscribe(data => {}, error => console.log(error.message));
+        }
+      }
+      return next.handle(request);
+    });
   }
 }

@@ -81,6 +81,7 @@
     <None Remove="ClientApp\src\app\models\folder.ts" />
     <None Remove="ClientApp\src\app\models\page.ts" />
     <None Remove="ClientApp\src\app\models\jwt-token.ts" />
+	<None Remove="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
     <None Remove="ClientApp\src\app\models\rule.ts" />
     <None Remove="ClientApp\src\app\models\tree-entry.ts" />
@@ -97,11 +98,13 @@
     <None Remove="ClientApp\src\app\services\refresh.service.ts" />
     <None Remove="ClientApp\src\app\services\resource.service.ts" />
     <None Remove="ClientApp\src\app\services\rule.service.ts" />
+    <None Remove="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
     <None Remove="ClientApp\src\app\services\token.interceptor.ts" />
     <None Remove="ClientApp\src\app\site\header\header.component.ts" />
     <None Remove="Data\StoredProcedures\BookingsSingleOccupancy.sql" />
     <None Remove="Data\StoredProcedures\Booking\Edit.sql" />
     <None Remove="Data\StoredProcedures\Booking\Terminate.sql" />
+    <None Remove="Data\StoredProcedures\Folder\IsParentValid.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -113,9 +116,11 @@
     <EmbeddedResource Include="Data\StoredProcedures\Booking\Edit.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\IsRangeAvailable.sql" />
     <EmbeddedResource Include="Data\StoredProcedures\Booking\OccupancyByResource.sql" />
+    <EmbeddedResource Include="Data\StoredProcedures\Folder\IsParentValid.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientApp\src\app\tests\components\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
@@ -140,6 +145,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\logger.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\development.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\rule.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
+	<TypeScriptCompile Include="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\token.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\site\header\header.component.ts" />
   </ItemGroup>
