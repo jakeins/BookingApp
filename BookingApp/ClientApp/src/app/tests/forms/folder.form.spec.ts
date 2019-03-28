@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { FolderService } from "../../services/folder.service";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { RouterTestingModule } from '@angular/router/testing';
+import { RuleService } from "../../services/rule.service";
 
 
 describe('Folder reactive form tests', () => {
@@ -15,7 +16,7 @@ describe('Folder reactive form tests', () => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, FormsModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [FolderEditComponent],
-      providers: [FolderService]
+      providers: [FolderService, RuleService]
     });
 
     // create component and test fixture

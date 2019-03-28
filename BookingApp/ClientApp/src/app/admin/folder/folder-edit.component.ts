@@ -4,6 +4,8 @@ import { FolderService } from '../../services/folder.service';
 import { Folder } from '../../models/folder';
 import { FolderFormGroup } from '../../models/folder-form.model';
 import { NgForm } from '@angular/forms';
+import { RuleService } from '../../services/rule.service';
+import { rule } from '../../models/rule';
 
 
 @Component({
@@ -23,36 +25,21 @@ export class FolderEditComponent implements OnInit {
   parentFolder: number;
   folderId: number;
   folders: Folder[];
+  rules: rule[] = [];
 
-  constructor(private folderService: FolderService, private router: Router, private actRoute: ActivatedRoute) { }
+  constructor(private folderService: FolderService, private ruleService: RuleService, private router: Router, private actRoute: ActivatedRoute) { }
 
   ngOnInit() {
 
     this.setParentFolderParam(+this.actRoute.snapshot.queryParams['parentFolderId']);
     this.isCreate(+this.actRoute.snapshot.params['id']);
     this.newFolder = new Folder("", this.parentFolder, 1, false);
-
     if (!this.IsCreate) {
-      this.folderService.getFolder(this.folderId).subscribe((folder: Folder) => {
-        if (folder.parentFolderId == undefined) folder.parentFolderId = 0;
-        if (folder.defaultRuleId == undefined) folder.defaultRuleId = 1;
-        this.newFolder = folder;
-      });
+      this.setFolder();
     }
-    
     this.form = new FolderFormGroup();
-
-    this.folderService.getList().subscribe((folders: Folder[]) => {
-      folders.unshift(new Folder("Root", null, null, false, 0));
-      let fId = this.folderId;
-      folders.forEach(function (item, index, object) {
-        if (item.id == fId) {
-          object.splice(index, 1);
-        }
-      }, fId);
-      
-      this.folders = folders;
-    });
+    this.setRules();
+    this.setFolders();
   }
 
   isCreate(id: number) {
@@ -109,7 +96,39 @@ export class FolderEditComponent implements OnInit {
     }
   }
 
-  handleError(error: any) {
+  //Private methods
+
+  private setRules() {
+    this.ruleService.getRules().subscribe((result: rule[]) => {
+      for (let key in result) {
+        this.rules.push(result[key]);
+      }
+    });
+  }
+
+  private setFolder() {
+    this.folderService.getFolder(this.folderId).subscribe((folder: Folder) => {
+      if (folder.parentFolderId == undefined) folder.parentFolderId = 0;
+      if (folder.defaultRuleId == undefined) folder.defaultRuleId = 1;
+      this.newFolder = folder;
+    });
+  }
+
+  private setFolders() {
+    this.folderService.getList().subscribe((folders: Folder[]) => {
+      folders.unshift(new Folder("Root", null, null, false, 0));
+      let fId = this.folderId;
+      folders.forEach(function (item, index, object) {
+        if (item.id == fId) {
+          object.splice(index, 1);
+        }
+      }, fId);
+
+      this.folders = folders;
+    });
+  }
+
+  private handleError(error: any) {
     this.apiError = error['status'];
 
     if (error['error'] != undefined) {
