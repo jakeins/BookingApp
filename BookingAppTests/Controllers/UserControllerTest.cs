@@ -11,6 +11,7 @@ using BookingApp.Exceptions;
 using System.Threading.Tasks;
 using BookingApp.Services.Interfaces;
 using BookingApp.DTOs.Resource;
+using BookingApp.DTOs.User;
 
 namespace BookingAppTests.Controllers
 {
@@ -252,10 +253,10 @@ namespace BookingAppTests.Controllers
             //await userService.AddUserRoleAsync(adminUser.Id, RoleTypes.Admin);
             // Arrange
             var mockApplicaitonUser = new Mock<ApplicationUser>();
-            var mockAuthRegisterDto = new Mock<AuthRegisterDto>();
+            var mockAuthRegisterDto = new Mock<AdminRegisterDTO>();
             var mockApplicationUser = new Mock<ApplicationUser>();
             var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.CreateAdmin(mockApplicaitonUser.Object,It.IsAny<string>())).Returns(Task.CompletedTask);
+            mockUserService.Setup(service => service.CreateAdmin(mockApplicaitonUser.Object)).Returns(Task.CompletedTask);
             mockUserService.Setup(service => service.GetUserByName(It.IsAny<string>())).ReturnsAsync(mockApplicaitonUser.Object);
             mockUserService.Setup(service => service.AddUserRoleAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
             var mockResourcesService = new Mock<IResourcesService>();

@@ -17,9 +17,11 @@ namespace BookingApp.Services
     {
 
         private IUserRepository userRepository;
-        public UserService(IUserRepository userRepository)
+        private readonly INotificationService notificationService;
+        public UserService(IUserRepository userRepository, INotificationService notificationService) 
         {
             this.userRepository = userRepository;
+            this.notificationService = notificationService;
         }
 
         public async Task CreateUser(ApplicationUser user)
@@ -37,6 +39,7 @@ namespace BookingApp.Services
             user.ApprovalStatus = true;
             string password = GenerateRandomPassword();
             await userRepository.CreateAsync(user, password);
+            await notificationService.ForgetPasswordMail(user);
         }
 
         public async Task DeleteUser(string id)

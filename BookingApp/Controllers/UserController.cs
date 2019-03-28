@@ -23,14 +23,12 @@ namespace BookingApp.Controllers
         private readonly IMapper mapper;
         private readonly IResourcesService resourcesService;
         private readonly IBookingsService bookingsService;
-        private readonly INotificationService notificationService;
 
-        public UserController(IUserService userService, IResourcesService resourcesService, IBookingsService bookingsService,INotificationService notificationService)
+        public UserController(IUserService userService, IResourcesService resourcesService, IBookingsService bookingsService)
         {
             this.userService = userService;
             this.resourcesService = resourcesService;
-            this.bookingsService = bookingsService;
-            this.notificationService = notificationService;
+            this.bookingsService = bookingsService;        
 
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
@@ -66,7 +64,6 @@ namespace BookingApp.Controllers
             await userService.CreateAdmin(appUser);
             ApplicationUser adminUser = await userService.GetUserByName(user.UserName);
             await userService.AddUsersRoleAsync(adminUser, new List<string> { RoleTypes.Admin ,RoleTypes.User });
-            await notificationService.ForgetPasswordMail(adminUser);
             return Ok("User created");       
         }
 
@@ -152,7 +149,6 @@ namespace BookingApp.Controllers
         [HttpDelete("api/user/{userId}")]
         public async Task<IActionResult> DeleteUserById([FromRoute] string userId)
         {
-            //TODO: Delete all user bookings
             await userService.RemoveAllRolesFromUser(userId);
             await userService.DeleteUser(userId);
             return new OkObjectResult("User deleted");
