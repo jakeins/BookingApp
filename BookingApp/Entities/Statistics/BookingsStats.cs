@@ -10,7 +10,7 @@ namespace BookingApp.Entities.Statistics
     {
         public BookingsStats(BookingStatsTypes type, DateTime fromDate, DateTime toDate, string interval, DateTime[] intervalsValues, int[] bookingsAll, Dictionary<int, int[]> bookingsByResources)
         {
-            Type = nameof(type);
+            Type = type.ToString();
             FromDate = fromDate;
             ToDate = toDate;
             Interval = interval;

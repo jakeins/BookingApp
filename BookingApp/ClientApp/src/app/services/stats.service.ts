@@ -10,12 +10,12 @@ export class StatsService {
   url: string;
 
   constructor(private http: HttpClient) {
-    this.url = BASE_API_URL + '/statistics';
+    this.url = BASE_API_URL + '/stats';
   }
 
   // temp
-  getBookingStats(): Observable<BookingStats> {
-    return this.http.get<BookingStats>(this.url + `/bookings-creations?startTime=01%20Mar%202019&endTime=05%20Mar%202019&interval=day`);
+  getBookingStats(type: string): Observable<BookingStats> {
+    return this.http.get<BookingStats>(this.url + `/bookings-${type.toLowerCase()}?startTime=01%20Mar%202019&endTime=05%20Mar%202019&interval=day`);
   }
 
 }

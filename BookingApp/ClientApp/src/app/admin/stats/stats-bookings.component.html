@@ -1,0 +1,25 @@
+<h3 class="title">Bokings Statistics</h3>
+<div class="form-group">
+  <label for="actionsTypeSelect">Actions type</label>
+  <select class="form-control" id="actionsTypeSelect" [(ngModel)]="actionsTypeSelect">
+    <option>Creations</option>
+    <option>Cancellations</option>
+    <option>Completions</option>
+    <option>Terminations</option>
+  </select>
+  <label for="fromDate">From Date:</label>
+  <input type="date" id="fromDate" [(ngModel)]="fromDateString" />
+  <label for="toDate">To Date:</label>
+  <input type="date" id="toDate" [(ngModel)]="toDateString" />
+  <button class="btn btn-primary" (click)="loadStats()">Load Stats</button>
+</div>
+<div *ngIf="bookingStats">
+  <p>{{bookingStats.type}}</p>
+  <p>{{bookingStats.fromDate}}</p>
+  <p>{{bookingStats.toDate}}</p>
+  <p>{{bookingStats.interval}}</p>
+  <p>All bookings values:</p>
+  <ul>
+    <li *ngFor="let item of bookingStats.bookingsAll">{{item}}</li>
+  </ul>
+</div>
