@@ -1,0 +1,7 @@
+<ul class="breadcrumb">
+  <li *ngFor="let breadcrumb of breadcrumbs" itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+    <a routerLink="{{breadcrumb.url}}" itemprop="url">
+      <span itemprop="title">{{ breadcrumb.label }}</span>
+    </a>
+  </li>
+</ul>
