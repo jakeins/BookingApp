@@ -1,1 +1,27 @@
-<h2>Cabinet.Home</h2>
+<h2>Welcome, {{name}}!</h2>
+<div id="content">
+  <div class="plate personal-data">
+    <div class="head">
+      <div class="icon"><i class="far fa-address-card fa-8x"></i></div>
+      <h3>Personal Data</h3>
+      <div class="text">Manage your personal data such as name, email and password.</div>
+    </div>
+    <div class="foot">
+      <a routerLink="/cabinet/user-edit">Manage own info</a>
+    </div>
+  </div>
+
+  <div class="plate my-bookings">
+    <div class="head">
+      <div class="icon"><i class="far fa-calendar-alt fa-8x"></i></div>
+      <h3>My Bookings</h3>
+      <div class="text">
+        View and manage the bookings you have made.
+        Their time, status, description, cancellation status
+        are available from this seciton.</div>
+      </div>
+    <div class="foot">
+      <a routerLink="/cabinet/my-bookings">Review and Manage own bookings</a>
+    </div>
+  </div>
+</div>
