@@ -46,7 +46,7 @@ export class AuthService {
     this.baseUrlForget = BASE_API_URL + '/auth/forget';
 
     tokenService.TokenExpired.subscribe(() => {
-      this.refresh().subscribe(data => {}, err => console.log(err));
+      this.refresh().subscribe(data => { }, err => console.log(err));
     });
   }
 
@@ -90,11 +90,10 @@ export class AuthService {
         expireOn: jwtToken.expireOn
       }),
       { headers: this.headers }
-    ).pipe(finalize(() => {
-      this.tokenService.deleteToken();
-      this.clearRoles();
-      this.AuthChanged.emit('Logged out');
-    }));
+    ).subscribe(data => {}, err => console.log(err));
+    this.tokenService.deleteToken();
+    this.clearRoles();
+    this.AuthChanged.emit('Logged out');
   }
 
   public refresh() {

@@ -17,7 +17,7 @@
 
                 <div class="card-body">
                     <form [formGroup]="forgetForm" (ngSubmit)="forget()">
-                        <div class="form-group row offset-md-4">
+                        <div class="form-group row justify-content-center">
                             <div class="alert alert-danger" *ngIf="forgetForm.hasError('forgetError')">
                                 Not correct email
                             </div>

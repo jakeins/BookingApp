@@ -16,12 +16,12 @@
 
                 <div class="card-body">
                     <form [formGroup]="loginForm" (ngSubmit)="login()">
-                        <div class="form-group row offset-md-4">
+                        <div class="form-group row justify-content-center">
                             <div class="alert alert-danger" *ngIf="loginForm.hasError('loginFailure')">
-                                {{errorMessage}}
+                                {{errorLogin.toString()}}
                             </div>
                             <div class="alert alert-danger" *ngIf="loginForm.hasError('loginError')">
-                                Not correct email or password
+                                Invalid email or password (client)
                             </div>
                             <div class="alert alert-danger" *ngIf="authService.isUser">
                                 Firstly logout, please
