@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Breadcrumb } from '../../models/breadcrumb';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd, UrlSegment } from '@angular/router';
 import { Logger } from '../../services/logger.service';
 import { filter } from 'rxjs/operators';
 
@@ -16,71 +16,85 @@ export class BreadcrumbsComponent implements OnInit {
     private route: ActivatedRoute
   ) { }
 
-  breadcrumbs: Breadcrumb[];
+  breadcrumbsInternal: Breadcrumb[];
+  breadcrumbsClean: Breadcrumb[];
 
 
   ngOnInit() {
 
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(event => {
-      this.resetBreadcrumbs();
+      this.extractBreadcrumbs();
     });
 
-    Logger.log("Initialize breadcrumbs.");
+    //Logger.log("Initialize breadcrumbs.");
   }
 
-  resetBreadcrumbs() {
+  extractBreadcrumbs() {//unwind currrent route's components
+
+    this.breadcrumbsInternal = [];
 
     let currentRoute: ActivatedRoute = this.route;
 
-    Logger.log(this.route);
+    let pathSegments: UrlSegment[] = [];
 
+    let i = -1;
     while (currentRoute != null) {
+
+      //Logger.log(currentRoute);
+
+      pathSegments = pathSegments.concat(currentRoute.snapshot.url);
 
       if (currentRoute.component != undefined) {
         let componentName = currentRoute.component['name'];
 
-        if (componentName == "AppComponent") {
-          Logger.log('home');
+        this.breadcrumbsInternal[++i] = null;
+
+        if (componentName == 'AppComponent') {
+          this.breadcrumbsInternal[i] = new Breadcrumb('<i class="fas fa-home fa-lg"></i>', '');
+          this.formCleanBreadcrumbs();
+          //Logger.log(this.breadcrumbsInternal);
         }
         else {
+          const localIndex = i;
           currentRoute.data.subscribe(dataset => {
 
-            if (dataset["breadcrumbIgnore"] != 'true') {
+            //Logger.log(dataset);
 
-              let x = dataset["breadcrumbLabel"];
+            if (dataset['breadcrumbIgnore'] != true) {
 
-              if (x == undefined)
-                x = componentName;
+              let bcLabel = dataset['breadcrumbLabel'];
 
-              Logger.log(x);
+              if (bcLabel == undefined)
+                bcLabel = componentName.replace('Component','').split(/(?=[A-Z])/).join(" ");
+
+              this.breadcrumbsInternal[localIndex] = new Breadcrumb(bcLabel, pathSegments.join('/');
+
+              //Logger.log(this.breadcrumbsInternal);
+
+              this.formCleanBreadcrumbs();
             }
 
           });
         }
-
-
-
-        
-
-        //let breadcrumb = new Breadcrumb(currentRoute.data._value["breadcrumbLabel"], currentRoute.snapshot.url.toString());
-        //breadcrumb
-        //breadcrumbs
-
-        //Logger.log(breadcrumb);
-
-
       }
 
-      if (currentRoute.children.length > 0)
-        currentRoute = currentRoute.children[0];
-      else
-        currentRoute = null;
-
+      currentRoute = currentRoute.children.length > 0 ? currentRoute.children[0] : null;
     };
 
-
-    
-
   }
+
+  formCleanBreadcrumbs() {
+    let tempBreadcrumbs: Breadcrumb[] = [];
+
+    for (let key in this.breadcrumbsInternal)
+      if (this.breadcrumbsInternal[key] != null)
+        tempBreadcrumbs.push(new Breadcrumb(this.breadcrumbsInternal[key].title, this.breadcrumbsInternal[key].url))
+
+    if (tempBreadcrumbs.length > 1) {
+      this.breadcrumbsClean = tempBreadcrumbs;
+      this.breadcrumbsClean[this.breadcrumbsClean.length - 1].url = null;
+    }    
+  }
+
 
 }
