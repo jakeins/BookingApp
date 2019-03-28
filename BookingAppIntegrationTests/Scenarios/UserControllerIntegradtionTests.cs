@@ -1,6 +1,7 @@
 ﻿using BookingApp;
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
+using BookingApp.Services;
 using BookingAppIntegrationTests.TestingUtilities;
 using BookingAppIntegrationTests.Tests;
 using Newtonsoft.Json;
@@ -22,6 +23,84 @@ namespace BookingAppIntegrationTests.Scenarios
         {
             _client = factory.CreateClient();
         }
+
+        #region GetUserTest
+        [Theory]
+        [InlineData("api/user")]
+        public async Task Get_Single_User_ById(string url)
+        {
+
+            await AuthUtils.AddUsersBearer(_client);
+            url += "/" + AuthUtils.UserId;// user id Lion(regular user) 
+
+            //Arrange
+            var response = await _client.GetAsync(url);
+
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<UserMinimalDto>(stringResponse);
+
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.False(string.IsNullOrEmpty(result.Id));
+
+
+        }
+
+        [Theory]
+        [InlineData("api/user")]
+        public async Task Get_Single_User_ByName(string url)
+        {
+            await AuthUtils.AddUsersBearer(_client);
+            url += "/user-name/" + AuthUtils.UserName;// user id Lion(regular user) 
+
+            //Arrange
+            var response = await _client.GetAsync(url);
+
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<UserMinimalDto>(stringResponse);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.False(string.IsNullOrEmpty(result.Id));
+        }
+
+        [Theory]
+        [InlineData("api/user")]
+        public async Task Get_Single_User_ByEmail(string url)
+        {
+            await AuthUtils.AddUsersBearer(_client);
+            url += "/email/" + AuthUtils.Email;// user id Lion(regular user) 
+
+            //Arrange
+            var response = await _client.GetAsync(url);
+
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<UserMinimalDto>(stringResponse);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.False(string.IsNullOrEmpty(result.Id));
+        }
+
+        [Theory]
+        [InlineData("api/users")]
+        public async Task Get_AllUser(string url)
+        {
+            await AuthUtils.AddAdminsBearer(_client);
+           
+
+            //Arrange
+            var response = await _client.GetAsync(url);
+
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<List<UserMinimalDto>>(stringResponse);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(result.Count > 0);
+        }
+        #endregion
 
         #region CreateUserTest
         [Theory]
@@ -124,7 +203,20 @@ namespace BookingAppIntegrationTests.Scenarios
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
+
+        [Theory]
+        [InlineData("api/user")]
+        public async Task Delete_User_NonAutorize(string url)
+        {
+            url += "/undefined";// user id Lion(regular user) 
+
+            //Arrange
+            var response = await _client.DeleteAsync(url);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
         #endregion
- 
+
     }
 }

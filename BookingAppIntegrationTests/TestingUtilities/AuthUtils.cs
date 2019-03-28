@@ -21,6 +21,8 @@ namespace BookingAppIntegrationTests.TestingUtilities
         }
 
         public static string UserId { get; set; }
+        public static string UserName { get; set; }
+        public static string Email { get; set; }
 
         static readonly StringBuilder adminsTokenCache = new StringBuilder();
         static readonly StringBuilder usersTokenCache = new StringBuilder();
@@ -56,6 +58,9 @@ namespace BookingAppIntegrationTests.TestingUtilities
                 var token = new JwtSecurityToken(tokenDto.AccessToken);
 
                 UserId = token.Claims.First(c => c.Type == "uid").Value;
+                UserName = token.Claims.First(c => c.Type == "sub").Value;
+                Email = token.Claims.First(c => c.Type == "email").Value;
+                
                 tokenCache.Append(tokenDto.AccessToken);
             }
             return tokenCache.ToString();
