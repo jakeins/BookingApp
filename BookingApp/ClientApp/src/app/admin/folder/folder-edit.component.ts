@@ -42,7 +42,6 @@ export class FolderEditComponent implements OnInit {
     this.setFolders();
   }
 
-
   isCreate(id: number) {
     this.folderId = id;
     if (!isNaN(id)) {
