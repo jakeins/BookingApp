@@ -24,6 +24,7 @@ namespace BookingApp.Services
                 cfg.CreateMap<Folder, FolderBaseDto>();
                 cfg.CreateMap<Folder, FolderMinimalDto>().ReverseMap();
 
+                cfg.CreateMap<Rule, RuleBasicDTO>();
                 cfg.CreateMap<Rule, RuleAdminDTO>();
                 cfg.CreateMap<Rule, RuleDetailedDTO>().ReverseMap();
 
