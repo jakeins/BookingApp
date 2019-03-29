@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Observable } from 'rxjs';
-import { tap, catchError} from 'rxjs/operators';
+import { tap, catchError, map} from 'rxjs/operators';
 import { rule } from '../models/rule';
 import { BASE_API_URL } from '../globals';
 import { Logger } from './logger.service';
@@ -18,8 +18,8 @@ export class RuleService {
 
   refreshList(){
     this.http.get<rule[]>(this.url).toPromise().then((res: rule[]) => {
-      console.log("list was refreshed");
       this.Rules = res; 
+      console.log("list was refreshed");
     },
     catchError(this.handleError<rule[]>('refresh list', []))
     )

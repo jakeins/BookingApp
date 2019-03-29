@@ -21,6 +21,7 @@ const routesAdmin: Routes = [
       { path: 'folders/create', component: FolderEditComponent },
       { path: 'folders/:id/edit', component: FolderEditComponent },
       { path: 'rules', component: RulesComponent },
+      { path: 'rules/:id', component: RulesComponent},
       { path: 'rules/:id/edit', component: RulesComponent }
     ]
   }

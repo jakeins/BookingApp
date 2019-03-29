@@ -66,7 +66,7 @@
   </div>
   <div class="form-group col-md-6" >
     <label>Created by</label>
-    <input name="createdUserId" [ngModel]="service.Rule.createdUserId | userName"class="form-control form-control-createdUserId" readonly>
+    <input name="createdUserId" [ngModel]="service.Rule.createdUserId | userName | async"class="form-control form-control-createdUserId" readonly>
   </div>
 </div>
 <div class="row" *ngIf="service.showAdditionalInfo==true">
@@ -76,7 +76,7 @@
     </div>
     <div class="form-group col-md-6">
       <label>Updated by</label>
-      <input name="updatedUserId" [ngModel]="service.Rule.updatedUserId | userName" class="form-control form-control-updatedUserId" readonly>
+      <input name="updatedUserId" [ngModel]="service.Rule.updatedUserId | userName | async " class="form-control form-control-updatedUserId" readonly>
     </div>
 </div>
 <div class="row">
