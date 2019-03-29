@@ -70,7 +70,6 @@ namespace BookingApp.Controllers
             return Ok("User created");       
         }
 
-
         [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}")]
         public async Task<IActionResult> GetUserById([FromRoute] string userId)
@@ -246,20 +245,14 @@ namespace BookingApp.Controllers
             return Ok("User blocked");
         }
 
-        [Authorize(Roles = RoleTypes.User)]
+        [AllowAnonymous]
         [HttpPut("api/user/{userId}/reset-password")]
         public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            if (UserId == userId)
-            {
-          
-                await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
-                return new OkObjectResult("Password have been reset");
-            }    
-            else
-                return BadRequest("Can not reset password for this user");
+                 return BadRequest(ModelState);
+            await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
+            return new OkObjectResult("Password have been reset");  
         }
 
         #region Bookings
