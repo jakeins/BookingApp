@@ -12,6 +12,8 @@ import { ResourceComponent } from './resource/resource.component';
 import { TreeComponent } from './tree/tree.component';
 import { AppHeaderComponent } from './header/header.component';
 import { RuleComponent } from './rule/rule.component';
+import { BreadcrumbsComponent } from './breadcrumbs/breadcrumbs.component';
+import { BookingsModule } from '../bookings/bookings.module';
 
 @NgModule({
   declarations: [
@@ -23,15 +25,20 @@ import { RuleComponent } from './rule/rule.component';
     ResetComponent,
     ErrorComponent,
     AppHeaderComponent,
-    RuleComponent
+    BreadcrumbsComponent,
+    RuleComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    BookingsModule
   ],
-  exports: [AppHeaderComponent],
+  exports: [
+    AppHeaderComponent,
+    BreadcrumbsComponent
+  ],
   providers: [],
   bootstrap: []
 })

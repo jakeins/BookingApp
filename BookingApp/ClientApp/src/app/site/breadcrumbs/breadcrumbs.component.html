@@ -1,0 +1,12 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb" *ngIf="breadcrumbsClean">
+    <li class="breadcrumb-item" *ngFor="let breadcrumb of breadcrumbsClean"
+        itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+
+      <a *ngIf="breadcrumb.url != null" routerLink="{{breadcrumb.url}}" itemprop="url" [innerHTML]="breadcrumb.title"></a>
+
+      <span *ngIf="breadcrumb.url == null" itemprop="title" [innerHTML]="breadcrumb.title"></span>
+
+    </li>
+  </ol>
+</nav>

@@ -12,13 +12,16 @@ import { RulesComponent } from './rules/rules.component';
 import { RuleComponent } from './rules/rule/rule.component';
 import { RuleListComponent } from './rules/rule-list/rule-list.component';
 import { UserNamePipe } from './user-name.pipe';
+import { AdminBookingComponent } from './bookings/bookings.admin.component';
+import { BookingsModule } from '../bookings/bookings.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    BookingsModule
   ],
   declarations: [
       AdminComponent,
@@ -29,7 +32,8 @@ import { UserNamePipe } from './user-name.pipe';
       RulesComponent,
       RuleComponent,
       RuleListComponent,
-      UserNamePipe
+      UserNamePipe,
+      AdminBookingComponent
   ],
 })
 export class AdminModule { }
