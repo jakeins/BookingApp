@@ -247,7 +247,7 @@ namespace BookingApp.Controllers
 
         [AllowAnonymous]
         [HttpPut("api/user/{userId}/reset-password")]
-        public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
+        public async Task<IActionResult> ResetPassword([FromRoute]string userId, [FromQuery]string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
         {
             if (!ModelState.IsValid)
                  return BadRequest(ModelState);

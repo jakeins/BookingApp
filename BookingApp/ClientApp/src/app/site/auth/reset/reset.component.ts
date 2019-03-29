@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { UserService } from '../../../services/user.service';
 import { UserNewPassword } from '../../../models/user-new-password';
 import { Logger } from '../../../services/logger.service';
+import { UserPage } from '../../../models/user-page';
 
 @Component({
   selector: 'app-reset',
@@ -29,7 +30,7 @@ export class ResetComponent implements OnInit, OnDestroy {
     this.querySubscription = route.queryParams.subscribe(
       (queryParam: any) => {
         this.userId = queryParam['userId'];
-        this.code = queryParam['code'];
+        this.code = encodeURIComponent(queryParam['code']);
       }
     );
   }
@@ -47,6 +48,7 @@ export class ResetComponent implements OnInit, OnDestroy {
   }
 
   reset() {
+    this.userPass = new UserNewPassword();
     this.userPass.password = this.resetForm.value.password;
     this.userPass.confirmPassword = this.resetForm.value.confirmPassword;
     this.userService.ressetPassword(this.userId, this.code, this.userPass).subscribe(() => {
