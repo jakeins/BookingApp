@@ -6,15 +6,17 @@ import { CabinetGuard } from './cabinet.guard';
 import { HomeComponent } from './home/home.component';
 import { CabinetComponent } from './cabinet.component';
 import { BookingsComponent } from './bookings/bookings.component';
-import { UserEditComponent } from './user-edit/user-edit.component';
+import { UserEditComponent } from './user/user-edit.component';
 
 
 const routesCabinet: Routes = [
     {
         path: '', component: CabinetComponent, canActivate: [CabinetGuard], children: [
-          { path: '', component: HomeComponent },
+          { path: '', component: HomeComponent, data: { breadcrumbIgnore: true } },
           { path: 'bookings', component: BookingsComponent },
-          { path: 'user-edit', component: UserEditComponent },
+          { path: 'user', component: UserEditComponent },
+          { path: 'user/create', component: UserEditComponent },
+          { path: 'user/:id/edit', component: UserEditComponent, data: { breadcrumbLabel: 'Personal Data' } },
         ]
     }
 ];

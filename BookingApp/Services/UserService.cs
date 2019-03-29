@@ -17,9 +17,10 @@ namespace BookingApp.Services
     {
 
         private IUserRepository userRepository;
-        public UserService(IUserRepository userRepository)
+        
+        public UserService(IUserRepository userRepository) 
         {
-            this.userRepository = userRepository;
+            this.userRepository = userRepository;          
         }
 
         public async Task CreateUser(ApplicationUser user)
@@ -32,10 +33,12 @@ namespace BookingApp.Services
             await userRepository.CreateAsync(user, password);
         }
 
-        public async Task CreateAdmin(ApplicationUser user, string password)
+        public async Task CreateAdmin(ApplicationUser user)
         {
             user.ApprovalStatus = true;
+            string password = GenerateRandomPassword();
             await userRepository.CreateAsync(user, password);
+           
         }
 
         public async Task DeleteUser(string id)
@@ -182,6 +185,45 @@ namespace BookingApp.Services
                 return true;
             else
                 return false;
+        }
+
+        private  string GenerateRandomPassword(PasswordOptions opts = null)
+        {
+            string[] randomChars = new[] {
+              "ABCDEFGHJKLMNOPQRSTUVWXYZ",    // uppercase 
+              "abcdefghijkmnopqrstuvwxyz",    // lowercase
+              "0123456789",                   // digits
+              "!@$?_-"                        // non-alphanumeric
+             };
+            opts  =  PasswordSettings.GetPasswordSettings().Password;
+            Random rand = new Random(Environment.TickCount);
+            List<char> chars = new List<char>();
+
+            if (opts.RequireUppercase)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[0][rand.Next(0, randomChars[0].Length)]);
+
+            if (opts.RequireLowercase)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[1][rand.Next(0, randomChars[1].Length)]);
+
+            if (opts.RequireDigit)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[2][rand.Next(0, randomChars[2].Length)]);
+
+            if (opts.RequireNonAlphanumeric)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[3][rand.Next(0, randomChars[3].Length)]);
+
+            for (int i = chars.Count; i < opts.RequiredLength
+                || chars.Distinct().Count() < opts.RequiredUniqueChars; i++)
+            {
+                string rcs = randomChars[rand.Next(0, randomChars.Length)];
+                chars.Insert(rand.Next(0, chars.Count),
+                    rcs[rand.Next(0, rcs.Length)]);
+            }
+
+            return new string(chars.ToArray());
         }
     }
 }

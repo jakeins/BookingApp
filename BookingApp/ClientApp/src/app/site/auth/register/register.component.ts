@@ -19,7 +19,7 @@ export class RegisterComponent implements OnInit {
       'email': new FormControl('', [Validators.required, Validators.email]),
       'password': new FormControl('', Validators.required),
       'confirmPassword': new FormControl(''),
-    }, {validators: this.comparePassword});
+    }, { validators: this.comparePassword });
   }
 
   ngOnInit() {
@@ -42,7 +42,7 @@ export class RegisterComponent implements OnInit {
     const pass = group.value.password;
     const confirm = group.value.confirmPassword;
 
-    return pass === confirm ? null : {notSame: true};
-}
+    return pass === confirm ? null : { notSame: true };
+  }
 
 }

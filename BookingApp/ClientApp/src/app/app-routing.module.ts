@@ -14,26 +14,30 @@ import { AdminModule } from './admin/admin.module';
 
 
 
+
 const routes: Routes = [
-  { path: '', component: TreeComponent },
+  { path: '', component: TreeComponent, data: { breadcrumbIgnore: true } },
+  //{ path: 'tree', component: TreeComponent },
   { path: 'error/:status-code', component: ErrorComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'forget', component: ForgetComponent },
   { path: 'reset', component: ResetComponent },
-  { path: 'resources/:id', component: ResourceComponent },
-  { path: 'tree', component: TreeComponent },
+  { path: 'resources/:id', component: ResourceComponent, data:{ breadcrumbLabel: 'Resource details' } },
+  
   {
     path: 'cabinet',
     loadChildren: () => CabinetModule,
     //loadChildren: './cabinet/cabinet.module#CabinetModule',
-    canLoad: [CabinetGuard]
+    canLoad: [CabinetGuard],
+    data: { breadcrumbLabel: 'User Cabinet' }
   },
   {
     path: 'admin',
     loadChildren: () => AdminModule,
     //loadChildren: './admin/admin.module#AdminModule',
-    canLoad: [AdminGuard]
+    canLoad: [AdminGuard],
+    data: { breadcrumbLabel: 'Admin CP' }
   },
   {
     path: '**',
