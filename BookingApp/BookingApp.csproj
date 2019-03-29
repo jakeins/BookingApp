@@ -36,8 +36,19 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="ClientApp\src\app\site\bookings\**" />
+    <Compile Remove="ClientApp\src\app\site\booking\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="ClientApp\src\app\site\bookings\**" />
+    <Content Remove="ClientApp\src\app\site\booking\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="ClientApp\src\app\site\bookings\**" />
+    <EmbeddedResource Remove="ClientApp\src\app\site\booking\**" />
+    <None Remove="ClientApp\src\app\site\bookings\**" />
+    <None Remove="ClientApp\src\app\site\booking\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -74,6 +85,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\admin\bookings\bookings.admin.component.ts" />
     <None Remove="ClientApp\src\app\admin\rules\rules.component.ts" />
     <None Remove="ClientApp\src\app\globals.ts" />
     <None Remove="ClientApp\src\app\models\admin-register.ts" />
@@ -83,6 +95,7 @@
     <None Remove="ClientApp\src\app\models\folder.ts" />
     <None Remove="ClientApp\src\app\models\page.ts" />
     <None Remove="ClientApp\src\app\models\jwt-token.ts" />
+    <None Remove="ClientApp\src\app\models\resource-time-window.ts" />
 	<None Remove="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
     <None Remove="ClientApp\src\app\models\rule.ts" />
@@ -94,6 +107,7 @@
     <None Remove="ClientApp\src\app\models\user-page.ts" />
     <None Remove="ClientApp\src\app\models\user-register.ts" />
     <None Remove="ClientApp\src\app\models\user-update.ts" />
+    <None Remove="ClientApp\src\app\services\bookings-component-mode.service.ts" />
     <None Remove="ClientApp\src\app\services\development.service.ts" />
     <None Remove="ClientApp\src\app\services\folder.service.ts" />
     <None Remove="ClientApp\src\app\services\logger.service.ts" />
@@ -128,6 +142,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\admin\bookings\bookings.admin.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\rules\rules.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\admin-register.ts" />
@@ -135,6 +150,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\folder-form.model.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\jwt-token.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\page.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\resource-time-window.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\breadcrumb.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\resource.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\rule.ts" />
@@ -144,6 +160,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\user-page.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-register.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-update.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\bookings-component-mode.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\folder.service.ts" />

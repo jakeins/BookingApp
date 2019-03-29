@@ -6,8 +6,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CabinetRoutingModule } from './cabinet-routing.module';
 import { HomeComponent } from './home/home.component';
 import { CabinetComponent } from './cabinet.component';
-import { BookingsComponent } from './bookings/bookings.component';
+import { UserBookingsComponent } from './bookings/bookings.user.component';
 import { UserEditComponent } from './user/user-edit.component';
+import { BookingsModule } from '../bookings/bookings.module';
 
 
 @NgModule({
@@ -15,13 +16,14 @@ import { UserEditComponent } from './user/user-edit.component';
       CommonModule,
       FormsModule,
       ReactiveFormsModule,
-      CabinetRoutingModule
+      CabinetRoutingModule,
+      BookingsModule
     ],
     declarations: [
         CabinetComponent,
         HomeComponent,
         UserEditComponent,
-        BookingsComponent
+        UserBookingsComponent
     ]
 })
 export class CabinetModule { }

@@ -226,7 +226,7 @@ namespace BookingAppTests.Controllers
             var ruleOk = Assert.IsType<OkObjectResult>(result);
             var resourcesOk = Assert.IsAssignableFrom<IEnumerable<ResourceMaxDto>>(ruleOk.Value);
         }
-#endregion
+        #endregion
 
         #region TestDataHelper
         public IEnumerable<Rule> initRules()
@@ -302,7 +302,7 @@ namespace BookingAppTests.Controllers
         {
             return new List<Resource>();
         }
-#endregion
+        #endregion
 
     }
 }

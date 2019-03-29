@@ -139,32 +139,6 @@ namespace BookingAppTests.Repositories
         }
         #endregion
 
-        #region CountAsync() tests
-        [Fact]
-        public async void CountAsync_ReturnsCorrectCount()
-        {
-            //Arrange
-            var options = InMemoryUtils.ProduceFreshDbContextOptions();
-
-            using (var context = new ApplicationDbContext(options))
-            {
-                context.Resources.AddRange(ResourceUtils.TestSet);
-                context.SaveChanges();
-            }
-
-            //Act
-            using (var context = new ApplicationDbContext(options))
-            {
-                ITrackEntityRepository<Resource, int, ApplicationUser, string> repo = new ResourcesRepository(context);
-                var result = await repo.CountAsync();
-
-                //Assert
-                Assert.IsAssignableFrom<int>(result);
-                Assert.Equal(ResourceUtils.TestSet.Count(), result);
-            }
-        }
-        #endregion
-
         #region ListByAssociatedUser() tests
         [Fact]
         public async void ListByAssociatedUser_ReturnsCorrectResources()
