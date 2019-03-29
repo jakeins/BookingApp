@@ -11,6 +11,7 @@ import { UserRegister } from '../models/user-register';
 import { UserPage } from '../models/user-page';
 import { UserUpdate } from '../models/user-update';
 import { UserInfoService } from './user-info.service';
+import { UserNewPassword } from '../models/user-new-password';
 import { AdminRegister } from '../models/admin-register';
 import { DatePipe } from '@angular/common';
 
@@ -98,6 +99,10 @@ export class UserService {
 
   approvalUser(userId: string, approval: boolean): Observable<Object> {
     return this.http.put(this.path + '/' + userId + '/approval', approval, { headers: this.headers });
+  }
+
+  ressetPassword(userId: string, code: string, userPass: UserNewPassword ): Observable<Object> {
+    return this.http.put(this.path + '/' + userId + '/reset-password', userPass, { headers: this.headers });
   }
   
   getUserName(): any {
