@@ -41,7 +41,7 @@ namespace BookingAppTests.Services
             NotificationService notificationService = new NotificationService(mockMessageService.Object, mockUserService.Object);
             await notificationService.ForgetPasswordMail(mockUser.Object);
 
-            mockMessageService.Verify(messageService => messageService.SendAsync(message), Times.Once);
+            mockMessageService.Verify(messageService => messageService.SendAsync(It.IsAny<Message>()), Times.Once);
         }
     }
 }

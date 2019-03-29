@@ -10,10 +10,8 @@ export class HomeComponent implements OnInit {
 
   constructor(private userInfo: UserInfoService) { }
 
-  name: string;
-
   ngOnInit() {
-    this.name = this.userInfo.username;
+
   }
 
 }

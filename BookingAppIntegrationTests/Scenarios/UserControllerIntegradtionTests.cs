@@ -88,7 +88,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task Get_AllUser(string url)
         {
             await AuthUtils.AddAdminsBearer(_client);
-           
+
 
             //Arrange
             var response = await _client.GetAsync(url);
@@ -137,9 +137,9 @@ namespace BookingAppIntegrationTests.Scenarios
         {
             await AuthUtils.AddUsersBearer(_client);
             url += "/" + AuthUtils.UserId;// user id Lion(regular user) 
-            
+
             //Arrange
-            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = "lion@user.cow", UserName = "Lions"});
+            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = "lion@user.cow", UserName = "Lions" });
             var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
             // Assert

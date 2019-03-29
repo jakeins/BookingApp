@@ -1,8 +1,8 @@
-<form #form="ngForm" autocomplete="off">
+<form #form="ngForm" autocomplete="off" >
   <input type="hidden" name="id" [ngModel]="service.Rule.id">
   <div class="form-group">
     <label>Title</label>
-    <input name="title" #title="ngModel" [(ngModel)]="service.Rule.title" class="form-control" pattern="^[a-z0-9_-]{4,64}$" required>
+    <input name="title" #title="ngModel" [(ngModel)]="service.Rule.title" class="form-control" pattern="^[\sa-zA-Z0-9_-]{4,64}$" required>
     <div *ngIf="title.invalid && (title.dirty || title.touched)"  class="form-group validation-error">
         <p>Incorrect title</p>
     </div>
@@ -64,9 +64,9 @@
     <label>Created</label>
     <input name="createdTime" [ngModel]="service.Rule.createdTime | date: 'dd-MMM-yyyy, hh:mm:ss'" class="form-control form-control-createdTime" readonly>
   </div>
-  <div class="form-group col-md-6">
+  <div class="form-group col-md-6" >
     <label>Created by</label>
-    <input name="createdUserId" [ngModel]="service.Rule.createdUserId | userName" class="form-control form-control-createdUserId" readonly>
+    <input name="createdUserId" [ngModel]="service.Rule.createdUserId | userName | async"class="form-control form-control-createdUserId" readonly>
   </div>
 </div>
 <div class="row" *ngIf="service.showAdditionalInfo==true">
@@ -76,7 +76,7 @@
     </div>
     <div class="form-group col-md-6">
       <label>Updated by</label>
-      <input name="updatedUserId" [ngModel]="service.Rule.updatedUserId | userName" class="form-control form-control-updatedUserId" readonly>
+      <input name="updatedUserId" [ngModel]="service.Rule.updatedUserId | userName | async " class="form-control form-control-updatedUserId" readonly>
     </div>
 </div>
 <div class="row">

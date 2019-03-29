@@ -90,7 +90,7 @@ export class AuthService {
         expireOn: jwtToken.expireOn
       }),
       { headers: this.headers }
-    ).subscribe(data => {}, err => console.log(err));
+    ).subscribe(data => { }, err => console.log(err));
     this.tokenService.deleteToken();
     this.clearRoles();
     this.AuthChanged.emit('Logged out');

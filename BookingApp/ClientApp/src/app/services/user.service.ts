@@ -11,8 +11,9 @@ import { UserRegister } from '../models/user-register';
 import { UserPage } from '../models/user-page';
 import { UserUpdate } from '../models/user-update';
 import { UserInfoService } from './user-info.service';
-import { AdminRegister } from '../models/admin-register';
 import { UserNewPassword } from '../models/user-new-password';
+import { AdminRegister } from '../models/admin-register';
+import { DatePipe } from '@angular/common';
 
 
 @Injectable()
@@ -78,7 +79,16 @@ export class UserService {
   }
 
   getBookings(userId: string, startTime?: Date, endTime?: Date): Observable<any> {
-    return this.http.put(this.path + '/' + userId + '/bookings?' + 'startTime=' + startTime + '&' + 'endTime=' + endTime, { headers: this.headers });
+    let datePipe = new DatePipe("en-Us");
+    let query: String;
+    query = "";
+    if (!(startTime == undefined || startTime == null)) query = "?startTime=" + datePipe.transform(startTime, 'short');
+    if (!(endTime == undefined || endTime == null)) {
+      if (query == null) query = "?";
+      else query += "&"
+      query += "endTime=" + datePipe.transform(endTime, 'short');
+    }
+    return this.http.get(this.path + '/' + userId + '/bookings' + query, { headers: this.headers });
   }
 
   blockUser(userId: string, blocking: boolean): Observable<Object> {
