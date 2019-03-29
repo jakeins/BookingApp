@@ -12,6 +12,7 @@ import { UserPage } from '../models/user-page';
 import { UserUpdate } from '../models/user-update';
 import { UserInfoService } from './user-info.service';
 import { AdminRegister } from '../models/admin-register';
+import { UserNewPassword } from '../models/user-new-password';
 
 
 @Injectable()
@@ -88,6 +89,10 @@ export class UserService {
 
   approvalUser(userId: string, approval: boolean): Observable<Object> {
     return this.http.put(this.path + '/' + userId + '/approval', approval, { headers: this.headers });
+  }
+
+  ressetPassword(userId: string, code: string, userPass: UserNewPassword ): Observable<Object> {
+    return this.http.put(this.path + '/' + userId + '/reset-password', userPass, { headers: this.headers });
   }
   
   getUserName(): any {
