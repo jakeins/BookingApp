@@ -13,6 +13,7 @@ import { TreeComponent } from './tree/tree.component';
 import { AppHeaderComponent } from './header/header.component';
 import { RuleComponent } from './rule/rule.component';
 import { BreadcrumbsComponent } from './breadcrumbs/breadcrumbs.component';
+import { BookingsModule } from '../bookings/bookings.module';
 
 @NgModule({
   declarations: [
@@ -25,13 +26,14 @@ import { BreadcrumbsComponent } from './breadcrumbs/breadcrumbs.component';
     ErrorComponent,
     AppHeaderComponent,
     BreadcrumbsComponent,
-    RuleComponent
+    RuleComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    BookingsModule
   ],
   exports: [
     AppHeaderComponent,

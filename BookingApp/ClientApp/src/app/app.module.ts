@@ -15,6 +15,8 @@ import { TokenService } from './services/token.service';
 import { UserService } from './services/user.service';
 import { UserInfoService } from './services/user-info.service';
 import { RuleService } from './services/rule.service';
+import { BookingService } from './services/booking.service';
+import { BookingsModeService } from './services/bookings-component-mode.service';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { RuleService } from './services/rule.service';
       useClass: TokenInterceptor,
       multi: true
     },
-    RuleService
+    RuleService,
+    BookingService,
+    BookingsModeService
   ],
   bootstrap: [AppComponent]
 })

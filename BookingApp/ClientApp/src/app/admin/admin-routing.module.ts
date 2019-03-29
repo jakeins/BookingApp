@@ -9,6 +9,7 @@ import { UserComponent } from './user/user.component';
 import { ResourceEditComponent } from './resource/resource-edit.component';
 import { FolderEditComponent } from './folder/folder-edit.component';
 import { RulesComponent } from './rules/rules.component';
+import { AdminBookingComponent } from './bookings/bookings.admin.component';
 
 
 const routesAdmin: Routes = [
@@ -20,7 +21,8 @@ const routesAdmin: Routes = [
       { path: 'resources/:id/edit', component: ResourceEditComponent, data: { breadcrumbLabel: 'Resource Editing' } },
       { path: 'folders/create', component: FolderEditComponent, data: { breadcrumbLabel: 'Folder Creation' } },
       { path: 'folders/:id/edit', component: FolderEditComponent, data: { breadcrumbLabel: 'Folder Editing' } },
-      { path: 'rules', component: RulesComponent, data: { breadcrumbLabel: 'Rules management' } }
+      { path: 'rules', component: RulesComponent, data: { breadcrumbLabel: 'Rules management' } },
+      { path: 'bookings', component: AdminBookingComponent, data: { breadcrumbLabel: 'All bookings managment' } }
     ]
   }
 ];

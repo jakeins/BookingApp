@@ -149,7 +149,9 @@ namespace BookingApp
             bool UseStoreProc = !env.IsEnvironment("Testing");
             if (env.IsEnvironment("Testing"))
             {
+#pragma warning disable CS4014 // Break integration tests
                 initializer.Initialize(UseStoreProc);
+#pragma warning restore CS4014 //
             }
             else
             {

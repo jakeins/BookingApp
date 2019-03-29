@@ -11,6 +11,8 @@ import { ResourceComponent } from './site/resource/resource.component';
 import { TreeComponent } from './site/tree/tree.component';
 import { CabinetModule } from './cabinet/cabinet.module';
 import { AdminModule } from './admin/admin.module';
+import { BookingsComponent } from './bookings/bookings/bookings.component';
+import { BookingComponent } from './bookings/booking/booking.component';
 
 
 
@@ -23,8 +25,9 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'forget', component: ForgetComponent },
   { path: 'reset', component: ResetComponent },
-  { path: 'resources/:id', component: ResourceComponent, data:{ breadcrumbLabel: 'Resource details' } },
-  
+  { path: 'resources/:id', component: ResourceComponent },
+  { path: 'booking/:id', component: BookingComponent },
+  { path: 'bookings', component: BookingsComponent},
   {
     path: 'cabinet',
     loadChildren: () => CabinetModule,

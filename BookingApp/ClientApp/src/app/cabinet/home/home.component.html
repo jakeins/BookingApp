@@ -1,4 +1,4 @@
-<h2>Welcome, {{name}}!</h2>
+<h2>Welcome, {{userInfo.username}}!</h2>
 <div id="content">
   <div class="plate personal-data">
     <div class="head">
@@ -7,7 +7,7 @@
       <div class="text">Manage your personal data such as name, email and password.</div>
     </div>
     <div class="foot">
-      <a routerLink="/cabinet/user-edit">Manage own info</a>
+      <a routerLink="/cabinet/user/{{userInfo.userId}}/edit">Manage own info</a>
     </div>
   </div>
 
@@ -21,7 +21,7 @@
         are available from this seciton.</div>
       </div>
     <div class="foot">
-      <a routerLink="/cabinet/my-bookings">Review and Manage own bookings</a>
+      <a routerLink="/cabinet/bookings">Review and Manage own bookings</a>
     </div>
   </div>
 </div>

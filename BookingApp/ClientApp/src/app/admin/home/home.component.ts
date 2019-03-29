@@ -8,12 +8,11 @@ import { UserInfoService } from '../../services/user-info.service';
 })
 export class HomeComponent implements OnInit {
 
-  name: string;
 
   constructor(private userInfo: UserInfoService) { }
 
   ngOnInit() {
-    this.name = this.userInfo.username;
+
   }
 
 }
