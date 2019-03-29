@@ -20,7 +20,9 @@ const routesAdmin: Routes = [
       { path: 'resources/:id/edit', component: ResourceEditComponent, data: { breadcrumbLabel: 'Resource Editing' } },
       { path: 'folders/create', component: FolderEditComponent, data: { breadcrumbLabel: 'Folder Creation' } },
       { path: 'folders/:id/edit', component: FolderEditComponent, data: { breadcrumbLabel: 'Folder Editing' } },
-      { path: 'rules', component: RulesComponent, data: { breadcrumbLabel: 'Rules management' } }
+      { path: 'rules', component: RulesComponent, data: { breadcrumbLabel: 'Rules management' } },
+      { path: 'rules/:id', component: RulesComponent, data: {breadcrumbLabel: 'Rules management'} },
+      { path: 'rules/:id/edit', component: RulesComponent, data: {breadcrumbLabel: 'Rules management'} }
     ]
   }
 ];
