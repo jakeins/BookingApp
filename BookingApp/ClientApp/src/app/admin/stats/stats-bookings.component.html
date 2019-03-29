@@ -46,12 +46,10 @@
   </div>
 </div>
 <div *ngIf="bookingStats">
-  <p>{{bookingStats.type}}</p>
-  <p>{{bookingStats.fromDate}}</p>
-  <p>{{bookingStats.toDate}}</p>
-  <p>{{bookingStats.interval}}</p>
-  <p>All bookings values:</p>
-  <ul>
-    <li *ngFor="let item of bookingStats.bookingsAll">{{item}}</li>
-  </ul>
+  <p>Bookings {{bookingStats.type}} from {{fromDateString}} to {{toDateString}}, {{bookingStats.interval}} intervals:</p>  
+  
+    <ol>
+      <li *ngFor="let item of bookingsWithKeys">{{item.key}} - {{item.value}}</li>
+    </ol>
+  
 </div>

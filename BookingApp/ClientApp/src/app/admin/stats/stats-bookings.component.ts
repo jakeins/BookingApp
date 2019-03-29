@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { StatsService } from '../../services/stats.service';
 import { BookingStats } from '../../models/stats-booking';
 import { Logger } from '../../services/logger.service';
-
 
 @Component({
   selector: 'app-stats-booking',
@@ -12,7 +11,8 @@ import { Logger } from '../../services/logger.service';
 export class StatsBookingComponent implements OnInit {
 
   bookingStats: BookingStats;
-  
+  bookingsWithKeys: BookingsWithKeys[] = [];
+  new 
   defaultFromDate: Date;
   defaultToDate: Date;
 
@@ -22,6 +22,8 @@ export class StatsBookingComponent implements OnInit {
   intervalSelect: string = 'day';
 
   actionsTypeSelect: string = 'creations';
+
+  
 
   constructor(private statsService: StatsService ) {     
   }
@@ -35,11 +37,9 @@ export class StatsBookingComponent implements OnInit {
 
     this.fromDateString = this.dateToString(this.defaultFromDate);
     Logger.log('fromDate: ' + this.fromDateString);
-    //(document.getElementById('fromDate') as HTMLInputElement).value = this.fromDateString;
     Logger.log('html fromDate: ' + (document.getElementById('fromDate') as HTMLInputElement).value);
     this.toDateString = this.dateToString(this.defaultToDate);
     Logger.log('toDate: ' + this.toDateString);
-    //(document.getElementById('toDate') as HTMLInputElement).value = this.toDateString; 
   }
 
   loadStats() {
@@ -51,6 +51,22 @@ export class StatsBookingComponent implements OnInit {
 
     this.statsService.getBookingStats(this.actionsTypeSelect, start, end, this.intervalSelect).subscribe((res: BookingStats) => {
       this.bookingStats = res;
+      this.bookingsWithKeys = [];
+      for (var i = 0; i < this.bookingStats.intervalsValues.length; i++) {
+        let key: string;
+        let date: Date = new Date(this.bookingStats.intervalsValues[i]);
+        if (this.intervalSelect === 'day') {
+          key = date.toDateString();
+        }
+        else if (this.intervalSelect === 'hour') {
+          key = date.toString();
+        }
+        else if (this.intervalSelect === 'month') {
+          key = date.getMonth().toString() +' '+  date.getFullYear().toString();
+        }
+        let keyValuePair: BookingsWithKeys = { key: key, value: this.bookingStats.bookingsAll[i] };       
+        this.bookingsWithKeys.push(keyValuePair);        
+      }
     });
   }
 
@@ -68,4 +84,9 @@ export class StatsBookingComponent implements OnInit {
 
     return new Date(year, month, day);
   }
+}
+
+class BookingsWithKeys {
+  key: string;
+  value: number;
 }
