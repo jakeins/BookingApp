@@ -10,7 +10,10 @@
     </thead>
     <tbody>
       <tr class="user-item" *ngFor="let user of userPage.items">
-        <td>{{user.userName}}</td>
+        <td>
+          <a class="left" title="Edit user" [routerLink]="['/cabinet/user', user.id, 'edit']"><i class="fas fa-sliders-h fa-lg"></i> </a>
+          {{user.userName}}
+        </td>
         <td>{{user.email}}</td>
         <td>
           <span *ngIf="user.approvalStatus == null">
@@ -32,10 +35,12 @@
       </tr>
     </tbody>
   </table>
-  <nav aria-label="Page navigation example" >
+  <nav aria-label="Page navigation example">
     <ul class="pagination">
       <li class="page-item page-link" *ngFor="let p of userPage.paging.arrayTotalPages; let i=index" (click)="getUserPages(i+1,10)">{{i+1}}</li>
     </ul>
   </nav>
 </div>
+<a [routerLink]="['/cabinet/user','create']" class="btn btn-outline-success">Create admin</a>
+<!--<button (click)="" type="button" class="btn btn-success" style="width:200px;">Create Admin</button>-->
 

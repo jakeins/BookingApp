@@ -1,0 +1,11 @@
+.bookedWindow{
+  background-color: red;
+}
+
+.serviceWindow{
+  background-color: yellow;
+}
+
+.freeWindow{
+  background-color: lightgreen;
+}

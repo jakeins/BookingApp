@@ -83,13 +83,13 @@ namespace BookingAppTests.Controllers
         }
 
         [Theory]
-        [InlineData(3)]
+        [InlineData(2)]
         public async Task GetRuleForUser(int id)
         {
             //arrange
+            mockServ.Setup(p => p.GetActive(id)).ReturnsAsync(true);
             mockServ.Setup(p => p.Get(id)).ReturnsAsync(initRules().Single(p => p.Id == id));
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.SetupGet(p => p.ExistsActive).Returns(true);
             controller.SetupGet(p => p.IsAdmin).Returns(false);
 
 
@@ -99,8 +99,8 @@ namespace BookingAppTests.Controllers
             //assert
             var ruleOk = Assert.IsType<OkObjectResult>(result);
             var modelOk = Assert.IsType<RuleBasicDTO>(ruleOk.Value);
-            Assert.Equal("BunkerRule", modelOk.Title);
-            Assert.Equal(30, modelOk.MinTime);
+            Assert.Equal("LibraryRule", modelOk.Title);
+            Assert.Equal(20, modelOk.MinTime);
         }
 
         [Theory]
@@ -110,7 +110,6 @@ namespace BookingAppTests.Controllers
             //arrange
             mockServ.Setup(p => p.Get(id)).ReturnsAsync((Rule)null);
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.SetupGet(p => p.ExistsActive).Returns(false);
             controller.SetupGet(p => p.IsAdmin).Returns(false);
 
             //act
@@ -170,8 +169,8 @@ namespace BookingAppTests.Controllers
             var result = await controller.Object.DeleteRule(id);
 
             //assert
-            var ruleOk = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal("Rule's been deleted", ruleOk.Value);
+            var ruleOk = Assert.IsType<OkResult>(result);
+            Assert.Equal(200, ruleOk.StatusCode);
 
         }
 
@@ -204,9 +203,8 @@ namespace BookingAppTests.Controllers
             var result = await controller.Object.UpdateRule(1, someDTORule());
 
             //Assert
-            var ruleOk = Assert.IsType<OkObjectResult>(result);
-            var ruleModel = Assert.IsType<string>(ruleOk.Value);
-            Assert.Equal("Rule's been updated", ruleOk.Value);
+            var ruleOk = Assert.IsType<OkResult>(result);
+            Assert.Equal(200, ruleOk.StatusCode);
         }
         #endregion
 
@@ -228,7 +226,7 @@ namespace BookingAppTests.Controllers
             var ruleOk = Assert.IsType<OkObjectResult>(result);
             var resourcesOk = Assert.IsAssignableFrom<IEnumerable<ResourceMaxDto>>(ruleOk.Value);
         }
-#endregion
+        #endregion
 
         #region TestDataHelper
         public IEnumerable<Rule> initRules()
@@ -304,7 +302,7 @@ namespace BookingAppTests.Controllers
         {
             return new List<Resource>();
         }
-#endregion
+        #endregion
 
     }
 }

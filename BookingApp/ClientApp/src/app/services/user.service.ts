@@ -11,6 +11,9 @@ import { UserRegister } from '../models/user-register';
 import { UserPage } from '../models/user-page';
 import { UserUpdate } from '../models/user-update';
 import { UserInfoService } from './user-info.service';
+import { UserNewPassword } from '../models/user-new-password';
+import { AdminRegister } from '../models/admin-register';
+import { DatePipe } from '@angular/common';
 
 
 @Injectable()
@@ -35,8 +38,8 @@ export class UserService {
     return this.http.post(this.path, user,  { headers: this.headers });
   }
 
-  createAdmin(user: UserRegister): Observable<any> {
-    return this.http.post(this.path + '/crate-admin', user, { headers: this.headers });
+  createAdmin(user: AdminRegister): Observable<any> {
+    return this.http.post(this.path + '/create-admin', user, { headers: this.headers });
   }
 
   updateUser(user: UserUpdate, userId: string): Observable<any> {
@@ -49,6 +52,10 @@ export class UserService {
 
   getUserById(userId: string): Observable<User> {
     return this.http.get<User>(this.path + '/' + userId);
+  }
+
+  getUserByUserName(userName: string): Observable<User> {
+    return this.http.get<User>(this.path + '/user-name/' + userName);
   }
 
   getUserRoleById(userId: string): Observable<string[]> {
@@ -71,6 +78,19 @@ export class UserService {
     return this.http.get<UserPage>(this.path + '/page' + '?' + 'PageNumber=' + page + '&' + 'PageSize=' + pageSize);
   }
 
+  getBookings(userId: string, startTime?: Date, endTime?: Date): Observable<any> {
+    let datePipe = new DatePipe("en-Us");
+    let query: String;
+    query = "";
+    if (!(startTime == undefined || startTime == null)) query = "?startTime=" + datePipe.transform(startTime, 'short');
+    if (!(endTime == undefined || endTime == null)) {
+      if (query == null) query = "?";
+      else query += "&"
+      query += "endTime=" + datePipe.transform(endTime, 'short');
+    }
+    return this.http.get(this.path + '/' + userId + '/bookings' + query, { headers: this.headers });
+  }
+
   blockUser(userId: string, blocking: boolean): Observable<Object> {
    // this.blockingModel.Is
     console.log(blocking);
@@ -81,6 +101,10 @@ export class UserService {
     return this.http.put(this.path + '/' + userId + '/approval', approval, { headers: this.headers });
   }
 
+  ressetPassword(userId: string, code: string, userPass: UserNewPassword ): Observable<Object> {
+    return this.http.put(this.path + '/' + userId + '/reset-password', userPass, { headers: this.headers });
+  }
+  
   getUserName(): any {
     return this.userInfoService.username;
   }

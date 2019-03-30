@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
 
   private loginForm: FormGroup;
-  private errorMessage: string;
+  private errorLogin: any;
   constructor(private authService: AuthService, private router: Router) {
     this.loginForm = new FormGroup({
       'email': new FormControl('', [Validators.required, Validators.email]),
@@ -28,8 +28,8 @@ export class LoginComponent implements OnInit {
       this.authService.login(this.loginForm.value.email, this.loginForm.value.password)
         .subscribe(data => this.router.navigate(['/']),
           err => {
-            if (err.error['loginFaillure'] !== undefined) {
-              this.errorMessage = err.error['loginFailure'].toString();
+            this.errorLogin = err.error['loginFailure']
+            if (this.errorLogin !== undefined) {
               this.loginForm.setErrors({
                 'loginFailure': true
               });

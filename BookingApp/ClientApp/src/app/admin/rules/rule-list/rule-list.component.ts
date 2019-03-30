@@ -33,7 +33,6 @@ export class RuleListComponent implements OnInit {
     },
     error => { 
       this.error = error['status'] + ': ' + error['error']['Message'];
-      Logger.error(error)
     })
     }
   }

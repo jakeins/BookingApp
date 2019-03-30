@@ -42,7 +42,7 @@ export class TokenInterceptor implements HttpInterceptor {
     return next.handle(request).catch(err => {
       if (!request.url.includes('logout')) {
         if (err.status === 401) {
-          this.authService.logout().subscribe(data => {}, error => console.log(error.message));
+          this.authService.logout();
         }
       }
       return next.handle(request);

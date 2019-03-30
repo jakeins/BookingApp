@@ -1,22 +1,26 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { User } from '../models/user';
+import { Observable } from 'rxjs';
+import { Logger } from '../services/logger.service';
 
 @Pipe({
   name: 'userName'
 })
 export class UserNamePipe implements PipeTransform {
-  //public user: User = new User();
-  static user: User; //TODO: fix temporary bug, that return undefined on the first loading only
+
+  user: User ;  
+
   constructor(
     private userSerive: UserService
   ){}
-  transform(value: string) {
-     this.userSerive.getUserById(value).subscribe(((res:User) => {
-        UserNamePipe.user = Object.assign({}, res);
-        console.log(UserNamePipe.user.userName);
-      })
-    )
-     return UserNamePipe.user.userName;
+  transform(id:string):Observable<string>{
+    return this.userSerive.getUserById(id).map(
+      data => {
+        this.user = data;
+        return this.user.userName;
+      },
+      error => Logger.error('transform userId to userName')
+      )
   }
 }

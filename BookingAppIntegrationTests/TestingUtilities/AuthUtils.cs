@@ -1,5 +1,7 @@
 ﻿using BookingApp.DTOs;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +19,10 @@ namespace BookingAppIntegrationTests.TestingUtilities
         {
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await GetToken(client, isAdmin: false)}");
         }
+
+        public static string UserId { get; set; }
+        public static string UserName { get; set; }
+        public static string Email { get; set; }
 
         static readonly StringBuilder adminsTokenCache = new StringBuilder();
         static readonly StringBuilder usersTokenCache = new StringBuilder();
@@ -49,6 +55,12 @@ namespace BookingAppIntegrationTests.TestingUtilities
                 string tokenJson = responseToken.Content.ReadAsStringAsync().Result;
                 AuthTokensDto tokenDto = JsonConvert.DeserializeObject<AuthTokensDto>(tokenJson);
 
+                var token = new JwtSecurityToken(tokenDto.AccessToken);
+
+                UserId = token.Claims.First(c => c.Type == "uid").Value;
+                UserName = token.Claims.First(c => c.Type == "sub").Value;
+                Email = token.Claims.First(c => c.Type == "email").Value;
+                
                 tokenCache.Append(tokenDto.AccessToken);
             }
             return tokenCache.ToString();
