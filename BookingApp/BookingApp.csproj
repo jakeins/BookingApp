@@ -87,6 +87,9 @@
     <None Remove="ClientApp\src\app\models\resource.ts" />
     <None Remove="ClientApp\src\app\models\rule.ts" />
     <None Remove="ClientApp\src\app\models\stats-booking.ts" />
+    <None Remove="ClientApp\src\app\models\stats-resource-brief.ts" />
+    <None Remove="ClientApp\src\app\models\stats-resource.ts" />
+    <None Remove="ClientApp\src\app\models\stats-users.ts" />
     <None Remove="ClientApp\src\app\models\tree-entry.ts" />
     <None Remove="ClientApp\src\app\models\tree-node.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
@@ -141,6 +144,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\breadcrumb.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\resource.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\rule.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\stats-resource-brief.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\stats-resource.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\stats-users.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-entry.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-node.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folder.ts" />
