@@ -159,8 +159,7 @@ namespace BookingApp.Services
 
             long maxRuleTime = new TimeSpan(0, resource.Rule.MaxTime.GetValueOrDefault(), 0).Ticks;
 
-            stats.
-Id = resource.Id;
+            stats.Id = resource.Id;
             stats.Title = resource.Title;
             stats.BookingsCount = resource.Bookings.Count;
             stats.AverageTime = new TimeSpan(longAverageTicks);
@@ -229,7 +228,7 @@ Id = resource.Id;
             switch (interval)
             {
                 case "month":
-                    number = (end.Year - start.Year) * 12 + end.Month - start.Month;
+                    number = GetMonths(start, end);
                     break;
                 case "week":
                     number = GetWeeks(start, end);
@@ -256,7 +255,7 @@ Id = resource.Id;
             switch (interval)
             {
                 case "month":
-                    number = (end.Year - start.Year) * 12 + end.Month - start.Month;
+                    number = GetMonthIndex(start, end);
                     break;
                 case "week":
                     number = GetWeekIndex(start, end);
@@ -302,8 +301,8 @@ Id = resource.Id;
 
         private DateTime GetStartOfMonth(DateTime input)
         {
-            int dayOfMonth = input.Day;
-            return input.Date.AddDays(1-dayOfMonth);
+            DateTime startOfMonth = new DateTime(input.Year, input.Month, 1);
+            return startOfMonth;
         }
 
         private DateTime GetStartOfWeek(DateTime input)
@@ -325,6 +324,17 @@ Id = resource.Id;
             DateTime startDay = GetStartOfWeek(start);
             double days = (end - startDay).TotalDays;
             return (int)Math.Ceiling(days / 7);
+        }
+
+        private int GetMonthIndex(DateTime start, DateTime end)
+        {
+            int months = (end.Year - start.Year) * 12 + end.Month - start.Month;
+            return months;
+        }
+
+        private int GetMonths(DateTime start, DateTime end)
+        {                       
+            return GetMonthIndex(start,end) + 1;
         }
 
         #endregion
