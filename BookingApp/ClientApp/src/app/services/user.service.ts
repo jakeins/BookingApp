@@ -101,8 +101,8 @@ export class UserService {
     return this.http.put(this.path + '/' + userId + '/approval', approval, { headers: this.headers });
   }
 
-  ressetPassword(userId: string, code: string, userPass: UserNewPassword ): Observable<Object> {
-    return this.http.put(this.path + '/' + userId + '/reset-password', userPass, { headers: this.headers });
+  ressetPassword(userId: string, code: string, userPass: UserNewPassword): Observable<Object> {
+    return this.http.put(this.path + '/' + userId + '/reset-password/' + code, userPass, { headers: this.headers });
   }
   
   getUserName(): any {

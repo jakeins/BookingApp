@@ -19,13 +19,13 @@ export class ResetComponent implements OnInit, OnDestroy {
   private code: string;
   private userId: string;
   private isParamsExist = true;
-  private userPass: UserNewPassword;
+  private userPass: UserNewPassword = new UserNewPassword();
 
   constructor(private authService: AuthService, private route: ActivatedRoute,
     private router: Router, private userService: UserService) {
     this.resetForm = new FormGroup({
       'password': new FormControl('', Validators.required),
-      'confirmPassword': new FormControl(''),
+      'confirmPassword': new FormControl('', Validators.required),
     }, { validators: this.comparePassword });
     this.querySubscription = route.queryParams.subscribe(
       (queryParam: any) => {
@@ -36,11 +36,11 @@ export class ResetComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.userId !== undefined || this.code !== undefined) {
+    if (this.userId !== undefined && this.code !== undefined) {
       this.isParamsExist = true;
     } else {
       this.isParamsExist = false;
-    }
+    }  
   }
 
   ngOnDestroy() {

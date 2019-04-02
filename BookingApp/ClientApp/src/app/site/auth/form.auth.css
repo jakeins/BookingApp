@@ -12,7 +12,7 @@
 }
 
 .ng-invalid {
-  border-left: 5px solid #808080; /* red */
+  border-left: 5px solid #808080; /* grey */
 }
 
 .ng-invalid.ng-touched {
