@@ -3,6 +3,9 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
+import { UserService } from '../../../services/user.service';
+import { UserNewPassword } from '../../../models/user-new-password';
+import { Logger } from '../../../services/logger.service';
 
 @Component({
   selector: 'app-reset',
@@ -15,9 +18,10 @@ export class ResetComponent implements OnInit, OnDestroy {
   private code: string;
   private userId: string;
   private isParamsExist = true;
+  private userPass: UserNewPassword;
 
   constructor(private authService: AuthService, private route: ActivatedRoute,
-    private router: Router) {
+    private router: Router, private userService: UserService) {
     this.resetForm = new FormGroup({
       'password': new FormControl('', Validators.required),
       'confirmPassword': new FormControl(''),
@@ -43,7 +47,12 @@ export class ResetComponent implements OnInit, OnDestroy {
   }
 
   reset() {
-    this.router.navigate(['/login']);
+    this.userPass.password = this.resetForm.value.password;
+    this.userPass.confirmPassword = this.resetForm.value.confirmPassword;
+    this.userService.ressetPassword(this.userId, this.code, this.userPass).subscribe(() => {
+      this.router.navigate(['/login']);
+    });
+    
   }
 
   private comparePassword(group: FormGroup) {
