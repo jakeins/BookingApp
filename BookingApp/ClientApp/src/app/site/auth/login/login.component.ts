@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  styleUrls: ['./login.component.css'],
+  styleUrls: ['../form.auth.css'],
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
@@ -29,7 +29,11 @@ export class LoginComponent implements OnInit {
       this.authService.login(this.loginForm.value.email, this.loginForm.value.password)
         .subscribe(data => this.router.navigate(['/']),
         err => {
-          this.apiError = err.error['loginFailure'];
+          if (err.error['loginFailure']) {
+            this.apiError = err.error['loginFailure'];
+          } else {
+            this.apiError = err.error.Message;
+          }
         });
     }
   }

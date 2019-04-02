@@ -4,6 +4,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-forget',
+  styleUrls: ['../form.auth.css'],
   templateUrl: './forget.component.html'
 })
 export class ForgetComponent implements OnInit {

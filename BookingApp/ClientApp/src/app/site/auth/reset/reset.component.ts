@@ -9,6 +9,7 @@ import { Logger } from '../../../services/logger.service';
 
 @Component({
   selector: 'app-reset',
+  styleUrls: ['../form.auth.css'],
   templateUrl: './reset.component.html'
 })
 export class ResetComponent implements OnInit, OnDestroy {
