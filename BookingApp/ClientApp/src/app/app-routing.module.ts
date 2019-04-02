@@ -23,7 +23,7 @@ const routes: Routes = [
   { path: 'error/:status-code', component: ErrorComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'forget', component: ForgetComponent },
+  { path: 'forget', component: ForgetComponent, data: { breadcrumbLabel: 'Restore Password' } },
   { path: 'reset', component: ResetComponent },
   { path: 'resources/:id', component: ResourceComponent },
   { path: 'booking/:id', component: BookingComponent },

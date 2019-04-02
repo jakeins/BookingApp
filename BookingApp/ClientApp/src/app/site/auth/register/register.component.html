@@ -18,7 +18,7 @@
               <div class="col-md-6">
                 <input formControlName="userName" type="text" class="form-control underlined" id="userName"
                        placeholder="name">
-                <span class="form-help-text" *ngIf="registerForm.get('userName').invalid && registerForm.get('userName').touched">
+                <span class="form-help-text" *ngIf="registerForm.get('userName').invalid && registerForm.get('userName').dirty">
                   <span *ngIf="registerForm.get('userName')['errors']['required']">Field can`t be empty.<br /></span>
                   <span *ngIf="registerForm.get('userName')['errors']['minlength']">Enter more 3 character.</span>
                 </span>
@@ -30,7 +30,7 @@
               <div class="col-md-6">
                 <input formControlName="email" type="text" class="form-control underlined" id="email"
                        placeholder="name@email.com">
-                <span class="form-help-text" *ngIf="registerForm.get('email').invalid && registerForm.get('email').touched">
+                <span class="form-help-text" *ngIf="registerForm.get('email').invalid && registerForm.get('email').dirty">
                   <span *ngIf="registerForm.get('email')['errors']['required']">Field can`t be empty.<br /></span>
                   <span *ngIf="registerForm.get('email')['errors']['email']">Field must be correct email.</span>
                 </span>
@@ -42,7 +42,7 @@
               <div class="col-md-6">
                 <input formControlName="password" type="password" class="form-control underlined" id="password" [ngClass]="{'ng-invalid':registerForm.hasError('notSame')}"
                        placeholder="***">
-                <span class="form-help-text" *ngIf="registerForm.get('password').invalid && registerForm.get('password').touched">
+                <span class="form-help-text" *ngIf="registerForm.get('password').invalid && registerForm.get('password').dirty">
                   <span *ngIf="registerForm.get('password')['errors']['required']">Field can`t be empty.</span>
                 </span>
               </div>
@@ -53,7 +53,7 @@
               <div class="col-md-6">
                 <input formControlName="confirmPassword" type="password" class="form-control underlined" [ngClass]="{'ng-invalid':registerForm.hasError('notSame')}"
                        id="confirmPassword" placeholder="***">
-                <span class="form-help-text" *ngIf="registerForm.hasError('notSame') && registerForm.get('confirmPassword').touched">
+                <span class="form-help-text" *ngIf="registerForm.hasError('notSame') && registerForm.get('confirmPassword').dirty">
                   <span *ngIf="registerForm.hasError('notSame')">Passwords don`t match.</span>
                 </span>
               </div>

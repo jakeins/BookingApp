@@ -2,18 +2,19 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
 
-        <div *ngIf="apiError != ''" class="alert alert-danger" role="alert">
-          {{ apiError }}
-        </div>
-
-        <div *ngIf="successMessage != ''" class="alert alert-success" role="alert">
-          {{ successMessage }}
-        </div>
-
         <div class="card">
-          <div class="card-header">Forget password</div>
+          <div class="card-header">Restore password</div>
 
           <div class="card-body">
+
+            <div *ngIf="apiError != ''" class="alert alert-danger" role="alert">
+              {{ apiError }}
+            </div>
+
+            <div *ngIf="successMessage != ''" class="alert alert-success" role="alert">
+              {{ successMessage }}
+            </div>
+
             <form [formGroup]="forgetForm" (ngSubmit)="forget()">
 
               <div class="form-group row">
@@ -22,7 +23,7 @@
                 <div class="col-md-6">
                   <input name="email" formControlName="email" type="text" class="form-control underlined"
                          id="email" placeholder="name@email.com">
-                  <span class="form-help-text" *ngIf="forgetForm.get('email').invalid && forgetForm.get('email').touched">
+                  <span class="form-help-text" *ngIf="forgetForm.get('email').invalid && forgetForm.get('email').dirty">
                     <span *ngIf="forgetForm.get('email')['errors']['required']">Field can`t be empty.<br /></span>
                     <span *ngIf="forgetForm.get('email')['errors']['email']">Field must be correct email.</span>
                   </span>
