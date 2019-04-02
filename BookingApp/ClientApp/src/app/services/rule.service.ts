@@ -8,6 +8,7 @@ import { Logger } from './logger.service';
 
 @Injectable()
 export class RuleService {
+  listSelectedRow: number;
   showAdditionalInfo: boolean = false;
   Rule: rule;
   Rules: rule[];

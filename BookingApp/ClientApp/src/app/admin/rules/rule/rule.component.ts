@@ -65,5 +65,6 @@ export class RuleComponent implements OnInit {
       reuseTimeout: 0,
       isActive: false
     }
+    this.service.listSelectedRow = null;
   }
 }

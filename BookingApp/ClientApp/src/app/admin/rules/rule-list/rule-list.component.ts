@@ -26,12 +26,12 @@ export class RuleListComponent implements OnInit {
   populateForm(i: number, rule?: rule ){
     if(rule != null){
       this.service.Rule = Object.assign({}, rule);
-      this.selectedRow = i;
+      this.service.listSelectedRow = i;
     }  
     else
       this.service.getRule(i).subscribe((res:rule)=>{
         this.service.Rule = res;
-        this.selectedRow = i-1;
+        this.service.listSelectedRow = i-1;
       });
 
     this.service.showAdditionalInfo = true;
@@ -63,5 +63,6 @@ export class RuleListComponent implements OnInit {
   ngOnDestroy(){
     this.ruleId = null;
     this.service.showAdditionalInfo = false;
+    this.service.listSelectedRow= null;
   }
 }
