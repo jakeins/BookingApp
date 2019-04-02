@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { RuleService } from '../../../services/rule.service';
 import { rule } from '../../../models/rule';
 import { Logger } from '../../../services/logger.service';
@@ -9,6 +9,7 @@ import { Logger } from '../../../services/logger.service';
   styleUrls: ['./rule-list.component.css']
 })
 export class RuleListComponent implements OnInit {
+  @Input() ruleId: number;
   error: string;
   selectedRow: number;
   constructor(
@@ -17,11 +18,22 @@ export class RuleListComponent implements OnInit {
 
   ngOnInit() {
     this.service.refreshList();
+    if(this.ruleId != null){
+       this.populateForm(this.ruleId);
+    }
   }
 
-  populateForm(rule: rule, i: number){
-    this.service.Rule = Object.assign({}, rule);
-    this.selectedRow = i;
+  populateForm(i: number, rule?: rule ){
+    if(rule != null){
+      this.service.Rule = Object.assign({}, rule);
+      this.selectedRow = i;
+    }  
+    else
+      this.service.getRule(i).subscribe((res:rule)=>{
+        this.service.Rule = res;
+        this.selectedRow = i-1;
+      });
+
     this.service.showAdditionalInfo = true;
   }
 
@@ -31,8 +43,8 @@ export class RuleListComponent implements OnInit {
       this.service.showAdditionalInfo = false;
       this.service.refreshList();
     },
-    error => { 
-      this.error = error['status'] + ': ' + error['error']['Message'];
+    err => { 
+      this.error = err.status + ': ' + err.error.Message;
     })
     }
   }
@@ -46,5 +58,10 @@ export class RuleListComponent implements OnInit {
 
   onReset(){
     this.error = null;
+  }
+
+  ngOnDestroy(){
+    this.ruleId = null;
+    this.service.showAdditionalInfo = false;
   }
 }

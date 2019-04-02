@@ -9,18 +9,13 @@ import { rule } from '../../../models/rule';
   styleUrls: ['./rule.component.css'],
 })
 export class RuleComponent implements OnInit {
-  @Input() ruleId: number;
+  
   constructor(
     private service: RuleService
   ) { }
 
   ngOnInit() {
     this.resetForm();
-    if(this.ruleId != null){
-      this.service.getRule(this.ruleId).subscribe((res: rule) =>{
-        this.service.Rule = res;
-      })
-    }
   }
 
   ngOnDestroy(){
