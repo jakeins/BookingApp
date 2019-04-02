@@ -12,7 +12,6 @@ export class StatsBookingComponent implements OnInit {
 
   bookingStats: BookingStats;
   bookingsWithKeys: BookingsWithKeys[] = [];
-  new 
   defaultFromDate: Date;
   defaultToDate: Date;
 
