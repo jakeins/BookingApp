@@ -1,0 +1,17 @@
+/* Validation */
+.form-help-text {
+  font-size: 12px;
+}
+
+.form-help-text {
+  color: #ff6c6c;
+}
+
+.ng-valid {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form) {
+  border-left: 5px solid #a94442; /* red */
+}
+/* Validation */
