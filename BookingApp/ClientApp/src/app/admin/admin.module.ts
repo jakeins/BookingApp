@@ -11,7 +11,7 @@ import { FolderEditComponent } from './folder/folder-edit.component';
 import { RulesComponent } from './rules/rules.component';
 import { RuleComponent } from './rules/rule/rule.component';
 import { RuleListComponent } from './rules/rule-list/rule-list.component';
-import { UserNamePipe } from './user-name.pipe';
+import { UserNamePipe, RuleActivityPipe } from './rule.pipe';
 import { AdminBookingComponent } from './bookings/bookings.admin.component';
 import { BookingsModule } from '../bookings/bookings.module';
 
@@ -33,6 +33,7 @@ import { BookingsModule } from '../bookings/bookings.module';
       RuleComponent,
       RuleListComponent,
       UserNamePipe,
+      RuleActivityPipe,
       AdminBookingComponent
   ],
 })

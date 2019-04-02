@@ -11,7 +11,6 @@ import { Logger } from '../../../services/logger.service';
 export class RuleListComponent implements OnInit {
   @Input() ruleId: number;
   error: string;
-  selectedRow: number;
   constructor(
     private service: RuleService
   ) { }
@@ -48,14 +47,6 @@ export class RuleListComponent implements OnInit {
     })
     }
   }
-
-  showActive(isActive: boolean):string{
-    if(isActive)
-      return 'active';
-    else
-      return 'not active';
-  }
-
   onReset(){
     this.error = null;
   }

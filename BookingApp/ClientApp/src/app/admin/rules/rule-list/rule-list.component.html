@@ -10,7 +10,7 @@
   </tr>
   <tr *ngFor="let rule of service.Rules;let i = index" (click)="populateForm(i, rule)" [class.active]="i == service.listSelectedRow"> 
     <td >{{rule.id}}</td>
-    <td >{{showActive(rule.isActive)}}</td>
+    <td >{{rule.isActive | activity }}</td>
     <td ><button (click)="onDelete(rule.id)" class="btn btn-sm btn-outline-danger">X</button></td>
   </tr>
 </table>

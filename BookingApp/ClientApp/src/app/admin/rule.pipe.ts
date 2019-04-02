@@ -8,7 +8,6 @@ import { Logger } from '../services/logger.service';
   name: 'userName'
 })
 export class UserNamePipe implements PipeTransform {
-
   user: User ;  
 
   constructor(
@@ -22,5 +21,19 @@ export class UserNamePipe implements PipeTransform {
       },
       error => Logger.error('transform userId to userName')
       )
+  }
+}
+
+@Pipe({
+  name: 'activity'
+})
+export class RuleActivityPipe implements PipeTransform{
+  constructor(){}
+
+  transform(isActive: boolean):string{
+    if(isActive)
+      return "active";
+    else
+      return "not active";
   }
 }
