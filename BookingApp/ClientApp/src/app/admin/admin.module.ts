@@ -14,6 +14,7 @@ import { RuleListComponent } from './rules/rule-list/rule-list.component';
 import { UserNamePipe } from './user-name.pipe';
 import { StatsBookingComponent } from './stats/stats-bookings.component';
 import { StatsResourcesComponent } from './stats/stats-resources.component';
+import { StatsResourceComponent } from './stats/stats-resource.component';
 
 @NgModule({
   imports: [
@@ -33,7 +34,8 @@ import { StatsResourcesComponent } from './stats/stats-resources.component';
       RuleListComponent,
       UserNamePipe,
       StatsBookingComponent,
-      StatsResourcesComponent
+      StatsResourcesComponent,
+      StatsResourceComponent
   ],
 })
 export class AdminModule { }

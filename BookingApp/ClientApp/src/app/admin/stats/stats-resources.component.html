@@ -6,11 +6,12 @@
   </div>
   <div *ngIf="resourcesRating">
     <div class="row mb-2 bg-light text-dark" *ngFor="let item of resourcesRating; index as i">
-      <div class="col-6 p-1">{{i+1}}. {{item.title}}</div>
-      <div class="col-4 p-1">{{item.bookingsCount}}</div>
-      <div class="col-2 p-1">
-        <button id ="details{{item.id}}" class="btn btn-primary btn-block">details</button>
+      <div class="col-6 pt-2">{{i+1}}. {{item.title}}</div>
+      <div class="col-4 pt-2">{{item.bookingsCount}}</div>
+      <div class="col-2">
+        <button id="btn{{item.id}}" (click)="showResource(i)" class="btn btn-primary btn-block">details</button>
       </div>
+      <app-stats-resource id="details{{i}}" [resourceId]="item.id" [shown]="showing[i]"></app-stats-resource>
     </div>
   </div>
 </div>

@@ -6,7 +6,6 @@ import { BookingStats } from '../models/stats-booking';
 import { ResourceStats } from '../models/stats-resource';
 import { ResourceStatsBrief } from '../models/stats-resource-brief';
 import { UsersStats } from '../models/stats-users';
-import { Logger } from './logger.service';
 
 @Injectable()
 export class StatsService {
@@ -20,7 +19,6 @@ export class StatsService {
   // temp
   getBookingStats(type: string, start: Date, end: Date, interval: string): Observable<BookingStats> {
     let startString = start.toString();
-    Logger.log(startString);
     let startDay = startString.substr(8, 2);
     let startMonth = startString.substr(4, 3);
     let startYear = startString.substr(11, 4);
