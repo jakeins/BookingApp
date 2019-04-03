@@ -1,4 +1,4 @@
 export class UserNewPassword {
-  password: string;
-  confirmPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
 }

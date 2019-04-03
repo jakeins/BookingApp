@@ -2,7 +2,7 @@
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
 using BookingApp.DTOs.User;
-using BookingApp.Exceptions;
+using System.Net;
 using BookingApp.DTOs.Resource;
 using BookingApp.Helpers;
 using BookingApp.Services;
@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookingApp.Controllers.Bases;
+
 
 namespace BookingApp.Controllers
 {
@@ -246,12 +247,12 @@ namespace BookingApp.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPut("api/user/{userId}/reset-password")]
+        [HttpPut("api/user/{userId}/reset-password/{token}")]
         public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
         {
             if (!ModelState.IsValid)
                  return BadRequest(ModelState);
-            await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
+            await userService.ResetUserPassword(userId, WebUtility.UrlDecode(token), userNewPasswordDto.NewPassword);
             return new OkObjectResult("Password have been reset");  
         }
 

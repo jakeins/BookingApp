@@ -48,8 +48,8 @@ export class ResetComponent implements OnInit, OnDestroy {
   }
 
   reset() {
-    this.userPass.password = this.resetForm.value.password;
-    this.userPass.confirmPassword = this.resetForm.value.confirmPassword;
+    this.userPass.newPassword = this.resetForm.value.password;
+    this.userPass.confirmNewPassword = this.resetForm.value.confirmPassword;
     this.userService.ressetPassword(this.userId, this.code, this.userPass).subscribe(() => {
       this.router.navigate(['/login']);
     });
