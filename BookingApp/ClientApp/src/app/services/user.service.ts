@@ -42,7 +42,7 @@ export class UserService {
     return this.http.post(this.path + '/create-admin', user, { headers: this.headers });
   }
 
-  updateUser(user: UserUpdate, userId: string): Observable<any> {
+  updateUser(userId: string, user: UserUpdate): Observable<any> {
     return this.http.put(this.path + '/' + userId, user, { headers: this.headers });
   }
 
