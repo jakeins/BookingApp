@@ -11,6 +11,7 @@ import { FolderEditComponent } from './folder/folder-edit.component';
 import { RulesComponent } from './rules/rules.component';
 import { StatsBookingComponent } from './stats/stats-bookings.component';
 import { StatsResourcesComponent } from './stats/stats-resources.component';
+import { StatsUsersComponent } from './stats/stats-users.component';
 
 
 const routesAdmin: Routes = [
@@ -23,8 +24,9 @@ const routesAdmin: Routes = [
       { path: 'folders/create', component: FolderEditComponent, data: { breadcrumbLabel: 'Folder Creation' } },
       { path: 'folders/:id/edit', component: FolderEditComponent, data: { breadcrumbLabel: 'Folder Editing' } },
       { path: 'rules', component: RulesComponent, data: { breadcrumbLabel: 'Rules management' } },
-      { path: 'stats/bookings', component: StatsBookingComponent },
-      { path: 'stats/resources', component: StatsResourcesComponent }
+      { path: 'stats/bookings', component: StatsBookingComponent, data: { breadcrumbLabel: 'Bookings Statistics' } },
+      { path: 'stats/resources', component: StatsResourcesComponent, data: { breadcrumbLabel: 'Resources Statistics' } },
+      { path: 'stats/users', component: StatsUsersComponent, data: { breadcrumbLabel: 'Users Statistics' } }
     ]
   }
 ];

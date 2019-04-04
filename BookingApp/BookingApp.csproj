@@ -78,6 +78,7 @@
     <None Remove="ClientApp\src\app\admin\stats\stats-bookings.component.ts" />
     <None Remove="ClientApp\src\app\admin\stats\stats-resource.component.ts" />
     <None Remove="ClientApp\src\app\admin\stats\stats-resources.component.ts" />
+    <None Remove="ClientApp\src\app\admin\stats\stats-users.component.ts" />
     <None Remove="ClientApp\src\app\globals.ts" />
     <None Remove="ClientApp\src\app\models\auth-login.ts" />
     <None Remove="ClientApp\src\app\models\breadcrumb.ts" />
@@ -139,6 +140,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\admin\stats\stats-resource.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\stats\stats-resources.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\stats\stats-bookings.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\stats\stats-users.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\auth-login.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\stats-booking.ts" />

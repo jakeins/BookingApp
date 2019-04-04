@@ -15,6 +15,7 @@ import { UserNamePipe } from './user-name.pipe';
 import { StatsBookingComponent } from './stats/stats-bookings.component';
 import { StatsResourcesComponent } from './stats/stats-resources.component';
 import { StatsResourceComponent } from './stats/stats-resource.component';
+import { StatsUsersComponent } from './stats/stats-users.component';
 
 @NgModule({
   imports: [
@@ -35,7 +36,8 @@ import { StatsResourceComponent } from './stats/stats-resource.component';
       UserNamePipe,
       StatsBookingComponent,
       StatsResourcesComponent,
-      StatsResourceComponent
+      StatsResourceComponent,
+      StatsUsersComponent
   ],
 })
 export class AdminModule { }
