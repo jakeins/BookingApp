@@ -5,8 +5,8 @@ import { UserService } from '../services/user.service';
 import { UserInfoService } from '../services/user-info.service';
 
 @Component({
-    selector: 'app-cabinet',
-    templateUrl: './cabinet.component.html'
+  selector: 'app-cabinet',
+  templateUrl: './cabinet.component.html'
 })
 
 export class CabinetComponent implements OnInit {

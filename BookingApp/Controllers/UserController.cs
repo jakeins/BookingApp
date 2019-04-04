@@ -205,6 +205,13 @@ namespace BookingApp.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var user = await userService.GetUserById(userId);
+            if (!await userService.CheckPassword(user, userDTO.CurrentPassword))
+            {
+                return BadRequest("You have entered wrong your password!");
+            }
+
             if (UserId == userId)
             {
                 await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
