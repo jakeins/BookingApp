@@ -92,8 +92,6 @@ export class UserService {
   }
 
   blockUser(userId: string, blocking: boolean): Observable<Object> {
-   // this.blockingModel.Is
-    console.log(blocking);
     return this.http.put(this.path + '/' + userId + '/blocking', blocking, { headers: this.headers});
   }
 

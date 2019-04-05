@@ -14,6 +14,8 @@ import { RuleListComponent } from './rules/rule-list/rule-list.component';
 import { UserNamePipe } from './user-name.pipe';
 import { AdminBookingComponent } from './bookings/bookings.admin.component';
 import { BookingsModule } from '../bookings/bookings.module';
+import { UserReadComponent } from './user/user-read.component';
+
 
 @NgModule({
   imports: [
@@ -33,7 +35,8 @@ import { BookingsModule } from '../bookings/bookings.module';
       RuleComponent,
       RuleListComponent,
       UserNamePipe,
-      AdminBookingComponent
+      AdminBookingComponent,
+      UserReadComponent
   ],
 })
 export class AdminModule { }

@@ -26,7 +26,7 @@ export class UserComponent implements OnInit {
  // pages: number;
  
   constructor(private userService: UserService) {
-
+    
   }
   public blocking: boolean;
 
