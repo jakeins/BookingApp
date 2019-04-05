@@ -1,39 +1,53 @@
-<header class="header-site">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-lg-3">
-        <a routerLink="/"><h1 class="logo">Booking</h1></a>
-      </div>
+<nav class="navbar row bg-warning d-flex justify-content-between">
 
-      <div class="col-lg-9">
-        <div style="float: left; margin-right: 20px;">
-          <a href="swagger" class="btn btn-success">Swagger</a>
-        </div>
+  <div class="navbar-brand pl-0">
+    <h1 class="h1 mb-0">
+      Booking
+      <img alt="App" src="assets/img/square.svg">
+    </h1>
 
-        <div class="cabinets" *ngIf="authService.isUser" style="float: left; margin-right: 20px;">
-          <a class="btn btn-outline-secondary" routerLink="cabinet">User Cabinet</a>
-          <a class="btn btn-outline-primary" routerLink="admin" *ngIf="authService.isAdmin">Admin Panel</a>
-        </div>
-
-        <!-- <div *ngIf="!authService.isUser" style="float: left; margin-right: 20px;">
-          <button *ngIf="!authService.isUser" (click)="authUser()" class="btn btn-secondary">User</button>
-          <button *ngIf="!authService.isAdmin" (click)="authAdmin()" class="btn btn-primary">Admin</button>
-        </div> -->
-
-
-
-        <div *ngIf="authService.isUser" style="float: left; margin-right: 20px;">
-          <button (click)="logout()" class="btn btn-danger">Logout</button>
-        </div>
-
-        <div *ngIf="!authService.isUser" style="float: left; margin-right: 20px;">
-          <a routerLink="/register" class="btn btn-outline-secondary">SignUp</a>
-        </div>
-        <div *ngIf="!authService.isUser">
-          <a routerLink="/login" class="btn btn-outline-success">SignIn</a>
-        </div>
-
-      </div>
-    </div>
   </div>
-</header>
+
+  <nav class="bg-success">
+
+    <div class="cabinets" *ngIf="authService.isUser">
+      <a class="btn btn-outline-secondary" routerLink="cabinet">User Cabinet</a>
+      <a class="btn btn-outline-primary" routerLink="admin" *ngIf="authService.isAdmin">Admin Panel</a>
+    </div>
+
+
+
+    <div *ngIf="authService.isUser">
+      Hi, {{userInfo.username}}
+
+
+      <div class="dropdown">
+        <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">
+          Example
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li class="dropdown-header"><b>Example</b></li>
+          <li><a href="example1.html">Example 1</a></li>
+          <li><a href="example2.html">Example 2</a></li>
+          <li><a href="example3.html">Example 3</a></li>
+          <li><a href="example4.html">Example 4</a></li>
+          <li><a href="example5.html">Example 5</a></li>
+        </ul>
+      </div>
+
+
+    </div>
+
+      <!--<div *ngIf="authService.isUser">
+        <button (click)="logout()">Sign Out</button>
+      </div>-->
+
+      <nav class="nav" *ngIf="!authService.isUser">
+        <a class="nav-link" routerLink="/login">Sign In</a>
+        <a class="nav-link" routerLink="/register">Sign Up</a>
+      </nav>
+
+
+  </nav>
+</nav>
