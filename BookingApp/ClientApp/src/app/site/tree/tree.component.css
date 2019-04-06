@@ -1,52 +1,59 @@
 .entry {
-  font-size:larger;
-  width: 100%;
-  padding: 12px;
   height: 50px;
-}
-
-.resource-entry:hover, .admin.folder-entry:hover {
-  background-color: #eee;
 }
 
 .inactive {
   color: gray;
   background-color: #f8f8f8;
 }
-
-.fleft {
-  float:left;
+.entry > div {
+  padding: 12px;
 }
 
-.fright {
-  float: right;
+.entry:hover > div {
+  background-color: #eee;
 }
 
-.indicator {
-  width: 80px;
-  height: 30px;
-  background-color: darkseagreen;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: inset 0 3px 4px rgba(0,0,0,.24);
+span.nesting > span {
+  display: inline-block;
+  width: 30px;
 }
 
-  .indicator > .occupied {
-    background-color: indianred;
-    box-shadow: inset 0 3px 4px rgba(0,0,0,.24), 2px 0 2px rgba(0,0,0,.24);
-    height:120%;
-  }
-   
+
+
+.start i {
+  color: #ddd;
+}
+
+
 .entry:hover .control {
-  display:block;
+  display: block;
 }
 
 .control {
   padding-right: 24px;
   display: none;
-  font-size:large;
+  font-size: large;
 }
 
-.redundand {
-  color: lightgray;
+.progress {
+  width: 80px;
+  height: 30px;
+  background-color: darkseagreen !important;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: inset 0 3px 4px rgba(0,0,0,.24);
 }
+
+.progress-bar {
+  background-color: indianred;
+  box-shadow: inset 0 3px 4px rgba(0,0,0,.24), 2px 0 2px rgba(0,0,0,.24);
+  height:120%;
+}
+
+@media(max-width:360px) {
+  .progress {
+    display: none;
+  }
+}
+
