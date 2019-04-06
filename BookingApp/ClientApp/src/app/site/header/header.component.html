@@ -9,7 +9,6 @@
 
   <nav class="btn-group">
     <div *ngIf="authService.isUser">
-      <a class="dropdown-item overflow-hidden invisible py-0 mx-2" style="height:0">x User Cabinet</a><!--menu width spacer-->
       <div class="d-flex justify-content-end">
         <button class="btn bg-transparent text-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="sr-only">Toggle User Menu Dropdown</span>
@@ -18,7 +17,7 @@
           <span class="pr-1">{{userInfo.username}}</span>
         </button>
 
-        <div class="dropdown-menu">
+        <div class="dropdown-menu dropdown-menu-right">
           <a class="dropdown-item" routerLink="cabinet"><i class="far fa-address-card mr-2"></i> User Cabinet</a>
           <a class="dropdown-item" routerLink="admin" *ngIf="authService.isAdmin"><i class="fas fa-toolbox mr-2"></i> Admin Panel</a>
           <div class="dropdown-divider"></div>

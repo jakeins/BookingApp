@@ -71,13 +71,13 @@ export class ResourceEditComponent implements OnInit {
 
       this.model = new Resource();
 
-      //#region DEVELOPMENT
-      this.model.title = [DevService.RandomTerm('wishAdj'), DevService.RandomTerm('basicColor'), DevService.RandomTerm('popNoun'), DevService.RandomTerm('emojiNature')].join(' ');
-      this.model.description = DevService.GenerateText(3, 30);
-      this.model.ruleId = 1;
-      this.model.folderId = 0;
-      this.model.isActive = true;
-      //#endregion DEVELOPMENT
+      ////#region DEVELOPMENT
+      //this.model.title = [DevService.RandomTerm('wishAdj'), DevService.RandomTerm('basicColor'), DevService.RandomTerm('popNoun'), DevService.RandomTerm('emojiNature')].join(' ');
+      //this.model.description = DevService.GenerateText(3, 30);
+      //this.model.ruleId = 1;
+      //this.model.folderId = 0;
+      //this.model.isActive = true;
+      ////#endregion DEVELOPMENT
 
       //reading parent folder from query parameters
       let pFoldId = this.actRoute.snapshot.queryParams["parentFolderId"];
