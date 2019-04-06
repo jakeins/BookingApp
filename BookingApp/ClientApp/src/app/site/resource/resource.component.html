@@ -2,7 +2,7 @@
   <span class="resource-modifies fright" *ngIf="authService.isAdmin">
     <a title="Edit resource" [routerLink]="['/admin/resources', resource.id, 'edit']"><i class="fas fa-wrench fa-lg"></i></a>
   </span>
-  <h1 class="display-3">
+  <h1 class="display-4">
     {{ resource.title }}
     <span class="redundand" *ngIf="resource.isActive != true"> (inactive)</span>
   </h1>

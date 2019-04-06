@@ -1,53 +1,44 @@
-<nav class="navbar row bg-warning d-flex justify-content-between">
+<nav class="navbar d-flex justify-content-between">
 
-  <div class="navbar-brand pl-0">
+  <a class="navbar-brand pl-0" routerLink="">
     <h1 class="h1 mb-0">
       Booking
       <img alt="App" src="assets/img/square.svg">
     </h1>
+  </a>
 
-  </div>
-
-  <nav class="bg-success">
-
-    <div class="cabinets" *ngIf="authService.isUser">
-      <a class="btn btn-outline-secondary" routerLink="cabinet">User Cabinet</a>
-      <a class="btn btn-outline-primary" routerLink="admin" *ngIf="authService.isAdmin">Admin Panel</a>
-    </div>
-
-
-
+  <nav class="btn-group">
     <div *ngIf="authService.isUser">
-      Hi, {{userInfo.username}}
-
-
-      <div class="dropdown">
-        <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">
-          Example
-          <span class="caret"></span>
+      <a class="dropdown-item overflow-hidden invisible py-0 mx-2" style="height:0">x User Cabinet</a><!--menu width spacer-->
+      <div class="d-flex justify-content-end">
+        <button class="btn bg-transparent text-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="sr-only">Toggle User Menu Dropdown</span>
+          <i *ngIf="authService.isAdmin" class="fas fa-user-tie mr-2"></i>
+          <i *ngIf="!authService.isAdmin" class="far fa-user mr-2"></i>
+          <span class="pr-1">{{userInfo.username}}</span>
         </button>
-        <ul class="dropdown-menu">
-          <li class="dropdown-header"><b>Example</b></li>
-          <li><a href="example1.html">Example 1</a></li>
-          <li><a href="example2.html">Example 2</a></li>
-          <li><a href="example3.html">Example 3</a></li>
-          <li><a href="example4.html">Example 4</a></li>
-          <li><a href="example5.html">Example 5</a></li>
-        </ul>
+
+        <div class="dropdown-menu">
+          <a class="dropdown-item" routerLink="cabinet"><i class="far fa-address-card mr-2"></i> User Cabinet</a>
+          <a class="dropdown-item" routerLink="admin" *ngIf="authService.isAdmin"><i class="fas fa-toolbox mr-2"></i> Admin Panel</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#" (click)="logout()"><i class="fas fa-sign-out-alt mr-2"></i> Sign Out</a>
+        </div>
       </div>
-
-
     </div>
 
-      <!--<div *ngIf="authService.isUser">
-        <button (click)="logout()">Sign Out</button>
-      </div>-->
-
-      <nav class="nav" *ngIf="!authService.isUser">
-        <a class="nav-link" routerLink="/login">Sign In</a>
-        <a class="nav-link" routerLink="/register">Sign Up</a>
-      </nav>
-
-
+    <div *ngIf="!authService.isUser">
+      <button type="button" routerLink="/login" class="btn bg-transparent text-primary">
+        Sign In
+      </button><button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                       class="btn bg-transparent text-primary dropdown-toggle dropdown-toggle-split mx-0">
+        <span class="sr-only">Toggle Authentication Dropdown</span>
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" routerLink="/login" href="#">Sign In</a>
+        <a class="dropdown-item" routerLink="/login" href="#">Sign Up</a>
+      </div>
+    </div>
   </nav>
+
 </nav>

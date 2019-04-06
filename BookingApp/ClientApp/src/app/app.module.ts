@@ -23,11 +23,11 @@ import { BookingsModeService } from './services/bookings-component-mode.service'
     AppComponent
   ],
   imports: [
-      BrowserModule,
-      HttpClientModule,
-      RouterModule,
-      AppRoutingModule,
-      SiteModule
+    BrowserModule,
+    HttpClientModule,
+    RouterModule,
+    AppRoutingModule,
+    SiteModule
   ],
   providers: [
     AuthService,

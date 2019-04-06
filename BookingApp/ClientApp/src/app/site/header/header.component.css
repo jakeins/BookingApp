@@ -4,3 +4,7 @@
   font-weight: 400;
   color: #016;
 }
+
+nav.navbar {
+  box-shadow: 0 8px 8px -8px #ccc;
+}
