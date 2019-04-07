@@ -1,7 +1,5 @@
 ﻿using BookingApp;
-using BookingApp.Data.Models;
 using BookingApp.DTOs;
-using BookingApp.Services;
 using BookingAppIntegrationTests.TestingUtilities;
 using BookingAppIntegrationTests.Tests;
 using Newtonsoft.Json;
@@ -17,8 +15,9 @@ namespace BookingAppIntegrationTests.Scenarios
 {
     public class UserControllerIntegrationTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private readonly HttpClient httpClient;
-        private const string apiUserPrePath = "api/user/";
+        readonly HttpClient httpClient;
+        const string apiUserPrePath = "api/user/";
+        const string appJson = "application/json";
 
         public UserControllerIntegrationTests(CustomWebApplicationFactory<Startup> factory)
         {
@@ -29,7 +28,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [Fact]
         public async Task Get_User_OnId()
         {
-            AuthUtils.AddBearerForAdmin(httpClient);
+            httpClient.AddBearerFor(UserType.ActiveAdmin);
             string url = apiUserPrePath + httpClient.GetTestToken(UserType.ActiveUser).UserID;
 
             //Arrange
@@ -46,7 +45,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [Fact]
         public async Task Get_User_OnName()
         {
-            AuthUtils.AddBearerForAdmin(httpClient);
+            httpClient.AddBearerFor(UserType.ActiveAdmin);
             string url = apiUserPrePath + "user-name/" + httpClient.GetTestToken(UserType.ActiveUser).UserName;
 
             //Arrange
@@ -63,8 +62,8 @@ namespace BookingAppIntegrationTests.Scenarios
         [Fact]
         public async Task Get_User_OnEmail()
         {
-            AuthUtils.AddBearerForAdmin(httpClient);
-            string url = apiUserPrePath + "email/" + (httpClient.GetTestToken(AuthUtils.UserType.ActiveUser)).UserEmail;
+            httpClient.AddBearerFor(UserType.ActiveAdmin);
+            string url = apiUserPrePath + "email/" + httpClient.GetTestToken(UserType.ActiveUser).UserEmail;
 
             //Arrange
             var response = await httpClient.GetAsync(url);
@@ -80,7 +79,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [Fact]
         public async Task Get_Users_ByAdmin()
         {
-            AuthUtils.AddBearerForAdmin(httpClient);
+            httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //Arrange
             var response = await httpClient.GetAsync("api/users");
@@ -98,8 +97,12 @@ namespace BookingAppIntegrationTests.Scenarios
         [Fact]
         public async Task Create_User()
         {
-            var content = JsonConvert.SerializeObject(new AuthRegisterDto { Email = "example@email.com", UserName = "UserName", Password = "Password", ConfirmPassword = "Password" });
-            var response = await httpClient.PostAsync(apiUserPrePath, new StringContent(content, Encoding.UTF8, "application/json"));
+            var content = JsonConvert.SerializeObject(new AuthRegisterDto {
+                Email = "example@email.com",
+                UserName = "UserName",
+                Password = "Password",
+                ConfirmPassword = "Password" });
+            var response = await httpClient.PostAsync(apiUserPrePath, new StringContent(content, Encoding.UTF8, appJson));
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -109,11 +112,14 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task Create_ReturnsBadRequest_OnFaultyData()
         {
             //Arrange
-
+            var content = JsonConvert.SerializeObject(new AuthRegisterDto {
+                Email = "example@email.com",
+                UserName = "UserName",
+                Password = "Password",
+                ConfirmPassword = "Fail" });
 
             //Act
-            var content = JsonConvert.SerializeObject(new AuthRegisterDto { Email = "example@email.com", UserName = "UserName", Password = "Password", ConfirmPassword = "Fail" });
-            var response = await httpClient.PostAsync(apiUserPrePath, new StringContent(content, Encoding.UTF8, "application/json"));
+            var response = await httpClient.PostAsync(apiUserPrePath, new StringContent(content, Encoding.UTF8, appJson));
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -129,26 +135,52 @@ namespace BookingAppIntegrationTests.Scenarios
             string url = apiUserPrePath + updUserToken.UserID;
 
             //Arrange
-            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = updUserToken.UserEmail, UserName = updUserToken.UserName + "A" });
-            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+            var content = JsonConvert.SerializeObject(new UserUpdateDTO
+            {
+                UserName = updUserToken.UserName + "A"
+            });
+            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, appJson));
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
-        [Fact]        
+        [Fact]
         public async Task Update_User_ByAnotherUser()
         {
-            AuthUtils.AddBearerForUser(httpClient);
+            httpClient.AddBearerFor(UserType.ActiveUser);
             var updatableUserToken = httpClient.GetTestToken(UserType.UpdatableUser);
             string url = apiUserPrePath + updatableUserToken.UserID;
 
             //Arrange
-            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = updatableUserToken.UserEmail, UserName = updatableUserToken.UserName + "A" });
-            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+            var content = JsonConvert.SerializeObject(new UserUpdateDTO
+            {
+                UserName = updatableUserToken.UserName + "A"
+            });
+            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, appJson));
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+
+
+        [Fact]
+        public async Task Update_User_ByAdmin()
+        {
+            httpClient.AddBearerFor(UserType.ActiveAdmin);
+            var updatableUserToken = httpClient.GetTestToken(UserType.UpdatableUser);
+            string url = apiUserPrePath + updatableUserToken.UserID;
+
+            //Arrange
+            var content = JsonConvert.SerializeObject(new UserUpdateDTO
+            {
+                UserName = updatableUserToken.UserName + "A"
+            });
+            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, appJson));
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
@@ -158,43 +190,31 @@ namespace BookingAppIntegrationTests.Scenarios
             string url = apiUserPrePath + updatableUserToken.UserID;
 
             //Arrange
-            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = updatableUserToken.UserEmail, UserName = updatableUserToken.UserName + "A" });
-            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+            var content = JsonConvert.SerializeObject(new UserUpdateDTO
+            {
+                UserName = updatableUserToken.UserName + "A"
+            });
+            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, appJson));
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
+        #endregion
 
+        #region Delete_User
         [Fact]
-        public async Task Update_User_ByAdmin()
+        public async Task Delete_User_ByAdmin()
         {
-            AuthUtils.AddBearerForAdmin(httpClient);
-            var updatableUserToken = httpClient.GetTestToken(UserType.UpdatableUser);
-            string url = apiUserPrePath + updatableUserToken.UserID;
+            httpClient.AddBearerFor(UserType.ActiveAdmin);
+            var deletableUserToken = httpClient.GetTestToken(UserType.DeletableUser);
+            string url = apiUserPrePath + deletableUserToken.UserID;
 
             //Arrange
-            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = updatableUserToken.UserEmail, UserName = updatableUserToken.UserName + "A" });
-            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+            var response = await httpClient.DeleteAsync(url);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
-        #endregion
-
-        #region Delete_User
-        //[Fact]
-        //public async Task Delete_User_ByAdmin()
-        //{
-        //    AuthUtils.AddBearerForAdmin(httpClient);
-        //    var deletableUserToken = httpClient.GetTestToken(UserType.DeletableUser);
-        //    string url = apiUserPrePath + deletableUserToken.UserID;
-
-        //    //Arrange
-        //    var response = await httpClient.DeleteAsync(url);
-
-        //    // Assert
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //}
 
         [Fact]
         public async Task Delete_User_NotAutorized()

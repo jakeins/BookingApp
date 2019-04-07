@@ -5,20 +5,28 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace BookingAppIntegrationTests.TestingUtilities
 {
     public static class AuthUtils
     {
-        public static void AddBearerForAdmin(this HttpClient client) => AddBearerFor(client, UserType.ActiveAdmin);
-        public static void AddBearerForUser(this HttpClient client) => AddBearerFor(client, UserType.ActiveUser);
-        public static void AddBearerFor(this HttpClient client, UserType type) => AddBearer(client, GetTestToken(client, type));
-        public static async Task AddBearerFor(this HttpClient client, Login login) => AddBearer(client, await TestToken.ProduceInstance(client, login));
+        static Dictionary<HttpClient, string> HttpClients = new Dictionary<HttpClient, string>();
+        static List<string> AddBearerForCalls = new List<string>();
+        static List<string> GetTestTokenCalls = new List<string>();
 
-        static void AddBearer(this HttpClient client, TestToken token)
+        public static void AddBearerFor(this HttpClient httpClient, UserType userType, [CallerMemberName] string callerName = "")
         {
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer { token.AuthToken.AccessToken }");
+            lock(AddBearerForCalls)
+                AddBearerForCalls.Add(callerName);
+
+            AddBearer(httpClient, GetTestToken(httpClient, userType, callerName));
+        }
+
+        static void AddBearer(this HttpClient httpClient, TestToken token)
+        {
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer { token.AuthToken.AccessToken }");
         }
 
         static readonly Dictionary<UserType, Login> logins = new Dictionary<UserType, Login>()
@@ -30,22 +38,36 @@ namespace BookingAppIntegrationTests.TestingUtilities
         };
         static Dictionary<HttpClient, Dictionary<UserType, TestToken>> tokenCache = new Dictionary<HttpClient, Dictionary<UserType, TestToken>>();
 
-        public static TestToken GetTestToken(this HttpClient client, UserType type)
+        public static TestToken GetTestToken(this HttpClient httpClient, UserType userType, [CallerMemberName] string callerName = "")
         {
+            lock (AddBearerForCalls)
+                GetTestTokenCalls.Add(callerName);
+
             lock (tokenCache)
             {
-                InitializeTokens(client);
-                return tokenCache[client][type];
+                if (!tokenCache.ContainsKey(httpClient))
+                {
+                    lock (HttpClients)
+                        HttpClients.Add(httpClient, callerName);
+                    InitializeTokens(httpClient);
+                }
+                return tokenCache[httpClient][userType];
             }
         }
 
-        static void InitializeTokens(HttpClient client)
+        static void InitializeTokens(HttpClient httpClient)
         {
-            if (!tokenCache.ContainsKey(client))
+            var newClientEntry = tokenCache[httpClient] = new Dictionary<UserType, TestToken>();
+
+            foreach (var entry in logins)
             {
-                var newClientEntry = tokenCache[client] = new Dictionary<UserType, TestToken>();
-                foreach (var entry in logins)
-                    newClientEntry[entry.Key] = TestToken.ProduceInstance(client, entry.Value).Result;
+                try
+                {
+                    newClientEntry[entry.Key] = TestToken.ProduceInstance(httpClient, entry.Value).Result;
+                }
+                catch (AggregateException ex) when (entry.Key == UserType.DeletableUser && ex.InnerException is ApplicationException)
+                {
+                }
             }
         }
 
@@ -77,15 +99,19 @@ namespace BookingAppIntegrationTests.TestingUtilities
             public string UserName;
             public string UserEmail;
 
-            public static async Task<TestToken> ProduceInstance(HttpClient client, Login login)
+            public static async Task<TestToken> ProduceInstance(HttpClient httpClient, Login login)
             {
-                var responseToken = await client.PostAsJsonAsync("/api/auth/login", new
+                var responseToken = await httpClient.PostAsJsonAsync("/api/auth/login", new
                 {
                     login.Email,
                     login.Password
                 });
 
                 string response = responseToken.Content.ReadAsStringAsync().Result;
+
+                if (!responseToken.IsSuccessStatusCode)
+                    throw new ApplicationException(responseToken.ReasonPhrase);
+
                 AuthTokensDto authToken = JsonConvert.DeserializeObject<AuthTokensDto>(response);
                 var tempJwt = new JwtSecurityToken(authToken.AccessToken);
 
