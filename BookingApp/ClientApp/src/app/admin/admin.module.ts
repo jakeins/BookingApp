@@ -15,6 +15,7 @@ import { UserNamePipe } from './user-name.pipe';
 import { AdminBookingComponent } from './bookings/bookings.admin.component';
 import { BookingsModule } from '../bookings/bookings.module';
 import { UserReadComponent } from './user/user-read.component';
+import { UserCreateComponent } from './user/user-create.cpmponent';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { UserReadComponent } from './user/user-read.component';
       RuleListComponent,
       UserNamePipe,
       AdminBookingComponent,
-      UserReadComponent
+      UserReadComponent,
+      UserCreateComponent
   ],
 })
 export class AdminModule { }

@@ -33,8 +33,8 @@ export class UserChangePasswordComponent implements OnInit {
 
   changePassword() {
     this.userPass.CurrentPassword = this.changePaswordForm.value.currentPassword;
-    this.userPass.newPassword = this.changePaswordForm.value.password;
-    this.userPass.confirmNewPassword = this.changePaswordForm.value.confirmPassword;
+    this.userPass.NewPassword = this.changePaswordForm.value.password;
+    this.userPass.ConfirmNewPassword = this.changePaswordForm.value.confirmPassword;
     this.userService.changePassword(this.userId, this.userPass).subscribe(() => {
       this.successMessage = "You change successfull your password!";
       this.apiError = "";

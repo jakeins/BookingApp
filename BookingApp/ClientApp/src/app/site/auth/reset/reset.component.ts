@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { UserService } from '../../../services/user.service';
 import { UserNewPassword } from '../../../models/user-new-password';
-import { Logger } from '../../../services/logger.service';
+
 
 @Component({
   selector: 'app-reset',
@@ -30,7 +30,7 @@ export class ResetComponent implements OnInit, OnDestroy {
     this.querySubscription = route.queryParams.subscribe(
       (queryParam: any) => {
         this.userId = queryParam['userId'];
-        this.code = queryParam['code'];
+        this.code = encodeURIComponent(queryParam['code']);
       }
     );
   }
@@ -48,8 +48,8 @@ export class ResetComponent implements OnInit, OnDestroy {
   }
 
   reset() {
-    this.userPass.newPassword = this.resetForm.value.password;
-    this.userPass.confirmNewPassword = this.resetForm.value.confirmPassword;
+    this.userPass.NewPassword = this.resetForm.value.password;
+    this.userPass.ConfirmNewPassword = this.resetForm.value.confirmPassword;
     this.userService.ressetPassword(this.userId, this.code, this.userPass).subscribe(() => {
       this.router.navigate(['/login']);
     });
