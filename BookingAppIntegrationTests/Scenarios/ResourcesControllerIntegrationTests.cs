@@ -112,7 +112,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task Create_ReturnsCreated()
         {
             //Arrange
-            await AuthUtils.AddAdminsBearer(httpClient);
+            AuthUtils.AddBearerForAdmin(httpClient);
             var path = apiPath;
 
             //Act
@@ -141,7 +141,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task Create_ReturnsBadRequest_OnFaultyData()
         {
             //Arrange
-            await AuthUtils.AddAdminsBearer(httpClient);
+            AuthUtils.AddBearerForAdmin(httpClient);
             var path = apiPath;
 
             //Act
@@ -158,7 +158,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task Update_ReturnsOK()
         {
             //Arrange
-            await AuthUtils.AddAdminsBearer(httpClient);
+            AuthUtils.AddBearerForAdmin(httpClient);
             var path = apiPath;
 
             //Act
@@ -187,7 +187,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task Update_ReturnsBadRequest_OnFaultyData()
         {
             //Arrange
-            await AuthUtils.AddAdminsBearer(httpClient);
+            AuthUtils.AddBearerForAdmin(httpClient);
             var path = apiPath + "/1";
 
             //Act
@@ -202,7 +202,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task Update_ReturnsNotFound_OnNotExistingId()
         {
             //Arrange
-            await AuthUtils.AddAdminsBearer(httpClient);
+            AuthUtils.AddBearerForAdmin(httpClient);
             var path = apiPath + "/999999";
 
             //Act
@@ -219,7 +219,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task Delete_ReturnsOK()
         {
             //Arrange
-            await AuthUtils.AddAdminsBearer(httpClient);
+            AuthUtils.AddBearerForAdmin(httpClient);
             var path = apiPath;
 
             //Act
@@ -248,7 +248,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task Delete_ReturnsNotFound_OnNotExistingId()
         {
             //Arrange
-            await AuthUtils.AddAdminsBearer(httpClient);
+            AuthUtils.AddBearerForAdmin(httpClient);
             var path = apiPath + "/999999";
 
             //Act

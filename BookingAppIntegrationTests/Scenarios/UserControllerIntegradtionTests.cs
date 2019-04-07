@@ -11,51 +11,29 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-
+using static BookingAppIntegrationTests.TestingUtilities.AuthUtils;
 
 namespace BookingAppIntegrationTests.Scenarios
 {
-    public class UserControllerIntegradtionTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class UserControllerIntegrationTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private readonly HttpClient _client;
+        private readonly HttpClient httpClient;
+        private const string apiUserPrePath = "api/user/";
 
-        public UserControllerIntegradtionTests(CustomWebApplicationFactory<Startup> factory)
+        public UserControllerIntegrationTests(CustomWebApplicationFactory<Startup> factory)
         {
-            _client = factory.CreateClient();
+            httpClient = factory.CreateClient();
         }
 
         #region GetUserTest
-        [Theory]
-        [InlineData("api/user")]
-        public async Task Get_Single_User_ById(string url)
+        [Fact]
+        public async Task Get_User_OnId()
         {
-
-            await AuthUtils.AddUsersBearer(_client);
-            url += "/" + AuthUtils.UserId;// user id Lion(regular user) 
+            AuthUtils.AddBearerForAdmin(httpClient);
+            string url = apiUserPrePath + httpClient.GetTestToken(UserType.ActiveUser).UserID;
 
             //Arrange
-            var response = await _client.GetAsync(url);
-
-            var stringResponse = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<UserMinimalDto>(stringResponse);
-
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.False(string.IsNullOrEmpty(result.Id));
-
-
-        }
-
-        [Theory]
-        [InlineData("api/user")]
-        public async Task Get_Single_User_ByName(string url)
-        {
-            await AuthUtils.AddUsersBearer(_client);
-            url += "/user-name/" + AuthUtils.UserName;// user id Lion(regular user) 
-
-            //Arrange
-            var response = await _client.GetAsync(url);
+            var response = await httpClient.GetAsync(url);
 
             var stringResponse = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<UserMinimalDto>(stringResponse);
@@ -65,15 +43,14 @@ namespace BookingAppIntegrationTests.Scenarios
             Assert.False(string.IsNullOrEmpty(result.Id));
         }
 
-        [Theory]
-        [InlineData("api/user")]
-        public async Task Get_Single_User_ByEmail(string url)
+        [Fact]
+        public async Task Get_User_OnName()
         {
-            await AuthUtils.AddUsersBearer(_client);
-            url += "/email/" + AuthUtils.Email;// user id Lion(regular user) 
+            AuthUtils.AddBearerForAdmin(httpClient);
+            string url = apiUserPrePath + "user-name/" + httpClient.GetTestToken(UserType.ActiveUser).UserName;
 
             //Arrange
-            var response = await _client.GetAsync(url);
+            var response = await httpClient.GetAsync(url);
 
             var stringResponse = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<UserMinimalDto>(stringResponse);
@@ -83,15 +60,30 @@ namespace BookingAppIntegrationTests.Scenarios
             Assert.False(string.IsNullOrEmpty(result.Id));
         }
 
-        [Theory]
-        [InlineData("api/users")]
-        public async Task Get_AllUser(string url)
+        [Fact]
+        public async Task Get_User_OnEmail()
         {
-            await AuthUtils.AddAdminsBearer(_client);
-
+            AuthUtils.AddBearerForAdmin(httpClient);
+            string url = apiUserPrePath + "email/" + (httpClient.GetTestToken(AuthUtils.UserType.ActiveUser)).UserEmail;
 
             //Arrange
-            var response = await _client.GetAsync(url);
+            var response = await httpClient.GetAsync(url);
+
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<UserMinimalDto>(stringResponse);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.False(string.IsNullOrEmpty(result.Id));
+        }
+
+        [Fact]
+        public async Task Get_Users_ByAdmin()
+        {
+            AuthUtils.AddBearerForAdmin(httpClient);
+
+            //Arrange
+            var response = await httpClient.GetAsync("api/users");
 
             var stringResponse = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<List<UserMinimalDto>>(stringResponse);
@@ -103,27 +95,25 @@ namespace BookingAppIntegrationTests.Scenarios
         #endregion
 
         #region CreateUserTest
-        [Theory]
-        [InlineData("api/user")]
-        public async Task CreateFolderTest(string url)
+        [Fact]
+        public async Task Create_User()
         {
             var content = JsonConvert.SerializeObject(new AuthRegisterDto { Email = "example@email.com", UserName = "UserName", Password = "Password", ConfirmPassword = "Password" });
-            var response = await _client.PostAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+            var response = await httpClient.PostAsync(apiUserPrePath, new StringContent(content, Encoding.UTF8, "application/json"));
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData("api/user")]
-        public async Task Create_ReturnsBadRequest_OnFaultyData(string url)
+        [Fact]
+        public async Task Create_ReturnsBadRequest_OnFaultyData()
         {
             //Arrange
 
 
             //Act
             var content = JsonConvert.SerializeObject(new AuthRegisterDto { Email = "example@email.com", UserName = "UserName", Password = "Password", ConfirmPassword = "Fail" });
-            var response = await _client.PostAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+            var response = await httpClient.PostAsync(apiUserPrePath, new StringContent(content, Encoding.UTF8, "application/json"));
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -131,87 +121,88 @@ namespace BookingAppIntegrationTests.Scenarios
         #endregion
 
         #region UpdateUserTest
-        [Theory]
-        [InlineData("api/user")]
-        public async Task Update_OwnProfile_RegularUser(string url)
+        [Fact]
+        public async Task Update_User_ByHimself()
         {
-            await AuthUtils.AddUsersBearer(_client);
-            url += "/" + AuthUtils.UserId;// user id Lion(regular user) 
+            httpClient.AddBearerFor(UserType.UpdatableUser);
+            var updUserToken = httpClient.GetTestToken(UserType.UpdatableUser);
+            string url = apiUserPrePath + updUserToken.UserID;
 
             //Arrange
-            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = "lion@user.cow", UserName = "Lions" });
-            var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = updUserToken.UserEmail, UserName = updUserToken.UserName + "A" });
+            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData("api/user")]
-        public async Task Update_OwnProfile_RegularUser_NonAuthorize(string url)
+        [Fact]        
+        public async Task Update_User_ByAnotherUser()
         {
-            await AuthUtils.AddUsersBearer(_client);
-            url += "/someOtherId";
+            AuthUtils.AddBearerForUser(httpClient);
+            var updatableUserToken = httpClient.GetTestToken(UserType.UpdatableUser);
+            string url = apiUserPrePath + updatableUserToken.UserID;
+
             //Arrange
-            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = "lion@user.cow", UserName = "Lions" });
-            var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = updatableUserToken.UserEmail, UserName = updatableUserToken.UserName + "A" });
+            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData("api/user")]
-        public async Task Update_OtherProfile_RegularUser_NonAuthorize(string url)
+        [Fact]
+        public async Task Update_User_ByAnonymous()
         {
-            url += "/undefined";
+            var updatableUserToken = httpClient.GetTestToken(UserType.UpdatableUser);
+            string url = apiUserPrePath + updatableUserToken.UserID;
+
             //Arrange
-            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = "lion@user.cow", UserName = "Lions" });
-            var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = updatableUserToken.UserEmail, UserName = updatableUserToken.UserName + "A" });
+            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData("api/user")]
-        public async Task Update_UserProfile_Admin(string url)
+        [Fact]
+        public async Task Update_User_ByAdmin()
         {
-            await AuthUtils.AddAdminsBearer(_client);
-            url += "/" + AuthUtils.UserId;// user id SuperAdmin(Admin) 
+            AuthUtils.AddBearerForAdmin(httpClient);
+            var updatableUserToken = httpClient.GetTestToken(UserType.UpdatableUser);
+            string url = apiUserPrePath + updatableUserToken.UserID;
 
             //Arrange
-            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = "lion@user.cow", UserName = "Lions" });
-            var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
+            var content = JsonConvert.SerializeObject(new UserUpdateDTO { Email = updatableUserToken.UserEmail, UserName = updatableUserToken.UserName + "A" });
+            var response = await httpClient.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
         #endregion
 
-        #region DeleteUserTest
-        [Theory]
-        [InlineData("api/user")]
-        public async Task Delete_User_ByAdmin(string url)
+        #region Delete_User
+        //[Fact]
+        //public async Task Delete_User_ByAdmin()
+        //{
+        //    AuthUtils.AddBearerForAdmin(httpClient);
+        //    var deletableUserToken = httpClient.GetTestToken(UserType.DeletableUser);
+        //    string url = apiUserPrePath + deletableUserToken.UserID;
+
+        //    //Arrange
+        //    var response = await httpClient.DeleteAsync(url);
+
+        //    // Assert
+        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //}
+
+        [Fact]
+        public async Task Delete_User_NotAutorized()
         {
-            await AuthUtils.AddAdminsBearer(_client);
-            url += "/" + AuthUtils.UserId;// user id Lion(regular user) 
+            string url = apiUserPrePath + "undefined";
 
             //Arrange
-            var response = await _client.DeleteAsync(url);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        }
-
-        [Theory]
-        [InlineData("api/user")]
-        public async Task Delete_User_NonAutorize(string url)
-        {
-            url += "/undefined";// user id Lion(regular user) 
-
-            //Arrange
-            var response = await _client.DeleteAsync(url);
+            var response = await httpClient.DeleteAsync(url);
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

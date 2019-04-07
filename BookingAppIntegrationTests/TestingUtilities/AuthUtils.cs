@@ -1,69 +1,103 @@
 ﻿using BookingApp.DTOs;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BookingAppIntegrationTests.TestingUtilities
 {
     public static class AuthUtils
     {
-        public static async Task AddAdminsBearer(HttpClient client)
+        public static void AddBearerForAdmin(this HttpClient client) => AddBearerFor(client, UserType.ActiveAdmin);
+        public static void AddBearerForUser(this HttpClient client) => AddBearerFor(client, UserType.ActiveUser);
+        public static void AddBearerFor(this HttpClient client, UserType type) => AddBearer(client, GetTestToken(client, type));
+        public static async Task AddBearerFor(this HttpClient client, Login login) => AddBearer(client, await TestToken.ProduceInstance(client, login));
+
+        static void AddBearer(this HttpClient client, TestToken token)
         {
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await GetToken(client, isAdmin: true)}");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer { token.AuthToken.AccessToken }");
         }
 
-        public static async Task AddUsersBearer(HttpClient client)
+        static readonly Dictionary<UserType, Login> logins = new Dictionary<UserType, Login>()
         {
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await GetToken(client, isAdmin: false)}");
-        }
+            { UserType.ActiveUser, new Login("cheetah@user.cow", "Cheetah")},
+            { UserType.ActiveAdmin, new Login("superadmin@admin.cow", "SuperAdmin")},
+            { UserType.DeletableUser, new Login("tiger@admin.cow", "Tiger")},
+            { UserType.UpdatableUser, new Login("lion@user.cow", "Lion")}
+        };
+        static Dictionary<HttpClient, Dictionary<UserType, TestToken>> tokenCache = new Dictionary<HttpClient, Dictionary<UserType, TestToken>>();
 
-        public static string UserId { get; set; }
-        public static string UserName { get; set; }
-        public static string Email { get; set; }
-
-        static readonly StringBuilder adminsTokenCache = new StringBuilder();
-        static readonly StringBuilder usersTokenCache = new StringBuilder();
-        static async Task<string> GetToken(HttpClient client, bool isAdmin )
+        public static TestToken GetTestToken(this HttpClient client, UserType type)
         {
-            var tokenCache = isAdmin ? adminsTokenCache : usersTokenCache;
-
-            if (tokenCache.Length < 1)
+            lock (tokenCache)
             {
-                string email;
-                string password;
+                InitializeTokens(client);
+                return tokenCache[client][type];
+            }
+        }
 
-                if (isAdmin)
-                {
-                    email = "superadmin@admin.cow";
-                    password = "SuperAdmin";
-                }
-                else
-                {
-                    email = "lion@user.cow";
-                    password = "Lion";
-                }
+        static void InitializeTokens(HttpClient client)
+        {
+            if (!tokenCache.ContainsKey(client))
+            {
+                var newClientEntry = tokenCache[client] = new Dictionary<UserType, TestToken>();
+                foreach (var entry in logins)
+                    newClientEntry[entry.Key] = TestToken.ProduceInstance(client, entry.Value).Result;
+            }
+        }
 
+        public enum UserType
+        {
+            ActiveUser,
+            ActiveAdmin,
+            DeletableUser,
+            UpdatableUser
+        }
+
+        public struct Login
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
+
+            public Login(string email, string password)
+            {
+                Email = email;
+                Password = password;
+            }
+        }
+
+        public class TestToken
+        {
+            public AuthTokensDto AuthToken;
+            public JwtSecurityToken JwtToken;
+            public string UserID;
+            public string UserName;
+            public string UserEmail;
+
+            public static async Task<TestToken> ProduceInstance(HttpClient client, Login login)
+            {
                 var responseToken = await client.PostAsJsonAsync("/api/auth/login", new
                 {
-                    Password = password,
-                    Email = email
+                    login.Email,
+                    login.Password
                 });
 
-                string tokenJson = responseToken.Content.ReadAsStringAsync().Result;
-                AuthTokensDto tokenDto = JsonConvert.DeserializeObject<AuthTokensDto>(tokenJson);
+                string response = responseToken.Content.ReadAsStringAsync().Result;
+                AuthTokensDto authToken = JsonConvert.DeserializeObject<AuthTokensDto>(response);
+                var tempJwt = new JwtSecurityToken(authToken.AccessToken);
 
-                var token = new JwtSecurityToken(tokenDto.AccessToken);
-
-                UserId = token.Claims.First(c => c.Type == "uid").Value;
-                UserName = token.Claims.First(c => c.Type == "sub").Value;
-                Email = token.Claims.First(c => c.Type == "email").Value;
-                
-                tokenCache.Append(tokenDto.AccessToken);
+                return new TestToken
+                {
+                    AuthToken = authToken,
+                    JwtToken = tempJwt,
+                    UserID = tempJwt.Claims.First(c => c.Type == "uid").Value,
+                    UserName = tempJwt.Claims.First(c => c.Type == "sub").Value,
+                    UserEmail = tempJwt.Claims.First(c => c.Type == "email").Value
+                };
             }
-            return tokenCache.ToString();
         }
     }
 }
