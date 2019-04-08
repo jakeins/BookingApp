@@ -45,11 +45,11 @@ namespace BookingApp.Controllers
             try
             {
                 user = await userService.GetUserByEmail(dto.Email);
-            } catch (RelatedEntryNotFoundException ex)
+            }
+            catch (CurrentEntryNotFoundException)
             {
                 userNotFound = true;
-            }
-            
+            }            
 
             if (userNotFound || !await userService.CheckPassword(user, dto.Password))
             {
