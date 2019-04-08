@@ -81,7 +81,7 @@ namespace BookingApp.Services
             ApplicationUser applicationUser = await userManager.FindByEmailAsync(email);
             if (applicationUser == null)
             {
-                throw new NullReferenceException("Can not find user with this email");
+                throw new RelatedEntryNotFoundException("Can not find user with this email");
             }
             else
             {
