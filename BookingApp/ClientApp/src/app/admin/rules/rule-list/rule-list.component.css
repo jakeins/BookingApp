@@ -1,13 +1,21 @@
 .search-div{
-    /* margin: 10px; */
     width: 100%;
+    display: inline-flex;
 }
-.search-form-field{
-    width: 65%;
+.search-field{
+    flex-basis: 90%;
+}
+.buttons-row{
+    flex-basis: 10%;
 }
 .search-div-create{
-
+    margin-top: 10px;
+    color: #fff;
+    background-color: #28a745;
 }
+/* .fill-remaining-place{
+    flex: 1 1 auto;
+    */
 .search-form-field div.mat-form-field-underline{
     display: none;
 }

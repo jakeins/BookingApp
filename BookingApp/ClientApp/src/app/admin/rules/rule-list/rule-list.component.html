@@ -1,9 +1,13 @@
 <div class="search-div">
-  <mat-form-field class="search-form-field">
+  <mat-form-field class="search-field">
       <input matInput [(ngModel)]="searchKey" placeholder="Search" (keyup)="applyFilter($event.target.value)" autocomplete="off">
+      <span class="fill-remaining-place"></span>
       <button mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey" (click)="onSearchReset()"><mat-icon>close</mat-icon></button>
     </mat-form-field>
-    <button mat-raised-button class="search-div-create" (click)="onCreate()"><mat-icon>add</mat-icon>Create</button>
+    <div class="buttons-row">
+      <button mat-stroked-button class="search-div-create" (click)="onCreate()">
+      <span>Create</span></button>
+    </div>
 </div>
 <div class="mat-elevation-z8">
   <mat-table [dataSource]="listData" matSort>

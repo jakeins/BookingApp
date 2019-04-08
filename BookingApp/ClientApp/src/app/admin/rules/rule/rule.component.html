@@ -1,13 +1,11 @@
 <mat-toolbar>
     <span>{{isUpdate? "Edit Rule": "New Rule"}}</span>
     <span class="fill-remaining-space"></span>
-    <!-- <button class="mat-dialog-close" (click)="onClose()" tabindex="-1"><mat-icon>close</mat-icon></button> -->
     <button class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1"><mat-icon>close</mat-icon></button>
 </mat-toolbar>
 <form [formGroup]="form"> 
   <mat-grid-list cols=2 rowHeight="300px"> 
     <mat-grid-tile>
-        <!-- bleeee:  {{form.value | json}} -->
       <div class="controles-container">
         <input type="hidden" formControlName="id">
         <mat-form-field>
