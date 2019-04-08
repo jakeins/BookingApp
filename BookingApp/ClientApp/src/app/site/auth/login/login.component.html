@@ -19,7 +19,7 @@
             <form [formGroup]="loginForm" (ngSubmit)="login()">
 
               <div class="form-group row">
-                <label class="col-md-4 col-form-label text-md-right">Email</label>
+                <label class="col-md-4 col-form-label text-md-right" for="email">Email</label>
                 <div class="col-md-6">
                   <input name="email" formControlName="email" type="text" class="form-control underlined"
                          id="email" placeholder="name@email.com">
@@ -31,10 +31,10 @@
               </div>
 
               <div class="form-group row">
-                <label class="col-md-4 col-form-label text-md-right">Password</label>
+                <label class="col-md-4 col-form-label text-md-right" for="password">Password</label>
                 <div class="col-md-6">
                   <input name="password" formControlName="password" type="password"
-                         class="form-control underlined" id="password" placeholder="***">
+                         class="form-control underlined" id="password">
                   <span class="form-help-text" *ngIf="loginForm.get('password').invalid && loginForm.get('password').dirty">
                     <span *ngIf="loginForm.get('password')['errors']['required']">Field can`t be empty.</span>
                   </span>

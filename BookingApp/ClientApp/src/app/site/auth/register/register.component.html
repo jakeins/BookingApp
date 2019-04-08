@@ -14,7 +14,7 @@
           <form [formGroup]="registerForm" (ngSubmit)="register()">
 
             <div class="form-group row">
-              <label class="col-md-4 col-form-label text-md-right">Username</label>
+              <label class="col-md-4 col-form-label text-md-right" for="userName">Username</label>
               <div class="col-md-6">
                 <input formControlName="userName" type="text" class="form-control underlined" id="userName"
                        placeholder="name">
@@ -26,7 +26,7 @@
             </div>
 
             <div class="form-group row">
-              <label class="col-md-4 col-form-label text-md-right">Email</label>
+              <label class="col-md-4 col-form-label text-md-right" for="email">Email</label>
               <div class="col-md-6">
                 <input formControlName="email" type="text" class="form-control underlined" id="email"
                        placeholder="name@email.com">
@@ -38,10 +38,10 @@
             </div>
 
             <div class="form-group row">
-              <label class="col-md-4 col-form-label text-md-right">Password</label>
+              <label class="col-md-4 col-form-label text-md-right" for="password">Password</label>
               <div class="col-md-6">
                 <input formControlName="password" type="password" class="form-control underlined" id="password" [ngClass]="{'ng-invalid':registerForm.hasError('notSame')}"
-                       placeholder="***">
+                       >
                 <span class="form-help-text" *ngIf="registerForm.get('password').invalid && registerForm.get('password').dirty">
                   <span *ngIf="registerForm.get('password')['errors']['required']">Field can`t be empty.</span>
                 </span>
@@ -49,10 +49,10 @@
             </div>
 
             <div class="form-group row">
-              <label class="col-md-4 col-form-label text-md-right">Confirm Password</label>
+              <label class="col-md-4 col-form-label text-md-right" for="confirmPassword">Confirm Password</label>
               <div class="col-md-6">
                 <input formControlName="confirmPassword" type="password" class="form-control underlined" [ngClass]="{'ng-invalid':registerForm.hasError('notSame')}"
-                       id="confirmPassword" placeholder="***">
+                       id="confirmPassword" >
                 <span class="form-help-text" *ngIf="registerForm.hasError('notSame') && registerForm.get('confirmPassword').dirty">
                   <span *ngIf="registerForm.hasError('notSame')">Passwords don`t match.</span>
                 </span>

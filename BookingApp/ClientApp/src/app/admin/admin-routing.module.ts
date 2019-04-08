@@ -20,7 +20,7 @@ const routesAdmin: Routes = [
       { path: '', component: HomeComponent, data: { breadcrumbIgnore: true } },
       { path: 'users', component: UserComponent, data: { breadcrumbLabel: 'Users management' } },
       { path: 'users/create', component: UserCreateComponent, data: { breadcrumbLabel: 'Create admin' } },
-      { path: 'users/:id/read', component: UserReadComponent, data: { breadcrumbLabel: 'Users Read' } },
+      { path: 'users/:id', component: UserReadComponent, data: { breadcrumbLabel: 'Users Read' } },
       { path: 'resources/create', component: ResourceEditComponent, data: { breadcrumbLabel: 'Resource Creation' } },
       { path: 'resources/:id/edit', component: ResourceEditComponent, data: { breadcrumbLabel: 'Resource Editing' } },
       { path: 'folders/create', component: FolderEditComponent, data: { breadcrumbLabel: 'Folder Creation' } },

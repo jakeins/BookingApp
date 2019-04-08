@@ -13,10 +13,10 @@
       <tr class="user-item" *ngFor="let user of userPage.items; let i = index">
         <td><b>{{ i+1+(this.page * 10 - 10) }}</b></td>
         <td>
-          <a [routerLink]="['/admin/users', user.id, 'read']">{{user.userName}}</a>
+          <a [routerLink]="['/admin/users', user.id]">{{user.userName}}</a>
         </td>
         <td>{{user.email}}</td>
-        <td><a [routerLink]="['/admin/users', user.id, 'read']"><i class="fas fa-eye"></i></a></td>
+        <td><a [routerLink]="['/admin/users', user.id]"><i class="fas fa-eye"></i></a></td>
       </tr>
     </tbody>
   </table>

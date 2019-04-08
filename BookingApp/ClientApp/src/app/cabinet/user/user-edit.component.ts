@@ -48,7 +48,7 @@ export class UserEditComponent implements OnInit {
   }
 
   private handleError(error: any) {
-    this.apiError = error.error;
+    this.apiError = error.error.Message;
     this.successMessage = "";
   }
   
