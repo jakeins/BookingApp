@@ -23,7 +23,6 @@ export class UserComponent implements OnInit {
   pageSize:number = 10;
   indexBlocking: number = 1;
   indexApproval: number = 1;
- // pages: number;
  
   constructor(private userService: UserService) {
     
@@ -31,7 +30,6 @@ export class UserComponent implements OnInit {
   public blocking: boolean;
 
   blockButton(userId: string) {
-    console.log(userId);
     for (var i = 0, len = this.userPage.items.length; i < len; i++) {
       if (this.userPage.items[i].id === userId) {
         if (this.userPage.items[i].isBlocked === true) {
@@ -72,16 +70,9 @@ export class UserComponent implements OnInit {
 
   ngOnInit() {
     this.getUserPages(this.page = 1, this.pageSize)
-    //this.userService.createUser(this.userRegister).subscribe((res) => {
-    //   console.log(res);
-    //});
   }
 
   handleError(error: any) {
     console.log(error);
-    //this.apiError = error['status'];
-
-    //if (error['error'] != undefined)
-    //  this.apiError += ': ' + error['error']['Message'];
   }
 }

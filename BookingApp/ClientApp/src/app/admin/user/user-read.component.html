@@ -18,7 +18,7 @@
       <tr>
         <td><b>UserName</b></td>
         <td>{{ user.userName }}</td>
-        <td><a [routerLink]="['/admin/users','edit']" class="btn btn-outline-primary mb-2">Edit</a></td>
+        <td><a routerLink="/cabinet/user/{{user.id}}/edit" class="btn btn-outline-primary mb-2">Edit</a></td>
       </tr>
       <tr>
         <td><b>Email</b></td>

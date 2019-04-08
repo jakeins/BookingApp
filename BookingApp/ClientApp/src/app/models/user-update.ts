@@ -1,4 +1,4 @@
 export class UserUpdate {
   userName: string;
-  email: string;
+  email?: string;
 }

@@ -27,7 +27,6 @@ export class UserEditComponent implements OnInit {
 
     this.userService.getUserById(this.userId).subscribe((res: User) => {
       this.userUpdate.userName = res.userName;
-      this.userUpdate.email = res.email;
       this.initializeForm();
     }, error => this.handleError(error));
     
@@ -35,7 +34,6 @@ export class UserEditComponent implements OnInit {
 
   editUser() {
     this.userUpdate.userName = this.editUserForm.value.userName;
-    this.userUpdate.email = this.editUserForm.value.email;
     this.userService.updateUser(this.userId, this.userUpdate).subscribe(() => {
       this.successMessage = "You change successfull your data!";
       this.apiError = "";
@@ -45,8 +43,7 @@ export class UserEditComponent implements OnInit {
 
   private initializeForm() {
     this.editUserForm = new FormGroup({
-      userName: new FormControl(this.userUpdate.userName, [Validators.required, Validators.minLength(3)]),
-      email: new FormControl(this.userUpdate.email, [Validators.required, Validators.email]),
+      userName: new FormControl(this.userUpdate.userName, [Validators.required, Validators.minLength(3)])
     });
   }
 

@@ -48,6 +48,7 @@ export class UserReadComponent implements OnInit {
   }
 
   private handleError(error: any) {
+    console.log(error);
     this.apiError = error.error.Message;
     this.successMessage = "";
   }
