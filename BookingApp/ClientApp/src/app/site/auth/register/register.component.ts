@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { RegisterFormModel } from '../../../models/register-form.model';
 import { Router } from '@angular/router';
+import { USERNAME_REGEX } from '../../../globals';
 
 
 @Component({
@@ -17,7 +18,7 @@ export class RegisterComponent implements OnInit {
 
   constructor(private authService: AuthService, private router: Router) {
     this.registerForm = new FormGroup({
-      'userName': new FormControl('', [Validators.required, Validators.minLength(3)]),
+      'userName': new FormControl('', [Validators.required, Validators.minLength(3), Validators.pattern(USERNAME_REGEX)]),
       'email': new FormControl('', [Validators.required, Validators.email]),
       'password': new FormControl('', Validators.required),
       'confirmPassword': new FormControl('', Validators.required),
