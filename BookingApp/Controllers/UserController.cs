@@ -154,7 +154,7 @@ namespace BookingApp.Controllers
         {
             await userService.RemoveAllRolesFromUser(userId);
             await userService.DeleteUser(userId);
-            return new OkObjectResult("User deleted");
+            return Ok(new { DeletedTime = DateTime.Now });
         }
 
         [Authorize(Roles = RoleTypes.User)]

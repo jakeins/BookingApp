@@ -6,6 +6,8 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/throw';
+
 import { Logger } from './logger.service';
 import { TokenService } from './token.service';
 import { AuthService } from './auth.service';
@@ -15,6 +17,7 @@ export class TokenInterceptor implements HttpInterceptor {
   private isRefreshProccess = false;
 
   constructor(private tokenService: TokenService, private authService: AuthService) { }
+
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const jwt = this.tokenService.readJwtToken();
     let accessToken = null;
@@ -39,13 +42,11 @@ export class TokenInterceptor implements HttpInterceptor {
       });
     }
 
-    return next.handle(request).catch(err => {
-      if (!request.url.includes('logout')) {
-        if (err.status === 401) {
+    return next.handle(request).catch(error => {
+      if (!request.url.includes('logout') && error.status === 401)
           this.authService.logout();
-        }
-      }
-      return next.handle(request);
+      
+      return Observable.throw(error);
     });
   }
 }
