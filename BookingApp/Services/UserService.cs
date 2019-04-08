@@ -169,7 +169,7 @@ namespace BookingApp.Services
 
         public async Task RemoveAllRolesFromUser(string userId)
         {
-           IList<string>  list = await GetUserRolesById(userId);
+           IList<string> list = await GetUserRolesById(userId);
            if(list != null)
            {
                 foreach (var role in list)
