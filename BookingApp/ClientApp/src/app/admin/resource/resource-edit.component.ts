@@ -41,6 +41,7 @@ export class ResourceEditComponent implements OnInit {
   id: number;
   authChangedSubscription: any;
 
+
   ngOnDestroy() {
     this.authChangedSubscription.unsubscribe();
   };
@@ -90,7 +91,6 @@ export class ResourceEditComponent implements OnInit {
     this.loadRules();
   }
 
-
   loadFolders() {
     this.folderService.getList().subscribe((result: Folder[]) => {
       for (let key in result) {
@@ -134,11 +134,40 @@ export class ResourceEditComponent implements OnInit {
 
     let formData = this.resourceForm.value;
 
+    let changes = {};
+    let cleans = {};
+
+    changes['title'] = this.model.title != formData.title;
     this.model.title = formData.title;
+
+    changes['description'] = this.model.description != formData.description;
     this.model.description = formData.description;
-    this.model.isActive = formData.isActive == 'true';
-    this.model.ruleId = formData.ruleId > 1 ? formData.ruleId : 1;
-    this.model.folderId = formData.folderId > 0 ? formData.folderId : null;
+
+    cleans['isActive'] = formData.isActive == 'true';
+    changes['isActive'] = this.model.isActive != cleans['isActive'];
+    this.model.isActive = cleans['isActive'];
+
+    cleans['rule'] = formData.ruleId > 1 ? formData.ruleId : 1;
+    changes['rule'] = this.model.ruleId != cleans['rule'];
+    this.model.ruleId = cleans['rule'];
+
+    cleans['folderId'] = formData.folderId > 0 ? formData.folderId : null;
+    changes['folderId'] = this.model.folderId != cleans['folderId'];
+    this.model.folderId = cleans['folderId'];
+
+    let hasEffectiveChanges: number = 0;
+
+    for (let x in changes) 
+      if (changes[x] == true) 
+        hasEffectiveChanges++;
+
+    if (hasEffectiveChanges == 0) {
+      this.resourceForm.markAsPristine();
+      this.warningControl(true);
+      return false;
+    }      
+
+    let onlySuperficialChanges: boolean = hasEffectiveChanges > 0 && !changes['title'] && !changes['description'] && !cleans['rule'];
 
     Logger.log(this.model);
 
@@ -146,9 +175,7 @@ export class ResourceEditComponent implements OnInit {
       this.resourceService.updateResource(this.model)
         .subscribe(result => {
           Logger.log(`Resource has been updated on ${result['updatedTime']}.`);
-
-          this.router.navigate(['/resources', this.model.id]);
-
+          this.router.navigate(onlySuperficialChanges ? [''] : ['/resources', this.model.id]);
         }, error => this.handleError(error));
     }
     else if (this.createMode) {
@@ -158,7 +185,7 @@ export class ResourceEditComponent implements OnInit {
 
           Logger.log(`Resource ${resourceId} has been created on ${result['updatedTime']}.`);
 
-          this.router.navigate(['/resources', resourceId]);
+          this.router.navigate(['']);
 
         }, error => this.handleError(error));
     }
@@ -179,5 +206,17 @@ export class ResourceEditComponent implements OnInit {
     if (error['error'] != undefined)
       this.apiError += ': ' + error['error']['Message'];
   }
+
+
+
+  warningControl(mode: boolean) {
+    let plate = document.querySelector('#no-effective-changes-warning');
+
+    if (mode === true)
+      plate.removeAttribute('hidden');
+    else
+      plate.setAttribute('hidden', 'hidden');
+  }
+
 
 }
