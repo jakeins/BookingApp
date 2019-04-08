@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using static BookingAppIntegrationTests.TestingUtilities.AuthUtils;
 
 namespace BookingAppIntegrationTests.Scenarios
 {
@@ -29,7 +30,8 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task GetRulesForAdmin(string path)
         {
             //arrange
-            await AuthUtils.AddAdminsBearer(_httpClient);
+
+            _httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //act
             var response = await _httpClient.GetAsync(path);
@@ -47,7 +49,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task GetRulesForUser(string path)
         {
             //arrange
-            await AuthUtils.AddUsersBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveUser);
 
             //act
             var response = await _httpClient.GetAsync(path);
@@ -66,7 +68,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task GetRuleForAdmin(string path)
         {
             //arrange
-            await AuthUtils.AddAdminsBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //act
             var response = await _httpClient.GetAsync(path);
@@ -85,7 +87,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task GetRuleForAdminReturnBadRequest(string path)
         {
             //arrange
-            await AuthUtils.AddAdminsBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //act
             var response = await _httpClient.GetAsync(path);
@@ -100,7 +102,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task GetRuleForUser(string path)
         {
             //arrange
-            await AuthUtils.AddUsersBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveUser);
 
             //act
             var response = await _httpClient.GetAsync(path);
@@ -118,7 +120,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task GetRuleForUserReturnsBadRequest(string path)
         {
             //arrange
-            await AuthUtils.AddUsersBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveUser);
 
             //act
             var response = await _httpClient.GetAsync(path);
@@ -132,7 +134,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task GetInactiveRuleForUserReturnsBadRequest(string path)
         {
             //arrange
-            await AuthUtils.AddUsersBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveUser);
 
             //act
             var response = await _httpClient.GetAsync(path);
@@ -147,7 +149,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task CreateRule(string path)
         {
             //arrange
-            await AuthUtils.AddAdminsBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //act
             var serialized = JsonConvert.SerializeObject(SomeRule());
@@ -163,7 +165,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task CreateRuleWithBadModelReturnsError(string path)
         {
             //arrange
-            await AuthUtils.AddAdminsBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //act
             var serialized = JsonConvert.SerializeObject(SomeBadRule());
@@ -180,7 +182,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task UpdateRule(string path)
         {
             //arrange
-            await AuthUtils.AddAdminsBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //act
             var serialized = JsonConvert.SerializeObject(SomeRule());
@@ -196,7 +198,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task UpdateRuleWithBadIdReturnsError(string path)
         {
             //arrange
-            await AuthUtils.AddAdminsBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //act
             var serialized = JsonConvert.SerializeObject(SomeRule());
@@ -211,7 +213,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task UpdateRuleWithBadModelReturnsError(string path)
         {
             //arrange
-            await AuthUtils.AddAdminsBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //act
             var serialized = JsonConvert.SerializeObject(SomeBadRule());
@@ -228,7 +230,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task DeleteRule(string path)
         {
             //arrange
-            await AuthUtils.AddAdminsBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //act
             var response = await _httpClient.DeleteAsync(path);
@@ -242,7 +244,7 @@ namespace BookingAppIntegrationTests.Scenarios
         public async Task DeleteRuleWithBadIdReturnsError(string path)
         {
             //arrange
-            await AuthUtils.AddAdminsBearer(_httpClient);
+            _httpClient.AddBearerFor(UserType.ActiveAdmin);
 
             //act
             var response = await _httpClient.DeleteAsync(path);
