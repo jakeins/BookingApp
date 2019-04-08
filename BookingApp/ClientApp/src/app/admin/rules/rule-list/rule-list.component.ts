@@ -1,7 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { RuleService } from '../../../services/rule.service';
 import { rule } from '../../../models/rule';
-import { Logger } from '../../../services/logger.service';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
+import { RuleComponent } from '../rule/rule.component';
+import { Observable } from 'rxjs';
+import { DataSource } from '@angular/cdk/table';
 
 @Component({
   selector: 'app-rule-list',
@@ -9,51 +13,104 @@ import { Logger } from '../../../services/logger.service';
   styleUrls: ['./rule-list.component.css']
 })
 export class RuleListComponent implements OnInit {
-  @Input() ruleId: number;
-  error: string;
-  constructor(
-    private service: RuleService
-  ) { }
+ @ViewChild(MatSort) sort: MatSort;
+ @ViewChild(MatPaginator) paginator: MatPaginator;
+  listData: MatTableDataSource<any>;
+  searchKey:string;
+//   sort;
+// @ViewChild(MatSort) set content(content: ElementRef) {
+//   this.sort = content;
+//   if (this.sort){
+//      this.listData.sort = this.sort;
+//   }
+// }
+displayColumns: string[] = ['id', 'title', 'minTime', 'maxTime', 'isActive', 'actions'];
 
+
+  constructor(private service: RuleService,
+    private dialog: MatDialog
+    ) { }
+    connect(){
+      return this.service.getRules();
+    }
+    
   ngOnInit() {
-    this.service.refreshList();
-    if(this.ruleId != null){
-       this.populateForm(this.ruleId);
-    }
-  }
-
-  populateForm(i: number, rule?: rule ){
-    if(rule != null){
-      this.service.Rule = Object.assign({}, rule);
-      this.service.listSelectedRow = i;
-    }  
-    else
-      this.service.getRule(i).subscribe((res:rule)=>{
-        this.service.Rule = res;
-        this.service.listSelectedRow = i-1;
-      });
-
-    this.service.showAdditionalInfo = true;
-  }
-
-  onDelete(id:number){
-    if(confirm('Are you sure to delete rule?')){
-    this.service.deleteRule(id).subscribe( res => {
-      this.service.showAdditionalInfo = false;
-      this.service.refreshList();
-    },
-    err => { 
-      this.error = err.status + ': ' + err.error.Message;
+    // this.service.getRules().subscribe(list =>{
+    //   let array = list.map(item =>{
+    //     return {
+    //       // $key: item.id,      //need?
+    //       item
+    //     };
+    //   });
+    //   this.listData = new MatTableDataSource(array);
+    //    //this.listData.sort = this.sort;
+    //    //setTimeout(() => this.listData.sort = this.sort)
+    //    setTimeout(() => {
+    //      console.log('works?');
+    //     this.listData.sort = this.sort;
+    //   });
+    // });
+    this.service.getRules().subscribe( res => {
+      this.listData = new MatTableDataSource();
+      this.listData.data = res;
+      this.listData.sort = this.sort;
+      this.listData.paginator = this.paginator;
+      this.listData.filterPredicate = (data, filter) =>{                                      //filter only by table columns cells
+        const dataStr = data.title.toLowerCase() + data.id + data.minTime + data.maxTime + data.isActive;
+        return dataStr.indexOf(filter) != -1;
+      }
     })
-    }
-  }
-  onReset(){
-    this.error = null;
   }
 
-  ngOnDestroy(){
-    this.ruleId = null;
-    this.service.showAdditionalInfo = false;
-    this.service.listSelectedRow= null;
+  onSearchReset(){
+    this.searchKey = '';
+  }
+
+  applyFilter(){
+    this.listData.filter = this.searchKey.trim().toLocaleLowerCase();
+  }
+
+  onCreate(){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "60%";
+    const dialogRef = this.dialog.open(RuleComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(res =>{
+      this.updateTable();
+    })
+  }
+
+  onEdit(rowId: number){
+    let dialogConfig = new MatDialogConfig();
+     dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "60%";
+    dialogConfig.data = rowId;
+    const dialogRef  = this.dialog.open(RuleComponent, dialogConfig); 
+    dialogRef.afterClosed().subscribe(res =>{
+      this.updateTable();
+    })
+  }
+ 
+  onDelete(rowId: number){
+    if(confirm('Are u sure to delete rule')){
+    this.service.deleteRule(rowId).subscribe(res =>{
+      this.updateTable();
+    });
+    }
+  }
+
+  updateTable(){
+    this.service.getRules().subscribe( res => {
+      this.listData = new MatTableDataSource();
+      this.listData.data = res;
+      this.listData.sort = this.sort;
+      this.listData.paginator = this.paginator;
+      this.listData.filterPredicate = (data, filter) =>{                                      //filter only by table columns cells
+        const dataStr = data.title.toLowerCase() + data.id + data.minTime + data.maxTime + data.isActive;
+        return dataStr.indexOf(filter) != -1;
+      }
+    })
   }
 }

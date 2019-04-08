@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
@@ -17,6 +18,7 @@ import { UserInfoService } from './services/user-info.service';
 import { RuleService } from './services/rule.service';
 import { BookingService } from './services/booking.service';
 import { BookingsModeService } from './services/bookings-component-mode.service';
+import { MaterialModule } from './material/material.module';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { BookingsModeService } from './services/bookings-component-mode.service'
       HttpClientModule,
       RouterModule,
       AppRoutingModule,
-      SiteModule
+      SiteModule,
+      BrowserAnimationsModule,
+      MaterialModule
   ],
   providers: [
     AuthService,
@@ -47,6 +51,7 @@ import { BookingsModeService } from './services/bookings-component-mode.service'
   ],
   bootstrap: [AppComponent]
 })
+
 
 export class AppModule {
 }

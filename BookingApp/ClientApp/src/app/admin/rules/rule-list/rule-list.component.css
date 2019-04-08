@@ -1,13 +1,23 @@
-.btn-outline-danger{
-    float: right;
+.search-div{
+    /* margin: 10px; */
+    width: 100%;
 }
-
-.table tr.active td {
-    background-color: #7FFFD4;
+.search-form-field{
+    width: 65%;
 }
+.search-div-create{
 
-.b-reset{
-    position: absolute;
-    top: 0;
-    right: 0;
+}
+.search-form-field div.mat-form-field-underline{
+    display: none;
+}
+.search-form-field div.mat-form-field-infix{
+    border-top: 0px;
+}
+.search-form-field div.mat-form-field-wrapper{
+    padding-bottom: 0px;
+}
+.search-form-field div.mat-form-field-suffix button{
+    height: 32px;
+    width: 32px;
 }
