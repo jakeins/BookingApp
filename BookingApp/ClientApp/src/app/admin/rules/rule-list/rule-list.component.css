@@ -3,19 +3,16 @@
     display: inline-flex;
 }
 .search-field{
-    flex-basis: 90%;
+    flex-basis: 92%;
 }
 .buttons-row{
-    flex-basis: 10%;
+    flex-basis: 8%;
 }
 .search-div-create{
     margin-top: 10px;
     color: #fff;
     background-color: #28a745;
 }
-/* .fill-remaining-place{
-    flex: 1 1 auto;
-    */
 .search-form-field div.mat-form-field-underline{
     display: none;
 }
@@ -28,4 +25,15 @@
 .search-form-field div.mat-form-field-suffix button{
     height: 32px;
     width: 32px;
+}
+
+.mat-column-id{
+    flex: 0 0 100px;
+}
+.mat-column-title{
+    flex: 0 0 180px ; 
+}
+ 
+.mat-column-actions{
+    flex: 0 0 90px;
 }

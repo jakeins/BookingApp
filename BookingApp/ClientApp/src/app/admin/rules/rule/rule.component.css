@@ -25,7 +25,6 @@
 }
 
 .btn-dialog-close{
-    width: 23px !important;
-    height: 43px !important ;
-    padding: 9px !important;
+    color: #fff;
+    background-color: #dc3535;
 }

@@ -1,7 +1,7 @@
 <mat-toolbar>
     <span>{{isUpdate? "Edit Rule": "New Rule"}}</span>
     <span class="fill-remaining-space"></span>
-    <button class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1"><mat-icon>close</mat-icon></button>
+    <button class="btn btn-md btn-dialog-close"(click)="onClose()">X</button>
 </mat-toolbar>
 <form [formGroup]="form"> 
   <mat-grid-list cols=2 rowHeight="300px"> 

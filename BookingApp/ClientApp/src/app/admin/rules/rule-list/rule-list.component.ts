@@ -17,14 +17,7 @@ export class RuleListComponent implements OnInit {
  @ViewChild(MatPaginator) paginator: MatPaginator;
   listData: MatTableDataSource<any>;
   searchKey:string;
-//   sort;
-// @ViewChild(MatSort) set content(content: ElementRef) {
-//   this.sort = content;
-//   if (this.sort){
-//      this.listData.sort = this.sort;
-//   }
-// }
-displayColumns: string[] = ['id', 'title', 'minTime', 'maxTime', 'isActive', 'actions'];
+displayColumns: string[] = ['id', 'title', 'minTime', 'maxTime', 'serviceTime', 'isActive', 'actions'];
 
 
   constructor(private service: RuleService,
@@ -35,21 +28,6 @@ displayColumns: string[] = ['id', 'title', 'minTime', 'maxTime', 'isActive', 'ac
     }
     
   ngOnInit() {
-    // this.service.getRules().subscribe(list =>{
-    //   let array = list.map(item =>{
-    //     return {
-    //       // $key: item.id,      //need?
-    //       item
-    //     };
-    //   });
-    //   this.listData = new MatTableDataSource(array);
-    //    //this.listData.sort = this.sort;
-    //    //setTimeout(() => this.listData.sort = this.sort)
-    //    setTimeout(() => {
-    //      console.log('works?');
-    //     this.listData.sort = this.sort;
-    //   });
-    // });
     this.service.getRules().subscribe( res => {
       this.listData = new MatTableDataSource();
       this.listData.data = res;

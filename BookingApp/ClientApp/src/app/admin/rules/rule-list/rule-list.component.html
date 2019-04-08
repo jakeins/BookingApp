@@ -12,8 +12,8 @@
 <div class="mat-elevation-z8">
   <mat-table [dataSource]="listData" matSort>
       <ng-container matColumnDef="id">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Id</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{element.id}}</mat-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header >Id</mat-header-cell>
+          <mat-cell *matCellDef="let element" >{{element.id}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="title">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Title</mat-header-cell>
@@ -27,11 +27,15 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>Max Time</mat-header-cell>
           <mat-cell *matCellDef="let element">{{element.maxTime}}</mat-cell>
         </ng-container>
+        <ng-container matColumnDef="serviceTime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Service Time</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{element.serviceTime}}</mat-cell>
+          </ng-container>
         <ng-container matColumnDef="isActive">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Activity</mat-header-cell>
           <mat-cell *matCellDef="let element">{{element.isActive | activity}}</mat-cell>
         </ng-container>
-        <ng-container matColumnDef="actions">
+        <ng-container matColumnDef="actions" >
           <mat-header-cell *matHeaderCellDef></mat-header-cell>
           <mat-cell *matCellDef="let row">
             <button mat-icon-button (click)="onEdit(row.id)"><mat-icon>edit</mat-icon></button>
