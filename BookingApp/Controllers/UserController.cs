@@ -158,13 +158,21 @@ namespace BookingApp.Controllers
 
         [Authorize(Roles = RoleTypes.User)]
         [HttpPut("api/user/{userId}")]
-        public async Task<IActionResult> UpdateUser([FromBody]UserUpdateDTO user, [FromRoute]string userId)
+        public async Task<IActionResult> UpdateUser([FromBody]UserUpdateDTO userDto, [FromRoute]string userId)
         {
             if (UserId == userId || IsAdmin)
             {
-                ApplicationUser appuser = await userService.GetUserById(userId);
-                mapper.Map<UserUpdateDTO, ApplicationUser>(user, appuser);
-                await userService.UpdateUser(appuser);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                ApplicationUser userModel = await userService.GetUserById(userId);
+
+                if (userDto.HasNameOnly())
+                    userModel.UserName = userDto.UserName;
+                else
+                    mapper.Map(userDto, userModel);
+
+                await userService.UpdateUser(userModel);
                 return new OkObjectResult("User updated");
             }
             else

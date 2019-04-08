@@ -132,6 +132,7 @@ namespace BookingApp.Services
         public async Task UpdateAsync(ApplicationUser user)
         {
             IdentityResult result = await userManager.UpdateAsync(user);
+
             if (!result.Succeeded)
             {
                 GetExceptionIdentityResult(result);
