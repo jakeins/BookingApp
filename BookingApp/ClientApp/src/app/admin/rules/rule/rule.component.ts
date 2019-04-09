@@ -4,6 +4,7 @@ import { FormGroup, Validators, FormBuilder} from '@angular/forms';
 import { rule } from '../../../models/rule';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { USERNAME_REGEX } from '../../../globals';
+import { NotificationService } from '../../../services/notification.service';
 
 
 
@@ -21,6 +22,7 @@ export class RuleComponent implements OnInit {
   error: string;
   constructor(
     private service: RuleService,
+    private notificationService: NotificationService,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<RuleComponent>,
     @Inject(MAT_DIALOG_DATA) public ruleData: any
@@ -134,7 +136,8 @@ export class RuleComponent implements OnInit {
         err => { 
           this.error = err.status + ': ' + err.error.Message + '.';
         });
-      this.onClose()
+      this.onClose();
+      this.notificationService.success('Created successfully!');
     }
   }
 
@@ -146,6 +149,7 @@ export class RuleComponent implements OnInit {
           this.error = err.status + ': ' + err.error.Message + '.';
         });
       this.onClose();
+      this.notificationService.submit('Submitted successfully!');
      }
   }
 

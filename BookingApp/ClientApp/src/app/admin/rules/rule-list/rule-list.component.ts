@@ -4,6 +4,7 @@ import { rule } from '../../../models/rule';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { RuleComponent } from '../rule/rule.component';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-rule-list',
@@ -21,7 +22,8 @@ export class RuleListComponent implements OnInit {
 
   constructor(
     private service: RuleService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private notificationService: NotificationService
     ) { }
 
   ngOnInit() {
@@ -77,6 +79,7 @@ export class RuleListComponent implements OnInit {
     },err => { 
       this.error = err.status + ': ' + err.error.Message + '.';
     });
+    this.notificationService.delete('Deleted successfully!');
     }
   }
 

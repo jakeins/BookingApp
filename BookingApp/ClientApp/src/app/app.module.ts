@@ -19,6 +19,7 @@ import { RuleService } from './services/rule.service';
 import { BookingService } from './services/booking.service';
 import { BookingsModeService } from './services/bookings-component-mode.service';
 import { MaterialModule } from './material/material.module';
+import { NotificationService } from './services/notification.service';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { MaterialModule } from './material/material.module';
     },
     RuleService,
     BookingService,
-    BookingsModeService
+    BookingsModeService,
+    NotificationService
   ],
   bootstrap: [AppComponent]
 })
