@@ -43,13 +43,24 @@ export class RuleListComponent implements OnInit {
       this.updateTable();
     })
   }
-
-  onEdit(rowId: number){
+  
+  onDetails(rowId: number, readonlymode: number){
     let dialogConfig = new MatDialogConfig();
-     dialogConfig.disableClose = true;
+    dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = "60%";
-    dialogConfig.data = rowId;
+    dialogConfig.data = { ruleId: rowId, readonlymode: readonlymode};
+    const dialogRef  = this.dialog.open(RuleComponent, dialogConfig); 
+    dialogRef.afterClosed().subscribe(res =>{
+      this.updateTable();
+    })
+  }
+  onEdit(rowId: number){
+    let dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "60%";
+    dialogConfig.data = { ruleId: rowId, readonlymode: null};
     const dialogRef  = this.dialog.open(RuleComponent, dialogConfig); 
     dialogRef.afterClosed().subscribe(res =>{
       this.updateTable();

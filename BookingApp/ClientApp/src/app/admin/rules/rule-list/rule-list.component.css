@@ -34,10 +34,16 @@
     flex: 0 0 20% ; 
 }
  
-/* .mat-column-actions{
-    flex: 0 0 20%;
-} */
+.mat-column-actions{
+    text-align: right !important;
+    flex: 0 0 15%;
+}
 
+@media (min-width: 680px) and (max-width: 1200px){
+    .mat-column-actions{
+        flex: 0 0 25%;
+    }
+}
 @media (max-width: 680px)  {
     .mat-column-serviceTime, .mat-column-minTime, .mat-column-maxTime{
         display: none;
@@ -49,9 +55,9 @@
         flex: 0 0 35%;
     }   
     .mat-column-isActive{
-        flex: -1 0 25%;
+        flex: -1 0 15%;
     }
     .mat-column-actions{
-        flex: 0 0 25%;
+        flex: 0 0 35%;
     }
 }

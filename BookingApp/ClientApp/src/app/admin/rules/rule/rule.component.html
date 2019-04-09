@@ -4,7 +4,7 @@
     <button class="btn btn-md btn-dialog-close"(click)="onClose()">X</button>
 </mat-toolbar>
 <form [formGroup]="form"> 
-  <mat-grid-list cols=2 rowHeight="300px"> 
+  <mat-grid-list cols=2 rowHeight="400px"> 
     <mat-grid-tile>
       <div class="controles-container">
         <input type="hidden" formControlName="id">
@@ -30,6 +30,12 @@
             <mat-error *ngIf="serviceTime.errors?.required && serviceTime.touched">Service time is required</mat-error>
             <mat-error *ngIf="serviceTime.errors?.pattern && serviceTime.touched">Incorrect service time</mat-error>
         </mat-form-field>
+        <mat-form-field *ngIf="isReadonly">
+            <input formControlName="createdTime" [value]="createdTimeValue | date: 'dd-MMM-yyyy, hh:mm:ss'" matInput placeholder="Created">
+        </mat-form-field>
+        <mat-form-field *ngIf="isReadonly">
+            <input formControlName="updatedTime" [value]="updatedTimeValue | date: 'dd-MMM-yyyy, hh:mm:ss'" matInput placeholder="Updated">
+        </mat-form-field>
       </div>
     </mat-grid-tile>
     <mat-grid-tile>
@@ -49,13 +55,19 @@
             <mat-error *ngIf="preOrder.errors?.required && step.touched">Pre order time limit is required</mat-error>
             <mat-error *ngIf="preOrder.errors?.pattern && step.touched">Incorrect pre order time limit </mat-error>
         </mat-form-field>
+        <mat-form-field *ngIf="isReadonly">
+            <input formControlName="createdUserId" matInput [value]="createdUserIdValue | userName | async" placeholder="Created by">
+        </mat-form-field>
+        <mat-form-field *ngIf="isReadonly">
+            <input formControlName="updatedUserId" matInput [value]="updatedUserIdValue | userName | async" placeholder="Updated by">
+        </mat-form-field>
         <div>
-          <mat-checkbox formControlName="isActive">Active Rule</mat-checkbox>
+          <mat-checkbox formControlName="isActive" >Active Rule</mat-checkbox>
         </div>
         <div class="button-row">
-          <button mat-raised-button (click)="onCreate()" [disabled]="form.invalid" *ngIf="!isUpdate" class="button-row-create" >Create</button>
+          <button mat-raised-button (click)="onCreate()" [disabled]="form.invalid"  *ngIf="!isUpdate && !isReadonly" class="button-row-create">Create</button>
           <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid" *ngIf="isUpdate">Submit</button>
-          <button mat-raised-button color="warn" (click)="onReset()">Reset</button>
+          <button mat-raised-button color="warn" (click)="onReset()" *ngIf="!isReadonly">Reset</button>
         </div>
       </div>
     </mat-grid-tile>
