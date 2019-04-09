@@ -1,93 +1,63 @@
-<form #form="ngForm" autocomplete="off" >
-  <input type="hidden" name="id" [ngModel]="service.Rule.id">
-  <div class="form-group">
-    <label>Title</label>
-    <input name="title" #title="ngModel" [(ngModel)]="service.Rule.title" class="form-control" pattern="^[\sa-zA-Z0-9_-]{4,64}$" required>
-    <div *ngIf="title.invalid && (title.dirty || title.touched)"  class="form-group validation-error">
-        <p>Incorrect title</p>
-    </div>
-  </div>
-
-  <div class="row">
-  <div class="form-group col-md-4">
-    <label>Min Time</label>
-    <input name="minTime"  #minTime="ngModel"  [(ngModel)]="service.Rule.minTime" class="form-control" pattern="^[0-9]{1,}$" required> 
-    <div *ngIf="minTime.invalid && (minTime.dirty || minTime.touched)" class="form-group validation-error">
-      <p>Incorrect min time</p>
-  </div>
-  </div>
-  <div class="form-group col-md-4">
-    <label>Max Time</label>
-    <input name="maxTime" #maxTime="ngModel" [(ngModel)]="service.Rule.maxTime" class="form-control" pattern="^[0-9]{1,}$" required>
-    <div *ngIf="maxTime.invalid && (maxTime.dirty || maxTime.touched)" class="form-group validation-error">
-      <p>Incorrect max time</p>
-    </div>
-  </div>
-  <div class="form-group col-md-4">
-      <label>Step Time</label>
-      <input name="stepTime" #stepTime="ngModel" [(ngModel)]="service.Rule.stepTime" class="form-control" pattern="^[0-9]{1,}$" required>
-      <div *ngIf="stepTime.invalid && (stepTime.dirty || stepTime.touched)" class="form-group validation-error">
-        <p>Incorrect step time</p>
-    </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-md-4">
-      <label>Service Time</label>
-      <input name="serviceTime" #serviceTime="ngModel" [(ngModel)]="service.Rule.serviceTime" class="form-control" pattern="^[0-9]{1,}$" required>
-      <div *ngIf="serviceTime.invalid && (serviceTime.dirty || serviceTime.touched)" class="form-group validation-error">
-        <p>Incorrect service time</p>
-    </div>    
-    </div>
-    <div class="form-group col-md-4">
-      <label>Pre order time Limit</label>
-      <input name="preOrderTimeLimit" #preOrderTimeLimit="ngModel" [(ngModel)]="service.Rule.preOrderTimeLimit" class="form-control" pattern="^[0-9]{1,}$" required>
-      <div *ngIf="preOrderTimeLimit.invalid && (preOrderTimeLimit.dirty || preOrderTimeLimit.touched)" class="form-group validation-error">
-        <p>Incorrect pre order time limit</p>
-    </div> 
-    </div>
-    <div class="form-group col-md-4">
-      <label>Reuse Timeout</label>
-      <input name="reuseTimeout" #reuseTimeout="ngModel" [(ngModel)]="service.Rule.reuseTimeout" class="form-control" pattern="^[0-9]{1,10}$" required>
-      <div *ngIf="reuseTimeout.invalid && (reuseTimeout.dirty || reuseTimeout.touched)" class="form-group validation-error">
-        <p>Incorrect reuse timeout</p>
-    </div> 
-    </div>
-  </div>
-  <div class="form-check  form-check-inline">
-    <label class="form-check-label">Active</label>
-    <input type="checkbox" name="isActive"[(ngModel)]="service.Rule.isActive" class="form-check-input" >
- </div>
-
-<div class="row" *ngIf="service.showAdditionalInfo==true" >
- <div class="form-group col-md-6" >
-    <label>Created</label>
-    <input name="createdTime" [ngModel]="service.Rule.createdTime | date: 'dd-MMM-yyyy, hh:mm:ss'" class="form-control form-control-createdTime" readonly>
-  </div>
-  <div class="form-group col-md-6" >
-    <label>Created by</label>
-    <input name="createdUserId" [ngModel]="service.Rule.createdUserId | userName | async"class="form-control form-control-createdUserId" readonly>
-  </div>
-</div>
-<div class="row" *ngIf="service.showAdditionalInfo==true">
-  <div class="form-group col-md-6">
-      <label>Updated</label>
-      <input name="updatedTime" [ngModel]="service.Rule.updatedTime | date: 'dd-MMM-yyyy, hh:mm:ss'" class="form-control form-control-updatedTime" readonly>
-    </div>
-    <div class="form-group col-md-6">
-      <label>Updated by</label>
-      <input name="updatedUserId" [ngModel]="service.Rule.updatedUserId | userName | async " class="form-control form-control-updatedUserId" readonly>
-    </div>
-</div>
-<div class="row">
-    <div class="form-group col-md-6">
-      <button (click)="onReset(form)" class="btn btn-block btn-danger">Reset</button>
-    </div>
-    <div class="form-group col-md-6" *ngIf="service.showAdditionalInfo==true">
-      <button (click)="onSubmit(form)" [disabled]="form.invalid" class="btn btn-submit btn-block btn-primary">Submit</button>
-    </div>
-    <div class="form-group col-md-6" *ngIf="service.showAdditionalInfo==false"> 
-      <button (click)="onAdd(form)" [disabled]="form.invalid" class="btn btn-submit btn-block btn-success">Add</button>
-    </div>
-</div>
+<mat-toolbar>
+    <span>{{isUpdate? "Edit Rule": "New Rule"}}</span>
+    <span class="fill-remaining-space"></span>
+    <button class="btn btn-md btn-dialog-close"(click)="onClose()">X</button>
+</mat-toolbar>
+<form [formGroup]="form"> 
+  <mat-grid-list cols=2 rowHeight="300px"> 
+    <mat-grid-tile>
+      <div class="controles-container">
+        <input type="hidden" formControlName="id">
+        <mat-form-field>
+          <input formControlName="title" matInput placeholder="Title" autocomplete="off" >
+          <mat-error *ngIf="title.errors?.required && title.touched">Title is required</mat-error>
+          <mat-error *ngIf="title.errors?.minlength">Mfinimum 4 characters needed</mat-error>
+          <mat-error *ngIf="title.errors?.maxlength">Maximum 64 characters</mat-error>
+          <mat-error *ngIf="title.errors?.pattern">Incorrect title name</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input formControlName="minTime" matInput placeholder="Min Time">
+            <mat-error *ngIf="minTime.errors?.required && minTime.touched">Min time is required</mat-error>
+            <mat-error *ngIf="minTime.errors?.pattern && minTime.touched">Incorrect min time</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input formControlName="maxTime" matInput placeholder="Max Time">
+            <mat-error *ngIf="maxTime.errors?.required && maxTime.touched">Max time is required</mat-error>
+            <mat-error *ngIf="maxTime.errors?.pattern && maxTime.touched">Incorrect max time</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input formControlName="serviceTime" matInput placeholder="Service Time">
+            <mat-error *ngIf="serviceTime.errors?.required && serviceTime.touched">Service time is required</mat-error>
+            <mat-error *ngIf="serviceTime.errors?.pattern && serviceTime.touched">Incorrect service time</mat-error>
+        </mat-form-field>
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="controles-container">
+        <mat-form-field>
+          <input formControlName="stepTime" matInput placeholder="Step Time">
+          <mat-error *ngIf="step.errors?.required && step.touched">Step time is required</mat-error>
+          <mat-error *ngIf="step.errors?.pattern && step.touched">Incorrect step time</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input formControlName="reuseTimeout" matInput placeholder="Reuse timeout">
+            <mat-error *ngIf="reuse.errors?.required && step.touched">Reuse timeout is required</mat-error>
+            <mat-error *ngIf="reuse.errors?.pattern && step.touched">Incorrect reuse timeout</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input formControlName="preOrderTimeLimit" matInput placeholder="Pre-order time limit">
+            <mat-error *ngIf="preOrder.errors?.required && step.touched">Pre order time limit is required</mat-error>
+            <mat-error *ngIf="preOrder.errors?.pattern && step.touched">Incorrect pre order time limit </mat-error>
+        </mat-form-field>
+        <div>
+          <mat-checkbox formControlName="isActive">Active Rule</mat-checkbox>
+        </div>
+        <div class="button-row">
+          <button mat-raised-button (click)="onCreate()" [disabled]="form.invalid" *ngIf="!isUpdate" class="button-row-create" >Create</button>
+          <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid" *ngIf="isUpdate">Submit</button>
+          <button mat-raised-button color="warn" (click)="onReset()">Reset</button>
+        </div>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
 </form>

@@ -8,7 +8,7 @@ import { rule } from '../../models/rule';
   templateUrl: './rule.component.html',
   styleUrls: ['./rule.component.css']
 })
-export class RuleComponent implements OnInit {
+export class SiteRuleComponent implements OnInit {
   @Input() ruleId: number;
 
   Rule: rule;
