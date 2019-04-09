@@ -6,51 +6,51 @@
     {{ apiError }}
   </div>
 
-  <table class="table table-bordered">
-    <thead class="thead-light">
-      <tr>
-        <th scope="col">Field name</th>
-        <th scope="col">Value</th>
-        <th scope="col">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><b>UserName</b></td>
-        <td>{{ user.userName }}</td>
-        <td><a routerLink="/cabinet/user/{{user.id}}/edit" class="btn btn-outline-primary mb-2">Edit</a></td>
-      </tr>
-      <tr>
-        <td><b>Email</b></td>
-        <td>{{ user.email }}</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><b>IsBlocked</b></td>
+  <table class="table">
+
+
+
+
+      <tr class="border-0">
+
         <td>
-          <span class="badge badge-success" *ngIf="user.isBlocked == false || user.isBlocked == null">Not blocked</span>
-          <span class="badge badge-danger" *ngIf="user.isBlocked">Blocked</span>
+          <span class="text-muted">#</span><input type="text" [value]="user.id" readonly onfocus="this.select();" class="border-0 text-muted d-inline-block" style="width:80%" />
+          <h1 class="display-4">{{ user.userName }}</h1>
+          <input type="text" [value]="user.email" readonly onfocus="this.select();" class="w-100 border-0 text-muted d-inline-block pl-2" />
+        </td>
+        <td class="align-middle"><a routerLink="/cabinet/user/{{user.id}}/edit" class="btn btn-primary mt-2">Rename</a></td>
+      </tr>
+
+      <tr>
+
+        <td class="align-middle">
+          This user is
+          <span *ngIf="user.isBlocked == false || user.isBlocked == null" class="badge badge-success">not blocked.</span>
+          <span *ngIf="user.isBlocked"><b class="badge badge-danger">blocked</b> by administrator.</span>
         </td>
         <td>
-          <button type="button" (click)="blockedUser(true)" class="btn btn-outline-danger" *ngIf="user.isBlocked == false || user.isBlocked == null">Blocked</button>
-          <button type="button" (click)="blockedUser(false)" class="btn btn-outline-success" *ngIf="user.isBlocked">Unblocked</button>
+          <button type="button" (click)="blockedUser(true)" class="btn btn-danger" *ngIf="user.isBlocked == false || user.isBlocked == null">Block user</button>
+          <button type="button" (click)="blockedUser(false)" class="btn btn-secondary" *ngIf="user.isBlocked">Unblock user</button>
         </td>
       </tr>
       <tr>
-        <td><b>ApprovalStatus</b></td>
-        <td>
-          <span class="badge badge-warning" *ngIf="user.approvalStatus == null">Awaiting</span>
-          <span class="badge badge-success" *ngIf="user.approvalStatus == true">Approved</span>
-          <span class="badge badge-danger" *ngIf="user.approvalStatus == false">Rejected</span>
+
+        <td class="align-middle">
+          <span *ngIf="user.approvalStatus == null">This user is <b class="badge badge-warning">awaiting</b> registration approval.</span>
+          <span *ngIf="user.approvalStatus == true">This users registration is <b class="badge badge-success">approved</b>.</span>
+          <span *ngIf="user.approvalStatus == false">This users registration is <b class="badge badge-danger">rejected</b>.</span>
         </td>
         <td>
-          <button type="button" (click)="approveUser(true)" class="btn btn-outline-success" *ngIf="user.approvalStatus == false || user.approvalStatus == null">Approve</button>
-          <button type="button" (click)="approveUser(false)" class="btn btn-outline-danger" *ngIf="user.approvalStatus == true || user.approvalStatus == null">Rejected</button>
+          <button type="button" (click)="approveUser(true)" class="btn btn-success" *ngIf="user.approvalStatus == false || user.approvalStatus == null">Approve</button>
+          <button type="button" (click)="approveUser(false)" class="btn btn-danger" *ngIf="user.approvalStatus == true || user.approvalStatus == null">Reject</button>
         </td>
       </tr>
-    </tbody>
+
   </table>
-  <button type="button" (click)="deleteUser()" class="btn btn-danger">Delete</button>
+  
+  <div class="border-top pt-2">
+    <button type="button" (click)="deleteUser()" class="btn btn-danger">Delete this user</button>
+  </div>
 </div>
 <ng-template #noUser>
   <h4>No user</h4>
