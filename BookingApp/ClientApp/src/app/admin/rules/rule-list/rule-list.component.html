@@ -1,3 +1,7 @@
+<div class="alert alert-danger alert-dismissable" *ngIf="error!= null" role="alert">
+    <p>{{error}}</p>
+    <button (click)="onClear()" class="btn btn-md btn-danger b-clear">Got It</button>
+</div>
 <div class="search-div">
   <mat-form-field class="search-field">
       <input matInput [(ngModel)]="searchKey" placeholder="Search" (keyup)="applyFilter()" autocomplete="off">

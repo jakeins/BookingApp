@@ -16,11 +16,14 @@ export class RuleListComponent implements OnInit {
   listData: MatTableDataSource<any>;
   searchKey:string;
   displayColumns: string[] = ['id', 'title', 'minTime', 'maxTime', 'serviceTime', 'isActive', 'actions'];
+  error: string;
 
 
-  constructor(private service: RuleService,
+  constructor(
+    private service: RuleService,
     private dialog: MatDialog
     ) { }
+
   ngOnInit() {
    this.updateTable();
   }
@@ -71,8 +74,14 @@ export class RuleListComponent implements OnInit {
     if(confirm('Are u sure to delete rule')){
     this.service.deleteRule(rowId).subscribe(res =>{
       this.updateTable();
+    },err => { 
+      this.error = err.status + ': ' + err.error.Message + '.';
     });
     }
+  }
+
+  onClear(){
+    this.error = null;
   }
 
   updateTable(){

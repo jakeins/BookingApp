@@ -27,6 +27,11 @@
     width: 32px;
 }
 
+.b-clear{
+    width: 100px ;
+    margin-left: 80%;
+} 
+
 .mat-column-id{
     flex: 0 0 10%;
 }

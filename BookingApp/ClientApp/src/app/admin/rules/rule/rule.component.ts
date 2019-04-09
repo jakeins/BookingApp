@@ -18,6 +18,7 @@ export class RuleComponent implements OnInit {
   numberPattern = "[0-9]{1,10}";
   isUpdate: boolean = false;
   isReadonly: boolean = false;
+  error: string;
   constructor(
     private service: RuleService,
     private fb: FormBuilder,
@@ -128,14 +129,22 @@ export class RuleComponent implements OnInit {
 
   onCreate(){
     if(this.form.valid){
-      this.service.addRule(this.form.value).subscribe();
+      this.service.addRule(this.form.value).subscribe(
+        () => {},
+        err => { 
+          this.error = err.status + ': ' + err.error.Message + '.';
+        });
       this.onClose()
     }
   }
 
   onSubmit(){
      if(this.form.valid){
-      this.service.updateRule(this.form.value).subscribe();
+      this.service.updateRule(this.form.value).subscribe(
+        () => {},
+        err => { 
+          this.error = err.status + ': ' + err.error.Message + '.';
+        });
       this.onClose();
      }
   }
@@ -154,7 +163,9 @@ export class RuleComponent implements OnInit {
       this.onReset();
     this.dialogRef.close();
   }
-
+  onClear(){
+    this.error = null;
+  }
   initializeForm(){
     this.form.setValue({
       id: null,
