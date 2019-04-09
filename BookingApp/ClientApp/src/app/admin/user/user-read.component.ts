@@ -28,6 +28,7 @@ export class UserReadComponent implements OnInit {
   blockedUser(isBlocked: boolean) {
     this.userService.blockUser(this.userId, isBlocked).subscribe((user: User) => {
       this.successMessage = "Operation success";
+      this.apiError = "";
       this.user.isBlocked = isBlocked;
     }, err => this.handleError(err));
   } 
@@ -35,6 +36,7 @@ export class UserReadComponent implements OnInit {
   approveUser(isApprove: boolean) {
     this.userService.approvalUser(this.userId, isApprove).subscribe((user: User) => {
       this.successMessage = "Operation success";
+      this.apiError = "";
       this.user.approvalStatus = isApprove;
     }, err => this.handleError(err));
   } 
