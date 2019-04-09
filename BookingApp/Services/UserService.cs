@@ -123,7 +123,7 @@ namespace BookingApp.Services
 
         public async Task RemoveUserRoleAsync(string userId, string role)
         {
-             ApplicationUser user = await GetUserById(userId);
+            ApplicationUser user = await GetUserById(userId);
             await userRepository.RemoveUserRole(user, role);
         }
 

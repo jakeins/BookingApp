@@ -9,6 +9,7 @@ import { CabinetComponent } from './cabinet.component';
 import { UserBookingsComponent } from './bookings/bookings.user.component';
 import { UserEditComponent } from './user/user-edit.component';
 import { BookingsModule } from '../bookings/bookings.module';
+import { UserChangePasswordComponent } from './user-change-password/user-change-password.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { BookingsModule } from '../bookings/bookings.module';
         CabinetComponent,
         HomeComponent,
         UserEditComponent,
-        UserBookingsComponent
+      UserBookingsComponent,
+      UserChangePasswordComponent
     ]
 })
 export class CabinetModule { }

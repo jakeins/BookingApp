@@ -15,6 +15,8 @@ import { UserNamePipe, RuleActivityPipe } from './rule.pipe';
 import { AdminBookingComponent } from './bookings/bookings.admin.component';
 import { BookingsModule } from '../bookings/bookings.module';
 import { MaterialModule } from '../material/material.module';
+import { UserReadComponent } from './user/user-read.component';
+import { UserCreateComponent } from './user/user-create.cpmponent';
 
 
 @NgModule({
@@ -33,11 +35,13 @@ import { MaterialModule } from '../material/material.module';
       ResourceEditComponent,
       FolderEditComponent,
       RulesComponent,
-       RuleComponent,
+      RuleComponent,
       UserNamePipe,
       RuleActivityPipe,
       AdminBookingComponent,
       RuleListComponent,
+      UserReadComponent,
+      UserCreateComponent
   ],
     entryComponents: [RuleComponent] 
 })

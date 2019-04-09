@@ -1,0 +1,57 @@
+<div *ngIf="user; else noUser">
+  <div *ngIf="successMessage != ''" class="alert alert-success" role="alert">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="apiError != ''" class="alert alert-danger" role="alert">
+    {{ apiError }}
+  </div>
+
+  <table class="table table-bordered">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Field name</th>
+        <th scope="col">Value</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>UserName</b></td>
+        <td>{{ user.userName }}</td>
+        <td><a routerLink="/cabinet/user/{{user.id}}/edit" class="btn btn-outline-primary mb-2">Edit</a></td>
+      </tr>
+      <tr>
+        <td><b>Email</b></td>
+        <td>{{ user.email }}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><b>IsBlocked</b></td>
+        <td>
+          <span class="badge badge-success" *ngIf="user.isBlocked == false || user.isBlocked == null">Not blocked</span>
+          <span class="badge badge-danger" *ngIf="user.isBlocked">Blocked</span>
+        </td>
+        <td>
+          <button type="button" (click)="blockedUser(true)" class="btn btn-outline-danger" *ngIf="user.isBlocked == false || user.isBlocked == null">Blocked</button>
+          <button type="button" (click)="blockedUser(false)" class="btn btn-outline-success" *ngIf="user.isBlocked">Unblocked</button>
+        </td>
+      </tr>
+      <tr>
+        <td><b>ApprovalStatus</b></td>
+        <td>
+          <span class="badge badge-warning" *ngIf="user.approvalStatus == null">Awaiting</span>
+          <span class="badge badge-success" *ngIf="user.approvalStatus == true">Approved</span>
+          <span class="badge badge-danger" *ngIf="user.approvalStatus == false">Rejected</span>
+        </td>
+        <td>
+          <button type="button" (click)="approveUser(true)" class="btn btn-outline-success" *ngIf="user.approvalStatus == false || user.approvalStatus == null">Approve</button>
+          <button type="button" (click)="approveUser(false)" class="btn btn-outline-danger" *ngIf="user.approvalStatus == true || user.approvalStatus == null">Rejected</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="button" (click)="deleteUser()" class="btn btn-danger">Delete</button>
+</div>
+<ng-template #noUser>
+  <h4>No user</h4>
+</ng-template>
