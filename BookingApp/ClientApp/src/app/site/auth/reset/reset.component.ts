@@ -59,7 +59,6 @@ export class ResetComponent implements OnInit, OnDestroy {
   private comparePassword(group: FormGroup) {
     const pass = group.value.password;
     const confirm = group.value.confirmPassword;
-
     return pass === confirm ? null : { notSame: true };
   }
 

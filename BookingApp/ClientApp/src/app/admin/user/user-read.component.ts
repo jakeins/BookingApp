@@ -15,9 +15,7 @@ export class UserReadComponent implements OnInit {
   private apiError: string = "";
   private successMessage = "";
 
-  constructor(private userService: UserService, private router: Router, private actRoute: ActivatedRoute) {
-
-  }
+  constructor(private userService: UserService, private router: Router, private actRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.userId = this.actRoute.snapshot.params['id'];

@@ -13,9 +13,7 @@ export class UserComponent implements OnInit {
   loaded: boolean;
   pageSize:number = 10;
  
-  constructor(private userService: UserService) {
-    
-  }
+  constructor(private userService: UserService) { }
 
   getUserPages(page: number, pageSize: number) {
     this.userService.getUsersPage(page, pageSize).subscribe((res: UserPage) => {

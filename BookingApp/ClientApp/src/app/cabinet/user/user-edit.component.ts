@@ -4,7 +4,7 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserUpdate } from '../../models/user-update';
 import { User } from '../../models/user';
-
+import { USERNAME_REGEX } from '../../globals';
 
 @Component({
   selector: 'app-cabinet-edit-profile',
@@ -43,12 +43,11 @@ export class UserEditComponent implements OnInit {
 
   private initializeForm() {
     this.editUserForm = new FormGroup({
-      userName: new FormControl(this.userUpdate.userName, [Validators.required, Validators.minLength(3)])
+      userName: new FormControl(this.userUpdate.userName, [Validators.required, Validators.minLength(3), Validators.pattern(USERNAME_REGEX)])
     });
   }
 
   private handleError(error: any) {
-    console.log(error);
     this.apiError = error.error.Message;
     this.successMessage = "";
   }

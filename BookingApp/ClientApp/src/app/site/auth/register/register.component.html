@@ -21,7 +21,7 @@
                 <span class="form-help-text" *ngIf="registerForm.get('userName').invalid && registerForm.get('userName').dirty">
                   <span *ngIf="registerForm.get('userName')['errors']['required']">Field can`t be empty.<br /></span>
                   <span *ngIf="registerForm.get('userName')['errors']['minlength']">Enter more 3 character.<br /></span>
-                  <span *ngIf="registerForm.get('userName')['errors']['pattern']">Enter pattern [A-Za-zА-ЩЬЮЯҐЄІЇа-щьюяґєії'0-9- _] .</span>
+                  <span *ngIf="registerForm.get('userName')['errors']['pattern']">The field contains forbidden characters.</span>
                 </span>
               </div>
             </div>

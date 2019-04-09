@@ -3,7 +3,7 @@ import { UserService } from '../../services/user.service';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AdminRegister } from '../../models/admin-register';
-
+import { USERNAME_REGEX } from '../../globals';
 
 @Component({
   selector: 'app-admin-user-create',
@@ -18,7 +18,7 @@ export class UserCreateComponent implements OnInit {
 
   constructor(private userService: UserService, private router: Router, private actRoute: ActivatedRoute) {
     this.createUserForm = new FormGroup({
-      'userName': new FormControl('', [Validators.required, Validators.minLength(3)]),
+      'userName': new FormControl('', [Validators.required, Validators.minLength(3), Validators.pattern(USERNAME_REGEX)]),
       'email': new FormControl('', [Validators.required, Validators.email]),
     });
   }
