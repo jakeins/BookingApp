@@ -15,7 +15,7 @@ export class AdminComponent implements OnInit {
   ngOnInit() {
     this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => {
       if (!this.authService.isAdmin) {
-        this.router.navigate(['/error/401']);
+        this.router.navigate(['/']);
       }
     });
   }

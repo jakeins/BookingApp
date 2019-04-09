@@ -123,7 +123,7 @@ namespace BookingApp.Services
 
         public async Task RemoveUserRoleAsync(string userId, string role)
         {
-             ApplicationUser user = await GetUserById(userId);
+            ApplicationUser user = await GetUserById(userId);
             await userRepository.RemoveUserRole(user, role);
         }
 
@@ -169,14 +169,10 @@ namespace BookingApp.Services
 
         public async Task RemoveAllRolesFromUser(string userId)
         {
-           IList<string>  list = await GetUserRolesById(userId);
-           if(list != null)
-           {
-                foreach (var role in list)
-                {
-                  await  RemoveUserRoleAsync(userId, role);
-                }
-           }
+            foreach (var role in await GetUserRolesById(userId))
+            {
+                await RemoveUserRoleAsync(userId, role);
+            }
         }
 
         public async Task<bool> IsEmailExist(string email)

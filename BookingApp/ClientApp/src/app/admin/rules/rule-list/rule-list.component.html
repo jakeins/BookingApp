@@ -1,16 +1,50 @@
-<div class="alert alert-danger alert-dismissable" *ngIf="error!= null" role="alert">
-    <button (click)="onReset()" class="btn btn-sm btn-outline-danger b-reset">X</button>
-    <p>{{error}}</p>
+<div class="search-div">
+  <mat-form-field class="search-field">
+      <input matInput [(ngModel)]="searchKey" placeholder="Search" (keyup)="applyFilter($event.target.value)" autocomplete="off">
+      <span class="fill-remaining-place"></span>
+      <button mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey" (click)="onSearchReset()"><mat-icon>close</mat-icon></button>
+    </mat-form-field>
+    <div class="buttons-row">
+      <button mat-stroked-button class="search-div-create" (click)="onCreate()">
+      <span>Create</span></button>
+    </div>
 </div>
-<table class="table table-hover">
-  <tr>
-      <th>Id</th>
-      <th>Activity</th>
-      <th></th>
-  </tr>
-  <tr *ngFor="let rule of service.Rules;let i = index" (click)="populateForm(rule, i)" [class.active]="i == selectedRow">
-    <td >{{rule.id}}</td>
-    <td >{{showActive(rule.isActive)}}</td>
-    <td ><button (click)="onDelete(rule.id)" class="btn btn-sm btn-outline-danger">X</button></td>
-  </tr>
-</table>
+<div class="mat-elevation-z8">
+  <mat-table [dataSource]="listData" matSort>
+      <ng-container matColumnDef="id">
+          <mat-header-cell *matHeaderCellDef mat-sort-header >Id</mat-header-cell>
+          <mat-cell *matCellDef="let element" >{{element.id}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="title">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Title</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.title}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="minTime">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Min Time</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.minTime}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="maxTime">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Max Time</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.maxTime}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="serviceTime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Service Time</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{element.serviceTime}}</mat-cell>
+          </ng-container>
+        <ng-container matColumnDef="isActive">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Activity</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.isActive | activity}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions" >
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <button mat-icon-button (click)="onEdit(row.id)"><mat-icon>edit</mat-icon></button>
+            <button mat-icon-button (click)="onDelete(row.id)" color="warn"><mat-icon>delete_outline</mat-icon></button>
+          </mat-cell>
+        </ng-container>
+  <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayColumns;"></mat-row>
+
+</mat-table>
+<mat-paginator [pageSizeOptions]="[5,10,20,100]" [pageSize]="5" showFirstLastButtons></mat-paginator>
+</div>

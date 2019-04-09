@@ -2,7 +2,7 @@
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
 using BookingApp.DTOs.User;
-using BookingApp.Exceptions;
+using System.Net;
 using BookingApp.DTOs.Resource;
 using BookingApp.Helpers;
 using BookingApp.Services;
@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookingApp.Controllers.Bases;
+
 
 namespace BookingApp.Controllers
 {
@@ -153,18 +154,26 @@ namespace BookingApp.Controllers
         {
             await userService.RemoveAllRolesFromUser(userId);
             await userService.DeleteUser(userId);
-            return new OkObjectResult("User deleted");
+            return Ok(new { DeletedTime = DateTime.Now });
         }
 
         [Authorize(Roles = RoleTypes.User)]
         [HttpPut("api/user/{userId}")]
-        public async Task<IActionResult> UpdateUser([FromBody]UserUpdateDTO user, [FromRoute]string userId)
+        public async Task<IActionResult> UpdateUser([FromBody]UserUpdateDTO userDto, [FromRoute]string userId)
         {
             if (UserId == userId || IsAdmin)
             {
-                ApplicationUser appuser = await userService.GetUserById(userId);
-                mapper.Map<UserUpdateDTO, ApplicationUser>(user, appuser);
-                await userService.UpdateUser(appuser);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                ApplicationUser userModel = await userService.GetUserById(userId);
+
+                if (userDto.HasNameOnly())
+                    userModel.UserName = userDto.UserName;
+                else
+                    mapper.Map(userDto, userModel);
+
+                await userService.UpdateUser(userModel);
                 return new OkObjectResult("User updated");
             }
             else
@@ -204,6 +213,13 @@ namespace BookingApp.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var user = await userService.GetUserById(userId);
+            if (!await userService.CheckPassword(user, userDTO.CurrentPassword))
+            {
+                return BadRequest("You have entered wrong your password!");
+            }
+
             if (UserId == userId)
             {
                 await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
@@ -246,9 +262,10 @@ namespace BookingApp.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPut("api/user/{userId}/reset-password")]
+        [HttpPut("api/user/{userId}/reset-password/{token}")]
         public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
         {
+            token = (WebUtility.UrlDecode(token)).Replace(" ", "+");
             if (!ModelState.IsValid)
                  return BadRequest(ModelState);
             await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);

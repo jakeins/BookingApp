@@ -441,62 +441,6 @@ namespace BookingAppTests.Controllers
 
         #endregion
 
-        #region ChangePassword
-
-        [Fact]
-        public async void Get_WhenCalled_ChangePassword()
-        {
-            // Arrange
-            var mockUserPasswordChangeDTO = new Mock<UserPasswordChangeDTO>();
-            var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.ChangePassword(It.IsAny<string>() , It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
-            var mockResourcesService = new Mock<IResourcesService>();
-            var mockBookingService = new Mock<IBookingsService>();
-            var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
-            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
-            // Act 
-            var result = await mockController.Object.ChangePassword(mockUserPasswordChangeDTO.Object, It.IsAny<string>()) as OkObjectResult;
-
-            // Assert
-            Assert.IsType<OkObjectResult>(result);
-        }
-
-        [Fact]
-        public async void Get_NullReferenceException_WhenCalled_ChangePassword()
-        {
-            // Arrange
-            var mockUserPasswordChangeDTO = new Mock<UserPasswordChangeDTO>();
-            var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.ChangePassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new NullReferenceException("Can not find user with this id"));
-            var mockResourcesService = new Mock<IResourcesService>();
-            var mockBookingService = new Mock<IBookingsService>();
-            var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
-            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
-            // Act and Assert
-            var ex = await Assert.ThrowsAsync<NullReferenceException>(() => mockController.Object.ChangePassword(mockUserPasswordChangeDTO.Object, It.IsAny<string>()));
-            Assert.Equal("Can not find user with this id", ex.Message);
-        }
-
-        [Fact]
-        public async void Get_UserExceptions_WhenCalled_ChangePassword()
-        {
-            // Arrange
-            var mockUserPasswordChangeDTO = new Mock<UserPasswordChangeDTO>();
-            var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.ChangePassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new UserException("Default User Exception"));
-            var mockResourcesService = new Mock<IResourcesService>();
-            var mockBookingService = new Mock<IBookingsService>();
-            var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
-            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
-            // Act and Assert
-            var ex = await Assert.ThrowsAsync<UserException>(() => mockController.Object.ChangePassword(mockUserPasswordChangeDTO.Object, It.IsAny<string>()));
-            Assert.Equal("Default User Exception", ex.Message);
-        }
-        #endregion
-
         #region UserApproval
         [Fact]
         public async void Get_WhenCalled_UserApproval()
@@ -606,62 +550,5 @@ namespace BookingAppTests.Controllers
             Assert.Equal("Default User Exception", ex.Message);
         }
         #endregion
-
-        #region ChangePassword
-
-        [Fact]
-        public async void Get_WhenCalled_ResetPassword()
-        {
-            // Arrange
-            var mockUserNewPasswordDto = new Mock<UserNewPasswordDto>();
-            var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.ResetUserPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
-            var mockResourcesService = new Mock<IResourcesService>();
-            var mockBookingService = new Mock<IBookingsService>();
-            var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
-            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);  
-            // Act 
-            var result = await mockController.Object.ResetPassword(It.IsAny<string>() , It.IsAny<string>() ,mockUserNewPasswordDto.Object) as OkObjectResult;
-
-            // Assert
-            Assert.IsType<OkObjectResult>(result);
-        }
-
-        [Fact]
-        public async void Get_NullReferenceException_WhenCalled_ResetPassword()
-        {
-            // Arrange
-            var mockUserNewPasswordDto = new Mock<UserNewPasswordDto>();
-            var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.ResetUserPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new NullReferenceException("Can not find user with this id"));
-            var mockResourcesService = new Mock<IResourcesService>();
-            var mockBookingService = new Mock<IBookingsService>();
-            var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
-
-            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);            // Act and Assert
-            var ex = await Assert.ThrowsAsync<NullReferenceException>(() => mockController.Object.ResetPassword(It.IsAny<string>(), It.IsAny<string>(), mockUserNewPasswordDto.Object));
-            Assert.Equal("Can not find user with this id", ex.Message);
-        }
-
-        [Fact]
-        public async void Get_UserExceptions_WhenCalled_ResetPassword()
-        {
-            // Arrange
-            var mockUserNewPasswordDto = new Mock<UserNewPasswordDto>();
-            var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.ResetUserPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new UserException("Default User Exception"));
-            var mockResourcesService = new Mock<IResourcesService>();
-            var mockBookingService = new Mock<IBookingsService>();
-            var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
-            mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
-            // Act and Assert
-            var ex = await Assert.ThrowsAsync<UserException>(() => mockController.Object.ResetPassword(It.IsAny<string>(), It.IsAny<string>(), mockUserNewPasswordDto.Object));
-            Assert.Equal("Default User Exception", ex.Message);
-        }
-        #endregion
-
     }
 }

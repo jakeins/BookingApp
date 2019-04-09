@@ -30,7 +30,7 @@ import { TosComponent } from './tos/tos.component';
     AppHeaderComponent,
     AppFooterComponent,
     BreadcrumbsComponent,
-    RuleComponent,
+    SiteRuleComponent,
   ],
   imports: [
     CommonModule,

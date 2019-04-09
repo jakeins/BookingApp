@@ -223,39 +223,6 @@ namespace BookingApp.Data
         }
 
         /// <summary>
-        /// Seeds booking in a simple manner. The bookings do not follow the booking rules and may overlap, causing same-time booking conflict.
-        /// </summary>
-        private void SeedBookingsSimple(Random rand, string loremIpsum, Dictionary<string, ApplicationUser> users, Dictionary<int, Resource> resources)
-        {
-            var bookings = new List<Booking>();
-            for (int i = 0; i < 50; i++)
-            {
-                var booking = new Booking
-                {
-                    Note = loremIpsum.Substring(rand.Next(loremIpsum.Length - 200), rand.Next(0, 64)).Trim(),
-                    Resource = resources[rand.Next(1, resources.Count)],
-                    StartTime = DateTime.Now + TimeSpan.FromMinutes(rand.Next(-1440 * 3, +1440 * 2)),
-                    Creator = users.OrderBy(e => rand.Next()).First().Value
-                };
-                booking.EndTime = booking.StartTime + TimeSpan.FromMinutes(rand.Next(booking.Resource.Rule.MinTime ?? 1, booking.Resource.Rule.MaxTime ?? 1440));
-                booking.Updater = booking.Creator;
-
-                bookings.Add(booking);
-            }
-
-            //cancel out some bookings
-            foreach (var booking in bookings.OrderBy(b => rand.Next()).Take(bookings.Count() / 5).ToList())
-            {
-                var deviationMagnitude = booking.Resource.Rule.MaxTime ?? 360;
-                var deviation = TimeSpan.FromMinutes(rand.Next(-deviationMagnitude, +deviationMagnitude));
-                booking.TerminationTime = booking.StartTime + deviation;
-            }
-
-            //pushing into EF
-            context.Bookings.AddRange(bookings);
-        }
-
-        /// <summary>
         /// Seeds bookings without overlaps. For each resource, fill bookings from the end.
         /// </summary>
         private void SeedBookingsNonOverlapping(Random rand, string loremIpsum, Dictionary<string, ApplicationUser> users, Dictionary<int, Resource> resources)
@@ -268,20 +235,20 @@ namespace BookingApp.Data
             {
                 Resource r = entry.Value;
 
-#region Per-resource variables
-                int stepMinutes = (int)r.Rule.StepTime;
-                int preOrderLimit = r.Rule.PreOrderTimeLimit < 1 ? day : (int)r.Rule.PreOrderTimeLimit;
+            #region Per-resource variables
+                int stepMinutes = r.Rule.StepTime ?? 1;
+                int preOrderLimit = r.Rule.PreOrderTimeLimit < 1 ? day : (r.Rule.PreOrderTimeLimit ?? 0);
 
-                int maxMinutes =  (int)r.Rule.MaxTime;
+                int maxMinutes =  r.Rule.MaxTime ?? 1440;
                 int maxSteps = maxMinutes / stepMinutes;
 
-                int minMinutes = (int)r.Rule.MinTime;
+                int minMinutes = r.Rule.MinTime ?? 1;
                 int minSteps = minMinutes / stepMinutes;
 
-                int serviceMinutes = (int)r.Rule.ServiceTime;
+                int serviceMinutes = r.Rule.ServiceTime ?? 0;
 
                 int postUsageDelayMinutesLimit = rand.Next(maxMinutes, day);
-#endregion
+            #endregion
 
                 // The value used in a loop, for correct time determination
                 int earliestOccupiedMinute = preOrderLimit + maxMinutes;
