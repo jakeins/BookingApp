@@ -11,7 +11,7 @@ import { ErrorComponent } from './error/error.component';
 import { ResourceComponent } from './resource/resource.component';
 import { TreeComponent } from './tree/tree.component';
 import { AppHeaderComponent } from './header/header.component';
-import { RuleComponent } from './rule/rule.component';
+import { SiteRuleComponent } from './rule/rule.component';
 import { BreadcrumbsComponent } from './breadcrumbs/breadcrumbs.component';
 import { BookingsModule } from '../bookings/bookings.module';
 
@@ -26,7 +26,7 @@ import { BookingsModule } from '../bookings/bookings.module';
     ErrorComponent,
     AppHeaderComponent,
     BreadcrumbsComponent,
-    RuleComponent,
+    SiteRuleComponent,
   ],
   imports: [
     CommonModule,

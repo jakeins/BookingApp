@@ -8,12 +8,13 @@ import { UserComponent } from './user/user.component';
 import { AdminComponent } from './admin.component';
 import { ResourceEditComponent } from './resource/resource-edit.component';
 import { FolderEditComponent } from './folder/folder-edit.component';
-import { RulesComponent } from './rules/rules.component';
-import { RuleComponent } from './rules/rule/rule.component';
+import { RulesComponent } from './rules/rules.component'
+ import { RuleComponent } from './rules/rule/rule.component';
 import { RuleListComponent } from './rules/rule-list/rule-list.component';
-import { UserNamePipe } from './user-name.pipe';
+import { UserNamePipe, RuleActivityPipe } from './rule.pipe';
 import { AdminBookingComponent } from './bookings/bookings.admin.component';
 import { BookingsModule } from '../bookings/bookings.module';
+import { MaterialModule } from '../material/material.module';
 import { UserReadComponent } from './user/user-read.component';
 import { UserCreateComponent } from './user/user-create.cpmponent';
 
@@ -24,7 +25,8 @@ import { UserCreateComponent } from './user/user-create.cpmponent';
     FormsModule,
     ReactiveFormsModule,
     AdminRoutingModule,
-    BookingsModule
+    BookingsModule,
+    MaterialModule
   ],
   declarations: [
       AdminComponent,
@@ -33,12 +35,16 @@ import { UserCreateComponent } from './user/user-create.cpmponent';
       ResourceEditComponent,
       FolderEditComponent,
       RulesComponent,
-      RuleComponent,
+       RuleComponent,
+      UserNamePipe,
+      RuleActivityPipe,
+      AdminBookingComponent,
       RuleListComponent,
       UserNamePipe,
       AdminBookingComponent,
       UserReadComponent,
       UserCreateComponent
   ],
+    entryComponents: [RuleComponent] 
 })
 export class AdminModule { }

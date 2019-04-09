@@ -1,13 +1,39 @@
-.btn-outline-danger{
-    float: right;
+.search-div{
+    width: 100%;
+    display: inline-flex;
+}
+.search-field{
+    flex-basis: 92%;
+}
+.buttons-row{
+    flex-basis: 8%;
+}
+.search-div-create{
+    margin-top: 10px;
+    color: #fff;
+    background-color: #28a745;
+}
+.search-form-field div.mat-form-field-underline{
+    display: none;
+}
+.search-form-field div.mat-form-field-infix{
+    border-top: 0px;
+}
+.search-form-field div.mat-form-field-wrapper{
+    padding-bottom: 0px;
+}
+.search-form-field div.mat-form-field-suffix button{
+    height: 32px;
+    width: 32px;
 }
 
-.table tr.active td {
-    background-color: #7FFFD4;
+.mat-column-id{
+    flex: 0 0 100px;
 }
-
-.b-reset{
-    position: absolute;
-    top: 0;
-    right: 0;
+.mat-column-title{
+    flex: 0 0 180px ; 
+}
+ 
+.mat-column-actions{
+    flex: 0 0 90px;
 }
