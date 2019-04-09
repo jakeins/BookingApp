@@ -10,6 +10,7 @@ using BookingApp.Services.Interfaces;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BookingApp.Exceptions;
 
 namespace BookingApp.Controllers
 {
@@ -39,9 +40,18 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = await userService.GetUserByEmail(dto.Email);
+            ApplicationUser user = null;
+            bool userNotFound = false;
+            try
+            {
+                user = await userService.GetUserByEmail(dto.Email);
+            }
+            catch (CurrentEntryNotFoundException)
+            {
+                userNotFound = true;
+            }            
 
-            if (!await userService.CheckPassword(user, dto.Password))
+            if (userNotFound || !await userService.CheckPassword(user, dto.Password))
             {
                 ModelState.AddModelError("loginFailure", "Invalid email or password");
                 return BadRequest(ModelState);

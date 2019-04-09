@@ -1,60 +1,10 @@
-body {
-}
-ul{
-  list-style: none;
-}
 tr th
 {
   text-align:center;
   width:250px;
 }
-.icon {
-  margin: 0 5%;
-}
 tr td {
   text-align: center;
-}
-.user-item:hover {
-  background-color: #f8f8f8;
-}
-.fa-lock {
-  color: #FF3737 !important;
-}
-.fa-check {
-  color: #007bff !important;
-  font-size: 18px!important;
-}
-.fa-times
-{
-  color: #FF3737 !important;
-  font-size: 18px !important;
-}
-.fa-check:hover {
-  transform: scale(1.2);
-}
-
-.fa-times:hover {
-  transform: scale(1.2);
-}
-.fa-lock:hover {
-  transform: scale(1.2);
-}
-.fa-lock-open:hover {
-  transform: scale(1.2);
-}
-.fa-lock-open {
-  color: #2acc56 !important;
-}
-.right {
-  float: right;
-  display: inline-block;
-  width: 5px;
-  margin: 0 5% 0 0;
-}
-.left {
-  float: left;
-  display: inline-block;
-  margin: 0 5% 0 0;
 }
 .page 
 {
@@ -76,5 +26,35 @@ tr td {
   background-color: #007bff;
   border-color: #007bff;
   color: white;
+}
+
+/* Validation */
+.form-help-text {
+  font-size: 12px;
+}
+
+.form-help-text {
+  color: #ff6c6c;
+}
+
+.ng-valid {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid {
+  border-left: 5px solid #808080; /* grey */
+}
+
+  .ng-invalid.ng-touched {
+    border-left: 5px solid #a94442; /* red */
+  }
+/* Validation */
+.foreget_link {
+  margin-left: 10px;
+  font-size: 12px;
+}
+
+.card-header {
+  font-size: 30px;
 }
 

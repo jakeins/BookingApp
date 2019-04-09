@@ -1,0 +1,57 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">Create admin</div>
+        <div class="card-body">
+          <div *ngIf="successMessage != ''" class="alert alert-success" role="alert">
+            {{ successMessage }}
+          </div>
+          <div *ngIf="apiError != ''" class="alert alert-danger" role="alert">
+            {{ apiError }}
+          </div>
+
+          <form [formGroup]="createUserForm" (ngSubmit)="createUser()">
+
+            <div class="form-group row">
+              <label class="col-md-4 col-form-label text-md-right">Username</label>
+              <div class="col-md-6">
+                <input formControlName="userName" type="text" class="form-control underlined" id="userName"
+                       placeholder="name">
+                <span class="form-help-text" *ngIf="createUserForm.get('userName').invalid && createUserForm.get('userName').dirty">
+                  <span *ngIf="createUserForm.get('userName')['errors']['required']">Field can`t be empty.<br /></span>
+                  <span *ngIf="createUserForm.get('userName')['errors']['minlength']">Enter more 3 character.</span>
+                  <span *ngIf="createUserForm.get('userName')['errors']['pattern']">The field contains forbidden characters.</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-4 col-form-label text-md-right">Email</label>
+              <div class="col-md-6">
+                <input formControlName="email" type="text" class="form-control underlined" id="email"
+                       placeholder="name@email.com">
+                <span class="form-help-text" *ngIf="createUserForm.get('email').invalid && createUserForm.get('email').dirty">
+                  <span *ngIf="createUserForm.get('email')['errors']['required']">Field can`t be empty.<br /></span>
+                  <span *ngIf="createUserForm.get('email')['errors']['email']">Field must be correct email.</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="form-group row mb-0">
+              <div class="col-md-6 offset-md-4">
+                <button type="submit" class="btn btn-primary"
+                        [disabled]="createUserForm.invalid">
+                  Create
+                  <span class="ti-user"></span>
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

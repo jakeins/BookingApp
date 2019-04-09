@@ -10,6 +10,8 @@ import { ResourceEditComponent } from './resource/resource-edit.component';
 import { FolderEditComponent } from './folder/folder-edit.component';
 import { RulesComponent } from './rules/rules.component';
 import { AdminBookingComponent } from './bookings/bookings.admin.component';
+import { UserReadComponent } from './user/user-read.component';
+import { UserCreateComponent } from './user/user-create.cpmponent';
 
 
 const routesAdmin: Routes = [
@@ -17,6 +19,8 @@ const routesAdmin: Routes = [
     path: '', component: AdminComponent, canActivate: [AdminGuard], children: [
       { path: '', component: HomeComponent, data: { breadcrumbIgnore: true } },
       { path: 'users', component: UserComponent, data: { breadcrumbLabel: 'Users management' } },
+      { path: 'users/create', component: UserCreateComponent, data: { breadcrumbLabel: 'Create admin' } },
+      { path: 'users/:id', component: UserReadComponent, data: { breadcrumbLabel: 'Users Read' } },
       { path: 'resources/create', component: ResourceEditComponent, data: { breadcrumbLabel: 'Resource Creation' } },
       { path: 'resources/:id/edit', component: ResourceEditComponent, data: { breadcrumbLabel: 'Resource Editing' } },
       { path: 'folders/create', component: FolderEditComponent, data: { breadcrumbLabel: 'Folder Creation' } },

@@ -1,0 +1,28 @@
+/* Validation */
+.form-help-text {
+  font-size: 12px;
+}
+
+.form-help-text {
+  color: #ff6c6c;
+}
+
+.ng-valid {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid {
+  border-left: 5px solid #808080; /* grey */
+}
+
+.ng-invalid.ng-touched {
+  border-left: 5px solid #a94442; /* red */
+}
+/* Validation */
+.foreget_link  {
+  margin-left: 10px;
+  font-size: 12px;
+}
+.card-header {
+  font-size: 30px;
+}

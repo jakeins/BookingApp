@@ -1,4 +1,4 @@
-using BookingApp.Data.Models;
+﻿using BookingApp.Data.Models;
 using BookingApp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,6 +46,10 @@ namespace BookingApp
             {
                 // Temporary mild password policy: to be strictened
                 options.Password = PasswordSettings.GetPasswordSettings().Password;
+                
+                options.User.AllowedUserNameCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЮЯҐЄІЇабвгдеёжзийклмнопрстуфхцчшщьюяґєії'0123456789 -_";//A-Za-zА-ЩЬЮЯҐЄІЇа-щьюяґєії'0-9 -_
+                options.User.RequireUniqueEmail = true;  
+
             }).AddRoles<IdentityRole>()
               .AddEntityFrameworkStores<ApplicationDbContext>()
               .AddDefaultTokenProviders();

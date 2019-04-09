@@ -1,85 +1,70 @@
 <div class="container">
-  <!--<div class="row">
-    <div class="col">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Sign Up</li>
-        </ol>
-      </nav>
-    </div>
-  </div>-->
+
   <div class="row justify-content-center">
     <div class="col-md-8">
+
+      <div *ngIf="apiError != ''" class="alert alert-danger" role="alert">
+        {{ apiError }}
+      </div>
+
       <div class="card">
         <div class="card-header">Sign Up</div>
 
         <div class="card-body">
           <form [formGroup]="registerForm" (ngSubmit)="register()">
+
             <div class="form-group row">
-              <label class="col-md-4 col-form-label text-md-right">Username</label>
+              <label class="col-md-4 col-form-label text-md-right" for="userName">Username</label>
               <div class="col-md-6">
                 <input formControlName="userName" type="text" class="form-control underlined" id="userName"
-                  placeholder="name">
-              </div>
-            </div>
-
-            <div class="form-group row offset-md-4">
-              <div class="alert alert-danger"
-                *ngIf="registerForm.controls['userName'].invalid && registerForm.controls['userName'].touched">
-                Not valid field
+                       placeholder="name">
+                <span class="form-help-text" *ngIf="registerForm.get('userName').invalid && registerForm.get('userName').dirty">
+                  <span *ngIf="registerForm.get('userName')['errors']['required']">Field can`t be empty.<br /></span>
+                  <span *ngIf="registerForm.get('userName')['errors']['minlength']">Enter more 3 character.<br /></span>
+                  <span *ngIf="registerForm.get('userName')['errors']['pattern']">The field contains forbidden characters.</span>
+                </span>
               </div>
             </div>
 
             <div class="form-group row">
-              <label class="col-md-4 col-form-label text-md-right">Email</label>
+              <label class="col-md-4 col-form-label text-md-right" for="email">Email</label>
               <div class="col-md-6">
                 <input formControlName="email" type="text" class="form-control underlined" id="email"
-                  placeholder="name@email.com">
-              </div>
-            </div>
-
-            <div class="form-group row offset-md-4">
-              <div class="alert alert-danger"
-                *ngIf="registerForm.controls['email'].invalid && registerForm.controls['email'].touched">
-                Not valid field
-              </div>
-            </div>
-
-            <div class="form-group row">
-              <label class="col-md-4 col-form-label text-md-right">Password</label>
-              <div class="col-md-6">
-                <input formControlName="password" type="password" class="form-control underlined" id="password"
-                  placeholder="***">
-              </div>
-            </div>
-
-            <div class="form-group row offset-md-4">
-              <div class="alert alert-danger"
-                *ngIf="registerForm.controls['password'].invalid && registerForm.controls['password'].touched">
-                Not valid field
+                       placeholder="name@email.com">
+                <span class="form-help-text" *ngIf="registerForm.get('email').invalid && registerForm.get('email').dirty">
+                  <span *ngIf="registerForm.get('email')['errors']['required']">Field can`t be empty.<br /></span>
+                  <span *ngIf="registerForm.get('email')['errors']['email']">Field must be correct email.</span>
+                </span>
               </div>
             </div>
 
             <div class="form-group row">
-              <label class="col-md-4 col-form-label text-md-right">Confirm Password</label>
+              <label class="col-md-4 col-form-label text-md-right" for="password">Password</label>
               <div class="col-md-6">
-                <input formControlName="confirmPassword" type="password" class="form-control underlined"
-                  id="confirmPassword" placeholder="***">
+                <input formControlName="password" type="password" class="form-control underlined" id="password" [ngClass]="{'ng-invalid':registerForm.hasError('notSame')}"
+                       >
+                <span class="form-help-text" *ngIf="registerForm.get('password').invalid && registerForm.get('password').dirty">
+                  <span *ngIf="registerForm.get('password')['errors']['required']">Field can`t be empty.</span>
+                </span>
               </div>
             </div>
 
-            <div class="form-group row offset-md-4">
-              <div class="alert alert-danger"
-                *ngIf="registerForm.hasError('notSame') && registerForm.controls['confirmPassword'].touched">
-                Not valid field
+            <div class="form-group row">
+              <label class="col-md-4 col-form-label text-md-right" for="confirmPassword">Confirm Password</label>
+              <div class="col-md-6">
+                <input formControlName="confirmPassword" type="password" class="form-control underlined" [ngClass]="{'ng-invalid':registerForm.hasError('notSame')}"
+                       id="confirmPassword" >
+                <span class="form-help-text" *ngIf="registerForm.hasError('notSame') && registerForm.get('confirmPassword').dirty">
+                  <span *ngIf="registerForm.hasError('notSame')">Passwords don`t match.</span>
+                </span>
               </div>
             </div>
 
             <div class="form-group row mb-0">
               <div class="col-md-6 offset-md-4">
-                <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Sign Up<span
-                    class="ti-user"></span></button>
+                <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">
+                  Sign Up<span class="ti-user"></span>
+                </button>
               </div>
             </div>
 

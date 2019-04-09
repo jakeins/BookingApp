@@ -4,12 +4,14 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-forget',
+  styleUrls: ['../form.auth.css'],
   templateUrl: './forget.component.html'
 })
 export class ForgetComponent implements OnInit {
 
   private forgetForm: FormGroup;
-  private successSend = false;
+  private successMessage: string = "";
+  private apiError: string = "";
 
   constructor(private authServie: AuthService) {
     this.forgetForm = new FormGroup({
@@ -22,12 +24,12 @@ export class ForgetComponent implements OnInit {
 
   forget() {
     this.authServie.forget(this.forgetForm.value.email)
-      .subscribe(data => this.successSend = true, err => {
-        console.log(err.message);
-        this.successSend = false;
-        this.forgetForm.setErrors({
-          'forgetError': true
-        });
+      .subscribe(data => {
+        this.successMessage = 'Reset mail have been sent';
+        this.apiError = "";
+      }, err => {
+        this.successMessage = "";
+        this.apiError = err.error.Message;
       });
   }
 }
