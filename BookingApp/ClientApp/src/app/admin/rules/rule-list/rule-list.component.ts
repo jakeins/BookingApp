@@ -4,8 +4,6 @@ import { rule } from '../../../models/rule';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { RuleComponent } from '../rule/rule.component';
-import { Observable } from 'rxjs';
-import { DataSource } from '@angular/cdk/table';
 
 @Component({
   selector: 'app-rule-list',
@@ -17,27 +15,14 @@ export class RuleListComponent implements OnInit {
  @ViewChild(MatPaginator) paginator: MatPaginator;
   listData: MatTableDataSource<any>;
   searchKey:string;
-displayColumns: string[] = ['id', 'title', 'minTime', 'maxTime', 'serviceTime', 'isActive', 'actions'];
+  displayColumns: string[] = ['id', 'title', 'minTime', 'maxTime', 'serviceTime', 'isActive', 'actions'];
 
 
   constructor(private service: RuleService,
     private dialog: MatDialog
     ) { }
-    connect(){
-      return this.service.getRules();
-    }
-    
   ngOnInit() {
-    this.service.getRules().subscribe( res => {
-      this.listData = new MatTableDataSource();
-      this.listData.data = res;
-      this.listData.sort = this.sort;
-      this.listData.paginator = this.paginator;
-      this.listData.filterPredicate = (data, filter) =>{                                      //filter only by table columns cells
-        const dataStr = data.title.toLowerCase() + data.id + data.minTime + data.maxTime + data.isActive;
-        return dataStr.indexOf(filter) != -1;
-      }
-    })
+   this.updateTable();
   }
 
   onSearchReset(){
@@ -86,7 +71,7 @@ displayColumns: string[] = ['id', 'title', 'minTime', 'maxTime', 'serviceTime', 
       this.listData.sort = this.sort;
       this.listData.paginator = this.paginator;
       this.listData.filterPredicate = (data, filter) =>{                                      //filter only by table columns cells
-        const dataStr = data.title.toLowerCase() + data.id + data.minTime + data.maxTime + data.isActive;
+        const dataStr = data.title.toLowerCase() + data.id + data.minTime + data.maxTime + data.serviceTime + data.isActive;
         return dataStr.indexOf(filter) != -1;
       }
     })

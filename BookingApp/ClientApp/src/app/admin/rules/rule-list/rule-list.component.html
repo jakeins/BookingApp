@@ -1,6 +1,6 @@
 <div class="search-div">
   <mat-form-field class="search-field">
-      <input matInput [(ngModel)]="searchKey" placeholder="Search" (keyup)="applyFilter($event.target.value)" autocomplete="off">
+      <input matInput [(ngModel)]="searchKey" placeholder="Search" (keyup)="applyFilter()" autocomplete="off">
       <span class="fill-remaining-place"></span>
       <button mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey" (click)="onSearchReset()"><mat-icon>close</mat-icon></button>
     </mat-form-field>

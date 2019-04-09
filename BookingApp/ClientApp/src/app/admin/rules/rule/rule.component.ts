@@ -41,7 +41,6 @@ export class RuleComponent implements OnInit {
     else
     {
       this.initializeForm();
-      this.form.valueChanges.subscribe(console.log);
     }
   }
   
