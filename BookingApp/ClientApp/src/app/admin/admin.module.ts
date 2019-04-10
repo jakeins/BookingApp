@@ -17,6 +17,7 @@ import { BookingsModule } from '../bookings/bookings.module';
 import { MaterialModule } from '../material/material.module';
 import { UserReadComponent } from './user/user-read.component';
 import { UserCreateComponent } from './user/user-create.cpmponent';
+import { UserListComponent } from './user/user-list.component';
 
 
 @NgModule({
@@ -41,7 +42,9 @@ import { UserCreateComponent } from './user/user-create.cpmponent';
       AdminBookingComponent,
       RuleListComponent,
       UserReadComponent,
-      UserCreateComponent
+    UserCreateComponent,
+    UserListComponent
+
   ],
     entryComponents: [RuleComponent] 
 })

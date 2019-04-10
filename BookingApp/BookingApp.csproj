@@ -89,6 +89,7 @@
     <None Remove="ClientApp\src\app\admin\rules\rules.component.ts" />
     <None Remove="ClientApp\src\app\admin\user\user-create.component.html" />
     <None Remove="ClientApp\src\app\admin\user\user-create.cpmponent.ts" />
+    <None Remove="ClientApp\src\app\admin\user\user-list.component.ts" />
     <None Remove="ClientApp\src\app\admin\user\user-read.component.ts" />
     <None Remove="ClientApp\src\app\cabinet\user-change-password\user-change-password.component.ts" />
     <None Remove="ClientApp\src\app\globals.ts" />
@@ -151,6 +152,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\admin\rules\rules.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-create.component.html" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-create.cpmponent.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-read.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\cabinet\user-change-password\user-change-password.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
