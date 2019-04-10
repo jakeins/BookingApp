@@ -193,17 +193,5 @@ namespace BookingAppTests.Controllers
             var actualTokens = Assert.IsAssignableFrom<AuthTokensDto>(okResult.Value);
             Assert.Equal(expectedTokens, actualTokens);
         }
-
-        [Fact]
-        public async Task ForgetMustSendForgetPasswordMailForUserAsync()
-        {
-            var mockUserDto = new Mock<AuthMinimalDto>();
-            mockUserService.Setup(userService => userService.GetUserByEmail(It.IsAny<string>())).ReturnsAsync(mockUser.Object);
-
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
-            var result = await authController.Forget(mockUserDto.Object);
-
-            mockNotificationService.Verify(notificationService => notificationService.ForgetPasswordMail(mockUser.Object), Times.Once);
-        }
     }
 }

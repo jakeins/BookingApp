@@ -24,14 +24,12 @@ namespace BookingApp.Controllers
         private readonly IMapper mapper;
         private readonly IResourcesService resourcesService;
         private readonly IBookingsService bookingsService;
-        private readonly INotificationService notificationService;
 
-        public UserController(IUserService userService, IResourcesService resourcesService, IBookingsService bookingsService, INotificationService notificationService)
+        public UserController(IUserService userService, IResourcesService resourcesService, IBookingsService bookingsService)
         {
             this.userService = userService;
             this.resourcesService = resourcesService;
             this.bookingsService = bookingsService;
-            this.notificationService = notificationService;
 
             mapper = new Mapper(new MapperConfiguration(cfg =>
             {
@@ -59,16 +57,14 @@ namespace BookingApp.Controllers
 
         [Authorize(Roles = RoleTypes.Admin)]
         [HttpPost("api/user/create-admin")]
-        public async Task<IActionResult> CreateAdmin([FromBody] AdminRegisterDTO user)
+        public async Task<IActionResult> CreateAdmin([FromBody] AdminRegisterDTO userDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            ApplicationUser appUser = mapper.Map<AdminRegisterDTO, ApplicationUser>(user);
-            await userService.CreateAdmin(appUser);
-            ApplicationUser adminUser = await userService.GetUserByName(user.UserName);
-            await userService.AddUsersRoleAsync(adminUser, new List<string> { RoleTypes.Admin ,RoleTypes.User });
-            await notificationService.ForgetPasswordMail(adminUser);
-            return Ok("User created");       
+
+            ApplicationUser userModel = mapper.Map<AdminRegisterDTO, ApplicationUser>(userDto);
+            await userService.CreateAdmin(userModel);
+            return Ok("Admin created");       
         }
 
         [Authorize(Roles = RoleTypes.User)]
@@ -262,14 +258,14 @@ namespace BookingApp.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPut("api/user/{userId}/reset-password/{token}")]
-        public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
+        [HttpPut("api/user/{userId}/restore-password")]
+        public async Task<IActionResult> RestorePassword([FromRoute]string userId, [FromBody]UserPasswordRestoreDto restoreDto)
         {
-            token = (WebUtility.UrlDecode(token)).Replace(" ", "+");
             if (!ModelState.IsValid)
                  return BadRequest(ModelState);
-            await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
-            return new OkObjectResult("Password have been reset");  
+
+            await userService.ResetUserPassword(userId, restoreDto.RestoreToken, restoreDto.NewPassword);
+            return Ok("Password restored successfully.");  
         }
 
         #region Bookings

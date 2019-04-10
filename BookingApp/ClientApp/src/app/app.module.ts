@@ -54,6 +54,5 @@ import { NotificationService } from './services/notification.service';
   bootstrap: [AppComponent]
 })
 
-
 export class AppModule {
 }

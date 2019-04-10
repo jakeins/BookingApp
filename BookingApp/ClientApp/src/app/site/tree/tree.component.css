@@ -1,28 +1,44 @@
 .entry {
-  font-size:larger;
-  width: 100%;
-  padding: 12px;
   height: 50px;
-}
-
-.resource-entry:hover, .admin.folder-entry:hover {
-  background-color: #eee;
+  font-size: 1.2rem;
 }
 
 .inactive {
   color: gray;
-  background-color: #f8f8f8;
+  background-color: ghostwhite;
 }
 
-.fleft {
-  float:left;
+
+.entry > div {
+  padding: 12px;
 }
 
-.fright {
-  float: right;
+.entry:hover > div, .inactive:hover {
+  background-color: #eee;
 }
 
-.indicator {
+span.nesting > span {
+  display: inline-block;
+  width: 30px;
+}
+
+
+
+.start i {
+  color: Gainsboro;
+}
+
+.entry > .control {
+  visibility: hidden;
+}
+
+.entry:hover > .control {
+  visibility:visible;
+}
+
+
+
+.progress {
   width: 80px;
   height: 30px;
   background-color: darkseagreen;
@@ -31,22 +47,15 @@
   box-shadow: inset 0 3px 4px rgba(0,0,0,.24);
 }
 
-  .indicator > .occupied {
-    background-color: indianred;
-    box-shadow: inset 0 3px 4px rgba(0,0,0,.24), 2px 0 2px rgba(0,0,0,.24);
-    height:120%;
+.progress-bar {
+  background-color: indianred;
+  box-shadow: inset 0 3px 4px rgba(0,0,0,.24), 2px 0 2px rgba(0,0,0,.24);
+  height:120%;
+}
+
+@media(max-width:360px) {
+  .progress {
+    display: none;
   }
-   
-.entry:hover .control {
-  display:block;
 }
 
-.control {
-  padding-right: 24px;
-  display: none;
-  font-size:large;
-}
-
-.redundand {
-  color: lightgray;
-}

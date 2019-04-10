@@ -3,6 +3,13 @@
     <p class="alert alert-danger" [hidden]="apiError == undefined">API error {{apiError}}</p>
     <p class="alert alert-danger" [hidden]="!resourceForm.controls['title'].errors || resourceForm.controls['title'].pristine">Please keep length of 3 to 64 characters.</p>
     <p class="alert alert-danger" [hidden]="!resourceForm.controls['description'].errors">Please keep description length less that 512 characters.</p>
+
+    <div id="no-effective-changes-warning" class="alert alert-warning alert-dismissible fade show" role="alert" hidden>
+      <strong>Watch out!</strong> You haven't made any effective changes.
+      <button type="button" class="close" (click)="warningControl(false)">
+        <span>&times;</span>
+      </button>
+    </div>
   </div>
   <div>
     Title:<br />
@@ -48,7 +55,7 @@
   <input *ngIf="updateMode" class="btn btn-danger" style="float:right" type="button" value="Delete this resource" (click)="delete()" />
 
   <div>
-    <button type="submit" class="btn btn-success" style="width:200px;" [disabled]="!resourceForm.valid">Post</button>
+    <button type="submit" class="btn btn-primary" style="width:200px;" [disabled]="!resourceForm.valid || resourceForm.pristine">Post</button>
   </div>
 
 </form>
