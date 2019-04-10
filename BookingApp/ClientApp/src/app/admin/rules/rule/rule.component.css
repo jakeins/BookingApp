@@ -1,30 +1,30 @@
-.form-check-input{
-    margin-left: 8px;
+.normal-form{
+    margin: 10px;
 }
 
-.form-check-inline{
-    margin-bottom: 6px;
-}
-
- input.ng-dirty.ng-invalid{
-    border-color: #dc3545;
-} 
-
-/* input.ng-dirty.ng-valid{
-    border-color: #008000;
-}  */
-
-div.validation-error{
+.controles-container{
     width: 100%;
-    color: #dc3545;
-    margin-top: 0.2 rem;
-    font-size: 85%;
+    padding: 5%;
 }
 
-.form-control-createdTime,.form-control-createdUserId,.form-control-updatedTime,.form-control-updatedUserId{
-    background-color: #fff;
+.controles-container > *{
+    width: 100%;
 }
 
-.form-control-createdTime,.form-control-createdUserId,.form-control-updatedTime,.form-control-updatedUserId:hover{
-    cursor: default;
+.button-row button{
+    margin: 5px;
+}
+
+.button-row-create{
+    background-color: #28a745;
+    color: #fff;
+}
+
+.fill-remaining-space{
+    flex: 1 1 auto;
+}
+
+.btn-dialog-close{
+    color: #fff;
+    background-color: #dc3535;
 }

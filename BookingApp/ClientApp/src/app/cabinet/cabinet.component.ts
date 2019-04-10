@@ -5,8 +5,8 @@ import { UserService } from '../services/user.service';
 import { UserInfoService } from '../services/user-info.service';
 
 @Component({
-    selector: 'app-cabinet',
-    templateUrl: './cabinet.component.html'
+  selector: 'app-cabinet',
+  templateUrl: './cabinet.component.html'
 })
 
 export class CabinetComponent implements OnInit {
@@ -18,8 +18,8 @@ export class CabinetComponent implements OnInit {
     
   ngOnInit() {
       this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => {
-        if (!this.authService.isUser) {
-          this.router.navigate(['/error/401']);
+        if (!this.userInfoService.isUser) {
+          this.router.navigate(['/']);
         }
     });
     let userId = this.userInfoService.userId;

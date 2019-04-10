@@ -10,14 +10,17 @@ import { ResetComponent } from './auth/reset/reset.component';
 import { ErrorComponent } from './error/error.component';
 import { ResourceComponent } from './resource/resource.component';
 import { TreeComponent } from './tree/tree.component';
+import { SiteRuleComponent } from './rule/rule.component';
 import { AppHeaderComponent } from './header/header.component';
-import { RuleComponent } from './rule/rule.component';
 import { BreadcrumbsComponent } from './breadcrumbs/breadcrumbs.component';
+import { AppFooterComponent } from './footer/footer.component';
 import { BookingsModule } from '../bookings/bookings.module';
+import { TosComponent } from './tos/tos.component';
 
 @NgModule({
   declarations: [
     TreeComponent,
+    TosComponent,
     ResourceComponent,
     RegisterComponent,
     LoginComponent,
@@ -25,8 +28,9 @@ import { BookingsModule } from '../bookings/bookings.module';
     ResetComponent,
     ErrorComponent,
     AppHeaderComponent,
+    AppFooterComponent,
     BreadcrumbsComponent,
-    RuleComponent,
+    SiteRuleComponent,
   ],
   imports: [
     CommonModule,
@@ -37,7 +41,8 @@ import { BookingsModule } from '../bookings/bookings.module';
   ],
   exports: [
     AppHeaderComponent,
-    BreadcrumbsComponent
+    BreadcrumbsComponent,
+    AppFooterComponent
   ],
   providers: [],
   bootstrap: []

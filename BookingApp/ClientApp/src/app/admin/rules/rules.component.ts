@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-
+import { RuleService } from '../../services/rule.service';
 
 @Component({
   selector: 'app-rules',
@@ -8,10 +7,10 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./rules.component.css']
 })
 export class RulesComponent implements OnInit {
-  id: number;
-  constructor(private activateRoute: ActivatedRoute) { }
 
-  ngOnInit() {
-    this.id = this.activateRoute.snapshot.params['id'];
+  constructor() { }
+
+  ngOnInit(){
   }
+
 }

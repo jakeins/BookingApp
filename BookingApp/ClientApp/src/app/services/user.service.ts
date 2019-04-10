@@ -42,7 +42,7 @@ export class UserService {
     return this.http.post(this.path + '/create-admin', user, { headers: this.headers });
   }
 
-  updateUser(user: UserUpdate, userId: string): Observable<any> {
+  updateUser(userId: string, user: UserUpdate): Observable<any> {
     return this.http.put(this.path + '/' + userId, user, { headers: this.headers });
   }
 
@@ -92,8 +92,6 @@ export class UserService {
   }
 
   blockUser(userId: string, blocking: boolean): Observable<Object> {
-   // this.blockingModel.Is
-    console.log(blocking);
     return this.http.put(this.path + '/' + userId + '/blocking', blocking, { headers: this.headers});
   }
 
@@ -101,8 +99,12 @@ export class UserService {
     return this.http.put(this.path + '/' + userId + '/approval', approval, { headers: this.headers });
   }
 
-  ressetPassword(userId: string, code: string, userPass: UserNewPassword ): Observable<Object> {
-    return this.http.put(this.path + '/' + userId + '/reset-password', userPass, { headers: this.headers });
+  ressetPassword(userId: string, code: string, userPass: UserNewPassword): Observable<Object> {
+    return this.http.put(this.path + '/' + userId + '/reset-password/' + code, userPass, { headers: this.headers });
+  }
+
+  changePassword(userId: string, userPass: UserNewPassword): Observable<Object> {
+    return this.http.put(this.path + '/' + userId + '/change-password', userPass, { headers: this.headers });
   }
   
   getUserName(): any {

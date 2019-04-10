@@ -13,17 +13,18 @@ import { CabinetModule } from './cabinet/cabinet.module';
 import { AdminModule } from './admin/admin.module';
 import { BookingsComponent } from './bookings/bookings/bookings.component';
 import { BookingComponent } from './bookings/booking/booking.component';
+import { TosComponent } from './site/tos/tos.component';
 
 
 
 
 const routes: Routes = [
   { path: '', component: TreeComponent, data: { breadcrumbIgnore: true } },
-  //{ path: 'tree', component: TreeComponent },
+  { path: 'tos', component: TosComponent, data: { breadcrumbLabel: 'Terms of Service' } },
   { path: 'error/:status-code', component: ErrorComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'forget', component: ForgetComponent },
+  { path: 'forget', component: ForgetComponent, data: { breadcrumbLabel: 'Restore Password' } },
   { path: 'reset', component: ResetComponent },
   { path: 'resources/:id', component: ResourceComponent },
   { path: 'booking/:id', component: BookingComponent },

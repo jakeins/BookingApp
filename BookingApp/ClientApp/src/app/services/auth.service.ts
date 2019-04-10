@@ -23,20 +23,6 @@ export class AuthService {
   });
   @Output() AuthChanged: EventEmitter<any> = new EventEmitter();
 
-  public get isAdmin(): boolean {
-    this.fillRoles();
-    return this.roleAdminCache === true;
-  }
-
-  public get isUser(): boolean {
-    this.fillRoles();
-    return this.roleUserCache === true;
-  }
-
-  public get isAnon(): boolean {
-    this.fillRoles();
-    return this.roleUserCache !== true;
-  }
 
   constructor(private http: HttpClient, private tokenService: TokenService, private userInfoService: UserInfoService) {
     this.baseUrlRegister = BASE_API_URL + '/auth/register';
@@ -49,6 +35,17 @@ export class AuthService {
       this.refresh().subscribe(data => { }, err => console.log(err));
     });
   }
+
+
+  public get isAdmin(): boolean {
+    return this.userInfoService.isAdmin;
+  }
+
+  public get isUser(): boolean {
+    return this.userInfoService.isUser;
+  }
+
+
 
   public register(registerFormModel: RegisterFormModel): Observable<any> {
     return this.http.post(
@@ -75,8 +72,8 @@ export class AuthService {
         data['expireOn']
       );
       this.tokenService.writeToken(token);
-      this.fillRoles();
       this.AuthChanged.emit('Logged in');
+      Logger.log(`Logged in as ${this.userInfoService.email}`);
     }));
   }
 
@@ -92,7 +89,6 @@ export class AuthService {
       { headers: this.headers }
     ).subscribe(data => { }, err => console.log(err));
     this.tokenService.deleteToken();
-    this.clearRoles();
     this.AuthChanged.emit('Logged out');
   }
 
@@ -124,26 +120,5 @@ export class AuthService {
     );
   }
 
-  private fillRoles() {
-    if (this.roleUserCache === null) {
 
-      const tokenRoles = this.userInfoService.roles;
-
-      if (tokenRoles != null) {
-        this.roleAdminCache = this.roleUserCache = false;
-
-        for (const role of tokenRoles) {
-          if (role === 'User') {
-            this.roleUserCache = true;
-          } else if (role === 'Admin') {
-            this.roleAdminCache = true;
-          }
-        }
-      }
-    }
-  }
-
-  private clearRoles() {
-    this.roleAdminCache = this.roleUserCache = null;
-  }
 }

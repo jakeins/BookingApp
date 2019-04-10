@@ -1,52 +1,45 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">Edit User</div>
+        <div class="card-body">
+          <div *ngIf="successMessage != ''" class="alert alert-success" role="alert">
+            {{ successMessage }}
+          </div>
+          <div *ngIf="apiError != ''" class="alert alert-danger" role="alert">
+            {{ apiError }}
+          </div>
 
+          <form [formGroup]="editUserForm" (ngSubmit)="editUser()">
 
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="(user && userForm && (!user.isBlocked || isAdmin == true))">
-  <!--*ngIf="model && resourceForm"-->
-  <!--<h2>Hello {{user.userName}}</h2>-->
-  <div class="errors">
-    <p class="alert alert-danger" [hidden]="!userForm.controls['userName'].errors || userForm.controls['userName'].pristine">Please keep length of 3 to 64 characters.</p>
-    <p class="alert alert-danger" [hidden]="!userForm.controls['email'].errors">Please keep description length less that 512 characters.</p>
-  </div>
-  <div>
-    UserName:<br />
-    <input type="text" formControlName="userName" class="form-control" minlength="3" maxlength="64" required />
-  </div>
-  <br />
+            <div class="form-group row">
+              <label class="col-md-4 col-form-label text-md-right">Username</label>
+              <div class="col-md-6">
+                <input formControlName="userName" type="text" class="form-control underlined" id="userName"
+                       placeholder="name">
+                <span class="form-help-text" *ngIf="editUserForm.get('userName').invalid && editUserForm.get('userName').dirty">
+                  <span *ngIf="editUserForm.get('userName')['errors']['required']">Field can`t be empty.<br /></span>
+                  <span *ngIf="editUserForm.get('userName')['errors']['minlength']">Enter more 3 character.</span>
+                  <span *ngIf="editUserForm.get('userName')['errors']['pattern']">The field contains forbidden characters.</span>
+                </span>
+              </div>
+            </div>
 
-  <div>
-    Email:<br />
-    <input formControlName="email" class="form-control" minlength="5" maxlength="64" required />
-  </div>
+            <div class="form-group row mb-0">
+              <div class="col-md-6 offset-md-4">
+                <button type="submit" class="btn btn-primary"
+                        [disabled]="editUserForm.invalid">
+                  Edit
+                  <span class="ti-user"></span>
+                </button>
+              </div>
+            </div>
 
-  <br />
-  <div *ngIf="isAdmin == true && updateMode == true">
-    <div *ngIf="user.approvalStatus == null">
-      <button (click)="approveUser()" type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Approve</button>
-      <button (click)="rejectUser()" type="button" class="btn btn-danger" style="width:200px;" [disabled]="!userForm.valid">Reject</button>
+          </form>
+        </div>
+
+      </div>
     </div>
-    <br />
-    <div>
-      <span *ngIf="user.approvalStatus == true" class="alert-success">User approved</span>
-      <span *ngIf="user.approvalStatus == false" class="alert-danger">User rejected</span>
-    </div>
-    <br/>
-    <div>
-      <button (click)="blockUser()" *ngIf="user.isBlocked == false" type="button" class="btn btn-danger" style="width:200px;" [disabled]="!userForm.valid">Block</button>
-      <button (click)="unBlockUser()" *ngIf="user.isBlocked == true" type="button" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">UnBlock</button>
-    </div>
   </div>
-
-  <br />
-
-  <div>
-    <button type="submit" class="btn btn-success" style="width:200px;" [disabled]="!userForm.valid">Post</button>
-  </div>
-
-</form>
-
-<div *ngIf="user && user.isBlocked && isAdmin == false">
-  <span class="alert-danger">
-    You have been blocked
-  </span>
 </div>
-

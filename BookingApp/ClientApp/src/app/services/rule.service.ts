@@ -6,15 +6,17 @@ import { rule } from '../models/rule';
 import { BASE_API_URL } from '../globals';
 import { Logger } from './logger.service';
 
+
 @Injectable()
 export class RuleService {
-  showAdditionalInfo: boolean = false;
+
   Rule: rule;
   Rules: rule[];
   url: string = BASE_API_URL + '/rules';
   constructor(
-    private http: HttpClient,
+    private http: HttpClient
     ) { }
+
 
   refreshList(){
     this.http.get<rule[]>(this.url).toPromise().then((res: rule[]) => {
@@ -60,7 +62,7 @@ export class RuleService {
        catchError(this.handleError<rule>('delete rule'))
      );
   }
-
+  
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       Logger.error(error); 

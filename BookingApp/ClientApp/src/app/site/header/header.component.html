@@ -1,39 +1,43 @@
-<header class="header-site">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-lg-3">
-        <a routerLink="/"><h1 class="logo">Booking</h1></a>
-      </div>
+<nav class="navbar d-flex justify-content-between">
 
-      <div class="col-lg-9">
-        <div style="float: left; margin-right: 20px;">
-          <a href="swagger" class="btn btn-success">Swagger</a>
+  <a class="navbar-brand pl-0" routerLink="">
+    <h1 class="h1 mb-0">
+      Booking
+      <img alt="App" src="assets/img/square.svg">
+    </h1>
+  </a>
+
+  <nav class="btn-group">
+    <div *ngIf="userInfo.isUser">
+      <div class="d-flex justify-content-end">
+        <button class="btn bg-transparent text-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="sr-only">Toggle User Menu Dropdown</span>
+          <i *ngIf="userInfo.isAdmin" class="fas fa-star" style="color:goldenrod" title="Administrator"></i>
+          <i *ngIf="!userInfo.isAdmin" class="far fa-user mr-2"></i>
+          <span class="pr-1">{{userInfo.username}}</span>
+        </button>
+
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" routerLink="cabinet"><i class="far fa-address-card mr-2"></i> User Cabinet</a>
+          <a class="dropdown-item" routerLink="admin" *ngIf="userInfo.isAdmin"><i class="fas fa-toolbox mr-2"></i> Admin Panel</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#" (click)="logout()"><i class="fas fa-sign-out-alt mr-2"></i> Sign Out</a>
         </div>
-
-        <div class="cabinets" *ngIf="authService.isUser" style="float: left; margin-right: 20px;">
-          <a class="btn btn-outline-secondary" routerLink="cabinet">User Cabinet</a>
-          <a class="btn btn-outline-primary" routerLink="admin" *ngIf="authService.isAdmin">Admin Panel</a>
-        </div>
-
-        <!-- <div *ngIf="!authService.isUser" style="float: left; margin-right: 20px;">
-          <button *ngIf="!authService.isUser" (click)="authUser()" class="btn btn-secondary">User</button>
-          <button *ngIf="!authService.isAdmin" (click)="authAdmin()" class="btn btn-primary">Admin</button>
-        </div> -->
-
-
-
-        <div *ngIf="authService.isUser" style="float: left; margin-right: 20px;">
-          <button (click)="logout()" class="btn btn-danger">Logout</button>
-        </div>
-
-        <div *ngIf="!authService.isUser" style="float: left; margin-right: 20px;">
-          <a routerLink="/register" class="btn btn-outline-secondary">SignUp</a>
-        </div>
-        <div *ngIf="!authService.isUser">
-          <a routerLink="/login" class="btn btn-outline-success">SignIn</a>
-        </div>
-
       </div>
     </div>
-  </div>
-</header>
+
+    <div *ngIf="!userInfo.isUser">
+      <button type="button" routerLink="/login" class="btn bg-transparent text-primary">
+        Sign In
+      </button><button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                       class="btn bg-transparent text-primary dropdown-toggle dropdown-toggle-split mx-0">
+        <span class="sr-only">Toggle Authentication Dropdown</span>
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" routerLink="/login" href="#">Sign In</a>
+        <a class="dropdown-item" routerLink="/login" href="#">Sign Up</a>
+      </div>
+    </div>
+  </nav>
+
+</nav>

@@ -1,61 +1,59 @@
-<h2>Administrator Panel</h2>
-<div id="content">
-  <div class="plate users">
-    <div class="head">
-      <div class="icon"><i class="fas fa-users fa-6x"></i></div>
-      <h3>Users</h3>
-      <div class="text">Management of all system of entire system: blocking, approval, editing, notifications.</div>
+<h2 class="text-center">Administrator Panel</h2>
+
+<div class="card-deck my-4">
+  <div class="card">
+    <div class="card-body">
+      <i class="fas fa-users"></i>
+      <h5 class="card-title">Users</h5>
+      <p class="card-text">
+        Management of all system of entire system: blocking, approval, editing, notifications.
+      </p>
     </div>
-    <div class="foot">
-      <a routerLink="/admin/users">Manage users</a>
+    <div class="card-footer bg-transparent">
+      <a routerLink="/admin/users" class="btn btn-primary">Manage users</a>
     </div>
   </div>
-
-  <div class="plate all-bookings">
-    <div class="head">
-      <div class="icon"><i class="far fa-calendar-alt fa-8x"></i></div>
-      <h3>All Bookings</h3>
-      <div class="text">
+  <div class="card">
+    <div class="card-body">
+      <i class="far fa-calendar-alt"></i>
+      <h5 class="card-title">All Bookings</h5>
+      <p class="card-text">
         View and manage the bookings of the entire system.
         Time, usage status, description
         are available from this seciton.
-      </div>
+      </p>
     </div>
-    <div class="foot">
-      <a routerLink="/admin/bookings">Review and Manage all bookings</a>
+    <div class="card-footer bg-transparent">
+      <a routerLink="/admin/bookings" class="btn btn-primary">Review and Manage</a>
     </div>
   </div>
+</div>
 
-  <div class="plate rules">
-    <div class="head">
-      <div class="icon"><i class="fas fa-clipboard-list fa-8x"></i></div>
-      <h3>Rules</h3>
-      <div class="text">
+<div class="card-deck my-4">
+  <div class="card">
+    <div class="card-body">
+      <i class="fas fa-clipboard-list"></i>
+      <h5 class="card-title">Rules</h5>
+      <p class="card-text">
         View and manage the rules for the resources. Edit times for steps, service, limits and more.
-      </div>
+      </p>
     </div>
-    <div class="foot">
-      <a routerLink="/admin/rules">Manage rules</a>
+    <div class="card-footer bg-transparent">
+      <a routerLink="/admin/rules" class="btn btn-primary">Manage rules</a>
     </div>
   </div>
-
-  <div class="plate statistics">
-    <div class="head">
-      <div class="icon"><i class="far fa-chart-bar fa-8x"></i></div>
-      <h3>Statistics</h3>
-      <div class="text">
+  <div class="card">
+    <div class="card-body">
+      <i class="far fa-chart-bar"></i>
+      <h5 class="card-title">Statistics</h5>
+      <p class="card-text">
         Various statistics for the bookings, resources and users of a system.
-      </div>
+      </p>
     </div>
-    <div class="foot">
-
-      <a routerLink="/admin/stats/bookings">Bookings</a>
-      &nbsp;&nbsp; / &nbsp;&nbsp;
-      <a routerLink="/admin/stats/resources">Resources</a>
-      &nbsp;&nbsp; / &nbsp;&nbsp;
-      <a routerLink="/admin/stats/users">Users</a>
+    <div class="card-footer bg-transparent">
+        <a routerLink="/admin/stats/bookings" class="btn btn-primary">Bookings</a>
+        <a routerLink="/admin/stats/resources" class="btn btn-primary">Resources</a>
+        <a routerLink="/admin/stats/users" class="btn btn-primary">Users</a>
     </div>
   </div>
-
-
 </div>

@@ -1,46 +1,43 @@
 <div *ngIf="loaded">
-  <table class="table">
-    <thead>
+  <a [routerLink]="['/admin/users','create']" class="btn btn-primary mb-2">Create admin</a>
+  <table class="table table-hover">
+    <thead class="thead-light">
       <tr>
-        <th>UserName</th>
-        <th>Email</th>
-        <th>ApprovalStatus</th>
-        <th>Blocking</th>
+        <th style="width:33%">Email</th>
+        <th>Admin</th>
+        <th>Info</th>
+        <th style="width:33%">Id</th>
       </tr>
     </thead>
     <tbody>
-      <tr class="user-item" *ngFor="let user of userPage.items">
+      <tr class="user-item" *ngFor="let user of userPage.items; let i = index" style="transform: rotate(0);">
+
+        <td class="text-muted">{{user.email}}</td>
+
         <td>
-          <a class="left" title="Edit user" [routerLink]="['/cabinet/user', user.id, 'edit']"><i class="fas fa-sliders-h fa-lg"></i> </a>
-          {{user.userName}}
+          <div [hidden]="rolesMap[user.id]" class="spinner-border spinner-border-sm text-warning" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <i *ngIf="rolesMap[user.id] == 'Admin'" class="fas fa-star" style="color:goldenrod" title="Administrator"></i>
         </td>
-        <td>{{user.email}}</td>
-        <td>
-          <span *ngIf="user.approvalStatus == null">
-            <i (click)="approvalButton(user.id,true)" class="icon fas fa-check"></i>
-            <i (click)="approvalButton(user.id,false)" class="icon fas fa-times"></i>
-          </span>
-          <span *ngIf="user.approvalStatus == true">
-            <i class="fas fa-check"></i>
-          </span>
-          <span *ngIf="user.approvalStatus == false">
-            <i class="fas fa-times"></i>
-          </span>
+
+        <td class="d-flex justify-content-start">
+
+          <a [routerLink]="['/admin/users', user.id]" class="stretched-link mr-2">{{user.userName}}</a>
+
+          <span class="badge badge-warning mx-1" *ngIf="user.approvalStatus == null">New</span>
+          <span class="badge badge-danger mx-1" *ngIf="user.approvalStatus == false">Rejected</span>
+          <span class="badge badge-danger mx-1" *ngIf="user.isBlocked">Blocked</span>
+
         </td>
-        <td>
-          <span>
-            <i (click)="blockButton(user.id)" [ngClass]="user.isBlocked ? 'fas fa-lock' : 'fas fa-lock-open'"></i>
-          </span>
-        </td>
+
+        <td class="text-muted text-nowrap">{{user.id}}</td>
       </tr>
     </tbody>
   </table>
-  <nav aria-label="Page navigation example">
+  <nav aria-label="Page navigation">
     <ul class="pagination">
       <li class="page-item page-link" *ngFor="let p of userPage.paging.arrayTotalPages; let i=index" (click)="getUserPages(i+1,10)">{{i+1}}</li>
     </ul>
   </nav>
 </div>
-<a [routerLink]="['/cabinet/user','create']" class="btn btn-outline-success">Create admin</a>
-<!--<button (click)="" type="button" class="btn btn-success" style="width:200px;">Create Admin</button>-->
-

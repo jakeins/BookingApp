@@ -87,6 +87,10 @@
   <ItemGroup>
     <None Remove="ClientApp\src\app\admin\bookings\bookings.admin.component.ts" />
     <None Remove="ClientApp\src\app\admin\rules\rules.component.ts" />
+    <None Remove="ClientApp\src\app\admin\user\user-create.component.html" />
+    <None Remove="ClientApp\src\app\admin\user\user-create.cpmponent.ts" />
+    <None Remove="ClientApp\src\app\admin\user\user-read.component.ts" />
+    <None Remove="ClientApp\src\app\cabinet\user-change-password\user-change-password.component.ts" />
     <None Remove="ClientApp\src\app\globals.ts" />
     <None Remove="ClientApp\src\app\models\admin-register.ts" />
     <None Remove="ClientApp\src\app\models\auth-login.ts" />
@@ -145,6 +149,10 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\admin\bookings\bookings.admin.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\rules\rules.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-create.component.html" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-create.cpmponent.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-read.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\cabinet\user-change-password\user-change-password.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\admin-register.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\auth-login.ts" />
