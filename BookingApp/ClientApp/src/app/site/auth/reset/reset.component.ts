@@ -16,10 +16,10 @@ export class ResetComponent implements OnInit, OnDestroy {
 
   private querySubscription: Subscription;
   private resetForm: FormGroup;
-  private code: string;
+  private restoreToken: string;
   private userId: string;
   private isParamsExist = true;
-  private userPass: UserNewPassword = new UserNewPassword();
+  private formProductModel: UserNewPassword = new UserNewPassword();
 
   constructor(private authService: AuthService, private route: ActivatedRoute,
     private router: Router, private userService: UserService) {
@@ -30,13 +30,13 @@ export class ResetComponent implements OnInit, OnDestroy {
     this.querySubscription = route.queryParams.subscribe(
       (queryParam: any) => {
         this.userId = queryParam['userId'];
-        this.code = encodeURIComponent(queryParam['code']);
+        this.restoreToken = queryParam['code'];
       }
     );
   }
 
   ngOnInit() {
-    if (this.userId !== undefined && this.code !== undefined) {
+    if (this.userId !== undefined && this.restoreToken !== undefined) {
       this.isParamsExist = true;
     } else {
       this.isParamsExist = false;
@@ -48,9 +48,10 @@ export class ResetComponent implements OnInit, OnDestroy {
   }
 
   reset() {
-    this.userPass.NewPassword = this.resetForm.value.password;
-    this.userPass.ConfirmNewPassword = this.resetForm.value.confirmPassword;
-    this.userService.ressetPassword(this.userId, this.code, this.userPass).subscribe(() => {
+    this.formProductModel.NewPassword = this.resetForm.value.password;
+    this.formProductModel.ConfirmNewPassword = this.resetForm.value.confirmPassword;
+    this.formProductModel.RestoreToken = this.restoreToken;
+    this.userService.restorePassword(this.userId, this.formProductModel).subscribe(() => {
       this.router.navigate(['/login']);
     });
     

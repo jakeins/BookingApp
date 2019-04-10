@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Logger } from '../../../services/logger.service';
 
 @Component({
   selector: 'app-forget',
@@ -29,6 +30,7 @@ export class ForgetComponent implements OnInit {
         this.apiError = "";
       }, err => {
         this.successMessage = "";
+        Logger.error(err);
         this.apiError = err.error.Message;
       });
   }

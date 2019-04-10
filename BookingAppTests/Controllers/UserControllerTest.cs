@@ -27,7 +27,7 @@ namespace BookingAppTests.Controllers
             var mockNotificationService = new Mock<INotificationService>();
             mockUserService.Setup(service => service.GetUsersList()).ReturnsAsync(GetUserList());
             var mockResourcesService = new Mock<IResourcesService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
             // Act
             var result = await controller.GetAllUsers() as OkObjectResult;
@@ -56,7 +56,7 @@ namespace BookingAppTests.Controllers
             var mockBookingService = new Mock<IBookingsService>();
 
             var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
             mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
 
             // Act
@@ -79,7 +79,7 @@ namespace BookingAppTests.Controllers
             var mockBookingService = new Mock<IBookingsService>();
 
             var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
             mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
 
             // Act
@@ -101,7 +101,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
             // Act and Assert
             var ex = await Assert.ThrowsAsync<NullReferenceException>(() => controller.GetUserByEmail(It.IsAny<string>()));
@@ -118,7 +118,7 @@ namespace BookingAppTests.Controllers
             var mockBookingService = new Mock<IBookingsService>();
 
             var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
             mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
 
             // Act and Assert
@@ -138,7 +138,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
             mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
 
             // Act
@@ -157,7 +157,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
             mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
 
             // Act
@@ -186,7 +186,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
             mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
 
             // Act and Assert
@@ -203,7 +203,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
             var mockUserRoleDto = new Mock<UserRoleDto>();
             mockUserRoleDto.SetupGet(x => x.Role).Returns("Admin");
@@ -223,7 +223,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
             var mockUserRoleDto = new Mock<UserRoleDto>();
             mockUserRoleDto.SetupGet(x => x.Role).Returns("Admin");
@@ -246,7 +246,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act
@@ -276,7 +276,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act
@@ -298,7 +298,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act
@@ -318,7 +318,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act and Assert
@@ -336,7 +336,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act and Assert
@@ -355,7 +355,7 @@ namespace BookingAppTests.Controllers
             mockResourcesService.Setup(services => services.ListByAssociatedUser(It.IsAny<string>())).ReturnsAsync(GetListResources());
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
             mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>());
 
             // Act
@@ -390,7 +390,7 @@ namespace BookingAppTests.Controllers
             var mockBookingService = new Mock<IBookingsService>();
 
             var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
             mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
             // Act 
             var result = await mockController.Object.UpdateUser(mockUserUpdateDTO.Object, It.IsAny<string>()) as OkObjectResult;
@@ -412,7 +412,7 @@ namespace BookingAppTests.Controllers
             var mockBookingService = new Mock<IBookingsService>();
 
             var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
             mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
             // Act and Assert
             var ex = await Assert.ThrowsAsync<NullReferenceException>(() => mockController.Object.UpdateUser(mockUserUpdateDTO.Object, It.IsAny<string>()));
@@ -432,7 +432,7 @@ namespace BookingAppTests.Controllers
             var mockBookingService = new Mock<IBookingsService>();
 
             var mockNotificationService = new Mock<INotificationService>();
-            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var mockController = new Mock<UserController>(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
             mockController.SetupGet(mock => mock.UserId).Returns(It.IsAny<string>);
             // Act and Assert
             var ex = await Assert.ThrowsAsync<UserException>(() => mockController.Object.UpdateUser(mockUserUpdateDTO.Object, It.IsAny<string>()));
@@ -451,7 +451,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act 
@@ -470,7 +470,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act and Assert
@@ -487,7 +487,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act and Assert
@@ -506,7 +506,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act 
@@ -525,7 +525,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act and Assert
@@ -542,7 +542,7 @@ namespace BookingAppTests.Controllers
             var mockResourcesService = new Mock<IResourcesService>();
             var mockBookingService = new Mock<IBookingsService>();
             var mockNotificationService = new Mock<INotificationService>();
-            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object, mockNotificationService.Object);
+            var controller = new UserController(mockUserService.Object, mockResourcesService.Object, mockBookingService.Object);
 
 
             // Act and Assert

@@ -11,16 +11,15 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-   
-
     public class UserService : IUserService
     {
-
         private IUserRepository userRepository;
-        
-        public UserService(IUserRepository userRepository) 
+        private readonly INotificationService notificationService;
+
+        public UserService(IUserRepository userRepository, INotificationService notificationService) 
         {
-            this.userRepository = userRepository;          
+            this.userRepository = userRepository;
+            this.notificationService = notificationService;
         }
 
         public async Task CreateUser(ApplicationUser user)
@@ -34,11 +33,12 @@ namespace BookingApp.Services
         }
 
         public async Task CreateAdmin(ApplicationUser user)
-        {
-            user.ApprovalStatus = true;
-            string password = GenerateRandomPassword();
-            await userRepository.CreateAsync(user, password);
-           
+        {            
+            await userRepository.CreateAsync(user, GenerateRandomPassword());
+            user = await GetUserByName(user.UserName);//JIC
+            await AddUsersRoleAsync(user, new List<string> { RoleTypes.Admin, RoleTypes.User });
+            await notificationService.SendPasswordResetNotification(user, await GeneratePasswordResetTokenAsync(user));
+            await UserApproval(user.Id, IsApproved: true);
         }
 
         public async Task DeleteUser(string id)
@@ -84,7 +84,7 @@ namespace BookingApp.Services
         public async Task<PagedList<ApplicationUser>> GetUsersList(int pageNumber, int pageSize)
         {
             IEnumerable<ApplicationUser> users = await userRepository.GetListAsync(pageNumber, pageSize);
-            int countOfUser = await userRepository.GetCountOfUser();
+            int countOfUser = await userRepository.GetUsersCount();
             PagedList<ApplicationUser> pagedList = new PagedList<ApplicationUser>(users, pageNumber, pageSize, countOfUser);
             return pagedList;
         }
@@ -158,6 +158,9 @@ namespace BookingApp.Services
             ApplicationUser user = await GetUserById(userId);
             user.ApprovalStatus = IsApproved;
             await userRepository.UpdateAsync(user);
+
+            if (IsApproved)
+                await notificationService.SendApprovalNotification(user);
         }
 
         public async Task UserBlocking(string userId, bool IsBlocked)
