@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { RuleService } from '../../../services/rule.service';
-import { rule } from '../../../models/rule';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { RuleComponent } from '../rule/rule.component';
 import { NotificationService } from '../../../services/notification.service';
+import { ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-rule-list',
@@ -18,16 +18,33 @@ export class RuleListComponent implements OnInit {
   searchKey:string;
   displayColumns: string[] = ['id', 'title', 'minTime', 'maxTime', 'serviceTime', 'isActive', 'actions'];
   error: string;
+  id: number;
+  idEdit: number;
 
 
   constructor(
     private service: RuleService,
     private dialog: MatDialog,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private activatedRoute: ActivatedRoute
     ) { }
 
   ngOnInit() {
-   this.updateTable();
+    
+    if(this.activatedRoute.snapshot.url.pop().path == 'edit')
+      this.idEdit = this.activatedRoute.snapshot.params['id'];
+    else
+      this.id = this.activatedRoute.snapshot.params['id'];
+    this.updateTable();
+ 
+    if(this.id != null || this.idEdit != null){
+        setTimeout(()=> {
+          if(this.id != null)
+            this.onDetails(this.id, this.id);
+          else
+            this.onEdit(this.idEdit);
+        }, 0);
+    }
   }
 
   onSearchReset(){
