@@ -12,20 +12,10 @@ export class AppHeaderComponent implements OnInit {
   constructor(private authService: AuthService, private userInfo: UserInfoService) { }
 
   ngOnInit() {
-
-  }
-
-  authAdmin() {
-    this.authService.login("superadmin@admin.cow", "SuperAdmin");
-  }
-
-  authUser() {
-    this.authService.login("lion@user.cow", "Lion");
   }
 
   logout() {
     this.authService.logout();
     return false;
   }
-
 }

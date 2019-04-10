@@ -10,6 +10,7 @@ import { DevService } from '../../services/development.service';
 import { AuthService } from '../../services/auth.service';
 import { rule } from '../../models/rule';
 import { RuleService } from '../../services/rule.service';
+import { UserInfoService } from '../../services/user-info.service';
 
 @Component({
   selector: 'app-resource-edit',
@@ -26,7 +27,8 @@ export class ResourceEditComponent implements OnInit {
     private actRoute: ActivatedRoute,
     private folderService: FolderService,
     private ruleService: RuleService,
-    private authService: AuthService
+    private authService: AuthService,
+    private userInfo: UserInfoService
   )
   { }
 
@@ -49,7 +51,7 @@ export class ResourceEditComponent implements OnInit {
   ngOnInit() {
 
     this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => {
-      if (!this.authService.isAdmin) {
+      if (!this.userInfo.isAdmin) {
         this.router.navigate(['/error/401']);
       }
     });

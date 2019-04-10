@@ -1,6 +1,8 @@
 import { Logger } from './logger.service';
 import { JwtToken } from '../models/jwt-token';
+import * as jwt_decode from 'jwt-decode';
 import { Injectable, EventEmitter, Output } from '@angular/core';
+import { UserInfoService } from './user-info.service';
 
 @Injectable()
 export class TokenService {
@@ -8,13 +10,21 @@ export class TokenService {
   private accessTokenName = 'accessToken';
   private refreshTokenName = 'refreshToken';
   private accessTokenExpName = 'accessTokenExpires';
+  
+
+  private roleKey = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
 
   @Output() TokenExpired: EventEmitter<any> = new EventEmitter();
+
+  constructor(private userInfoService: UserInfoService) {
+  }
 
   public writeToken(jwtToken: JwtToken): void {
     localStorage.setItem(this.accessTokenName, jwtToken.accessToken);
     localStorage.setItem(this.refreshTokenName, jwtToken.refreshToken);
-    localStorage.setItem(this.accessTokenExpName, jwtToken.expireOn.toString() );
+    localStorage.setItem(this.accessTokenExpName, jwtToken.expireOn.toString());
+
+    this.userInfoService.SaveUserInfo(jwt_decode(jwtToken.accessToken));
   }
 
   public readJwtToken(): JwtToken {
@@ -37,5 +47,7 @@ export class TokenService {
     localStorage.removeItem(this.accessTokenName);
     localStorage.removeItem(this.refreshTokenName);
     localStorage.removeItem(this.accessTokenExpName);
+
+    this.userInfoService.DeleteUserInfo();
   }
 }

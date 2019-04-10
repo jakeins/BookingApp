@@ -8,25 +8,25 @@
   </a>
 
   <nav class="btn-group">
-    <div *ngIf="authService.isUser">
+    <div *ngIf="userInfo.isUser">
       <div class="d-flex justify-content-end">
         <button class="btn bg-transparent text-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="sr-only">Toggle User Menu Dropdown</span>
-          <i *ngIf="authService.isAdmin" class="fas fa-user-tie mr-2"></i>
-          <i *ngIf="!authService.isAdmin" class="far fa-user mr-2"></i>
+          <i *ngIf="userInfo.isAdmin" class="fas fa-star" style="color:goldenrod" title="Administrator"></i>
+          <i *ngIf="!userInfo.isAdmin" class="far fa-user mr-2"></i>
           <span class="pr-1">{{userInfo.username}}</span>
         </button>
 
         <div class="dropdown-menu dropdown-menu-right">
           <a class="dropdown-item" routerLink="cabinet"><i class="far fa-address-card mr-2"></i> User Cabinet</a>
-          <a class="dropdown-item" routerLink="admin" *ngIf="authService.isAdmin"><i class="fas fa-toolbox mr-2"></i> Admin Panel</a>
+          <a class="dropdown-item" routerLink="admin" *ngIf="userInfo.isAdmin"><i class="fas fa-toolbox mr-2"></i> Admin Panel</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#" (click)="logout()"><i class="fas fa-sign-out-alt mr-2"></i> Sign Out</a>
         </div>
       </div>
     </div>
 
-    <div *ngIf="!authService.isUser">
+    <div *ngIf="!userInfo.isUser">
       <button type="button" routerLink="/login" class="btn bg-transparent text-primary">
         Sign In
       </button><button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
