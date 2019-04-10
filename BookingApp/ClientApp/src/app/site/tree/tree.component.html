@@ -1,5 +1,8 @@
 <div *ngFor="let node of treeFlat" >
   <div [ngClass]="{
+  'd-flex': true,
+  'justify-content-between': true,
+  'rounded': true,
   'entry': true,
   'clearfix': true,
   'admin': authService.isAdmin,
@@ -8,40 +11,45 @@
   'inactive': node.item.isActive != true
   }" *ngIf="node.nesting != 0 || authService.isAdmin">
 
-    <div class="fleft" [style.padding-left.px]="30*node.nesting">
-
+    <div class="start " [style.margin-left.%]="2*node.nesting">
       <a id="Folder-{{node.item.id}}"></a>
-      <span title="Root pesudo-folder" *ngIf="node.nesting === 0"><i class="far fa-star fa-lg" style="color:#ddd"></i></span>
+      <span title="Root pesudo-folder" *ngIf="node.nesting === 0"><i class="far fa-star fa-lg"></i></span>
       <span *ngIf="node.nesting != 0">
-        <span title="Folder #{{node.item.id}}" *ngIf="node.item.isFolder"><i class="far fa-folder-open fa-lg" style="color:#ddd"></i></span>
-        <span title="Resource #{{node.item.id}}" *ngIf="!node.item.isFolder"><i class="fas fa-chevron-right fa-xs" style="color:#ddd"></i></span>
+        <span title="Folder #{{node.item.id}}" *ngIf="node.item.isFolder"><i class="far fa-folder-open fa-lg"></i></span>
+        <span title="Resource #{{node.item.id}}" *ngIf="!node.item.isFolder"><i class="fas fa-chevron-right fa-xs"></i></span>
       </span>
 
       <span *ngIf="node.item.isFolder">{{ node.item.title }}</span>
       <a *ngIf="!node.item.isFolder" [routerLink]="['/resources', node.item.id]">{{ node.item.title }}</a>
 
-      <span class="redundand" *ngIf="node.item.isActive != true" style="padding-left:12px;"> (inactive)</span>
+      <span class="text-muted" *ngIf="node.item.isActive != true" style="padding-left:12px;"> (inactive)</span>
     </div>
 
-    <div class="indicator fright" *ngIf="node.item.occupancy != null" title="{{node.item.occupancyTitle}}">
-      <div class="occupied" [style.width]="node.item.occupancy+'%'">&nbsp;</div>
+    <div class="space flex-fill"></div>
+
+
+
+    <div class="occupancy pr-1" title="{{node.item.occupancyTitle}}">
+      <div class="progress" *ngIf="node.item.occupancy != null">
+        <div class="progress-bar" role="progressbar" [style.width]="node.item.occupancy+'%'"></div>
+      </div>
     </div>
 
-    <div class="control fright" *ngIf="authService.isAdmin">
-      <span class="folder-modifies controls" *ngIf="node.item.isFolder">
-        <span class="folder-modifies" *ngIf="node.nesting != 0">
-          <a title="Edit folder" [routerLink]="['/admin/folders', node.item.id, 'edit']"><i class="fas fa-sliders-h fa-lg"></i> </a>
-        </span>
-        &nbsp;
-        <span class="nested-creates">
-          <a title="Add Resource" [routerLink]="['/admin/resources','create']" [queryParams]="{parentFolderId: node.item.id}"><i class="far fa-plus-square fa-lg"></i></a>
-          &nbsp;
-          <a title="Add Subfolder" [routerLink]="['/admin/folders', 'create']" [queryParams]="{parentFolderId: node.item.id}"><i class="fas fa-folder-plus fa-lg"></i></a>
-        </span>
-      </span>
-      <span class="resource-modifies" *ngIf="!node.item.isFolder">
-        <a title="Edit resource" [routerLink]="['/admin/resources', node.item.id, 'edit']"><i class="fas fa-wrench fa-lg"></i></a>
-      </span>
+    <div class="control dropdown p-0 pt-2" *ngIf="authService.isAdmin">
+      <button class="btn dropdown px-2" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+        <i class="fas fa-ellipsis-v" style="color:gray;font-size:1.2rem"></i>
+      </button>
+      <div class="dropdown-menu dropdown-menu-right">
+        <div *ngIf="node.item.isFolder">
+          <a [routerLink]="['/admin/folders', node.item.id, 'edit']" class="dropdown-item"
+              [ngClass]="{'dropdown-item': true, 'disabled': node.nesting == 0}">Edit Folder</a>
+          <div class="dropdown-divider"></div>
+          <a [routerLink]="['/admin/folders', 'create']" [queryParams]="{parentFolderId: node.item.id}" class="dropdown-item">Add Subfolder</a>
+          <a [routerLink]="['/admin/resources','create']" [queryParams]="{parentFolderId: node.item.id}" class="dropdown-item">Add Resource</a>
+        </div>
+        <a [routerLink]="['/admin/resources', node.item.id, 'edit']" *ngIf="!node.item.isFolder" class="dropdown-item">Edit Resource</a>
+      </div>
     </div>
+
+
   </div>
-</div>

@@ -1,26 +1,41 @@
 <div *ngIf="loaded">
-  <a [routerLink]="['/admin/users','create']" class="btn btn-outline-success mb-2">Create admin</a>
-  <table class="table">
+  <a [routerLink]="['/admin/users','create']" class="btn btn-primary mb-2">Create admin</a>
+  <table class="table table-hover">
     <thead class="thead-light">
       <tr>
-        <th style="width:20px;">#</th>
-        <th>UserName</th>
-        <th>Email</th>
-        <th>Read</th>
+        <th style="width:33%">Email</th>
+        <th>Admin</th>
+        <th>Info</th>
+        <th style="width:33%">Id</th>
       </tr>
     </thead>
     <tbody>
-      <tr class="user-item" *ngFor="let user of userPage.items; let i = index">
-        <td><b>{{ i+1+(this.page * 10 - 10) }}</b></td>
+      <tr class="user-item" *ngFor="let user of userPage.items; let i = index" style="transform: rotate(0);">
+
+        <td class="text-muted">{{user.email}}</td>
+
         <td>
-          <a [routerLink]="['/admin/users', user.id]">{{user.userName}}</a>
+          <div [hidden]="rolesMap[user.id]" class="spinner-border spinner-border-sm text-warning" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <i *ngIf="rolesMap[user.id] == 'Admin'" class="fas fa-star" style="color:goldenrod" title="Administrator"></i>
         </td>
-        <td>{{user.email}}</td>
-        <td><a [routerLink]="['/admin/users', user.id]"><i class="fas fa-eye"></i></a></td>
+
+        <td class="d-flex justify-content-start">
+
+          <a [routerLink]="['/admin/users', user.id]" class="stretched-link mr-2">{{user.userName}}</a>
+
+          <span class="badge badge-warning mx-1" *ngIf="user.approvalStatus == null">New</span>
+          <span class="badge badge-danger mx-1" *ngIf="user.approvalStatus == false">Rejected</span>
+          <span class="badge badge-danger mx-1" *ngIf="user.isBlocked">Blocked</span>
+
+        </td>
+
+        <td class="text-muted text-nowrap">{{user.id}}</td>
       </tr>
     </tbody>
   </table>
-  <nav aria-label="Page navigation example">
+  <nav aria-label="Page navigation">
     <ul class="pagination">
       <li class="page-item page-link" *ngFor="let p of userPage.paging.arrayTotalPages; let i=index" (click)="getUserPages(i+1,10)">{{i+1}}</li>
     </ul>

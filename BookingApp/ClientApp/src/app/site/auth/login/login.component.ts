@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserInfoService } from '../../../services/user-info.service';
 
 
 @Component({
@@ -13,7 +14,7 @@ export class LoginComponent implements OnInit {
 
   private loginForm: FormGroup;
   private apiError: string = "";
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private userInfo: UserInfoService) {
     this.loginForm = new FormGroup({
       'email': new FormControl('', [Validators.required, Validators.email]),
       'password': new FormControl('', Validators.required),
@@ -25,7 +26,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    if (!this.authService.isUser) {
+    if (!this.userInfo.isUser) {
       this.authService.login(this.loginForm.value.email, this.loginForm.value.password)
         .subscribe(data => this.router.navigate(['/']),
         err => {
