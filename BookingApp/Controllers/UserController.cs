@@ -262,14 +262,14 @@ namespace BookingApp.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPut("api/user/{userId}/reset-password/{token}")]
-        public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
+        [HttpPut("api/user/{userId}/restore-password")]
+        public async Task<IActionResult> RestorePassword([FromRoute]string userId, [FromBody]UserPasswordRestoreDto restoreDto)
         {
-            token = (WebUtility.UrlDecode(token)).Replace(" ", "+");
             if (!ModelState.IsValid)
                  return BadRequest(ModelState);
-            await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
-            return new OkObjectResult("Password have been reset");  
+
+            await userService.ResetUserPassword(userId, restoreDto.RestoreToken, restoreDto.NewPassword);
+            return Ok("Password restored successfully.");  
         }
 
         #region Bookings
