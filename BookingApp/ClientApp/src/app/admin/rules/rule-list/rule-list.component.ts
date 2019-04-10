@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RuleService } from '../../../services/rule.service';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { RuleComponent } from '../rule/rule.component';
 import { NotificationService } from '../../../services/notification.service';
 import { ActivatedRoute} from '@angular/router';
@@ -30,14 +30,20 @@ export class RuleListComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    
-    if(this.activatedRoute.snapshot.url.pop().path == 'edit')
+
+    this.updateTable();
+    let path = this.activatedRoute.snapshot.url.pop().path;
+
+    if(path == 'edit')
       this.idEdit = this.activatedRoute.snapshot.params['id'];
+    else if (path == 'create')
+    setTimeout(()=> this.onCreate());
+
     else
       this.id = this.activatedRoute.snapshot.params['id'];
-    this.updateTable();
  
     if(this.id != null || this.idEdit != null){
+      console.log(this.id, this.idEdit);
         setTimeout(()=> {
           if(this.id != null)
             this.onDetails(this.id, this.id);
@@ -93,10 +99,10 @@ export class RuleListComponent implements OnInit {
     if(confirm('Are u sure to delete rule')){
     this.service.deleteRule(rowId).subscribe(res =>{
       this.updateTable();
+      this.notificationService.delete('Deleted successfully!');
     },err => { 
       this.error = err.status + ': ' + err.error.Message + '.';
     });
-    this.notificationService.delete('Deleted successfully!');
     }
   }
 

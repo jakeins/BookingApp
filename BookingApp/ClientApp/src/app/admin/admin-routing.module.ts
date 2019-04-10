@@ -29,6 +29,7 @@ const routesAdmin: Routes = [
       { path: 'rules', component: RulesComponent, data: { breadcrumbLabel: 'Rules management' } },
       { path: 'rules/:id', component: RuleListComponent, data: {breadcrumbLabel: 'Rules management'} },
       { path: 'rules/:id/edit', component: RuleListComponent, data: {breadcrumbLabel: 'Rules management'} },
+      { path: 'rules/create', component: RuleListComponent, data: {breadcrumbLabel: 'Rules management'} },
       { path: 'bookings', component: AdminBookingComponent, data: { breadcrumbLabel: 'All bookings managment' } }
     ]
   }

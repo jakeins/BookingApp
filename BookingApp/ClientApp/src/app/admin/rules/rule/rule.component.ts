@@ -5,6 +5,7 @@ import { rule } from '../../../models/rule';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { USERNAME_REGEX } from '../../../globals';
 import { NotificationService } from '../../../services/notification.service';
+import { Router } from '@angular/router';
 
 
 
@@ -25,7 +26,8 @@ export class RuleComponent implements OnInit {
     private notificationService: NotificationService,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<RuleComponent>,
-    @Inject(MAT_DIALOG_DATA) public ruleData: any
+    @Inject(MAT_DIALOG_DATA) public ruleData: any,
+    private router: Router
         ) { }
 
   ngOnInit() {
@@ -76,7 +78,7 @@ export class RuleComponent implements OnInit {
       isActive: false,
       createdTime: null,
       updatedTime: null,
-      createdUserId: 'ed7e3433-b6b4-488b-b547-9eb880cb316c',  
+      createdUserId: 'ed7e3433-b6b4-488b-b547-9eb880cb316c', 
       updatedUserId: 'ed7e3433-b6b4-488b-b547-9eb880cb316c'
     })
   }
@@ -94,6 +96,11 @@ export class RuleComponent implements OnInit {
         reuseTimeout: res.reuseTimeout,
         isActive: res.isActive 
       });
+    },
+    error => {
+      this.onClose();
+      this.ruleData = null;
+      this.router.navigate(['error/404']);
     });
   }
 
@@ -126,6 +133,10 @@ export class RuleComponent implements OnInit {
       this.updatedTime.disable();
       this.createdUserId.disable();
       this.updatedUserId.disable();
+    },
+    error => {
+      this.onClose();
+      this.router.navigate(['error/404']);
     });
   }
 
