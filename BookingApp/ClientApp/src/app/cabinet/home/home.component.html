@@ -1,28 +1,33 @@
-<h2>Welcome, {{userInfo.username}}!</h2>
-<div id="content">
-  <div class="plate personal-data">
-    <div class="head">
-      <div class="icon"><i class="far fa-address-card fa-8x"></i></div>
-      <h3>Personal Data</h3>
-      <div class="text">Manage your personal data such as name, email and password.</div>
+<h2 class="text-center">Welcome, {{userInfo.username}}!</h2>
+
+<div class="card-deck my-4" >
+
+  <div class="card">
+    <div class="card-body">
+      <i class="far fa-address-card"></i>
+      <h5 class="card-title">Personal Data</h5>
+      <p class="card-text">Manage your personal data such as name, email and password.</p>
     </div>
-    <div class="foot">
-      <a routerLink="/cabinet/user/{{userInfo.userId}}/edit">Manage own info</a> | 
-      <a routerLink="/cabinet/user/{{userInfo.userId}}/change-password">Change password</a>
+    <div class="card-footer bg-transparent">
+      <a routerLink="/cabinet/user/{{userInfo.userId}}/edit" class="btn btn-primary">Manage own info</a>
     </div>
   </div>
 
-  <div class="plate my-bookings">
-    <div class="head">
-      <div class="icon"><i class="far fa-calendar-alt fa-8x"></i></div>
-      <h3>My Bookings</h3>
-      <div class="text">
+  <div class="card">
+    <div class="card-body">
+      <i class="far fa-calendar-alt"></i>
+      <h5 class="card-title">My Bookings</h5>
+      <p class="card-text">
         View and manage the bookings you have made.
         Their time, status, description, cancellation status
-        are available from this seciton.</div>
-      </div>
-    <div class="foot">
-      <a routerLink="/cabinet/bookings">Review and Manage own bookings</a>
+        are available from this seciton.
+      </p>
+    </div>
+    <div class="card-footer bg-transparent">
+      <a routerLink="/cabinet/bookings" class="btn btn-primary">Review and Manage</a>
     </div>
   </div>
+
 </div>
+
+

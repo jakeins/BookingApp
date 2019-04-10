@@ -1,51 +1,38 @@
 <div *ngIf="resource">
-  <span class="resource-modifies fright" *ngIf="authService.isAdmin">
-    <a title="Edit resource" [routerLink]="['/admin/resources', resource.id, 'edit']"><i class="fas fa-wrench fa-lg"></i></a>
-  </span>
-  <h1>
+
+  <a *ngIf="authService.isAdmin" title="Edit resource" [routerLink]="['/admin/resources', resource.id, 'edit']"
+     class="btn btn-primary mt-3 d-inline-block float-right">
+    Edit resource
+  </a>
+
+  <h1 class="display-4 m-0 p-0">
     {{ resource.title }}
-    <span class="redundand" *ngIf="resource.isActive != true"> (inactive)</span>
+    <span class="text-muted h5 font-weight-light" *ngIf="resource.isActive != true">
+     (inactive)
+    </span>
   </h1>
-  
+
   <p>{{ resource.description }}</p>
 </div>
 
+<div class="rules accordion alert alert-secondary p-0" id="accordionRule" style="background-color:#f8f8f8">
 
-<div class="alert alert-warning" *ngIf="resource">
-  <span class="resource-modifies fright" *ngIf="authService.isAdmin">
-    <a title="Edit rule" [routerLink]="['/admin/rules', resource.ruleId, 'edit']"><i class="fas fa-wrench fa-lg"></i></a>
-  </span>
-  <app-rule [ruleId]="resource.ruleId"></app-rule>
+  <button *ngIf="resource" class="btn dropdown-toggle w-100" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+    <span class="d-inline-block text-left" style="width: 95%">Booking rules for this resource</span>
+  </button>
+
+  <div id="collapseOne" class="collapse p-2" aria-labelledby="headingOne" data-parent="#accordionRule">
+    <div *ngIf="resource">
+      <a *ngIf="authService.isAdmin" title="Edit resource" [routerLink]="['/admin/rules', resource.ruleId, 'edit']"
+         class="btn btn-primary d-inline-block float-right">
+        Edit rule
+      </a>
+      <app-rule [ruleId]="resource.ruleId" class="pt-2"></app-rule>
+    </div>
+  </div>
 </div>
 
-<hr />
-
-
-<div class="bookings-mock">
-  <h3>Bookings:</h3>
-  <!--<div class="alert alert-primary" role="alert">
-    This is a primary alert—check it out!
-  </div>
-  <div class="alert alert-secondary" role="alert">
-    This is a secondary alert—check it out!
-  </div>
-  <div class="alert alert-success" role="alert">
-    This is a success alert—check it out!
-  </div>
-  <div class="alert alert-danger" role="alert">
-    This is a danger alert—check it out!
-  </div>
-  <div class="alert alert-warning" role="alert">
-    This is a warning alert—check it out!
-  </div>
-  <div class="alert alert-info" role="alert">
-    This is a info alert—check it out!
-  </div>
-  <div class="alert alert-light" role="alert">
-    This is a light alert—check it out!
-  </div>
-  <div class="alert alert-dark" role="alert">
-    This is a dark alert—check it out!
-  </div>-->
-  <app-bookings></app-bookings>
+<div class="bookings">
+    <h2 class="h2 font-weight-light">Bookings</h2>
+    <app-bookings></app-bookings>
 </div>
