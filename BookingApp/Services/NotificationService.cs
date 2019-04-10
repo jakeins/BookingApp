@@ -1,10 +1,7 @@
 ﻿using BookingApp.Data.Models;
 using BookingApp.Helpers;
 using BookingApp.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
 namespace BookingApp.Services
@@ -12,26 +9,37 @@ namespace BookingApp.Services
     public class NotificationService : INotificationService
     {
         private readonly IMessageService messageService;
-        private readonly IUserService userService;
+        public IConfiguration Configuration { get; }
 
-        public NotificationService(IMessageService messageService, IUserService userService)
+        public NotificationService(IMessageService messageService, IConfiguration configuration)
         {
             this.messageService = messageService;
-            this.userService = userService;
+            Configuration = configuration;
         }
 
-        public async Task ForgetPasswordMail(ApplicationUser user)
+        public async Task SendPasswordResetNotification(ApplicationUser user, string passResetToken)
         {
-            var code = await userService.GeneratePasswordResetTokenAsync(user);
-            var callbackUrl = $"https://localhost:44340/reset?userId={user.Id}&code={code}";
-            var body = $"Click to <a href=\"{callbackUrl}\">link</a>, if you want restore your password";
-            var message = new Message
+            await messageService.SendAsync(new Message
             {
                 Destination = user.Email,
-                Subject = "Forget Password",
-                Body = body
-            };
-            await messageService.SendAsync(message);
+                Subject = "BookingApp New Password",
+                Body = $"<h1>Hello {user.UserName}</h1>" +
+                $"<p>Please proceed by the following <a href=\"https://{Configuration["HostingDomain"]}/reset?userId={user.Id}&code={passResetToken}\">link</a> to set your new password.</p>" +
+                "<p>Happy booking!</p>"
+            });
+        }
+
+        public async Task SendApprovalNotification(ApplicationUser user)
+        {
+            await messageService.SendAsync(new Message
+            {
+                Destination = user.Email,
+                Subject = "BookingApp Account",
+                Body = $"<h1>Hello {user.UserName}</h1>" +
+                $"<p>Your account {user.Email} is ready for usage.</p>" +
+                $"Having your password, <a href=\"https://{Configuration["HostingDomain"]}/login\">sign in</a> to use <b>Booking App</b>.</p>" +
+                "<p>Happy booking!</p>"
+            });
         }
     }
 }
