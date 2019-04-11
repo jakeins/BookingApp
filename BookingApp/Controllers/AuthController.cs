@@ -121,7 +121,24 @@ namespace BookingApp.Controllers
             }
 
             var principal = jwtService.GetPrincipalFromExpiredAccessToken(dto.AccessToken);
-            dto.AccessToken = jwtService.GenerateJwtAccessToken(principal.Claims);
+
+            var user = await userService.GetUserById(principal.Claims.Single(claim => claim.Type == JwtCustomClaimNames.UserID).Value);
+
+            if (user.ApprovalStatus != true)
+            {
+                ModelState.AddModelError("loginFailure", "Not approved");
+                return BadRequest(ModelState);
+            }
+
+            if (user.IsBlocked == true)
+            {
+                ModelState.AddModelError("loginFailure", "Account has been blocked");
+                return BadRequest(ModelState);
+            }
+
+            var userClaims = await jwtService.GetClaimsAsync(user); 
+
+            dto.AccessToken = jwtService.GenerateJwtAccessToken(userClaims);
             dto.RefreshToken = await jwtService.UpdateRefreshTokenAsync(dto.RefreshToken, principal);
             dto.ExpireOn = jwtService.ExpirationTime;
 

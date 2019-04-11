@@ -14,7 +14,7 @@ export class TokenService {
 
   private roleKey = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
 
-  @Output() TokenExpired: EventEmitter<any> = new EventEmitter();
+  @Output() AccessTokenExpired: EventEmitter<any> = new EventEmitter();
 
   constructor(private userInfoService: UserInfoService) {
   }
