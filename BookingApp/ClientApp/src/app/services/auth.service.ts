@@ -31,11 +31,7 @@ export class AuthService {
     this.baseUrlRefresh = BASE_API_URL + '/auth/refresh';
     this.baseUrlForget = BASE_API_URL + '/auth/forget';
 
-    tokenService.TokenExpired.subscribe(() => {
-      this.refresh().subscribe(data => { }, err => console.log(err));
-    });
   }
-
 
   public get isAdmin(): boolean {
     return this.userInfoService.isAdmin;
@@ -66,16 +62,38 @@ export class AuthService {
       JSON.stringify({ password: password, email: email }),
       { headers: this.headers }
     ).pipe(map(data => {
-      const token: JwtToken = new JwtToken(
-        data['accessToken'],
-        data['refreshToken'],
-        data['expireOn']
-      );
-      this.tokenService.writeToken(token);
+      this.writeTokenFromResponse(data);
       this.AuthChanged.emit('Logged in');
       Logger.log(`Logged in as ${this.userInfoService.email}`);
     }));
   }
+
+  public refresh() {
+    const jwtToken: JwtToken = this.tokenService.readJwtToken();
+    Logger.log("Auth Service: sending refresh request.");
+    return this.http.post(
+      this.baseUrlRefresh,
+      JSON.stringify({
+        accessToken: jwtToken.accessToken,
+        refreshToken: jwtToken.refreshToken,
+        expireOn: jwtToken.expireOn
+      }),
+      { headers: this.headers }
+    ).pipe(map(data => {
+      this.writeTokenFromResponse(data);
+    }));
+  }
+
+  writeTokenFromResponse(response : any) {
+    const token: JwtToken = new JwtToken(
+      response['accessToken'],
+      response['refreshToken'],
+      response['expireOn']
+    );
+    this.tokenService.writeToken(token);
+  }
+
+
 
   public logout() {
     const jwtToken: JwtToken = this.tokenService.readJwtToken();
@@ -92,25 +110,6 @@ export class AuthService {
     this.AuthChanged.emit('Logged out');
   }
 
-  public refresh() {
-    const jwtToken: JwtToken = this.tokenService.readJwtToken();
-    return this.http.post(
-      this.baseUrlRefresh,
-      JSON.stringify({
-        accessToken: jwtToken.accessToken,
-        refreshToken: jwtToken.refreshToken,
-        expireOn: jwtToken.expireOn
-      }),
-      { headers: this.headers }
-    ).pipe(map(data => {
-      const token: JwtToken = {
-        accessToken: data['accessToken'],
-        refreshToken: data['refreshToken'],
-        expireOn: data['expireOn']
-      };
-      this.tokenService.writeToken(token);
-    }));
-  }
 
   public forget(email: string): Observable<any> {
     return this.http.post(
