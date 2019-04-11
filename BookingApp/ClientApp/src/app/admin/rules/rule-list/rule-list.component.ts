@@ -4,7 +4,7 @@ import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { RuleComponent } from '../rule/rule.component';
 import { NotificationService } from '../../../services/notification.service';
-import { ActivatedRoute} from '@angular/router';
+import { ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-rule-list',
@@ -26,7 +26,8 @@ export class RuleListComponent implements OnInit {
     private service: RuleService,
     private dialog: MatDialog,
     private notificationService: NotificationService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private router: Router
     ) { }
 
   ngOnInit() {
@@ -37,11 +38,12 @@ export class RuleListComponent implements OnInit {
     if(path == 'edit')
       this.idEdit = this.activatedRoute.snapshot.params['id'];
     else if (path == 'create')
-      setTimeout(()=> this.onCreate(), 0);
+        setTimeout(()=> this.onCreate(), 0);
     else
       this.id = this.activatedRoute.snapshot.params['id'];
- 
+    
     if(this.id != null || this.idEdit != null){
+      this.checkIfIdCorrect(this.id, this.idEdit);
         setTimeout(()=> {
           if(this.id != null)
             this.onDetails(this.id, this.id);
@@ -69,9 +71,6 @@ export class RuleListComponent implements OnInit {
     dialogConfig.width = "60%";
     dialogConfig.data = { ruleId: rowId, readonlymode: readonlymode};
     const dialogRef  = this.dialog.open(RuleComponent, dialogConfig); 
-    dialogRef.afterClosed().subscribe(res =>{
-      this.updateTable();
-    })
   }
   onEdit(rowId: number){
     let dialogConfig = new MatDialogConfig();
@@ -108,6 +107,21 @@ export class RuleListComponent implements OnInit {
     this.error = null;
   }
 
+  checkIfIdCorrect(id, idEdit){
+    if(id != null){
+      this.service.getRule(id).subscribe(res =>{
+        if (res == null)
+        this.router.navigate(['error/404']);
+      });
+    }
+    else
+    {
+      this.service.getRule(idEdit).subscribe(res =>{
+        if (res == null)
+        this.router.navigate(['error/404']);
+      });
+    }
+  }
   updateTable(){
     this.service.getRules().subscribe( res => {
       this.listData = new MatTableDataSource();

@@ -96,10 +96,6 @@ export class RuleComponent implements OnInit {
         reuseTimeout: res.reuseTimeout,
         isActive: res.isActive 
       });
-    },
-    error => {
-      this.onClose();
-      this.router.navigate(['error/404']);
     });
   }
 
@@ -132,10 +128,6 @@ export class RuleComponent implements OnInit {
       this.updatedTime.disable();
       this.createdUserId.disable();
       this.updatedUserId.disable();
-    },
-    error => {
-      this.onClose();
-      this.router.navigate(['error/404']);
     });
   }
 
