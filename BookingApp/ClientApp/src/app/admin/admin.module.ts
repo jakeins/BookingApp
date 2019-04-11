@@ -18,6 +18,7 @@ import { MaterialModule } from '../material/material.module';
 import { UserReadComponent } from './user/user-read.component';
 import { UserCreateComponent } from './user/user-create.cpmponent';
 import { UserListComponent } from './user/user-list.component';
+import { UserChangeComponent } from './user/user-edit.component';
 
 
 @NgModule({
@@ -43,8 +44,8 @@ import { UserListComponent } from './user/user-list.component';
       RuleListComponent,
       UserReadComponent,
     UserCreateComponent,
-    UserListComponent
-
+    UserListComponent,
+    UserChangeComponent
   ],
     entryComponents: [RuleComponent] 
 })

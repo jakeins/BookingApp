@@ -13,6 +13,7 @@ import { AdminBookingComponent } from './bookings/bookings.admin.component';
 import { UserReadComponent } from './user/user-read.component';
 import { UserCreateComponent } from './user/user-create.cpmponent';
 import { UserListComponent } from './user/user-list.component';
+import { UserChangeComponent } from './user/user-edit.component';
 
 
 const routesAdmin: Routes = [
@@ -24,6 +25,7 @@ const routesAdmin: Routes = [
           { path: '', component: UserListComponent },
           { path: 'create', component: UserCreateComponent, data: { breadcrumbLabel: 'Create admin' } },
           { path: ':id', component: UserReadComponent, data: { breadcrumbLabel: 'Users Read' } },
+          { path: ':id/edit', component: UserChangeComponent, data: { breadcrumbLabel: 'Users Edit' } },
         ]
       },
       { path: 'resources/create', component: ResourceEditComponent, data: { breadcrumbLabel: 'Resource Creation' } },
