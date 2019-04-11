@@ -25,6 +25,7 @@ const routesAdmin: Routes = [
           { path: '', component: UserListComponent, data: { breadcrumbLabel: 'Users List', breadcrumbIgnore: true } },
           { path: 'create', component: UserCreateComponent, data: { breadcrumbLabel: 'Create Admin' } },
           { path: ':id', component: UserReadComponent, data: { breadcrumbLabel: 'User Details' } },
+          { path: ':id/edit', component: UserChangeComponent, data: { breadcrumbLabel: 'User Details' } },
         ]
       },
       { path: 'resources/create', component: ResourceEditComponent, data: { breadcrumbLabel: 'Resource Creation' } },
