@@ -133,12 +133,17 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> Forget([FromBody]AuthMinimalDto dto)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
-            var user = await userService.GetUserByEmail(dto.Email);
-            await notificationService.ForgetPasswordMail(user);
+            try
+            {
+                var user = await userService.GetUserByEmail(dto.Email);
+                await notificationService.SendPasswordResetNotification(user, await userService.GeneratePasswordResetTokenAsync(user));
+            }
+            catch (CurrentEntryNotFoundException)
+            {
+                //Swallowing possible email leak
+            }
 
             return Ok();
         }

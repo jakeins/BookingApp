@@ -17,8 +17,8 @@ const routesCabinet: Routes = [
           { path: 'bookings', component: UserBookingsComponent },
           { path: 'user', component: UserEditComponent },
           { path: 'user/create', component: UserEditComponent },
-          { path: 'user/:id/edit', component: UserEditComponent, data: { breadcrumbLabel: 'Personal Data' } },
-          { path: 'user/:id/change-password', component: UserChangePasswordComponent, data: { breadcrumbLabel: 'Personal Data' } },
+          { path: 'user/:id/edit', component: UserEditComponent },
+          { path: 'user/:id/change-password', component: UserChangePasswordComponent },
         ]
     }
 ];

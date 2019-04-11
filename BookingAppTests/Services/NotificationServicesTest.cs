@@ -2,6 +2,7 @@
 using BookingApp.Helpers;
 using BookingApp.Services;
 using BookingApp.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace BookingAppTests.Services
 {
     public class NotificationServicesTest
     {
+        private readonly Mock<IConfiguration> mockConfigService;
         private readonly Mock<IMessageService> mockMessageService;
         private readonly Mock<IUserService> mockUserService;
         private readonly Mock<ApplicationUser> mockUser;
@@ -21,6 +23,7 @@ namespace BookingAppTests.Services
             mockMessageService = new Mock<IMessageService>();
             mockUserService = new Mock<IUserService>();
             mockUser = new Mock<ApplicationUser>();
+            mockConfigService = new Mock<IConfiguration>();
         }
 
         [Theory]
@@ -38,8 +41,9 @@ namespace BookingAppTests.Services
             };
             mockUserService.Setup(userService => userService.GeneratePasswordResetTokenAsync(mockUser.Object)).ReturnsAsync(resetToken);
 
-            NotificationService notificationService = new NotificationService(mockMessageService.Object, mockUserService.Object);
-            await notificationService.ForgetPasswordMail(mockUser.Object);
+
+            NotificationService notificationService = new NotificationService(mockMessageService.Object, mockConfigService.Object);
+            await notificationService.SendPasswordResetNotification(mockUser.Object, "token");
 
             mockMessageService.Verify(messageService => messageService.SendAsync(It.IsAny<Message>()), Times.Once);
         }

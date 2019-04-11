@@ -35,7 +35,7 @@ export class UserEditComponent implements OnInit {
   editUser() {
     this.userUpdate.userName = this.editUserForm.value.userName;
     this.userService.updateUser(this.userId, this.userUpdate).subscribe(() => {
-      this.successMessage = "You change successfull your data!";
+      this.successMessage = "Your name succesfully changed, relogin to review changes!";
       this.apiError = "";
       this.initializeForm();
     }, error => this.handleError(error));

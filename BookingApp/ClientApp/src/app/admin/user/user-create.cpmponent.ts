@@ -4,6 +4,7 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AdminRegister } from '../../models/admin-register';
 import { USERNAME_REGEX } from '../../globals';
+import { Logger } from '../../services/logger.service';
 
 @Component({
   selector: 'app-admin-user-create',
@@ -41,6 +42,7 @@ export class UserCreateComponent implements OnInit {
   
   private handleError(error: any) {
     this.apiError = error.error.Message;
+    Logger.error(error);
     this.successMessage = "";
   }
 
