@@ -29,7 +29,7 @@
       </a>
       <a *ngIf="authService.isAdmin" title="Edit resource" [routerLink]="['/admin/rules', resource.ruleId ]"
           class="btn btn-primary d-inline-block float-right">
-        See details
+        Details
       </a>
       <app-rule [ruleId]="resource.ruleId" class="pt-2"></app-rule>
     </div>

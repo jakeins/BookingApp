@@ -3,8 +3,7 @@
       <button (click)="onClear()" class="btn btn-md btn-danger b-clear">Got It</button>
 </div>
 <mat-toolbar>
-    <span *ngIf="!isReadonly">{{isUpdate? "Edit Rule" : "New Rule"}}</span>
-    <span *ngIf="isReadonly">Rule Details</span>
+    <span>{{isReadonly ? "Rule Details": isUpdate ? "Edit Rule" : "New Rule"}}</span>
     <span class="fill-remaining-space"></span>
     <button class="btn btn-md btn-dialog-close"(click)="onClose()">X</button>
 </mat-toolbar>

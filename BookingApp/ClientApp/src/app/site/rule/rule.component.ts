@@ -34,7 +34,7 @@ export class SiteRuleComponent implements OnInit {
         return `${a} minutes`;
       else
        {
-         let hours:number = a/60;
+         let hours:number = Math.floor(a/60);
          let minutes:number = a - (hours* 60);
          let str = `${hours} hours`;
           if(minutes > 0)

@@ -37,13 +37,11 @@ export class RuleListComponent implements OnInit {
     if(path == 'edit')
       this.idEdit = this.activatedRoute.snapshot.params['id'];
     else if (path == 'create')
-    setTimeout(()=> this.onCreate());
-
+      setTimeout(()=> this.onCreate(), 0);
     else
       this.id = this.activatedRoute.snapshot.params['id'];
  
     if(this.id != null || this.idEdit != null){
-      console.log(this.id, this.idEdit);
         setTimeout(()=> {
           if(this.id != null)
             this.onDetails(this.id, this.id);
@@ -51,14 +49,6 @@ export class RuleListComponent implements OnInit {
             this.onEdit(this.idEdit);
         }, 0);
     }
-  }
-
-  onSearchReset(){
-    this.searchKey = '';
-  }
-
-  applyFilter(){
-    this.listData.filter = this.searchKey.trim().toLocaleLowerCase();
   }
 
   onCreate(){
@@ -104,6 +94,14 @@ export class RuleListComponent implements OnInit {
       this.error = err.status + ': ' + err.error.Message + '.';
     });
     }
+  }
+
+  onSearchReset(){
+    this.searchKey = '';
+  }
+
+  applyFilter(){
+    this.listData.filter = this.searchKey.trim().toLocaleLowerCase();
   }
 
   onClear(){

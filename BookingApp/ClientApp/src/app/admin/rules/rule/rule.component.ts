@@ -99,7 +99,6 @@ export class RuleComponent implements OnInit {
     },
     error => {
       this.onClose();
-      this.ruleData = null;
       this.router.navigate(['error/404']);
     });
   }
@@ -167,10 +166,9 @@ export class RuleComponent implements OnInit {
   onReset(){          
     this.form.reset();
     this.initializeForm();
-    Object.keys(this.form.controls).forEach(key => {                //reset form validation errors
-        this.form.controls[key].setErrors(null)
-      });
-    this.form.clearValidators();
+    // Object.keys(this.form.controls).forEach(key => {                //reset form validation errors
+    //     this.form.controls[key].setErrors(null)
+    //   });
   }
 
   onClose(){
