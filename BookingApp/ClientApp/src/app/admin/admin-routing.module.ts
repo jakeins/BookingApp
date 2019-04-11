@@ -20,10 +20,10 @@ const routesAdmin: Routes = [
     path: '', component: AdminComponent, canActivate: [AdminGuard], children: [
       { path: '', component: HomeComponent, data: { breadcrumbIgnore: true } },
       {
-        path: 'users', component: UserComponent, data: { breadcrumbLabel: 'Users management' }, children: [
-          { path: '', component: UserListComponent },
-          { path: 'create', component: UserCreateComponent, data: { breadcrumbLabel: 'Create admin' } },
-          { path: ':id', component: UserReadComponent, data: { breadcrumbLabel: 'Users Read' } },
+        path: 'users', component: UserComponent, data: { breadcrumbLabel: 'Users Management' }, children: [
+          { path: '', component: UserListComponent, data: { breadcrumbLabel: 'Users List', breadcrumbIgnore: true } },
+          { path: 'create', component: UserCreateComponent, data: { breadcrumbLabel: 'Create Admin' } },
+          { path: ':id', component: UserReadComponent, data: { breadcrumbLabel: 'User Details' } },
         ]
       },
       { path: 'resources/create', component: ResourceEditComponent, data: { breadcrumbLabel: 'Resource Creation' } },

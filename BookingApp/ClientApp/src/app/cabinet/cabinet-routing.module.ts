@@ -14,11 +14,9 @@ const routesCabinet: Routes = [
     {
         path: '', component: CabinetComponent, canActivate: [CabinetGuard], children: [
           { path: '', component: HomeComponent, data: { breadcrumbIgnore: true } },
-          { path: 'bookings', component: UserBookingsComponent },
-          { path: 'user', component: UserEditComponent },
-          { path: 'user/create', component: UserEditComponent },
-          { path: 'user/:id/edit', component: UserEditComponent },
-          { path: 'user/:id/change-password', component: UserChangePasswordComponent },
+          { path: 'bookings', component: UserBookingsComponent, data: { breadcrumbLabel: 'My Bookings' } },
+          { path: 'user/:id/edit', component: UserEditComponent, data: { breadcrumbLabel: 'Change Name' } },
+          { path: 'user/:id/change-password', component: UserChangePasswordComponent, data: { breadcrumbLabel: 'Change Password' } },
         ]
     }
 ];
