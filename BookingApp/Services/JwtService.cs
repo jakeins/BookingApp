@@ -1,4 +1,5 @@
 ﻿using BookingApp.Data.Models;
+using BookingApp.Helpers;
 using BookingApp.Repositories;
 using BookingApp.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -30,17 +31,14 @@ namespace BookingApp.Services
 
         public async Task DeleteRefreshTokenAsync(ClaimsPrincipal userPrincipal)
         {
-            if (!userPrincipal.HasClaim(c => c.Type == "uid"))
-            {
-                throw new SecurityTokenException("Invalid access token");
-            }
+            if (!userPrincipal.HasClaim(claim => claim.Type == JwtCustomClaimNames.UserID))
+                throw new SecurityTokenException("Refresh token deletion failed: access token has no user id.");
 
-            var userId = userPrincipal.FindFirst(c => c.Type == "uid").Value;
-            var refreshToken = await refreshRepository.GetByUserIdAsync(userId);
+            var userID = userPrincipal.FindFirst(claim => claim.Type == JwtCustomClaimNames.UserID).Value;
+            var refreshToken = await refreshRepository.GetByUserIdAsync(userID);
+
             if (refreshToken == null)
-            {
-                throw new SecurityTokenException("Invalid access token");
-            }
+                throw new SecurityTokenException("Refresh token deletion failed: cannot retrieve refresh token.");
 
             await refreshRepository.DeleteAsync(refreshToken.Id);
         }
@@ -78,7 +76,7 @@ namespace BookingApp.Services
                 new Claim(JwtRegisteredClaimNames.Sub, userInfo.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("uid", userInfo.Id)
+                new Claim(JwtCustomClaimNames.UserID, userInfo.Id)
             };
 
             foreach (var role in roles)
@@ -103,8 +101,12 @@ namespace BookingApp.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var principal = tokenHandler.ValidateToken(accessToken, tokenValidationParameters, out SecurityToken securityToken);
-            if (!(securityToken is JwtSecurityToken jwtSecurityToken) || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                throw new SecurityTokenException("Invalid access token");
+
+            if (!(securityToken is JwtSecurityToken jwtSecurityToken))
+                throw new SecurityTokenException("Retrieving principal from access token failed: access token validation failed.");
+
+            if (!jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Retrieving principal from access token failed: access token's algorithm is not correct.");
 
             return principal;
         }
@@ -130,19 +132,16 @@ namespace BookingApp.Services
             }
         }
 
-        public async Task<string> UpdateRefreshTokenAsync(string oldRefreshToken, ClaimsPrincipal userPrincipal)
+        public async Task<string> UpdateRefreshTokenAsync(string oldRefreshTokenPlain, ClaimsPrincipal userPrincipal)
         {
-            if (!userPrincipal.HasClaim(c => c.Type == "uid"))
-            {
-                throw new SecurityTokenException("Invalid access token");
-            }
+            if (!userPrincipal.HasClaim(claim => claim.Type == JwtCustomClaimNames.UserID))
+                throw new SecurityTokenException("Refresh token update failed: access token has no user id.");
 
-            var userId = userPrincipal.FindFirst(c => c.Type == "uid").Value;
-            var savedRefreshToken = await refreshRepository.GetByUserIdAsync(userId);
-            if (oldRefreshToken != savedRefreshToken?.RefreshToken)
-            {
-                throw new SecurityTokenException("Invalid refresh token");
-            }
+            string userId = userPrincipal.FindFirst(claim => claim.Type == JwtCustomClaimNames.UserID).Value;
+            UserRefreshToken savedRefreshToken = await refreshRepository.GetByUserIdAsync(userId);
+
+            if (oldRefreshTokenPlain != savedRefreshToken?.RefreshToken)
+                throw new SecurityTokenException("Refresh token update failed: plain refresh tokens don't match.");
 
             var newRefreshToken = GenerateJwtRefreshToken();
 
