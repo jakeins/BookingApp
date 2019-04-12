@@ -84,8 +84,6 @@ namespace BookingApp.Controllers
             }
             else
             {
-                if( await _ruleService.GetActive(id) == false)
-                    return BadRequest();
 
                 var rule = await _ruleService.Get(id);
                 var dtor = _mapper.Map<RuleBasicDTO>(rule);
