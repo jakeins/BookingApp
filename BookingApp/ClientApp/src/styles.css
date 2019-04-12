@@ -1,2 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+snack-bar-container.success{
+    background-color:#4CAF50  !important;
+    color: #fff;
+}
+
+snack-bar-container.delete{
+    background-color:#FF5252  !important;
+    color: #fff;
+}
+
+snack-bar-container.submit{
+    background-color:#FF9800  !important;
+    color: #fff;
+}
+snack-bar-container.notification simple-snack-bar{
+    font-size: 18px !important;
+    font-weight: bold;
+}
