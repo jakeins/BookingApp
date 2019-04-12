@@ -85,7 +85,7 @@ export class RuleListComponent implements OnInit {
   }
  
   onDelete(rowId: number){
-    if(confirm('Are u sure to delete rule')){
+    if(confirm('Are you sure to delete rule')){
     this.service.deleteRule(rowId).subscribe(res =>{
       this.updateTable();
       this.notificationService.delete('Deleted successfully!');
@@ -122,6 +122,7 @@ export class RuleListComponent implements OnInit {
       });
     }
   }
+  
   updateTable(){
     this.service.getRules().subscribe( res => {
       this.listData = new MatTableDataSource();

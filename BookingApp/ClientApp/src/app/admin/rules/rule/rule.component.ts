@@ -17,7 +17,7 @@ import { Router } from '@angular/router';
 export class RuleComponent implements OnInit {
   Rule: rule;
   form: FormGroup;
-  numberPattern = "[0-9]{1,10}";
+  numberPattern = "[0-9]{1,5}";
   isUpdate: boolean = false;
   isReadonly: boolean = false;
   error: string;
@@ -55,12 +55,12 @@ export class RuleComponent implements OnInit {
     this.form = this.fb.group({
       id: null,
       title: ['', Validators.compose([Validators.required, Validators.minLength(4), Validators.maxLength(64), Validators.pattern(USERNAME_REGEX)])],
-      minTime: [0, Validators.compose([Validators.required, Validators.pattern(this.numberPattern)])],
-      maxTime: [0, Validators.compose([Validators.required, Validators.pattern(this.numberPattern)])],
-      serviceTime: [0, Validators.compose([Validators.required, Validators.pattern(this.numberPattern)])],
-      stepTime: [1, Validators.compose([Validators.required, Validators.pattern("[1-9]{1,10}")])],
-      preOrderTimeLimit: [0, Validators.compose([Validators.required, Validators.pattern(this.numberPattern)])],
-      reuseTimeout: [0, Validators.compose([Validators.required, Validators.pattern(this.numberPattern)])],
+      minTime: [0, Validators.compose([Validators.required, Validators.min(1), Validators.max(14400),Validators.pattern(this.numberPattern)])],
+      maxTime: [0, Validators.compose([Validators.required, Validators.min(1), Validators.max(14400), Validators.pattern(this.numberPattern)])],
+      serviceTime: [0, Validators.compose([Validators.required, Validators.min(0), Validators.max(14400), Validators.pattern(this.numberPattern)])],
+      stepTime: [1, Validators.compose([Validators.required, Validators.min(1), Validators.max(14400), Validators.pattern(this.numberPattern)])],
+      preOrderTimeLimit: [0, Validators.compose([Validators.required, Validators.min(0), Validators.max(14400),Validators.pattern(this.numberPattern)])],
+      reuseTimeout: [0, Validators.compose([Validators.required, Validators.min(0), Validators.max(14400), Validators.pattern(this.numberPattern)])],
       isActive: false
     })
   }
@@ -168,9 +168,11 @@ export class RuleComponent implements OnInit {
       this.onReset();
     this.dialogRef.close();
   }
+
   onClear(){
     this.error = null;
   }
+
   initializeForm(){
     this.form.setValue({
       id: null,

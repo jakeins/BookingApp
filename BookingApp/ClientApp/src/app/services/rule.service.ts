@@ -22,10 +22,11 @@ export class RuleService {
     );
   }
 
+
   getRules(): Observable<rule[]> {
     return this.http.get<rule[]>(this.url).pipe(
       tap(_ => Logger.log("rules were loaded")),
-      catchError(this.handleError<rule[]>('update rule',[]))
+      catchError(this.handleError<rule[]>('get rules',[]))
     );
   }
 
