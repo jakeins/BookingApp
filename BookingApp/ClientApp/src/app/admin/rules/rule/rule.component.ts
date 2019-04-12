@@ -134,24 +134,26 @@ export class RuleComponent implements OnInit {
   onCreate(){
     if(this.form.valid){
       this.service.addRule(this.form.value).subscribe(
-        () => {},
+        () => {
+          this.onClose();
+          this.notificationService.success('Created successfully!');
+        },
         err => { 
           this.error = err.status + ': ' + err.error.Message + '.';
         });
-      this.onClose();
-      this.notificationService.success('Created successfully!');
     }
   }
 
   onSubmit(){
      if(this.form.valid){
       this.service.updateRule(this.form.value).subscribe(
-        () => {},
+        () => {
+          this.onClose();
+          this.notificationService.submit('Submitted successfully!');
+        },
         err => { 
           this.error = err.status + ': ' + err.error.Message + '.';
         });
-      this.onClose();
-      this.notificationService.submit('Submitted successfully!');
      }
   }
 

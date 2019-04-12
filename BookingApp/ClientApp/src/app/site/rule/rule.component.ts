@@ -11,7 +11,7 @@ import { UserInfoService } from '../../services/user-info.service';
 })
 export class SiteRuleComponent implements OnInit {
   @Input() ruleId: number;
-
+  isAdmin:boolean  = false;
   Rule: rule;
   constructor(
     private ruleService: RuleService,
@@ -19,6 +19,7 @@ export class SiteRuleComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.isAdmin = this.userInfoService.isAdmin;
     this.onReset();
   }
 
