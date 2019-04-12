@@ -181,7 +181,7 @@ namespace BookingAppTests.Controllers
         public async Task UpdateRuleWithBadModelReturnsBadRequest()
         {
             //arrange
-            mockServ.Setup(f => f.Update(someRule())).Returns(Task.CompletedTask);
+            mockServ.Setup(f => f.Update(5,someRule())).Returns(Task.CompletedTask);
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
             controller.Object.ModelState.AddModelError("error", "Invalid model");
             //act
@@ -196,7 +196,7 @@ namespace BookingAppTests.Controllers
         public async Task UpdateRule()
         {
             //arrange
-            mockServ.Setup(f => f.Update(someRule())).Returns(Task.CompletedTask);
+            mockServ.Setup(f => f.Update(1, someRule())).Returns(Task.CompletedTask);
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
             controller.SetupGet(p => p.UserId).Returns(It.IsAny<string>());
             //act
