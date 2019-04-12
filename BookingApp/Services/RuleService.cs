@@ -23,7 +23,10 @@ namespace BookingApp.Services
             return await _rulesRepository.GetListAsync();
         }
 
-        public async Task<Rule> Get(int id) => await _rulesRepository.GetAsync(id);
+        public async Task<Rule> Get(int id)
+        {
+            return await _rulesRepository.GetAsync(id);
+        }
 
         public async Task Create(Rule rule)
         {
@@ -46,8 +49,6 @@ namespace BookingApp.Services
         }
 
         public async Task<IEnumerable<Rule>> GetActiveList() => await _rulesRepository.ListActiveAsync();
-
-        public async Task<bool> GetActive(int id) => await _rulesRepository.IsActiveAsync(id);
 
 
         public void CheckIfCorrect(Rule rule)

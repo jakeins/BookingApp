@@ -12,6 +12,5 @@ namespace BookingApp.Services.Interfaces
         Task Delete(int id);
         Task Update(int id, Rule rule);
         Task<IEnumerable<Rule>> GetActiveList();
-        Task<bool> GetActive(int id);
     }
 }
