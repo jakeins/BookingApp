@@ -14,6 +14,7 @@ import { UserInfoService } from './user-info.service';
 import { UserNewPassword } from '../models/user-new-password';
 import { AdminRegister } from '../models/admin-register';
 import { DatePipe } from '@angular/common';
+import { UserRoles } from '../models/user-roles';
 
 
 @Injectable()
@@ -44,6 +45,14 @@ export class UserService {
 
   updateUser(userId: string, user: UserUpdate): Observable<any> {
     return this.http.put(this.basePathS + userId, user, { headers: this.headers });
+  }
+
+  addRole(userId: string, role: UserRoles): Observable<any> {
+    return this.http.put(this.basePath + "/" + userId + "/add-role", role, { headers: this.headers });
+  }
+
+  removeRole(userId: string, role: UserRoles): Observable<any> {
+    return this.http.put(this.basePath + "/" + userId + "/remove-role", role, { headers: this.headers });
   }
 
   deleteUser(userId: string): Observable<any> {

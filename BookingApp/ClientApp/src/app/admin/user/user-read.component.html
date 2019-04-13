@@ -8,9 +8,6 @@
 
   <table class="table">
 
-
-
-
       <tr class="border-0">
 
         <td>
@@ -18,7 +15,7 @@
           <h1 class="display-4">{{ user.userName }}</h1>
           <input type="text" [value]="user.email" readonly onfocus="this.select();" class="w-100 border-0 text-muted d-inline-block pl-2" />
         </td>
-        <td class="align-middle"><a routerLink="/cabinet/user/{{user.id}}/edit" class="btn btn-primary mt-2">Rename</a></td>
+        <td class="align-middle"><a routerLink="/admin/users/{{user.id}}/edit" class="btn btn-primary mt-2">Rename</a></td>
       </tr>
 
       <tr>

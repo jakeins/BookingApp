@@ -89,6 +89,8 @@
     <None Remove="ClientApp\src\app\admin\rules\rules.component.ts" />
     <None Remove="ClientApp\src\app\admin\user\user-create.component.html" />
     <None Remove="ClientApp\src\app\admin\user\user-create.cpmponent.ts" />
+    <None Remove="ClientApp\src\app\admin\user\user-edit.component.ts" />
+    <None Remove="ClientApp\src\app\admin\user\user-list.component.ts" />
     <None Remove="ClientApp\src\app\admin\user\user-read.component.ts" />
     <None Remove="ClientApp\src\app\cabinet\user-change-password\user-change-password.component.ts" />
     <None Remove="ClientApp\src\app\globals.ts" />
@@ -111,6 +113,7 @@
     <None Remove="ClientApp\src\app\models\user-new-password.ts" />
     <None Remove="ClientApp\src\app\models\user-page.ts" />
     <None Remove="ClientApp\src\app\models\user-register.ts" />
+    <None Remove="ClientApp\src\app\models\user-roles.ts" />
     <None Remove="ClientApp\src\app\models\user-update.ts" />
     <None Remove="ClientApp\src\app\services\bookings-component-mode.service.ts" />
     <None Remove="ClientApp\src\app\services\development.service.ts" />
@@ -151,6 +154,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\admin\rules\rules.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-create.component.html" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-create.cpmponent.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-edit.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-read.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\cabinet\user-change-password\user-change-password.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
@@ -169,6 +174,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\user-new-password.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-page.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-register.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\user-roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-update.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\bookings-component-mode.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
