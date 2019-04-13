@@ -27,6 +27,10 @@
          class="btn btn-primary d-inline-block float-right">
         Edit rule
       </a>
+      <a *ngIf="authService.isAdmin" title="Edit resource" [routerLink]="['/admin/rules', resource.ruleId ]"
+          class="btn btn-primary d-inline-block float-right">
+        Details
+      </a>
       <app-rule [ruleId]="resource.ruleId" class="pt-2"></app-rule>
     </div>
   </div>

@@ -148,50 +148,5 @@ namespace BookingAppTests.Controllers
             mockJwtService.Verify();
         }
 
-        [Fact]
-        public async Task RefreshReturnsChangedJwtTokenAsync()
-        {
-            var expectedTokens = new AuthTokensDto
-            { AccessToken = "accessToken", RefreshToken = "refreshToken", ExpireOn = DateTime.Now };
-            var mockClaimsPrincipal = new Mock<ClaimsPrincipal>();
-            mockJwtService.Setup(jwtService => jwtService.GetPrincipalFromExpiredAccessToken(expectedTokens.AccessToken)).Returns(mockClaimsPrincipal.Object);
-            mockJwtService.Setup(jwtService => jwtService.GenerateJwtAccessToken(mockClaimsPrincipal.Object.Claims)).Returns(It.IsAny<string>());
-            mockJwtService.Setup(jwtService => jwtService.UpdateRefreshTokenAsync(expectedTokens.RefreshToken, mockClaimsPrincipal.Object)).ReturnsAsync(It.IsAny<string>());
-            mockJwtService.SetupGet(jwtService => jwtService.ExpirationTime).Returns(DateTime.Now.AddMinutes(120));
-
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
-            var result = await authController.Refresh((AuthTokensDto)expectedTokens.Clone());
-
-            mockJwtService.Verify();
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var actualTokens = Assert.IsAssignableFrom<AuthTokensDto>(okResult.Value);
-            Assert.NotEqual(expectedTokens, actualTokens);
-        }
-
-        [Theory]
-        [InlineData("token1", "token1")]
-        [InlineData("token2", "token2")]
-        [InlineData("token1", "token2")]
-        [InlineData("token2", "token1")]
-        [InlineData("somedata", "somedata")]
-        public async Task RefreshReturnsNewValuesAsync(string accessToken, string refreshToken)
-        {
-            var expectedTokens = new AuthTokensDto
-            { AccessToken = accessToken, RefreshToken = refreshToken, ExpireOn = DateTime.Now.AddMinutes(120) };
-            var mockClaimsPrincipal = new Mock<ClaimsPrincipal>();
-            var mockTokens = new Mock<AuthTokensDto>();
-            mockJwtService.Setup(jwtService => jwtService.GetPrincipalFromExpiredAccessToken(It.IsAny<string>())).Returns(mockClaimsPrincipal.Object);
-            mockJwtService.Setup(jwtService => jwtService.GenerateJwtAccessToken(mockClaimsPrincipal.Object.Claims)).Returns(expectedTokens.AccessToken);
-            mockJwtService.Setup(jwtService => jwtService.UpdateRefreshTokenAsync(It.IsAny<string>(), mockClaimsPrincipal.Object)).ReturnsAsync(expectedTokens.RefreshToken);
-            mockJwtService.SetupGet(jwtService => jwtService.ExpirationTime).Returns(DateTime.Now.AddMinutes(120));
-
-            AuthController authController = new AuthController(mockNotificationService.Object, mockUserService.Object, mockJwtService.Object, mockMapperService.Object);
-            var result = await authController.Refresh(mockTokens.Object);
-
-            mockJwtService.Verify();
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var actualTokens = Assert.IsAssignableFrom<AuthTokensDto>(okResult.Value);
-            Assert.Equal(expectedTokens, actualTokens);
-        }
     }
 }

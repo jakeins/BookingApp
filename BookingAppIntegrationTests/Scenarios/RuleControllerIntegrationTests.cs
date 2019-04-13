@@ -129,19 +129,6 @@ namespace BookingAppIntegrationTests.Scenarios
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData("api/rules/6")]
-        public async Task GetInactiveRuleForUserReturnsBadRequest(string path)
-        {
-            //arrange
-            _httpClient.AddBearerFor(UserType.ActiveUser);
-
-            //act
-            var response = await _httpClient.GetAsync(path);
-
-            //assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
         #endregion
         #region CreateRule
         [Theory]
