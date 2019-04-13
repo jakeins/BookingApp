@@ -9,7 +9,7 @@ import { ResourceService } from '../../services/resource.service';
 import { RuleService } from '../../services/rule.service';
 import { Resource } from '../../models/resource';
 import { rule } from '../../models/rule';
-import { BookingsModeService, BookingsComponentMode } from '../../services/bookings-component-mode.service';
+import { BookingsModeService } from '../../services/bookings-component-mode.service';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -19,7 +19,6 @@ import { UserService } from '../../services/user.service';
 })
 export class BookingsComponent implements OnInit {
   //For modes
-  public modeType = BookingsComponentMode;
   public mode;
   //For resource mode
   public ResourceTimeWindowT = ResourceTimeWindowType;
@@ -65,19 +64,19 @@ export class BookingsComponent implements OnInit {
 
   resetData() {
     switch (this.mode) {
-      case BookingsComponentMode.Admin:
+      case "admin":
         this.bookingService.getBookings().subscribe((response: Booking[]) => {
           console.log(response);
           this.bookings = response;
         }, error => { this.router.navigate(['/error']); });
         break;
-      case BookingsComponentMode.User:
+      case "user":
         this.userService.getBookings(this.userId, this.startTime, this.endTime).subscribe((response: Booking[]) => {
           console.log(response);
           this.bookings = response;
         }, error => { this.router.navigate(['/error']); });
         break;
-      case BookingsComponentMode.Resource:
+      case "res":
         this.bookingService.getBookingOfResource(3).subscribe((responseBookings: Booking[]) => {
           this.resourceService.getResource(this.resourceId).subscribe((response: Resource) => {
             this.ruleService.getRule(response.ruleId).subscribe((response: rule) => {
@@ -101,7 +100,7 @@ export class BookingsComponent implements OnInit {
   };
 
   genResourceTimeWindows() {
-    this.resourceTimeWindows = new Array();
+   this.resourceTimeWindows = new Array();
     for (var i = 0; i < this.bookings.length; i++) {
       var bookingTimeWindow = new ResourceTimeWindow;
       var serviceTimeWindow = new ResourceTimeWindow;
@@ -141,4 +140,9 @@ export class BookingsComponent implements OnInit {
     }
 
   };
+
+
+  edit(id: number) {
+
+  }
 }

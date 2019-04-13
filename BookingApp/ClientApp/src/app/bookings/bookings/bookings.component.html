@@ -1,5 +1,5 @@
-<div [ngSwitch]="mode">
-  <ng-container *ngSwitchCase="modeType.Admin">
+<div *ngIf="mode!=''">
+  <ng-container *ngIf="mode == 'admin'">
     <table>
       <tr *ngFor="let booking of bookings" class="alert alert-primary">
         <td>{{booking.id}}</td>
@@ -12,7 +12,7 @@
       </tr>
     </table>
   </ng-container>
-  <ng-container *ngSwitchCase="modeType.User">
+  <ng-container *ngIf="mode == 'user'">
     <table>
       <tr *ngFor="let booking of bookings" class="alert alert-primary">
         <td>{{booking.id}}</td>
@@ -25,11 +25,11 @@
       </tr>
     </table>
   </ng-container>
-  <ng-container *ngSwitchCase="modeType.Resource">
+  <ng-container *ngIf="mode == 'res'">
     <div *ngFor="let resourceTimeWindow of resourceTimeWindows" [ngSwitch]="resourceTimeWindow.type">
       <ng-container *ngSwitchCase="ResourceTimeWindowT.Booked">
-        <div class="alert alert-danger" style="width: 100%;">
-          <p>Booked from {{resourceTimeWindow.startTime | date:'short'}} to {{resourceTimeWindow.endTime | date:'short'}}</p>
+        <div class="alert alert-danger" style="width: 100%;" [routerLink]="['booking/']">
+          <p>Booked from {{resourceTimeWindow.startTime | date:'short'}} to {{resourceTimeWindow.endTime | date:'short'}} </p>
         </div>
       </ng-container>
       <ng-container *ngSwitchCase="ResourceTimeWindowT.ServiceTime">
@@ -37,7 +37,7 @@
           <p>Service time from {{resourceTimeWindow.startTime | date:'short'}} to {{resourceTimeWindow.endTime | date:'short'}}</p>
         </div>  
       </ng-container>
-      <ng-container *ngSwitchCase="ResourceTimeWindowT.Free">
+      <ng-container *ngSwitchCase="ResourceTimeWindowT.Free" >
         <div class="alert alert-success" style="width: 100%;">
           <p>Free from {{resourceTimeWindow.startTime | date:'short'}} to {{resourceTimeWindow.endTime | date:'short'}}</p>
         </div>

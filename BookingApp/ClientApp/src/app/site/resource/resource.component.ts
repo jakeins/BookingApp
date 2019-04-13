@@ -7,7 +7,7 @@ import { Logger } from '../../services/logger.service';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
-import { BookingsModeService, BookingsComponentMode } from '../../services/bookings-component-mode.service';
+import { BookingsModeService } from '../../services/bookings-component-mode.service';
 import { BookingsComponent } from '../../bookings/bookings/bookings.component';
 
 @NgModule({
@@ -41,7 +41,7 @@ export class ResourceComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.actRoute.params.subscribe(params => {this.id = +params['id'];});
-    this.bookingsModeService.currentMode = BookingsComponentMode.Resource;
+    this.bookingsModeService.currentMode = "res";
     this.bookingsModeService.resourceId = this.id;
     this.resetData();
 

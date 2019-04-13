@@ -1,9 +1,20 @@
 <h2>BookingData</h2>
-<div *ngIf="booking">
-  <p *ngIf="authService.isAdmin">Id = {{booking.id}}</p>
-  <p *ngIf="authService.isAdmin">ResourceId = {{booking.resourceId}}</p>
-  <p>StartTime = {{booking.startTime}}</p>
-  <p>EndTime = {{booking.endTime}}</p>
-  <p>Note = {{booking.note}}</p>
-  <p *ngIf="authService.isAdmin && booking.terminationTime!= null">TerminationTime = {{booking.terminationTime}}</p>
+<div *ngIf='mode != "view"'>
+  <form [formGroup]="form">
+      <div class="form-group">
+        <label>StartTime</label><input type="text" name="startTime" />
+      </div>
+      <div class="form-group">
+        <label>EndTime</label><input type="text" name="endTime" />
+      </div>
+      <div class="form-group">
+        <label>Description</label><input type="text" name="description" />
+      </div>
+    <!--<input type="submit" value="mode == 'edit' ? 'Save' : 'Create'"/>-->
+  </form>
+</div>
+<div *ngIf='mode == "view"'>
+  <p><label>StartTime = {{booking.startTime}}</label></p>
+  <p><label>EndTime = {{booking.endTime}}</label></p>
+  <p><label>Description = {{booking.note}}</label></p>
 </div>

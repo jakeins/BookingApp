@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserInfoService } from '../../services/user-info.service';
-import { BookingsModeService, BookingsComponentMode } from '../../services/bookings-component-mode.service';
+import { BookingsModeService } from '../../services/bookings-component-mode.service';
 
 @Component({
   selector: 'app-admin-bookings',
@@ -17,7 +17,7 @@ export class AdminBookingComponent implements OnInit {
 
   ngOnInit() {
     this.name = this.userInfo.username;
-    this.bookingsConfigService.currentMode = BookingsComponentMode.Admin;
+    this.bookingsConfigService.currentMode = "admin";
   }
 
 }

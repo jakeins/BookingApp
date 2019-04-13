@@ -27,7 +27,7 @@ const routes: Routes = [
   { path: 'forget', component: ForgetComponent, data: { breadcrumbLabel: 'Restore Password' } },
   { path: 'reset', component: ResetComponent },
   { path: 'resources/:id', component: ResourceComponent },
-  { path: 'booking/:id', component: BookingComponent },
+  { path: 'booking', component: BookingComponent },
   { path: 'bookings', component: BookingsComponent},
   {
     path: 'cabinet',
