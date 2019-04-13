@@ -5,10 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { USERNAME_REGEX } from '../../globals';
 import { UserUpdate } from '../../models/user-update';
 import { User } from '../../models/user';
-import { forkJoin } from 'rxjs/observable/forkJoin';
 import { UserRoles } from '../../models/user-roles';
-import { switchMap } from 'rxjs/operator/switchMap';
-import { of } from 'rxjs/observable/of';
 import 'rxjs/Rx';
 import { Observable } from 'rxjs/Rx';
 
