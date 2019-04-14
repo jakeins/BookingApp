@@ -15,6 +15,9 @@ import { UserReadComponent } from './user/user-read.component';
 import { UserCreateComponent } from './user/user-create.cpmponent';
 import { UserListComponent } from './user/user-list.component';
 import { UserChangeComponent } from './user/user-edit.component';
+import { StatsBookingComponent } from './stats/stats-bookings.component';
+import { StatsResourcesComponent } from './stats/stats-resources.component';
+import { StatsUsersComponent } from './stats/stats-users.component';
 
 
 const routesAdmin: Routes = [
@@ -37,7 +40,10 @@ const routesAdmin: Routes = [
       { path: 'rules/:id', component: RuleListComponent, data: {breadcrumbLabel: 'Rules management'} },
       { path: 'rules/:id/edit', component: RuleListComponent, data: {breadcrumbLabel: 'Rules management'} },
       { path: 'rules/create', component: RuleListComponent, data: {breadcrumbLabel: 'Rules management'} },
-      { path: 'bookings', component: AdminBookingComponent, data: { breadcrumbLabel: 'All bookings managment' } }
+      { path: 'bookings', component: AdminBookingComponent, data: { breadcrumbLabel: 'All bookings managment' } },
+      { path: 'stats/bookings', component: StatsBookingComponent, data: { breadcrumbLabel: 'Bookings Statistics' } },
+      { path: 'stats/resources', component: StatsResourcesComponent, data: { breadcrumbLabel: 'Resources Statistics' } },
+      { path: 'stats/users', component: StatsUsersComponent, data: { breadcrumbLabel: 'Users Statistics' } }
     ]
   }
 ];

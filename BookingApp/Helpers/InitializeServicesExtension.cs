@@ -31,6 +31,8 @@ namespace BookingApp.Helpers
             services.AddScoped<IRuleService, RuleService>();
             services.AddScoped<IRuleRepository, RuleRepository>();
 
+            services.AddScoped<IStatisticsService, StatisticsService>();
+
             services.AddScoped<IMapperService, MapperService>();
         }
     }
