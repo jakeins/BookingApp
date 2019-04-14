@@ -1,0 +1,44 @@
+<h2>BookingData</h2>
+<div *ngIf='mode != "view"'>
+  <form [formGroup]="form">
+    <div class="controles-container">
+      <mat-form-field>
+        <input formControlName="description" matInput placeholder="Title" autocomplete="off">
+        <mat-error *ngIf="description.errors?.required && title.touched">Title is required</mat-error>
+        <mat-error *ngIf="description.errors?.minlength">Mfinimum 4 characters needed</mat-error>
+        <mat-error *ngIf="description.errors?.maxlength">Maximum 64 characters</mat-error>
+        <mat-error *ngIf="description.errors?.pattern">Incorrect title name</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input formControlName="startTime" matInput placeholder="Start Time">
+        <mat-error *ngIf="startTime.errors?.required && startTime.touched">Min time is required</mat-error>
+        <mat-error *ngIf="startTime.errors?.pattern && startTime.touched">Incorrect min time</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input formControlName="endTime" matInput placeholder="End Time">
+        <mat-error *ngIf="endTime.errors?.required && maxTime.touched">Max time is required</mat-error>
+        <mat-error *ngIf="endTime.errors?.pattern && maxTime.touched">Incorrect max time</mat-error>
+      </mat-form-field>
+      <div class="button-row">
+        <button mat-raised-button (click)="onCreate()" [disabled]="form.invalid" *ngIf="mode=='create'" class="button-row-create">Create</button>
+        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid" *ngIf="mode=='edit'">Submit</button>
+        <button mat-raised-button color="warn" (click)="onReset()">Reset</button>
+      </div>
+    </div>
+    <!--<div class="form-group">
+    <label>StartTime</label><input type="text" name="startTime" />
+  </div>
+  <div class="form-group">
+    <label>EndTime</label><input type="text" name="endTime" />
+  </div>
+  <div class="form-group">
+    <label>Description</label><input type="text" name="description" />
+  </div>-->
+    <!--<input type="submit" value="mode == 'edit' ? 'Save' : 'Create'"/>-->
+  </form>
+</div>
+<div *ngIf='mode == "view"'>
+  <p><label>StartTime = {{booking.startTime}}</label></p>
+  <p><label>EndTime = {{booking.endTime}}</label></p>
+  <p><label>Description = {{booking.note}}</label></p>
+</div>

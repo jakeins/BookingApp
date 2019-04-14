@@ -11,8 +11,8 @@ import { ResourceComponent } from './site/resource/resource.component';
 import { TreeComponent } from './site/tree/tree.component';
 import { CabinetModule } from './cabinet/cabinet.module';
 import { AdminModule } from './admin/admin.module';
-import { BookingsComponent } from './bookings/bookings/bookings.component';
-import { BookingComponent } from './bookings/booking/booking.component';
+import { BookingsComponent } from './site/bookings/bookings/bookings.component';
+import { BookingComponent } from './site/bookings/booking/booking.component';
 import { TosComponent } from './site/tos/tos.component';
 
 

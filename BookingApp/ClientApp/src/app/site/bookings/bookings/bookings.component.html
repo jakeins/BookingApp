@@ -21,15 +21,18 @@
         <td>{{booking.endTime}}</td>
         <td>{{booking.note}}</td>
         <td>{{booking.terminationTime}}</td>
-        <td>{{booking.createdUserId}}</td>
       </tr>
     </table>
   </ng-container>
   <ng-container *ngIf="mode == 'res'">
     <div *ngFor="let resourceTimeWindow of resourceTimeWindows" [ngSwitch]="resourceTimeWindow.type">
       <ng-container *ngSwitchCase="ResourceTimeWindowT.Booked">
-        <div class="alert alert-danger" style="width: 100%;" [routerLink]="['booking/']">
+        <div class="alert alert-danger" style="width: 100%;">
           <p>Booked from {{resourceTimeWindow.startTime | date:'short'}} to {{resourceTimeWindow.endTime | date:'short'}} </p>
+          <p *ngIf= "((this.userInfoService.isUser && this.userInfoService.uID == resourceTimeWindow.booking.createdUserId)|| this.userInfoService.uAdmin)">
+            <button mat-icon-button (click)="onEdit(resourceTimeWindow.booking.id)"><mat-icon>edit</mat-icon></button>
+            <button mat-icon-button (click)="onDelete(resourceTimeWindow.booking.id)" color="warn"><mat-icon>delete_outline</mat-icon></button>
+          </p>
         </div>
       </ng-container>
       <ng-container *ngSwitchCase="ResourceTimeWindowT.ServiceTime">
@@ -40,6 +43,7 @@
       <ng-container *ngSwitchCase="ResourceTimeWindowT.Free" >
         <div class="alert alert-success" style="width: 100%;">
           <p>Free from {{resourceTimeWindow.startTime | date:'short'}} to {{resourceTimeWindow.endTime | date:'short'}}</p>
+          <p *ngIf ="this.userInfoService.isUser || this.userInfoService.uAdmin"><button mat-stroked-button class="search-div-create" (click)="onCreate">Create</button></p>
         </div>
       </ng-container>
     </div>

@@ -36,18 +36,14 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
-    <Compile Remove="ClientApp\src\app\site\bookings\**" />
     <Compile Remove="ClientApp\src\app\site\booking\**" />
     <Content Remove="$(SpaRoot)**" />
-    <Content Remove="ClientApp\src\app\site\bookings\**" />
     <Content Remove="ClientApp\src\app\site\booking\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Remove="ClientApp\src\app\site\bookings\**" />
     <EmbeddedResource Remove="ClientApp\src\app\site\booking\**" />
-    <None Remove="ClientApp\src\app\site\bookings\**" />
     <None Remove="ClientApp\src\app\site\booking\**" />
   </ItemGroup>
 
@@ -112,7 +108,6 @@
     <None Remove="ClientApp\src\app\models\user-page.ts" />
     <None Remove="ClientApp\src\app\models\user-register.ts" />
     <None Remove="ClientApp\src\app\models\user-update.ts" />
-    <None Remove="ClientApp\src\app\services\bookings-component-mode.service.ts" />
     <None Remove="ClientApp\src\app\services\development.service.ts" />
     <None Remove="ClientApp\src\app\services\folder.service.ts" />
     <None Remove="ClientApp\src\app\services\logger.service.ts" />
@@ -170,7 +165,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\user-page.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-register.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-update.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\services\bookings-component-mode.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\folder.service.ts" />

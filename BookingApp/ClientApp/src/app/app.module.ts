@@ -17,7 +17,6 @@ import { UserService } from './services/user.service';
 import { UserInfoService } from './services/user-info.service';
 import { RuleService } from './services/rule.service';
 import { BookingService } from './services/booking.service';
-import { BookingsModeService } from './services/bookings-component-mode.service';
 import { MaterialModule } from './material/material.module';
 
 @NgModule({
@@ -46,8 +45,7 @@ import { MaterialModule } from './material/material.module';
       multi: true
     },
     RuleService,
-    BookingService,
-    BookingsModeService
+    BookingService
   ],
   bootstrap: [AppComponent]
 })
