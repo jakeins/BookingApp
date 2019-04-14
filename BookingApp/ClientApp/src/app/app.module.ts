@@ -50,7 +50,7 @@ import { StatsService } from './services/stats.service';
     RuleService,
     BookingService,
     BookingsModeService,
-    NotificationService
+    NotificationService,
     StatsService
   ],
   bootstrap: [AppComponent]

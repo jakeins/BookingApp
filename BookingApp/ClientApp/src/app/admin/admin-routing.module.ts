@@ -40,7 +40,7 @@ const routesAdmin: Routes = [
       { path: 'rules/:id', component: RuleListComponent, data: {breadcrumbLabel: 'Rules management'} },
       { path: 'rules/:id/edit', component: RuleListComponent, data: {breadcrumbLabel: 'Rules management'} },
       { path: 'rules/create', component: RuleListComponent, data: {breadcrumbLabel: 'Rules management'} },
-      { path: 'bookings', component: AdminBookingComponent, data: { breadcrumbLabel: 'All bookings managment' } }
+      { path: 'bookings', component: AdminBookingComponent, data: { breadcrumbLabel: 'All bookings managment' } },
       { path: 'stats/bookings', component: StatsBookingComponent, data: { breadcrumbLabel: 'Bookings Statistics' } },
       { path: 'stats/resources', component: StatsResourcesComponent, data: { breadcrumbLabel: 'Resources Statistics' } },
       { path: 'stats/users', component: StatsUsersComponent, data: { breadcrumbLabel: 'Users Statistics' } }

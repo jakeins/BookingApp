@@ -8,7 +8,7 @@ import { UserComponent } from './user/user.component';
 import { AdminComponent } from './admin.component';
 import { ResourceEditComponent } from './resource/resource-edit.component';
 import { FolderEditComponent } from './folder/folder-edit.component';
-import { RulesComponent } from './rules/rules.component'
+import { RulesComponent } from './rules/rules.component';
  import { RuleComponent } from './rules/rule/rule.component';
 import { RuleListComponent } from './rules/rule-list/rule-list.component';
 import { UserNamePipe, RuleActivityPipe } from './rule.pipe';
@@ -49,7 +49,7 @@ import { StatsUsersComponent } from './stats/stats-users.component';
       UserReadComponent,
     UserCreateComponent,
     UserListComponent,
-    UserChangeComponent
+    UserChangeComponent,
       StatsBookingComponent,
       StatsResourcesComponent,
       StatsResourceComponent,
