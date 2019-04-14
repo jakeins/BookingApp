@@ -1,0 +1,54 @@
+<div *ngIf="user; else noUser">
+  <div *ngIf="successMessage != ''" class="alert alert-success" role="alert">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="apiError != ''" class="alert alert-danger" role="alert">
+    {{ apiError }}
+  </div>
+
+  <table class="table">
+
+      <tr class="border-0">
+
+        <td>
+          <span class="text-muted">#</span><input type="text" [value]="user.id" readonly onfocus="this.select();" class="border-0 text-muted d-inline-block" style="width:80%" />
+          <h1 class="display-4">{{ user.userName }}</h1>
+          <input type="text" [value]="user.email" readonly onfocus="this.select();" class="w-100 border-0 text-muted d-inline-block pl-2" />
+        </td>
+        <td class="align-middle"><a routerLink="/admin/users/{{user.id}}/edit" class="btn btn-primary mt-2">Rename</a></td>
+      </tr>
+
+      <tr>
+
+        <td class="align-middle">
+          This user is
+          <span *ngIf="user.isBlocked == false || user.isBlocked == null" class="badge badge-success">not blocked.</span>
+          <span *ngIf="user.isBlocked"><b class="badge badge-danger">blocked</b> by administrator.</span>
+        </td>
+        <td>
+          <button type="button" (click)="blockedUser(true)" class="btn btn-danger" *ngIf="user.isBlocked == false || user.isBlocked == null">Block user</button>
+          <button type="button" (click)="blockedUser(false)" class="btn btn-secondary" *ngIf="user.isBlocked">Unblock user</button>
+        </td>
+      </tr>
+      <tr>
+
+        <td class="align-middle">
+          <span *ngIf="user.approvalStatus == null">This user is <b class="badge badge-warning">awaiting</b> registration approval.</span>
+          <span *ngIf="user.approvalStatus == true">This users registration is <b class="badge badge-success">approved</b>.</span>
+          <span *ngIf="user.approvalStatus == false">This users registration is <b class="badge badge-danger">rejected</b>.</span>
+        </td>
+        <td>
+          <button type="button" (click)="approveUser(true)" class="btn btn-success" *ngIf="user.approvalStatus == false || user.approvalStatus == null">Approve</button>
+          <button type="button" (click)="approveUser(false)" class="btn btn-danger" *ngIf="user.approvalStatus == true || user.approvalStatus == null">Reject</button>
+        </td>
+      </tr>
+
+  </table>
+  
+  <div class="border-top pt-2">
+    <button type="button" (click)="deleteUser()" class="btn btn-danger">Delete this user</button>
+  </div>
+</div>
+<ng-template #noUser>
+  <h4>No user</h4>
+</ng-template>

@@ -10,6 +10,7 @@ using BookingApp.Services.Interfaces;
 using BookingApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BookingApp.Exceptions;
 
 namespace BookingApp.Controllers
 {
@@ -39,9 +40,18 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = await userService.GetUserByEmail(dto.Email);
+            ApplicationUser user = null;
+            bool userNotFound = false;
+            try
+            {
+                user = await userService.GetUserByEmail(dto.Email);
+            }
+            catch (CurrentEntryNotFoundException)
+            {
+                userNotFound = true;
+            }            
 
-            if (!await userService.CheckPassword(user, dto.Password))
+            if (userNotFound || !await userService.CheckPassword(user, dto.Password))
             {
                 ModelState.AddModelError("loginFailure", "Invalid email or password");
                 return BadRequest(ModelState);
@@ -111,7 +121,24 @@ namespace BookingApp.Controllers
             }
 
             var principal = jwtService.GetPrincipalFromExpiredAccessToken(dto.AccessToken);
-            dto.AccessToken = jwtService.GenerateJwtAccessToken(principal.Claims);
+
+            var user = await userService.GetUserById(principal.Claims.Single(claim => claim.Type == JwtCustomClaimNames.UserID).Value);
+
+            if (user.ApprovalStatus != true)
+            {
+                ModelState.AddModelError("loginFailure", "Not approved");
+                return BadRequest(ModelState);
+            }
+
+            if (user.IsBlocked == true)
+            {
+                ModelState.AddModelError("loginFailure", "Account has been blocked");
+                return BadRequest(ModelState);
+            }
+
+            var userClaims = await jwtService.GetClaimsAsync(user); 
+
+            dto.AccessToken = jwtService.GenerateJwtAccessToken(userClaims);
             dto.RefreshToken = await jwtService.UpdateRefreshTokenAsync(dto.RefreshToken, principal);
             dto.ExpireOn = jwtService.ExpirationTime;
 
@@ -123,12 +150,17 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> Forget([FromBody]AuthMinimalDto dto)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
-            var user = await userService.GetUserByEmail(dto.Email);
-            await notificationService.ForgetPasswordMail(user);
+            try
+            {
+                var user = await userService.GetUserByEmail(dto.Email);
+                await notificationService.SendPasswordResetNotification(user, await userService.GeneratePasswordResetTokenAsync(user));
+            }
+            catch (CurrentEntryNotFoundException)
+            {
+                //Swallowing possible email leak
+            }
 
             return Ok();
         }

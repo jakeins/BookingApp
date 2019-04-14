@@ -2,6 +2,7 @@
 using BookingApp.Exceptions;
 using BookingApp.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,85 +22,65 @@ namespace BookingApp.Services
 
         public async Task CreateAsync(ApplicationUser user)
         {
-            IdentityResult result = await userManager.CreateAsync(user);
-            if (!result.Succeeded)
-            {
-                GetExceptionIdentityResult(result);
-            }
+            EnsureIdentitySuccess(await userManager.CreateAsync(user));
         }
 
         public async Task CreateAsync(ApplicationUser user, string password)
         {
             if (await userManager.FindByEmailAsync(user.Email) != null)
-                throw new UserException("User with this email already registered");
-            IdentityResult result = await userManager.CreateAsync(user, password);
-            if (!result.Succeeded)
-            {
-                GetExceptionIdentityResult(result);
-            }
+                throw new UserException("User with this email is already registered");
+
+            EnsureIdentitySuccess(await userManager.CreateAsync(user, password));
         }
 
         public async Task DeleteAsync(string id)
         {
             ApplicationUser applicationUser = await userManager.FindByIdAsync(id);
             if (applicationUser == null)
-                throw new NullReferenceException("Can not find user with this id");
+                throw new CurrentEntryNotFoundException("There is no User with such UserID to delete.");
             else
             {
-                IdentityResult result = await userManager.DeleteAsync(applicationUser);
-                if (!result.Succeeded)
+                try
                 {
-                    GetExceptionIdentityResult(result);
+                    EnsureIdentitySuccess(await userManager.DeleteAsync(applicationUser));
+                }
+                catch (DbUpdateException dbuException)
+                {
+                    Helpers.DbUpdateExceptionTranslator.ReThrow(dbuException, $"User deletion");
                 }
             }
         }
 
         public async Task DeleteAsync(ApplicationUser user)
         {
-            IdentityResult result = await userManager.DeleteAsync(user);
-            if (!result.Succeeded)
-            {
-                GetExceptionIdentityResult(result);
-            }
+            EnsureIdentitySuccess(await userManager.DeleteAsync(user));
         }
 
         public async Task<ApplicationUser> GetAsync(string userid)
         {
             ApplicationUser applicationUser = await userManager.FindByIdAsync(userid);
             if (applicationUser == null)
-            {
-                throw new NullReferenceException("Can not find user with this id");
-            }
+                throw new CurrentEntryNotFoundException("There is no such UserID to get the User from.");
             else
-            {
                 return applicationUser;
-            }
         }
 
         public async Task<ApplicationUser> GetUserByEmailAsync(string email)
         {
             ApplicationUser applicationUser = await userManager.FindByEmailAsync(email);
             if (applicationUser == null)
-            {
-                throw new NullReferenceException("Can not find user with this email");
-            }
+                throw new CurrentEntryNotFoundException("There is no User with such Email to get.");
             else
-            {
                 return applicationUser;
-            }
         }
 
         public async Task<ApplicationUser> GetUserByUserName(string userName)
         {
             ApplicationUser applicationUser = await userManager.FindByNameAsync(userName);
             if (applicationUser == null)
-            {
-                throw new NullReferenceException("Can not find user with this UserName");
-            }
+                throw new CurrentEntryNotFoundException("There is no User with such UserName to get.");
             else
-            {
                 return applicationUser;
-            }
         }
 
         public Task<IEnumerable<ApplicationUser>> GetUsersById(IEnumerable<string> usersId)
@@ -126,16 +107,12 @@ namespace BookingApp.Services
 
         public Task SaveAsync()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Save is not applicable for current repository implementation.");
         }
 
         public async Task UpdateAsync(ApplicationUser user)
         {
-            IdentityResult result = await userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-            {
-                GetExceptionIdentityResult(result);
-            }
+            EnsureIdentitySuccess(await userManager.UpdateAsync(user));
         }
 
         public async Task<bool> CheckPassword(ApplicationUser user, string password)
@@ -145,42 +122,10 @@ namespace BookingApp.Services
 
         public async Task ChangePassword(ApplicationUser user, string currentpassword,string newpassword)
         {
-           IdentityResult result =  await userManager.ChangePasswordAsync(user, currentpassword,newpassword);
-            if (!result.Succeeded)
-            {
-                GetExceptionIdentityResult(result);
-            }
+            EnsureIdentitySuccess(await userManager.ChangePasswordAsync(user, currentpassword, newpassword));
         }
 
-        private void GetExceptionIdentityResult(IdentityResult identityResult)
-        {
-            foreach (IdentityError item in identityResult.Errors)
-            {
-                switch (item.Code)
-                {
-                    case "DuplicateUserName":
-                        throw new UserException("User with this Username already created");
-                    case "DuplicateEmail":
-                        throw new UserException("Email already registered");
-                    case "InvalidEmail":
-                        throw new UserException("Invalid email");
-                    case "InvalidUserName":
-                        throw new UserException("Invalid Username");
-                    case "PasswordTooShort":
-                        throw new UserException("Password too short");
-                    case "PasswordRequiresNonAlphanumeric":
-                        throw new UserException("Password requires non alphanumeric");
-                    case "PasswordRequiresDigit":
-                        throw new UserException("Password requires digit");
-                    case "PasswordRequiresLower":
-                        throw new UserException("Password requires lower");
-                    case "PasswordRequiresUpper":
-                        throw new UserException("Password requires upper");
-                    default:
-                        throw new UserException("Default User Exception");
-                }
-            }
-        }
+ 
 
         public async Task<IList<string>> GetUserRoles(ApplicationUser user)
         {
@@ -191,55 +136,34 @@ namespace BookingApp.Services
         {
             ApplicationUser applicationUser = await userManager.FindByIdAsync(userId);
             if (applicationUser == null)
-            {
-                throw new NullReferenceException("Can not find user with this id");
-            }
-            return await userManager.GetRolesAsync(applicationUser);
+                throw new CurrentEntryNotFoundException("There is no User ID to get the roles from.");
+            else
+                return await userManager.GetRolesAsync(applicationUser);
         }
 
         public async Task AddUserRole(ApplicationUser user,string role)
         {
-          IdentityResult result =   await userManager.AddToRoleAsync(user, role);
-            if (!result.Succeeded)
-            {
-                GetExceptionIdentityResult(result);
-            }
+            EnsureIdentitySuccess(await userManager.AddToRoleAsync(user, role));
         }
 
         public async Task RemoveUserRole(ApplicationUser user, string role)
         {
-           IdentityResult result = await userManager.RemoveFromRoleAsync(user, role);
-            if (!result.Succeeded)
-            {
-                GetExceptionIdentityResult(result);
-            }
+            EnsureIdentitySuccess(await userManager.RemoveFromRoleAsync(user, role));
         }
 
         public async Task AddUserRoles(ApplicationUser user, IEnumerable<string> roles)
         {
-            IdentityResult result = await userManager.AddToRolesAsync(user, roles);
-            if (!result.Succeeded)
-            {
-                GetExceptionIdentityResult(result);
-            }
+            EnsureIdentitySuccess(await userManager.AddToRolesAsync(user, roles));
         }
 
         public async Task RemoveUserRoles(ApplicationUser user, IEnumerable<string> roles)
         {
-            IdentityResult result = await userManager.RemoveFromRolesAsync(user, roles);
-            if (!result.Succeeded)
-            {
-                GetExceptionIdentityResult(result);
-            }
+            EnsureIdentitySuccess(await userManager.RemoveFromRolesAsync(user, roles));
         }
 
         public async Task ResetUserPassword(ApplicationUser user,string token,string newPassword)
         {
-            IdentityResult result = await userManager.ResetPasswordAsync(user, token, newPassword);
-            if (!result.Succeeded)
-            {
-                GetExceptionIdentityResult(result);
-            }
+            EnsureIdentitySuccess( await userManager.ResetPasswordAsync(user, token, newPassword) );
         }
 
         public async Task<bool> IsInRole(ApplicationUser user, string role)
@@ -252,9 +176,26 @@ namespace BookingApp.Services
             return await userManager.GeneratePasswordResetTokenAsync(user);
         }
 
-        public Task<int> GetCountOfUser()
+        public Task<int> GetUsersCount()
         {
             return Task.FromResult(userManager.Users.Count());
         }
+
+        #region Utilities
+        private void EnsureIdentitySuccess(IdentityResult identityResult)
+        {
+            if (identityResult.Succeeded)
+                return;
+
+            List<string> exceptions = new List<string>();
+
+            foreach (IdentityError item in identityResult.Errors)
+            {
+                exceptions.Add(item.Code);
+            }
+
+            throw new UserException("Identity issue(s): " + string.Join(", ", exceptions));
+        }
+        #endregion
     }
 }

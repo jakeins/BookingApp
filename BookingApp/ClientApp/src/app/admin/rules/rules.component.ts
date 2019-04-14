@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { RuleService } from '../../services/rule.service';
 
 @Component({
   selector: 'app-rules',
@@ -10,6 +10,7 @@ export class RulesComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  ngOnInit(){
   }
+
 }

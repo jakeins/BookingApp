@@ -1,4 +1,4 @@
-using BookingApp.Data.Models;
+﻿using BookingApp.Data.Models;
 using BookingApp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,12 +45,11 @@ namespace BookingApp
             services.AddIdentityCore<ApplicationUser>(options =>
             {
                 // Temporary mild password policy: to be strictened
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredLength = 3;
-                options.Password.RequiredUniqueChars = 0;
+                options.Password = PasswordSettings.GetPasswordSettings().Password;
+                
+                options.User.AllowedUserNameCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЮЯҐЄІЇабвгдеёжзийклмнопрстуфхцчшщьюяґєії'0123456789 -_";//A-Za-zА-ЩЬЮЯҐЄІЇа-щьюяґєії'0-9 -_
+                options.User.RequireUniqueEmail = true;  
+
             }).AddRoles<IdentityRole>()
               .AddEntityFrameworkStores<ApplicationDbContext>()
               .AddDefaultTokenProviders();
@@ -151,15 +150,7 @@ namespace BookingApp
                 }
             });
 
-            bool UseStoreProc = !env.IsEnvironment("Testing");
-            if (env.IsEnvironment("Testing"))
-            {
-                initializer.Initialize(UseStoreProc);
-            }
-            else
-            {
-                initializer.Initialize(UseStoreProc).Wait();
-            }
+            initializer.Initialize( !env.IsEnvironment("Testing") ).Wait();
         }
     }
 }

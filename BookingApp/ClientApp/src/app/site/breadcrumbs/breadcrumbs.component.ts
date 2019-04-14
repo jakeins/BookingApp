@@ -50,7 +50,7 @@ export class BreadcrumbsComponent implements OnInit {
         this.breadcrumbsInternal[++i] = null;
 
         if (componentName == 'AppComponent') {
-          this.breadcrumbsInternal[i] = new Breadcrumb('<i class="fas fa-home fa-lg"></i>', '');
+          this.breadcrumbsInternal[i] = new Breadcrumb('<i class="fas fa-home fa-sm"></i>', '');
           this.formCleanBreadcrumbs();
           //Logger.log(this.breadcrumbsInternal);
         }

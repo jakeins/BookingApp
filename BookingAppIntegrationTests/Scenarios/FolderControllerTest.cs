@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using static BookingAppIntegrationTests.TestingUtilities.AuthUtils;
 
 namespace BookingAppIntegrationTests.Scenarios
 {
@@ -25,7 +26,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder")]
         public async Task GetFoldersIsAdminTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var response = await _client.GetAsync(url);
             var stringResponse = await response.Content.ReadAsStringAsync();
             var folders = JsonConvert.DeserializeObject<List<Folder>>(stringResponse);
@@ -45,7 +46,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/1")]
         public async Task GetFolderByIdTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var response = await _client.GetAsync(url);
             var folder = JsonConvert.DeserializeObject<Folder>(await response.Content.ReadAsStringAsync());
 
@@ -60,7 +61,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/122")]
         public async Task GetFaildedFolderByIdTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var response = await _client.GetAsync(url);
 
             // Assert
@@ -73,7 +74,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder")]
         public async Task CreateFolderTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var content = JsonConvert.SerializeObject(new Folder { Title = "Folder new", IsActive = true });
             var response = await _client.PostAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -86,7 +87,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder")]
         public async Task FailedValidationCreateFolderTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var content = JsonConvert.SerializeObject(new Folder { Title = "Fo", IsActive = true });
             var response = await _client.PostAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -100,7 +101,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/1")]
         public async Task UpdateFolderTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var content = JsonConvert.SerializeObject(new Folder { Title = "Folder new", IsActive = true });
             var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -112,7 +113,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/122")]
         public async Task FailedUpdateFolderTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var content = JsonConvert.SerializeObject(new Folder { Title = "Folder new", IsActive = true });
             var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -124,7 +125,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/1")]
         public async Task FailedValidationUpdateFolderTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var content = JsonConvert.SerializeObject(new Folder { Title = "Fo", IsActive = true });
             var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -136,7 +137,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/1")]
         public async Task IsParentInvalidUpdateFolderTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var content = JsonConvert.SerializeObject(new Folder { Title = "Folder 1", ParentFolderId = 3, IsActive = true });
             var response = await _client.PutAsync(url, new StringContent(content, Encoding.UTF8, "application/json"));
 
@@ -150,7 +151,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/2")]
         public async Task DeleteFolderTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var response = await _client.DeleteAsync(url);
 
             // Assert
@@ -161,7 +162,7 @@ namespace BookingAppIntegrationTests.Scenarios
         [InlineData("api/folder/122")]
         public async Task FailedDeleteFolderTest(string url)
         {
-            await AuthUtils.AddAdminsBearer(_client);
+            _client.AddBearerFor(UserType.ActiveAdmin);
             var response = await _client.DeleteAsync(url);
 
             // Assert

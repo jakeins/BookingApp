@@ -19,18 +19,16 @@ namespace BookingApp.Controllers
     public class RuleController : EntityControllerBase
     {
         readonly IRuleService _ruleService;
-        readonly IMapper mapper;
-        public virtual bool ExistsActive { get; set; }               
+        readonly IMapper _mapper;             
 
         public RuleController(IRuleService ruleService)
         {
             _ruleService = ruleService;
-
-            mapper = new Mapper(new MapperConfiguration(c =>
+            _mapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                c.CreateMap<Rule, RuleBasicDTO>();
-                c.CreateMap<Rule, RuleAdminDTO>();
-                c.CreateMap<Rule, RuleDetailedDTO>().ReverseMap();
+                cfg.CreateMap<Rule, RuleBasicDTO>();
+                cfg.CreateMap<Rule, RuleAdminDTO>();
+                cfg.CreateMap<Rule, RuleDetailedDTO>().ReverseMap();
             }));
         }
 
@@ -48,13 +46,13 @@ namespace BookingApp.Controllers
             if (IsAdmin)
             {
                 var rules = await _ruleService.GetList();
-                var dtos = mapper.Map<IEnumerable<RuleAdminDTO>>(rules);
+                var dtos = _mapper.Map<IEnumerable<RuleAdminDTO>>(rules);
                 return Ok(dtos);
             }
             else
             {
                 var rules = await _ruleService.GetActiveList();
-                var dtos = mapper.Map<IEnumerable<RuleBasicDTO>>(rules);
+                var dtos = _mapper.Map<IEnumerable<RuleBasicDTO>>(rules);
                 return Ok(dtos);
             }
         }
@@ -81,16 +79,14 @@ namespace BookingApp.Controllers
             if (IsAdmin)
             {
                 var rule = await _ruleService.Get(id);
-                var dtor = mapper.Map<RuleAdminDTO>(rule);
+                var dtor = _mapper.Map<RuleAdminDTO>(rule);
                 return Ok(dtor);
             }
             else
             {
-                 ExistsActive = await _ruleService.GetActive(id);
-                if (!ExistsActive)
-                    return BadRequest();
+
                 var rule = await _ruleService.Get(id);
-                var dtor = mapper.Map<RuleBasicDTO>(rule);
+                var dtor = _mapper.Map<RuleBasicDTO>(rule);
                 return Ok(dtor);
             }
         }
@@ -117,9 +113,8 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var rule = mapper.Map<Rule>(dtos);
+            var rule = _mapper.Map<Rule>(dtos);
             rule.CreatedUserId = rule.UpdatedUserId = UserId;                        
-            rule.CreatedTime = rule.UpdatedTime = DateTime.Now;
             await _ruleService.Create(rule);
             return Ok(rule);
 
@@ -177,18 +172,16 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var rule = mapper.Map<Rule>(dtos);
-            rule.UpdatedTime = DateTime.Now;              
+            var rule = _mapper.Map<Rule>(dtos);        
             rule.UpdatedUserId = UserId;                 
-            rule.Id = id;
 
-            await _ruleService.Update(rule);
+            await _ruleService.Update(id, rule);
             return Ok();
 
         }
 
         /// <summary>
-        /// Return rule. Get: api/rules/{id}/resources
+        /// Return resources. Get: api/rules/{id}/resources
         /// </summary>
         /// <param name="id">Rule id</param>
         /// <returns>Http response code</returns>
@@ -208,7 +201,7 @@ namespace BookingApp.Controllers
         public async Task<IActionResult> GetResourcesByRule([FromRoute]int id, [FromServices]IResourcesService _resourcesService)
         {
             var res = await _resourcesService.ListByRuleKey(id);
-            var resD = mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(res);
+            var resD = _mapper.Map<IEnumerable<Resource>, IEnumerable<ResourceMaxDto>>(res);
             return Ok(resD);
         }
     }

@@ -1,8 +1,15 @@
-<h5>This resource has some rules, you should know about:</h5>
-<ul *ngIf="Rule">
-  <li><p>Minimum time for usage is {{Rule.minTime}} minute(s), maximum - {{Rule.maxTime}}.</p></li>
-  <li *ngIf="Rule.serviceTime !=0"><p >This resource needs some {{Rule.serviceTime}} minute(s) for restoration.</p></li>
-  <li *ngIf="Rule.stepTime !=0"><p >Keep in mind, that this resource has a step time: {{Rule.stepTime}} minute(s).</p></li>
-  <li *ngIf="Rule.reuseTimeout !=0"><p >This resource has a constraint, you have to wait {{Rule.reuseTimeout}} minutes before you can book it again.</p></li>
-  <li *ngIf="Rule.preOrderTimeLimit !=0"><p >Notice, the most allowable timespan between booking and resource's using start time is {{Rule.preOrderTimeLimit}} hours.</p></li>
+<ul *ngIf="Rule && isAdmin">
+  <li><p>Rule: {{Rule.title}}</p></li>
+  <li><p>Minimum time: {{showTime(Rule.minTime)}}, maximum: {{showTime(Rule.maxTime)}}.</p></li>
+  <li *ngIf="Rule.serviceTime !=0"><p >Service time: {{showTime(Rule.serviceTime)}}.</p></li>
+  <li *ngIf="Rule.stepTime !=0"><p >Step time: {{showTime(Rule.stepTime)}}.</p></li>
+  <li *ngIf="Rule.reuseTimeout !=0"><p >Reuse timeout: {{showTime(Rule.reuseTimeout)}}.</p></li>
+  <li *ngIf="Rule.preOrderTimeLimit !=0"><p >Pre order time limit: {{showTime(Rule.preOrderTimeLimit)}}.</p></li>
 </ul>
+
+<p *ngIf="Rule && !isAdmin">
+  <span>Minimum time for this resource usage is {{showTime(Rule.minTime)}}, maximum - {{showTime(Rule.maxTime)}}.</span>
+  <span *ngIf="Rule.serviceTime !=0">Keep in mind, that this resource needs some {{showTime(Rule.serviceTime)}} for restoration.</span>
+  <span *ngIf="Rule.reuseTimeout !=0">This resource has a constraint, you have to wait {{showTime(Rule.reuseTimeout)}} before you can book it again.</span>
+  <span *ngIf="Rule.preOrderTimeLimit !=0">Notice, you can book book {{showTime(Rule.preOrderTimeLimit)}} in advance max.</span>
+</p>

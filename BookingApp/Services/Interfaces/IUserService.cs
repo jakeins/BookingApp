@@ -14,7 +14,7 @@ namespace BookingApp.Services.Interfaces
         Task ChangePassword(string userId, string currentpassword, string newpassword);
         Task<IEnumerable<ApplicationUser>> GetUsersById(IEnumerable<string> usersId);
         Task<bool> CheckPassword(ApplicationUser user, string password);
-        Task CreateAdmin(ApplicationUser user, string password);
+        Task CreateAdmin(ApplicationUser user);
         Task CreateUser(ApplicationUser user);
         Task CreateUser(ApplicationUser user, string password);
         Task DeleteUser(ApplicationUser user);

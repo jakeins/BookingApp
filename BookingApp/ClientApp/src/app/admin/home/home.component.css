@@ -1,56 +1,18 @@
-h2 {
-  text-align: center;
+.card i {
+  font-size: 4rem;
+  color: #ccc;
+  float: right;
+  padding: 0 0 0 1rem;
 }
 
-div#content {
-  margin-top:24px;
-}
-
-div.plate {
-  width: 45%;
-  float: left;
-  border: solid #aaa 2px;
-  border-radius: 24px;
-  margin:20px 2%;
-  height: 250px;
-}
-
-  div.plate > div {
-    padding: 20px;
+@media(max-width:300px) {
+  .card i {
+    display:none;
   }
+}
 
-    div.plate > div.head {
-      height: 160px;
-    }
-
-      div.plate > div.head > div.icon {
-        float: right;
-        color: #aaa;
-        width: 30%;
-        padding-top:6px;
-      }
-
-      div.plate > div.head > div.icon > i {
-        float: right;
-        color: #aaa;
-        maxwidth: 30%;
-        padding-top: 6px;
-      }
-
-      div.plate > div.head > div.h3 {
-        font-weight: bold;
-      
-      }
-
-      div.plate > div.head > div.text {
-        color: #777;
-        width: 65%;
-      }
-
-    div.plate > div.foot {
-      margin-top: 12px;
-      clear: both;
-      border-top: solid #aaa 2px;
-      min-height: 50px;
-      font-weight: bolder;
-    }
+@media(min-width:768px) {
+  .card i {
+    font-size: 6rem;
+  }
+}

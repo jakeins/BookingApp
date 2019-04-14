@@ -11,6 +11,7 @@ using BookingApp.DTOs;
 using System.Linq;
 using BookingApp.Services.Interfaces;
 using BookingApp.DTOs.Resource;
+using BookingApp.Exceptions;
 
 namespace BookingAppTests.Controllers
 {
@@ -83,13 +84,12 @@ namespace BookingAppTests.Controllers
         }
 
         [Theory]
-        [InlineData(3)]
+        [InlineData(2)]
         public async Task GetRuleForUser(int id)
         {
             //arrange
             mockServ.Setup(p => p.Get(id)).ReturnsAsync(initRules().Single(p => p.Id == id));
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.SetupGet(p => p.ExistsActive).Returns(true);
             controller.SetupGet(p => p.IsAdmin).Returns(false);
 
 
@@ -99,27 +99,10 @@ namespace BookingAppTests.Controllers
             //assert
             var ruleOk = Assert.IsType<OkObjectResult>(result);
             var modelOk = Assert.IsType<RuleBasicDTO>(ruleOk.Value);
-            Assert.Equal("BunkerRule", modelOk.Title);
-            Assert.Equal(30, modelOk.MinTime);
+            Assert.Equal("LibraryRule", modelOk.Title);
+            Assert.Equal(20, modelOk.MinTime);
         }
 
-        [Theory]
-        [InlineData(30)]
-        public async Task GetRuleForUserReturnsError(int id)
-        {
-            //arrange
-            mockServ.Setup(p => p.Get(id)).ReturnsAsync((Rule)null);
-            var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.SetupGet(p => p.ExistsActive).Returns(false);
-            controller.SetupGet(p => p.IsAdmin).Returns(false);
-
-            //act
-            var result = await controller.Object.GetRule(id);
-
-            //assert
-            var ruleBad = Assert.IsType<BadRequestResult>(result);
-            Assert.Equal(400, ruleBad.StatusCode);
-        }
         #endregion
 
         #region CreateRule
@@ -170,8 +153,8 @@ namespace BookingAppTests.Controllers
             var result = await controller.Object.DeleteRule(id);
 
             //assert
-            var ruleOk = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal("Rule's been deleted", ruleOk.Value);
+            var ruleOk = Assert.IsType<OkResult>(result);
+            Assert.Equal(200, ruleOk.StatusCode);
 
         }
 
@@ -182,7 +165,7 @@ namespace BookingAppTests.Controllers
         public async Task UpdateRuleWithBadModelReturnsBadRequest()
         {
             //arrange
-            mockServ.Setup(f => f.Update(someRule())).Returns(Task.CompletedTask);
+            mockServ.Setup(f => f.Update(5,someRule())).Returns(Task.CompletedTask);
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
             controller.Object.ModelState.AddModelError("error", "Invalid model");
             //act
@@ -197,16 +180,15 @@ namespace BookingAppTests.Controllers
         public async Task UpdateRule()
         {
             //arrange
-            mockServ.Setup(f => f.Update(someRule())).Returns(Task.CompletedTask);
+            mockServ.Setup(f => f.Update(1, someRule())).Returns(Task.CompletedTask);
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
             controller.SetupGet(p => p.UserId).Returns(It.IsAny<string>());
             //act
             var result = await controller.Object.UpdateRule(1, someDTORule());
 
             //Assert
-            var ruleOk = Assert.IsType<OkObjectResult>(result);
-            var ruleModel = Assert.IsType<string>(ruleOk.Value);
-            Assert.Equal("Rule's been updated", ruleOk.Value);
+            var ruleOk = Assert.IsType<OkResult>(result);
+            Assert.Equal(200, ruleOk.StatusCode);
         }
         #endregion
 
@@ -228,7 +210,7 @@ namespace BookingAppTests.Controllers
             var ruleOk = Assert.IsType<OkObjectResult>(result);
             var resourcesOk = Assert.IsAssignableFrom<IEnumerable<ResourceMaxDto>>(ruleOk.Value);
         }
-#endregion
+        #endregion
 
         #region TestDataHelper
         public IEnumerable<Rule> initRules()
@@ -304,7 +286,7 @@ namespace BookingAppTests.Controllers
         {
             return new List<Resource>();
         }
-#endregion
+        #endregion
 
     }
 }

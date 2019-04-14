@@ -2,7 +2,7 @@
 using BookingApp.Data.Models;
 using BookingApp.DTOs;
 using BookingApp.DTOs.User;
-using BookingApp.Exceptions;
+using System.Net;
 using BookingApp.DTOs.Resource;
 using BookingApp.Helpers;
 using BookingApp.Services;
@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookingApp.Controllers.Bases;
+
 
 namespace BookingApp.Controllers
 {
@@ -34,6 +35,7 @@ namespace BookingApp.Controllers
             {
                 cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap().ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
+                cfg.CreateMap<AdminRegisterDTO, ApplicationUser>().ReverseMap();
                 cfg.CreateMap<List<ApplicationUser>, List<UserMinimalDto>> ().ReverseMap();
                 cfg.CreateMap<List<UserMinimalDto>, List<ApplicationUser>> ().ReverseMap();
                 cfg.CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
@@ -55,17 +57,15 @@ namespace BookingApp.Controllers
 
         [Authorize(Roles = RoleTypes.Admin)]
         [HttpPost("api/user/create-admin")]
-        public async Task<IActionResult> CreateAdmin([FromBody] AuthRegisterDto user)
+        public async Task<IActionResult> CreateAdmin([FromBody] AdminRegisterDTO userDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            ApplicationUser appUser = mapper.Map<AuthRegisterDto, ApplicationUser>(user);
-            await userService.CreateAdmin(appUser, user.Password);
-            ApplicationUser adminUser = await userService.GetUserByName(user.UserName);
-            await userService.AddUsersRoleAsync(adminUser, new List<string> { RoleTypes.Admin ,RoleTypes.User });
-            return Ok("User created");       
-        }
 
+            ApplicationUser userModel = mapper.Map<AdminRegisterDTO, ApplicationUser>(userDto);
+            await userService.CreateAdmin(userModel);
+            return Ok("Admin created");       
+        }
 
         [Authorize(Roles = RoleTypes.User)]
         [HttpGet("api/user/{userId}")]
@@ -81,6 +81,20 @@ namespace BookingApp.Controllers
                 return BadRequest("Can not get information about this user");
         }
 
+        [Authorize(Roles = RoleTypes.User)]
+        [HttpGet("api/user/user-name/{userName}")]
+        public async Task<IActionResult> GetUserByName([FromRoute]string userName)
+        {
+            ApplicationUser applicationUser = await userService.GetUserByName(userName); 
+            if (UserId == applicationUser.Id || IsAdmin)
+            {
+                ApplicationUser appuser = await userService.GetUserByName(userName);
+                UserMinimalDto user = mapper.Map<ApplicationUser, UserMinimalDto>(appuser);
+                return new OkObjectResult(user);
+            }
+            else
+                return BadRequest("Can not get information about this user");
+        }
         
         [HttpGet("api/user/email/{userEmail}")]
         [Authorize(Roles = RoleTypes.User)]
@@ -134,21 +148,28 @@ namespace BookingApp.Controllers
         [HttpDelete("api/user/{userId}")]
         public async Task<IActionResult> DeleteUserById([FromRoute] string userId)
         {
-            //TODO: Delete all user bookings
             await userService.RemoveAllRolesFromUser(userId);
             await userService.DeleteUser(userId);
-            return new OkObjectResult("User deleted");
+            return Ok(new { DeletedTime = DateTime.Now });
         }
 
         [Authorize(Roles = RoleTypes.User)]
         [HttpPut("api/user/{userId}")]
-        public async Task<IActionResult> UpdateUser([FromBody]UserUpdateDTO user, [FromRoute]string userId)
+        public async Task<IActionResult> UpdateUser([FromBody]UserUpdateDTO userDto, [FromRoute]string userId)
         {
             if (UserId == userId || IsAdmin)
             {
-                ApplicationUser appuser = await userService.GetUserById(userId);
-                mapper.Map<UserUpdateDTO, ApplicationUser>(user, appuser);
-                await userService.UpdateUser(appuser);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                ApplicationUser userModel = await userService.GetUserById(userId);
+
+                if (userDto.HasNameOnly())
+                    userModel.UserName = userDto.UserName;
+                else
+                    mapper.Map(userDto, userModel);
+
+                await userService.UpdateUser(userModel);
                 return new OkObjectResult("User updated");
             }
             else
@@ -188,6 +209,13 @@ namespace BookingApp.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var user = await userService.GetUserById(userId);
+            if (!await userService.CheckPassword(user, userDTO.CurrentPassword))
+            {
+                return BadRequest("You have entered wrong your password!");
+            }
+
             if (UserId == userId)
             {
                 await userService.ChangePassword(userId, userDTO.CurrentPassword, userDTO.NewPassword);
@@ -229,20 +257,15 @@ namespace BookingApp.Controllers
             return Ok("User blocked");
         }
 
-        [Authorize(Roles = RoleTypes.User)]
-        [HttpPut("api/user/{userId}/reset-password")]
-        public async Task<IActionResult> ResetPassword([FromRoute]string userId, string token, [FromBody]UserNewPasswordDto userNewPasswordDto)
+        [AllowAnonymous]
+        [HttpPut("api/user/{userId}/restore-password")]
+        public async Task<IActionResult> RestorePassword([FromRoute]string userId, [FromBody]UserPasswordRestoreDto restoreDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            if (UserId == userId)
-            {
-          
-                await userService.ResetUserPassword(userId, token, userNewPasswordDto.NewPassword);
-                return new OkObjectResult("Password have been reset");
-            }    
-            else
-                return BadRequest("Can not reset password for this user");
+                 return BadRequest(ModelState);
+
+            await userService.ResetUserPassword(userId, restoreDto.RestoreToken, restoreDto.NewPassword);
+            return Ok("Password restored successfully.");  
         }
 
         #region Bookings

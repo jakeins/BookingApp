@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { UserInfoService } from '../../services/user-info.service';
 
 @Component({
   selector: 'app-header',
@@ -8,22 +9,13 @@ import { AuthService } from '../../services/auth.service';
 })
 export class AppHeaderComponent implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private userInfo: UserInfoService) { }
 
   ngOnInit() {
-
-  }
-
-  authAdmin() {
-    this.authService.login("superadmin@admin.cow", "SuperAdmin");
-  }
-
-  authUser() {
-    this.authService.login("lion@user.cow", "Lion");
   }
 
   logout() {
     this.authService.logout();
+    return false;
   }
-
 }

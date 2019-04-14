@@ -1,56 +1,35 @@
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-                    <li class="breadcrumb-item"><a routerLink="/login">Sign In</a></li>
-                    <li class="breadcrumb-item"><a routerLink="/forget">Forget password</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Reset password</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
     <div class="row justify-content-center">
         <div class="col-md-8">
+          <div *ngIf="!isParamsExist" class="alert alert-danger" role="alert">
+            Cannot reset password, wrong url params
+          </div>
+
             <div class="card">
-                <div class="card-header">Sign Up</div>
+              <div class="card-header">Reset password</div>
 
                 <div class="card-body">
                     <form [formGroup]="resetForm" (ngSubmit)="reset()">
-                        <div class="form-group row justify-content-center">
-                            <div class="alert alert-danger" *ngIf="!isParamsExist">
-                                Cannot reset password
-                            </div>
-                        </div>
 
                         <div class="form-group row">
-                            <label class="col-md-4 col-form-label text-md-right">Password</label>
+                            <label class="col-md-4 col-form-label text-md-right" for="password">Password</label>
                             <div class="col-md-6">
-                                <input formControlName="password" type="password" class="form-control underlined"
+                                <input formControlName="password" type="password" class="form-control underlined" [ngClass]="{'ng-invalid':resetForm.hasError('notSame')}"
                                     id="password" placeholder="***">
-                            </div>
-                        </div>
-
-                        <div class="form-group row offset-md-4">
-                            <div class="alert alert-danger"
-                                *ngIf="resetForm.controls['password'].invalid && resetForm.controls['password'].touched">
-                                Not valid field
+                                <span class="form-help-text" *ngIf="resetForm.get('password').invalid && resetForm.get('password').dirty">
+                                  <span *ngIf="resetForm.get('password')['errors']['required']">Field can`t be empty.</span>
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-md-4 col-form-label text-md-right">Confirm Password</label>
+                            <label class="col-md-4 col-form-label text-md-right" for="confirmPassword">Confirm Password</label>
                             <div class="col-md-6">
-                                <input formControlName="confirmPassword" type="password" class="form-control underlined"
-                                    id="confirmPassword" placeholder="***">
-                            </div>
-                        </div>
-
-                        <div class="form-group row offset-md-4">
-                            <div class="alert alert-danger"
-                                *ngIf="resetForm.hasError('notSame') && resetForm.controls['confirmPassword'].touched">
-                                Not valid field
+                              <input formControlName="confirmPassword" type="password" class="form-control underlined" [ngClass]="{'ng-invalid':resetForm.hasError('notSame')}"
+                                     id="confirmPassword" placeholder="***">
+                              <span class="form-help-text" *ngIf="resetForm.hasError('notSame') && resetForm.get('confirmPassword').dirty">
+                                <span *ngIf="resetForm.hasError('notSame')">Passwords don`t match.</span>
+                              </span>
                             </div>
                         </div>
 

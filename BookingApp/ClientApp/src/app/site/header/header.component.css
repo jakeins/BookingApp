@@ -1,21 +1,10 @@
-/* Layout */
-.header-site {
-  padding-top: 10px;
-  -webkit-box-shadow: 0px 3px 11px -4px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 3px 11px -4px rgba(0,0,0,0.75);
-  box-shadow: 0px 3px 11px -4px rgba(0,0,0,0.75);
-  position: fixed;
-  z-index: 99;
-  top: 0;
-  width: 100%;
-  background: #fff;
+.navbar-brand > h1 {
+  font-family: Open Sans;
+  font-style: italic;
+  font-weight: 400;
+  color: #016;
 }
 
-.logo {
-  color: #000000;
+nav.navbar {
+  box-shadow: 0 8px 8px -8px #ccc;
 }
-
-  .logo span {
-    color: #ff627b;
-  }
-/* Layout */
