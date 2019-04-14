@@ -8,7 +8,7 @@ import { UserComponent } from './user/user.component';
 import { AdminComponent } from './admin.component';
 import { ResourceEditComponent } from './resource/resource-edit.component';
 import { FolderEditComponent } from './folder/folder-edit.component';
-import { RulesComponent } from './rules/rules.component'
+import { RulesComponent } from './rules/rules.component';
  import { RuleComponent } from './rules/rule/rule.component';
 import { RuleListComponent } from './rules/rule-list/rule-list.component';
 import { UserNamePipe, RuleActivityPipe } from './rule.pipe';
@@ -19,6 +19,10 @@ import { UserReadComponent } from './user/user-read.component';
 import { UserCreateComponent } from './user/user-create.cpmponent';
 import { UserListComponent } from './user/user-list.component';
 import { UserChangeComponent } from './user/user-edit.component';
+import { StatsBookingComponent } from './stats/stats-bookings.component';
+import { StatsResourcesComponent } from './stats/stats-resources.component';
+import { StatsResourceComponent } from './stats/stats-resource.component';
+import { StatsUsersComponent } from './stats/stats-users.component';
 
 
 @NgModule({
@@ -45,7 +49,11 @@ import { UserChangeComponent } from './user/user-edit.component';
       UserReadComponent,
     UserCreateComponent,
     UserListComponent,
-    UserChangeComponent
+    UserChangeComponent,
+      StatsBookingComponent,
+      StatsResourcesComponent,
+      StatsResourceComponent,
+      StatsUsersComponent
   ],
     entryComponents: [RuleComponent] 
 })

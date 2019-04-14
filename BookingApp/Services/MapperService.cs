@@ -3,8 +3,11 @@ using BookingApp.Data.Models;
 using BookingApp.DTOs;
 using BookingApp.DTOs.Folder;
 using BookingApp.DTOs.Resource;
+using BookingApp.DTOs.Statistics;
+using BookingApp.Entities.Statistics;
 using BookingApp.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace BookingApp.Services
 {
@@ -31,6 +34,10 @@ namespace BookingApp.Services
                 cfg.CreateMap<ApplicationUser, AuthRegisterDto>().ReverseMap().ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
                 cfg.CreateMap<UserMinimalDto, ApplicationUser>().ReverseMap();
                 cfg.CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
+
+                cfg.CreateMap<BookingsStats, BookingStatsDTO>();
+                cfg.CreateMap<ResourceStats, ResourceStatsDTO>();
+                cfg.CreateMap<ResourceStats, ResourceStatsBriefDTO>();
             }));
         }
 
