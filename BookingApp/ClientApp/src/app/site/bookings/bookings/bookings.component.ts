@@ -69,7 +69,7 @@ export class BookingsComponent implements OnInit {
   resetData() {
     switch (this.mode) {
       case "admin":
-        this.bookingService.getBookings().subscribe((bookingsRaw: Booking[]) => {
+        this.bookingService.getBookings(this.startTime, this.endTime).subscribe((bookingsRaw: Booking[]) => {
           for (var booking of bookingsRaw) {
             this.userService.getUserById(booking.createdUserId).subscribe((response: User) => {
               booking.createdUserId = response.userName;
@@ -84,7 +84,7 @@ export class BookingsComponent implements OnInit {
         }, error => { this.router.navigate(['/error']); });
         break;
       case "res":
-        this.bookingService.getBookingOfResource(3).subscribe((responseBookings: Booking[]) => {
+        this.bookingService.getBookingOfResource(this.resourceId, this.startTime, this.endTime).subscribe((responseBookings: Booking[]) => {
           this.resourceService.getResource(this.resourceId).subscribe((response: Resource) => {
             this.ruleService.getRule(response.ruleId).subscribe((response: rule) => {
               this.serviceTime = response.serviceTime;
@@ -106,43 +106,66 @@ export class BookingsComponent implements OnInit {
   };
 
   genResourceTimeWindows() {
-   this.resourceTimeWindows = new Array();
-    for (var i = 0; i < this.bookings.length; i++) {
-      var bookingTimeWindow = new ResourceTimeWindow;
-      var serviceTimeWindow = new ResourceTimeWindow;
-      bookingTimeWindow.type = ResourceTimeWindowType.Booked;
-      bookingTimeWindow.startTime = new Date(this.bookings[i].startTime);
-      bookingTimeWindow.endTime = new Date(this.bookings[i].endTime);
-      bookingTimeWindow.booking = this.bookings[i];
-      this.resourceTimeWindows.push(bookingTimeWindow);
-      serviceTimeWindow.type = ResourceTimeWindowType.ServiceTime;
-      serviceTimeWindow.startTime = new Date(this.bookings[i].startTime);
-      serviceTimeWindow.endTime = new Date(this.bookings[i].startTime);
-      serviceTimeWindow.endTime.setTime(serviceTimeWindow.endTime.getTime() + this.serviceTime * 60 * 1000);
-      this.resourceTimeWindows.push(serviceTimeWindow);
+    this.resourceTimeWindows = new Array();
+    if (this.bookings.length != 0) {
+      for (var i = 0; i < this.bookings.length; i++) {
+        var bookingTimeWindow = new ResourceTimeWindow;
+        var serviceTimeWindow = new ResourceTimeWindow;
+        bookingTimeWindow.type = ResourceTimeWindowType.Booked;
+        bookingTimeWindow.startTime = new Date(this.bookings[i].startTime);
+        bookingTimeWindow.endTime = new Date(this.bookings[i].endTime);
+        bookingTimeWindow.booking = this.bookings[i];
+        this.resourceTimeWindows.push(bookingTimeWindow);
 
-      if (i == this.bookings.length - 1) {
-        let freeTimeWindowSize = this.endTime.getTime() - serviceTimeWindow.endTime.getTime();
-        if (freeTimeWindowSize > 0) {
-          var freeTimeWindow = new ResourceTimeWindow;
-          freeTimeWindow.type = ResourceTimeWindowType.Free;
-          freeTimeWindow.startTime = new Date(serviceTimeWindow.endTime);
-          freeTimeWindow.endTime = new Date(this.endTime);
-          this.resourceTimeWindows.push(freeTimeWindow);
+        if (this.serviceTime != 0) {
+          serviceTimeWindow.type = ResourceTimeWindowType.ServiceTime;
+          serviceTimeWindow.startTime = new Date(this.bookings[i].endTime);
+          serviceTimeWindow.endTime = new Date(this.bookings[i].endTime);
+          serviceTimeWindow.endTime.setTime(serviceTimeWindow.endTime.getTime() + this.serviceTime * 60 * 1000);
+          this.resourceTimeWindows.push(serviceTimeWindow);
         }
-      } else {
-        let freeTimeWindowSize = new Date(this.bookings[i + 1].startTime).getTime();
-        freeTimeWindowSize = freeTimeWindowSize - serviceTimeWindow.endTime.getTime();
-        if (freeTimeWindowSize > 0) {
-          var freeTimeWindow = new ResourceTimeWindow;
-          freeTimeWindow.type = ResourceTimeWindowType.Free;
-          freeTimeWindow.startTime = new Date(serviceTimeWindow.endTime);
-          freeTimeWindow.endTime = new Date(this.bookings[i + 1].startTime);
-          this.resourceTimeWindows.push(freeTimeWindow);
+
+        var freeTimeWindow = new ResourceTimeWindow;
+        freeTimeWindow.type = ResourceTimeWindowType.Free;
+        if (i == this.bookings.length - 1) {
+          let freeTimeWindowSize = this.endTime.getTime();
+          if (this.serviceTime != 0) {
+            freeTimeWindow.startTime = new Date(serviceTimeWindow.endTime);
+            freeTimeWindowSize -= serviceTimeWindow.endTime.getTime();
+          }
+          else {
+            freeTimeWindow.startTime = new Date(this.bookings[i].endTime);
+            freeTimeWindowSize -= this.endTime.getTime() - - this.bookings[i].endTime.getTime();
+          }
+          if (freeTimeWindowSize > 0) {
+
+            freeTimeWindow.endTime = new Date(this.endTime);
+            this.resourceTimeWindows.push(freeTimeWindow);
+          }
+        } else {
+          let freeTimeWindowSize = new Date(this.bookings[i + 1].startTime).getTime();
+          if (this.serviceTime != 0) {
+            freeTimeWindow.startTime = new Date(serviceTimeWindow.endTime);
+            freeTimeWindowSize -= serviceTimeWindow.endTime.getTime();
+          }
+          else {
+            freeTimeWindow.startTime = new Date(this.bookings[i].endTime);
+            freeTimeWindowSize -= this.bookings[i].endTime.getTime();
+          }
+          if (freeTimeWindowSize > 0) {
+            freeTimeWindow.endTime = new Date(this.bookings[i + 1].startTime);
+            this.resourceTimeWindows.push(freeTimeWindow);
+          }
         }
       }
     }
-
+    else {
+      var freeTimeWindow = new ResourceTimeWindow;
+      freeTimeWindow.type = ResourceTimeWindowType.Free;
+      freeTimeWindow.startTime = this.startTime;
+      freeTimeWindow.endTime = this.endTime;
+      this.resourceTimeWindows.push(freeTimeWindow);
+    }
   };
 
   onCreate(startTime: Date) {

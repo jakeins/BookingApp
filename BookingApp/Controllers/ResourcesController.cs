@@ -59,11 +59,18 @@ namespace BookingApp.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         // Filtered access: Guest/Owner/Admin.
-        public async Task<IActionResult> ListRelatedBookings([FromRoute] int resourceId)
+        public async Task<IActionResult> ListRelatedBookings([FromRoute] int resourceId, [FromQuery]DateTime? startTime, [FromQuery]DateTime? endTime)
         {
             await AuthorizeForSingleResource(resourceId);
-
-            var models = await bookService.ListBookingOfResource(resourceId, IsAdmin);
+            DateTime realStartTime;
+            if (IsAdmin)
+                realStartTime = startTime ?? DateTime.Now;
+            else
+            {
+                realStartTime = startTime ?? DateTime.Now;
+                realStartTime = (realStartTime < DateTime.Now) ? DateTime.Now : realStartTime;
+            }
+            var models = await bookService.ListBookingOfResource(resourceId, realStartTime, endTime ?? DateTime.MaxValue);
 
             IEnumerable<BookingMinimalDTO> dtos;
 

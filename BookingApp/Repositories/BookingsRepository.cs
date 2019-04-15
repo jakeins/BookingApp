@@ -47,19 +47,14 @@ namespace BookingApp.Repositories
         /// <returns>List of <see cref="Booking"/></returns>
         Task<IEnumerable<Booking>> GetAllBookings(DateTime startTime, DateTime endTime);
         #endregion
-        /// <summary>
-        /// Get <see cref="Booking"></see> of specified <see cref="Resource"></see> and active now or in future
-        /// </summary>
-        /// <param name="resource">Booking <see cref="Resource"></see></param>
-        /// <returns>List of active <see cref="Booking"></see></returns>
-        Task<IEnumerable<Booking>> GetActiveBookingsOfResourceFromCurrentTime(int resourceId);
-
+        #region Get bookings of resource
         /// <summary>
         /// Get all <see cref="Booking"></see> of specific <see cref="Resource"></see>
         /// </summary>
         /// <param name="resource">Exist <see cref="Resource.Id"></see></param>
         /// <returns>List of all <see cref="Booking"></see> of specific <see cref="Resource"></see></returns>
-        Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId);
+        Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId, DateTime startTime, DateTime endTime);
+        #endregion
 
         /// <summary>
         /// Terminate specific <see cref="Booking"></see>
@@ -288,21 +283,12 @@ namespace BookingApp.Repositories
         }
 
         /// <summary>
-        /// Get <see cref="Booking"></see> of specified <see cref="Resource"></see> and active now or in future
-        /// </summary>
-        /// <param name="resource">Booking <see cref="Resource"></see></param>
-        /// <returns>List of active <see cref="Booking"></see></returns>
-        public async Task<IEnumerable<Booking>> GetActiveBookingsOfResourceFromCurrentTime(int resourceId) => await ActualBookings
-            .Where(b => b.ResourceId == resourceId && (b.TerminationTime ?? b.EndTime) < DateTime.Now)
-            .ToListAsync();
-
-        /// <summary>
         /// Get all <see cref="Booking"></see> of specific <see cref="Resource"></see>
         /// </summary>
         /// <param name="resource">Exist <see cref="Resource.Id"></see></param>
         /// <returns>List of all <see cref="Booking"></see> of specific <see cref="Resource"></see></returns>
-        public async Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId) => await Bookings
-            .Where(b => b.ResourceId == resourceId)
+        public async Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId, DateTime startTime, DateTime endTime) => await Bookings
+            .Where(b => ((b.ResourceId == resourceId) && ((b.TerminationTime ?? b.EndTime) <= endTime && b.StartTime >= startTime)))
             .ToListAsync();
 
         /// <summary>
@@ -352,7 +338,7 @@ namespace BookingApp.Repositories
         /// <param name="endTime">End time of bookings</param>
         /// <returns>List of <see cref="Booking"/></returns>
         public async Task<IEnumerable<Booking>> GetAllBookings(DateTime startTime, DateTime endTime) => await Bookings
-            .Where(b => (b.TerminationTime ?? b.EndTime) < startTime && b.StartTime < endTime)
+            .Where(b => ((b.TerminationTime ?? b.EndTime) <= endTime && b.StartTime >= startTime))
             .ToListAsync();
         #endregion
 

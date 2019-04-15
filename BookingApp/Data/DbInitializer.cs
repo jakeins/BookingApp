@@ -228,7 +228,7 @@ namespace BookingApp.Data
         private void SeedBookingsNonOverlapping(Random rand, string loremIpsum, Dictionary<string, ApplicationUser> users, Dictionary<int, Resource> resources)
         {
             const int day = 60 * 24;
-            const int historyWriteMinutesLimit = -day;
+            const int historyWriteMinutesLimit = -day * 365;
             const double terminationChance = 0.2;
 
             foreach (var entry in resources)

@@ -53,7 +53,7 @@ namespace BookingApp.Services
         /// <param name="resourceId"><see cref="Booking.ResourceId"></see></param>
         /// <param name="asAdmin">If <see cref="true"></see> than return all bookings of specific <see cref="Resource"></see> else only booking from active in current time or in future</param>
         /// <returns></returns>
-        Task<IEnumerable<Booking>> ListBookingOfResource(int resourceId, bool asAdmin);
+        Task<IEnumerable<Booking>> ListBookingOfResource(int resourceId, DateTime startTime, DateTime endTime);
 
         /// <summary>
         /// Terminate specific <see cref="Booking"></see>
@@ -133,12 +133,9 @@ namespace BookingApp.Services
         /// <param name="resourceId"><see cref="Booking.ResourceId"></see></param>
         /// <param name="asAdmin">If <see cref="true"></see> than return all bookings of specific <see cref="Resource"></see> else only booking from active in current time or in future</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Booking>> ListBookingOfResource(int resourceId, bool asAdmin)
+        public async Task<IEnumerable<Booking>> ListBookingOfResource(int resourceId, DateTime startTime, DateTime endTime)
         {
-            if (asAdmin)
-                return await bookingsRepo.GetBookingsOfResource(resourceId);
-            else
-                return await bookingsRepo.GetActiveBookingsOfResourceFromCurrentTime(resourceId);
+            return await bookingsRepo.GetBookingsOfResource(resourceId, startTime, endTime);
         }
 
         /// <summary>

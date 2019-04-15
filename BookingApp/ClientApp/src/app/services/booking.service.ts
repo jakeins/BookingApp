@@ -43,15 +43,16 @@ export class BookingService {
   }
 
   getBookingOfResource(resourceId: number, startTime?: Date, endTime?: Date): Observable<Booking[]> {
+    let datePipe = new DatePipe("en-Us");
     let query: String;
     query = "";
-    if (!(startTime == undefined || startTime == null)) query = "?startTime=" + startTime;
+    if (!(startTime == undefined || startTime == null)) query = "?startTime=" + datePipe.transform(startTime, 'short');
     if (!(endTime == undefined || endTime == null)) {
       if (query == null) query = "?";
       else query += "&"
-      query += "endTime=" + endTime;
+      query += "endTime=" + datePipe.transform(endTime, 'short');
     }
-    return this.http.get(BASE_API_URL + "/resources/" + resourceId + "/bookings", 
+    return this.http.get(BASE_API_URL + "/resources/" + resourceId + "/bookings" + query, 
       {
         headers: this.headers
       }).map((response: Response) => response)
