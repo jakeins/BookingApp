@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BookingApp.DTOs
+namespace BookingApp.DTOs.Statistics
 {
     public class BookingStatsDTO
     {

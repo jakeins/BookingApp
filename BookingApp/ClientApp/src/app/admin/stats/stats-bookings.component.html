@@ -1,0 +1,55 @@
+<h3 class="title">Bokings Statistics</h3>
+<div class="form-group">
+  <div class="row">
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="actionsTypeSelect">Actions type:</label>
+        </div>
+        <select class="custom-select" id="actionsTypeSelect" [(ngModel)]="actionsTypeSelect">
+          <option value="creations">Creations</option>
+          <option value="cancellations">Cancellations</option>
+          <option value="completions">Completions</option>
+          <option value="terminations">Terminations</option>
+        </select>
+      </div>      
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <label for="fromDate">From Date:</label>
+      <input type="date" id="fromDate" [(ngModel)]="fromDateString" />
+    </div>
+    <div class="col-md-6">
+      <label for="toDate">To Date:</label>
+      <input type="date" id="toDate" [(ngModel)]="toDateString" />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="intervalSelect">Interval:</label>
+        </div>
+        <select class="custom-select" id="actionsTypeSelect" [(ngModel)]="intervalSelect">
+          <option value="month">Month</option>
+          <option value="day">Day</option>
+          <option value="hour">Hour</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md">
+      <button class="btn btn-primary btn-block" (click)="loadStats()">Load Stats</button>
+    </div>
+  </div>
+</div>
+<div *ngIf="bookingStats">
+  <p>Bookings {{bookingStats.type}} from {{fromDateString}} to {{toDateString}}, {{bookingStats.interval}} intervals:</p>  
+  
+    <ol>
+      <li *ngFor="let item of bookingsWithKeys">{{item.key}} - {{item.value}}</li>
+    </ol>
+  
+</div>

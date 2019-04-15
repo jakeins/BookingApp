@@ -93,6 +93,10 @@
     <None Remove="ClientApp\src\app\admin\user\user-list.component.ts" />
     <None Remove="ClientApp\src\app\admin\user\user-read.component.ts" />
     <None Remove="ClientApp\src\app\cabinet\user-change-password\user-change-password.component.ts" />
+    <None Remove="ClientApp\src\app\admin\stats\stats-bookings.component.ts" />
+    <None Remove="ClientApp\src\app\admin\stats\stats-resource.component.ts" />
+    <None Remove="ClientApp\src\app\admin\stats\stats-resources.component.ts" />
+    <None Remove="ClientApp\src\app\admin\stats\stats-users.component.ts" />
     <None Remove="ClientApp\src\app\globals.ts" />
     <None Remove="ClientApp\src\app\models\admin-register.ts" />
     <None Remove="ClientApp\src\app\models\auth-login.ts" />
@@ -105,6 +109,10 @@
 	<None Remove="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
     <None Remove="ClientApp\src\app\models\rule.ts" />
+    <None Remove="ClientApp\src\app\models\stats-booking.ts" />
+    <None Remove="ClientApp\src\app\models\stats-resource-brief.ts" />
+    <None Remove="ClientApp\src\app\models\stats-resource.ts" />
+    <None Remove="ClientApp\src\app\models\stats-users.ts" />
     <None Remove="ClientApp\src\app\models\tree-entry.ts" />
     <None Remove="ClientApp\src\app\models\tree-node.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
@@ -123,6 +131,7 @@
     <None Remove="ClientApp\src\app\services\resource.service.ts" />
     <None Remove="ClientApp\src\app\services\rule.service.ts" />
     <None Remove="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
+    <None Remove="ClientApp\src\app\services\stats.service.ts" />
     <None Remove="ClientApp\src\app\services\token.interceptor.ts" />
     <None Remove="ClientApp\src\app\site\breadcrumbs\breadcrumbs.component.ts" />
     <None Remove="ClientApp\src\app\site\header\header.component.ts" />
@@ -158,9 +167,14 @@
     <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\admin\user\user-read.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\cabinet\user-change-password\user-change-password.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\stats\stats-resource.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\stats\stats-resources.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\stats\stats-bookings.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\admin\stats\stats-users.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\globals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\admin-register.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\auth-login.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\stats-booking.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folder-form.model.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\jwt-token.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\page.ts" />
@@ -168,6 +182,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\breadcrumb.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\resource.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\rule.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\stats-resource-brief.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\stats-resource.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\stats-users.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-entry.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\tree-node.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\folder.ts" />
@@ -177,6 +194,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\user-roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-update.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\bookings-component-mode.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\stats.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\folder.service.ts" />
