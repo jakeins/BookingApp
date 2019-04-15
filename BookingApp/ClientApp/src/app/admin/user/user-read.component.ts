@@ -10,7 +10,7 @@ import { Logger } from '../../services/logger.service';
   selector: 'app-admin-user-read',
   templateUrl: './user-read.component.html'
 })
-export class UserReadComponent implements OnInit {
+export class UserCPComponent implements OnInit {
 
   user: User;
   private userId: string;

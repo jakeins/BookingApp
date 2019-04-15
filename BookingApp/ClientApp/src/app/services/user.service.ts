@@ -15,6 +15,7 @@ import { UserNewPassword } from '../models/user-new-password';
 import { AdminRegister } from '../models/admin-register';
 import { DatePipe } from '@angular/common';
 import { UserRole } from '../models/user-roles';
+import { Logger } from './logger.service';
 
 
 @Injectable()
@@ -60,6 +61,10 @@ export class UserService {
   }
 
   getUserById(userId: string): Observable<User> {
+    if (userId == undefined || userId.length < 1) {
+      Logger.error(`User Id [${userId}] is illegal.`);
+      return null;
+    }
     return this.http.get<User>(this.basePathS + userId);
   }
 
