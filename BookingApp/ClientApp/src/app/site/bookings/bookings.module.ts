@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../material/material.module';
+import { DatePipe } from '@angular/common'
 
 import { BookingComponent } from './booking/booking.component';
 import { BookingsComponent } from './bookings/bookings.component';
@@ -23,7 +24,7 @@ import { BookingsComponent } from './bookings/bookings.component';
     BookingComponent,
     BookingsComponent
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: []
 })
 

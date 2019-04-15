@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as Material from '@angular/material';
+import { MatDatepickerModule } from '@angular/material';
 
 @NgModule({
   imports: [
@@ -16,7 +17,11 @@ import * as Material from '@angular/material';
     Material.MatPaginatorModule,
     Material.MatSortModule,
     Material.MatDialogModule,
-    Material.MatSnackBarModule
+    Material.MatSnackBarModule,
+    Material.MatSliderModule,
+    Material.MatDatepickerModule,
+    Material.MatNativeDateModule,
+    MatDatepickerModule
   ],
   exports: [
     Material.MatToolbarModule,
@@ -30,7 +35,11 @@ import * as Material from '@angular/material';
     Material.MatPaginatorModule,
     Material.MatSortModule,
     Material.MatDialogModule,
-    Material.MatSnackBarModule
+    Material.MatSnackBarModule, 
+    Material.MatSliderModule,
+    Material.MatDatepickerModule,
+    Material.MatNativeDateModule,
+    MatDatepickerModule
   ],
   declarations: []
 })

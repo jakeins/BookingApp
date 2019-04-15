@@ -2,28 +2,57 @@
 <div *ngIf='mode != "view"'>
   <form [formGroup]="form">
     <div class="controles-container">
-      <mat-form-field>
-        <input formControlName="description" matInput placeholder="Title" autocomplete="off">
-        <mat-error *ngIf="description.errors?.required && title.touched">Title is required</mat-error>
-        <mat-error *ngIf="description.errors?.minlength">Mfinimum 4 characters needed</mat-error>
-        <mat-error *ngIf="description.errors?.maxlength">Maximum 64 characters</mat-error>
-        <mat-error *ngIf="description.errors?.pattern">Incorrect title name</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <input formControlName="startTime" matInput placeholder="Start Time">
-        <mat-error *ngIf="startTime.errors?.required && startTime.touched">Min time is required</mat-error>
-        <mat-error *ngIf="startTime.errors?.pattern && startTime.touched">Incorrect min time</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <input formControlName="endTime" matInput placeholder="End Time">
-        <mat-error *ngIf="endTime.errors?.required && maxTime.touched">Max time is required</mat-error>
-        <mat-error *ngIf="endTime.errors?.pattern && maxTime.touched">Incorrect max time</mat-error>
-      </mat-form-field>
-      <div class="button-row">
-        <button mat-raised-button (click)="onCreate()" [disabled]="form.invalid" *ngIf="mode=='create'" class="button-row-create">Create</button>
-        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid" *ngIf="mode=='edit'">Submit</button>
-        <button mat-raised-button color="warn" (click)="onReset()">Reset</button>
-      </div>
+      <mat-grid-list cols="1" colspan="1" rowHeight="300px" layout="column">
+        <mat-grid-tile>
+          <div class="controles-container" layout="column">
+            <div class="alert alert-danger alert-dismissable" *ngIf="error!= null" role="alert">
+              <p>{{error}}</p>
+              <button (click)="onClear()" class="btn btn-md btn-danger b-clear">Got It</button>
+            </div>
+            <div>
+              <mat-form-field>
+                <input formControlName="description" matInput placeholder="Title" autocomplete="off" style="min-width: 100%; width: 100% !important">
+                <mat-error *ngIf="description.errors?.required && title.touched">Title is required</mat-error>
+                <mat-error *ngIf="description.errors?.minlength">Mfinimum 4 characters needed</mat-error>
+                <mat-error *ngIf="description.errors?.maxlength">Maximum 64 characters</mat-error>
+                <mat-error *ngIf="description.errors?.pattern">Incorrect title name</mat-error>
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+                <!--<input formControlName="startTime" matInput placeholder="Start Time">-->
+                <!--<input formControlName="startTime" matInput mdc-datetime-picker="" date="true" time="true" type="text" id="startTime"
+      placeholder="Date" show-todays-date="" min-date="date" ng-model="dateTime" class=" md-input"
+      readonly="readonly">-->
+                <!--<input formControlName="startTime" class=" md-input" matInput type="datetime-local" placeholder="start date" g-model="dateTime" style="min-width: 100%; width: 100% !important">-->
+                <input formControlName="startTime" matInput [matDatepicker]="myDatepicker" type="datetime-local">
+                <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                <mat-datepicker #myDatepicker></mat-datepicker>
+                <!--<mat-placeholder>Start DateTime</mat-placeholder>
+      <mat-datetimepicker-toggle [for]="datetimePicker" matSuffix></mat-datetimepicker-toggle>
+      <mat-datetimepicker #datetimePicker type="datetime" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
+      <input matInput formControlName="startTime" [matDatetimepicker]="datetimePicker" required autocomplete="false">-->
+                <mat-error *ngIf="startTime.errors?.required && startTime.touched">Min time is required</mat-error>
+                <mat-error *ngIf="startTime.errors?.pattern && startTime.touched">Incorrect min time</mat-error>
+              </mat-form-field>
+            </div>
+            <!--<mat-form-field>
+    <input formControlName="endTime" matInput placeholder="End Time">
+    <mat-error *ngIf="endTime.errors?.required && maxTime.touched">Max time is required</mat-error>
+    <mat-error *ngIf="endTime.errors?.pattern && maxTime.touched">Incorrect max time</mat-error>
+  </mat-form-field>-->
+            <div>
+              <mat-slider thumbLabel [tick-interval]="1" [max]="max" [min]="min" [step]="step" [value]="current" style="min-width: 100%; width: 100% !important"></mat-slider>
+            </div>
+            <div>
+              <button mat-raised-button (click)="onSubmit()" [disabled]="form.invalid" *ngIf="mode=='create'" class="button-row-create">Create</button>
+              <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid" *ngIf="mode=='edit'">Submit</button>
+              <button mat-raised-button color="warn" (click)="onReset()">Reset</button>
+              <button mat-raised-button color="pimary" (click)="onCancel()">Cancel</button>
+            </div>
+          </div>
+        </mat-grid-tile>
+      </mat-grid-list>
     </div>
     <!--<div class="form-group">
     <label>StartTime</label><input type="text" name="startTime" />

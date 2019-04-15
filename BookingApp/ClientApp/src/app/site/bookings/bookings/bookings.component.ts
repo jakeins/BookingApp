@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Logger } from '../../../services/logger.service';
 import { AuthService } from '../../../services/auth.service';
@@ -19,7 +19,8 @@ import { BookingComponent } from '../booking/booking.component';
 @Component({
   selector: 'app-bookings',
   templateUrl: './bookings.component.html',
-  styleUrls: ['./bookings.component.css']
+  styleUrls: ['./bookings.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class BookingsComponent implements OnInit {
   //Inputs for modes
@@ -144,12 +145,12 @@ export class BookingsComponent implements OnInit {
 
   };
 
-  onCreate() {
+  onCreate(startTime: Date) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = "60%";
-    dialogConfig.data = { mode : "create"};
+    dialogConfig.data = { mode: "create", id: this.resourceId, startTime: startTime };
     const dialogRef = this.dialog.open(BookingComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(res => {
       this.resetData();
