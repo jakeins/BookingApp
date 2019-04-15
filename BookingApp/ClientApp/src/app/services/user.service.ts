@@ -15,6 +15,7 @@ import { UserNewPassword } from '../models/user-new-password';
 import { AdminRegister } from '../models/admin-register';
 import { DatePipe } from '@angular/common';
 import { UserRoles } from '../models/user-roles';
+import { Logger } from './logger.service';
 
 
 @Injectable()
@@ -108,14 +109,21 @@ export class UserService {
     return obs;
   }
 
-
-
-
-
-
   getUsersPage(page: number, pageSize: number): Observable<UserPage> {
-    return this.http.get<UserPage>(this.basePathS + 'page' + '?' + 'PageNumber=' + page + '&' + 'PageSize=' + pageSize);
+    const obs = this.http.get<UserPage>(this.basePathS + 'page' + '?' + 'PageNumber=' + page + '&' + 'PageSize=' + pageSize);
+    obs.subscribe(result => {
+      for (let user of result.items) {
+        this.updateUserCache(user);
+      }
+    });
+    return obs;
   }
+
+
+
+
+
+
 
   getUserRoleById(userId: string): Observable<string[]> {
     return this.http.get<string[]>(this.basePathS + userId + '/roles');
@@ -152,9 +160,23 @@ export class UserService {
 
 
 
-  updateUserCache(user: User) {
+  updateUserCache(user: User): void {
     this.UserCache[user.id] = user;
+    Logger.log(`User cache for ${user.email} updated.`);
   }
 
+  getUserCache(userId: string) : User {
+    return this.UserCache[userId];
+  }
+
+  getUsersCache(userIds: string[]): User[] {
+    let result: User[] = [];
+
+    for (let userID of userIds) {
+      result.push(this.updateUserCache[userID]);
+    }
+
+    return result;
+  }
 
 }
