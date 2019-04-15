@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, Injector } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { User } from '../models/user';
 import { Observable } from 'rxjs';
@@ -11,10 +11,11 @@ export class UserNamePipe implements PipeTransform {
   user: User ;  
 
   constructor(
-    private userSerive: UserService
+    private injector: Injector
   ){}
-  transform(id:string):Observable<string>{
-    return this.userSerive.getUserById(id).map(
+  transform(id: string): Observable<string>{
+    let userSerive = this.injector.get(UserService);
+    return userSerive.getUserById(id).map(
       data => {
         this.user = data;
         return this.user.userName;
