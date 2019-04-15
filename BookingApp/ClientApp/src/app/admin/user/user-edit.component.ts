@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { USERNAME_REGEX } from '../../globals';
 import { UserUpdate } from '../../models/user-update';
 import { User } from '../../models/user';
-import { UserRoles } from '../../models/user-roles';
+import { UserRole } from '../../models/user-roles';
 import 'rxjs/Rx';
 import { Observable } from 'rxjs/Rx';
 
@@ -56,7 +56,7 @@ export class UserChangeComponent implements OnInit {
   }
 
   editUser() {
-    let userRole = new UserRoles();
+    let userRole = new UserRole();
 
     this.userUpdate.userName = this.editUserForm.value.userName;
     this.userService.updateUser(this.userId, this.userUpdate)

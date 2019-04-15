@@ -43,6 +43,17 @@
         </td>
       </tr>
 
+      <tr>
+        <td class="align-middle">
+          <span *ngIf="!isAdmin">This is a regular user.</span>
+          <span *ngIf="isAdmin">This is an administrator.</span>
+        </td>
+        <td>
+          <button type="button" (click)="setAdminPrivileges(true)" class="btn btn-success" *ngIf="!isAdmin">Grant Admin Privileges</button>
+          <button type="button" (click)="setAdminPrivileges(false)" class="btn btn-danger" *ngIf="isAdmin">Revoke Admin Privileges</button>
+        </td>
+      </tr>
+
   </table>
   
   <div class="border-top pt-2">
