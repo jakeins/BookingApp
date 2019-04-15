@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-12">
       <div class="card">
-        <div class="card-header">Edit User</div>
+        <div class="card-header">Change Name</div>
         <div class="card-body">
           <div *ngIf="successMessage != ''" class="alert alert-success" role="alert">
             {{ successMessage }}
@@ -14,7 +14,7 @@
           <form [formGroup]="editUserForm" (ngSubmit)="editUser()">
 
             <div class="form-group row">
-              <label class="col-md-4 col-form-label text-md-right">Username</label>
+              <label class="col-md-4 col-form-label text-md-right" for="userName">Username</label>
               <div class="col-md-6">
                 <input formControlName="userName" type="text" class="form-control underlined" id="userName"
                        placeholder="name">
@@ -30,7 +30,7 @@
               <div class="col-md-6 offset-md-4">
                 <button type="submit" class="btn btn-primary"
                         [disabled]="editUserForm.invalid">
-                  Edit
+                  Submit
                   <span class="ti-user"></span>
                 </button>
               </div>
