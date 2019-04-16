@@ -15,14 +15,15 @@ import { UserNamePipe, RuleActivityPipe } from './rule.pipe';
 import { AdminBookingComponent } from './bookings/bookings.admin.component';
 import { BookingsModule } from '../bookings/bookings.module';
 import { MaterialModule } from '../material/material.module';
-import { UserReadComponent } from './user/user-read.component';
+import { UserCPComponent } from './user/user-read.component';
 import { UserCreateComponent } from './user/user-create.cpmponent';
 import { UserListComponent } from './user/user-list.component';
-import { UserChangeComponent } from './user/user-edit.component';
+import { UserRenameComponent } from './user/user-edit.component';
 import { StatsBookingComponent } from './stats/stats-bookings.component';
 import { StatsResourcesComponent } from './stats/stats-resources.component';
 import { StatsResourceComponent } from './stats/stats-resource.component';
 import { StatsUsersComponent } from './stats/stats-users.component';
+import { UserDetailsComponent } from './user/user-details.component';
 
 
 @NgModule({
@@ -46,14 +47,15 @@ import { StatsUsersComponent } from './stats/stats-users.component';
       RuleActivityPipe,
       AdminBookingComponent,
       RuleListComponent,
-      UserReadComponent,
+      UserCPComponent,
     UserCreateComponent,
     UserListComponent,
-    UserChangeComponent,
+    UserRenameComponent,
       StatsBookingComponent,
       StatsResourcesComponent,
       StatsResourceComponent,
-      StatsUsersComponent
+    StatsUsersComponent,
+    UserDetailsComponent
   ],
     entryComponents: [RuleComponent] 
 })

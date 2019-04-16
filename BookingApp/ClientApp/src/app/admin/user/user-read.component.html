@@ -15,7 +15,7 @@
           <h1 class="display-4">{{ user.userName }}</h1>
           <input type="text" [value]="user.email" readonly onfocus="this.select();" class="w-100 border-0 text-muted d-inline-block pl-2" />
         </td>
-        <td class="align-middle"><a routerLink="/admin/users/{{user.id}}/edit" class="btn btn-primary mt-2">Rename</a></td>
+        <td class="align-middle"><a routerLink="/admin/users/{{user.id}}/rename" class="btn btn-primary mt-2">Rename</a></td>
       </tr>
 
       <tr>
@@ -26,7 +26,7 @@
           <span *ngIf="user.isBlocked"><b class="badge badge-danger">blocked</b> by administrator.</span>
         </td>
         <td>
-          <button type="button" (click)="blockedUser(true)" class="btn btn-danger" *ngIf="user.isBlocked == false || user.isBlocked == null">Block user</button>
+          <button type="button" (click)="blockedUser(true)" class="btn btn-danger" *ngIf="user.isBlocked != true">Block user</button>
           <button type="button" (click)="blockedUser(false)" class="btn btn-secondary" *ngIf="user.isBlocked">Unblock user</button>
         </td>
       </tr>
@@ -38,8 +38,20 @@
           <span *ngIf="user.approvalStatus == false">This users registration is <b class="badge badge-danger">rejected</b>.</span>
         </td>
         <td>
-          <button type="button" (click)="approveUser(true)" class="btn btn-success" *ngIf="user.approvalStatus == false || user.approvalStatus == null">Approve</button>
-          <button type="button" (click)="approveUser(false)" class="btn btn-danger" *ngIf="user.approvalStatus == true || user.approvalStatus == null">Reject</button>
+          <button type="button" (click)="approveUser(true)" class="btn btn-success" *ngIf="user.approvalStatus != true">Approve</button>
+          <button type="button" (click)="approveUser(false)" class="btn btn-danger" *ngIf="user.approvalStatus != false">Reject</button>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="align-middle">
+          This is 
+          <span *ngIf="!isAdmin">a <b class="badge badge-secondary">regular user</b>.</span>
+          <span *ngIf="isAdmin">an <b class="badge badge-success">administrator</b>.</span>
+        </td>
+        <td>
+          <button type="button" (click)="setAdminPrivileges(true)" class="btn btn-success" *ngIf="!isAdmin">Grant Admin Privileges</button>
+          <button type="button" (click)="setAdminPrivileges(false)" class="btn btn-danger" *ngIf="isAdmin">Revoke Admin Privileges</button>
         </td>
       </tr>
 

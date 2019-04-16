@@ -33,7 +33,7 @@ export class UserCreateComponent implements OnInit {
     user.userName = this.createUserForm.value.userName;
     user.email = this.createUserForm.value.email;
     console.log(user);
-    this.userService.createAdmin(user).subscribe(() => {
+    this.userService.createAdmin(user).subscribe(result => {
       this.createUserForm.reset();
       this.successMessage = "You successfull create admin!";
       this.apiError = "";
