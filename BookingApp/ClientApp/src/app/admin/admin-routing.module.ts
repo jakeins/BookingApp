@@ -19,6 +19,7 @@ import { StatsBookingComponent } from './stats/stats-bookings.component';
 import { StatsResourcesComponent } from './stats/stats-resources.component';
 import { StatsUsersComponent } from './stats/stats-users.component';
 import { UserDetailsComponent } from './user/user-details.component';
+import { TheirsBookingsComponent } from './bookings/theirs-bookings.admin.component';
 
 
 const routesAdmin: Routes = [
@@ -27,12 +28,13 @@ const routesAdmin: Routes = [
       { path: '', component: HomeComponent, data: { breadcrumbIgnore: true } },
       {
         path: 'users', component: UserComponent, data: { breadcrumbLabel: 'Users Management' }, children: [
-          { path: '', component: UserListComponent, data: { breadcrumbLabel: 'Users List', breadcrumbIgnore: true } },
+          { path: '', component: UserListComponent, data: { breadcrumbIgnore: true } },
           { path: 'create', component: UserCreateComponent, data: { breadcrumbLabel: 'Create Admin' } },
           {
-            path: ':id', component: UserDetailsComponent, data: { breadcrumbLabel: 'User Details' }, children: [
-              { path: '', component: UserCPComponent, data: { breadcrumbLabel: 'User Control Panel', breadcrumbIgnore: true } },
-              { path: 'rename', component: UserRenameComponent, data: { breadcrumbLabel: 'User Rename' } },
+            path: ':id', component: UserDetailsComponent, data: { breadcrumbLabel: 'User' }, children: [
+              { path: '', component: UserCPComponent, data: { breadcrumbIgnore: true } },
+              { path: 'rename', component: UserRenameComponent, data: { breadcrumbLabel: 'Rename' } },
+              { path: 'bookings', component: TheirsBookingsComponent, data: { breadcrumbLabel: 'Bookings' } },
             ]
           },
           
