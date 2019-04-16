@@ -84,8 +84,6 @@ namespace BookingApp.Controllers
             }
             else
             {
-                if( await _ruleService.GetActive(id) == false)
-                    return BadRequest();
 
                 var rule = await _ruleService.Get(id);
                 var dtor = _mapper.Map<RuleBasicDTO>(rule);
@@ -117,7 +115,6 @@ namespace BookingApp.Controllers
 
             var rule = _mapper.Map<Rule>(dtos);
             rule.CreatedUserId = rule.UpdatedUserId = UserId;                        
-            rule.CreatedTime = rule.UpdatedTime = DateTime.Now;
             await _ruleService.Create(rule);
             return Ok(rule);
 
@@ -175,18 +172,16 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            var rule = _mapper.Map<Rule>(dtos);
-            rule.UpdatedTime = DateTime.Now;              
+            var rule = _mapper.Map<Rule>(dtos);        
             rule.UpdatedUserId = UserId;                 
-            rule.Id = id;
 
-            await _ruleService.Update(rule);
+            await _ruleService.Update(id, rule);
             return Ok();
 
         }
 
         /// <summary>
-        /// Return rule. Get: api/rules/{id}/resources
+        /// Return resources. Get: api/rules/{id}/resources
         /// </summary>
         /// <param name="id">Rule id</param>
         /// <returns>Http response code</returns>

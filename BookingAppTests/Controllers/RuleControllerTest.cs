@@ -11,6 +11,7 @@ using BookingApp.DTOs;
 using System.Linq;
 using BookingApp.Services.Interfaces;
 using BookingApp.DTOs.Resource;
+using BookingApp.Exceptions;
 
 namespace BookingAppTests.Controllers
 {
@@ -87,7 +88,6 @@ namespace BookingAppTests.Controllers
         public async Task GetRuleForUser(int id)
         {
             //arrange
-            mockServ.Setup(p => p.GetActive(id)).ReturnsAsync(true);
             mockServ.Setup(p => p.Get(id)).ReturnsAsync(initRules().Single(p => p.Id == id));
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
             controller.SetupGet(p => p.IsAdmin).Returns(false);
@@ -103,22 +103,6 @@ namespace BookingAppTests.Controllers
             Assert.Equal(20, modelOk.MinTime);
         }
 
-        [Theory]
-        [InlineData(30)]
-        public async Task GetRuleForUserReturnsError(int id)
-        {
-            //arrange
-            mockServ.Setup(p => p.Get(id)).ReturnsAsync((Rule)null);
-            var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
-            controller.SetupGet(p => p.IsAdmin).Returns(false);
-
-            //act
-            var result = await controller.Object.GetRule(id);
-
-            //assert
-            var ruleBad = Assert.IsType<BadRequestResult>(result);
-            Assert.Equal(400, ruleBad.StatusCode);
-        }
         #endregion
 
         #region CreateRule
@@ -181,7 +165,7 @@ namespace BookingAppTests.Controllers
         public async Task UpdateRuleWithBadModelReturnsBadRequest()
         {
             //arrange
-            mockServ.Setup(f => f.Update(someRule())).Returns(Task.CompletedTask);
+            mockServ.Setup(f => f.Update(5,someRule())).Returns(Task.CompletedTask);
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
             controller.Object.ModelState.AddModelError("error", "Invalid model");
             //act
@@ -196,7 +180,7 @@ namespace BookingAppTests.Controllers
         public async Task UpdateRule()
         {
             //arrange
-            mockServ.Setup(f => f.Update(someRule())).Returns(Task.CompletedTask);
+            mockServ.Setup(f => f.Update(1, someRule())).Returns(Task.CompletedTask);
             var controller = new Mock<RuleController>(mockServ.Object) { CallBase = true };
             controller.SetupGet(p => p.UserId).Returns(It.IsAny<string>());
             //act

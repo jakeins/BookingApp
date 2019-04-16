@@ -1,6 +1,10 @@
+<div class="alert alert-danger alert-dismissable" *ngIf="error!= null" role="alert">
+    <p>{{error}}</p>
+    <button (click)="onClear()" class="btn btn-md btn-danger b-clear">Got It</button>
+</div>
 <div class="search-div">
   <mat-form-field class="search-field">
-      <input matInput [(ngModel)]="searchKey" placeholder="Search" (keyup)="applyFilter($event.target.value)" autocomplete="off">
+      <input matInput [(ngModel)]="searchKey" placeholder="Search" (keyup)="applyFilter()" autocomplete="off">
       <span class="fill-remaining-place"></span>
       <button mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey" (click)="onSearchReset()"><mat-icon>close</mat-icon></button>
     </mat-form-field>
@@ -38,8 +42,9 @@
         <ng-container matColumnDef="actions" >
           <mat-header-cell *matHeaderCellDef></mat-header-cell>
           <mat-cell *matCellDef="let row">
+            <button mat-icon-button (click)="onDetails(row.id, row.id)"><mat-icon>description</mat-icon></button>
             <button mat-icon-button (click)="onEdit(row.id)"><mat-icon>edit</mat-icon></button>
-            <button mat-icon-button (click)="onDelete(row.id)" color="warn"><mat-icon>delete_outline</mat-icon></button>
+            <button mat-icon-button (click)="onDelete(row.id)" color="warn"><mat-icon>delete</mat-icon></button>
           </mat-cell>
         </ng-container>
   <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>

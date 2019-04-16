@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BookingApp.Helpers;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,9 +8,9 @@ namespace BookingApp.Entities.Statistics
 {
     public class BookingsStats
     {
-        public BookingsStats(string type, DateTime fromDate, DateTime toDate, string interval, DateTime[] intervalsValues, int[] bookingsAll, Dictionary<int, int[]> bookingsByResources)
+        public BookingsStats(BookingStatsTypes type, DateTime fromDate, DateTime toDate, string interval, DateTime[] intervalsValues, int[] bookingsAll, Dictionary<int, int[]> bookingsByResources)
         {
-            Type = type;
+            Type = type.ToString();
             FromDate = fromDate;
             ToDate = toDate;
             Interval = interval;

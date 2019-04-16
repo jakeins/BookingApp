@@ -18,6 +18,8 @@ import { UserInfoService } from './services/user-info.service';
 import { RuleService } from './services/rule.service';
 import { BookingService } from './services/booking.service';
 import { MaterialModule } from './material/material.module';
+import { NotificationService } from './services/notification.service';
+import { StatsService } from './services/stats.service';
 
 @NgModule({
   declarations: [

@@ -7,5 +7,9 @@ export class rule {
   serviceTime: number;
   preOrderTimeLimit: number;
   reuseTimeout: number;
-  isActive: boolean
+  isActive: boolean;
+  createdTime?: Date;
+  updatedTime?: Date;
+  createdUserId?: string;
+  updatedUserId?: string;
 }

@@ -1,10 +1,14 @@
+<div class="alert alert-danger alert-dismissable" *ngIf="error!= null" role="alert">
+      <p>{{error}}</p>
+      <button (click)="onClear()" class="btn btn-md btn-danger b-clear">Got It</button>
+</div>
 <mat-toolbar>
-    <span>{{isUpdate? "Edit Rule": "New Rule"}}</span>
+    <span>{{isReadonly ? "Rule Details": isUpdate ? "Edit Rule" : "New Rule"}}</span>
     <span class="fill-remaining-space"></span>
     <button class="btn btn-md btn-dialog-close"(click)="onClose()">X</button>
 </mat-toolbar>
 <form [formGroup]="form"> 
-  <mat-grid-list cols=2 rowHeight="300px"> 
+  <mat-grid-list cols=2 rowHeight="400px"> 
     <mat-grid-tile>
       <div class="controles-container">
         <input type="hidden" formControlName="id">
@@ -18,17 +22,26 @@
         <mat-form-field>
             <input formControlName="minTime" matInput placeholder="Min Time">
             <mat-error *ngIf="minTime.errors?.required && minTime.touched">Min time is required</mat-error>
-            <mat-error *ngIf="minTime.errors?.pattern && minTime.touched">Incorrect min time</mat-error>
+            <mat-error *ngIf="minTime.errors?.min && minTime.touched">Min time value should be greater than 0.</mat-error>
+            <mat-error *ngIf="minTime.errors?.max && minTime.touched">Min time value should lower than 14400.</mat-error>
         </mat-form-field>
         <mat-form-field>
             <input formControlName="maxTime" matInput placeholder="Max Time">
             <mat-error *ngIf="maxTime.errors?.required && maxTime.touched">Max time is required</mat-error>
-            <mat-error *ngIf="maxTime.errors?.pattern && maxTime.touched">Incorrect max time</mat-error>
+            <mat-error *ngIf="maxTime.errors?.min && maxTime.touched">Max time value should be greater than 0.</mat-error>
+            <mat-error *ngIf="maxTime.errors?.max && maxTime.touched">Max time value should lower than 14400.</mat-error>
         </mat-form-field>
         <mat-form-field>
             <input formControlName="serviceTime" matInput placeholder="Service Time">
             <mat-error *ngIf="serviceTime.errors?.required && serviceTime.touched">Service time is required</mat-error>
-            <mat-error *ngIf="serviceTime.errors?.pattern && serviceTime.touched">Incorrect service time</mat-error>
+            <mat-error *ngIf="serviceTime.errors?.min && serviceTime.touched">Service time value should equal or be greater than 0.</mat-error>
+            <mat-error *ngIf="serviceTime.errors?.max && serviceTime.touched">Service time value should lower than 14400.</mat-error>
+        </mat-form-field>
+        <mat-form-field *ngIf="isReadonly">
+            <input formControlName="createdTime" [value]="createdTimeValue | date: 'dd-MMM-yyyy, hh:mm:ss'" matInput placeholder="Created">
+        </mat-form-field>
+        <mat-form-field *ngIf="isReadonly">
+            <input formControlName="updatedTime" [value]="updatedTimeValue | date: 'dd-MMM-yyyy, hh:mm:ss'" matInput placeholder="Updated">
         </mat-form-field>
       </div>
     </mat-grid-tile>
@@ -37,25 +50,34 @@
         <mat-form-field>
           <input formControlName="stepTime" matInput placeholder="Step Time">
           <mat-error *ngIf="step.errors?.required && step.touched">Step time is required</mat-error>
-          <mat-error *ngIf="step.errors?.pattern && step.touched">Incorrect step time</mat-error>
+          <mat-error *ngIf="step.errors?.min && step.touched">Step time value should be greater than 0.</mat-error>
+          <mat-error *ngIf="step.errors?.max && step.touched">Step time value should lower than 14400.</mat-error>
         </mat-form-field>
         <mat-form-field>
             <input formControlName="reuseTimeout" matInput placeholder="Reuse timeout">
-            <mat-error *ngIf="reuse.errors?.required && step.touched">Reuse timeout is required</mat-error>
-            <mat-error *ngIf="reuse.errors?.pattern && step.touched">Incorrect reuse timeout</mat-error>
+            <mat-error *ngIf="reuse.errors?.required && reuse.touched">Reuse timeout is required</mat-error>
+            <mat-error *ngIf="reuse.errors?.min && reuse.touched">Reuse timeout value should equal or be greater than 0.</mat-error>
+            <mat-error *ngIf="reuse.errors?.max && reuse.touched">Reuse timeout value should lower than 14400.</mat-error>
         </mat-form-field>
         <mat-form-field>
             <input formControlName="preOrderTimeLimit" matInput placeholder="Pre-order time limit">
-            <mat-error *ngIf="preOrder.errors?.required && step.touched">Pre order time limit is required</mat-error>
-            <mat-error *ngIf="preOrder.errors?.pattern && step.touched">Incorrect pre order time limit </mat-error>
+            <mat-error *ngIf="preOrder.errors?.required && preOrder.touched">Pre order time limit is required</mat-error>
+            <mat-error *ngIf="preOrder.errors?.min && preOrder.touched">Reuse time value should equal or be greater than 0.</mat-error>
+            <mat-error *ngIf="preOrder.errors?.max && preOrder.touched">Reuse time value should lower than 14400.</mat-error>
+        </mat-form-field>
+        <mat-form-field *ngIf="isReadonly">
+            <input formControlName="createdUserId" matInput [value]="createdUserIdValue | userName | async" placeholder="Created by">
+        </mat-form-field>
+        <mat-form-field *ngIf="isReadonly">
+            <input formControlName="updatedUserId" matInput [value]="updatedUserIdValue | userName | async" placeholder="Updated by">
         </mat-form-field>
         <div>
-          <mat-checkbox formControlName="isActive">Active Rule</mat-checkbox>
+          <mat-checkbox formControlName="isActive" >Active Rule</mat-checkbox>
         </div>
         <div class="button-row">
-          <button mat-raised-button (click)="onCreate()" [disabled]="form.invalid" *ngIf="!isUpdate" class="button-row-create" >Create</button>
+          <button mat-raised-button (click)="onCreate()" [disabled]="form.invalid"  *ngIf="!isUpdate && !isReadonly" class="button-row-create">Create</button>
           <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid" *ngIf="isUpdate">Submit</button>
-          <button mat-raised-button color="warn" (click)="onReset()">Reset</button>
+          <button mat-raised-button color="warn" (click)="onReset()" *ngIf="!isReadonly">Reset</button>
         </div>
       </div>
     </mat-grid-tile>

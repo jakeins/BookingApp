@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">User Rename</div>
+        <div class="card-body">
+          <div *ngIf="successMessage != ''" class="alert alert-success" role="alert">
+            {{ successMessage }}
+          </div>
+          <div *ngIf="apiError != ''" class="alert alert-danger" role="alert">
+            {{ apiError }}
+          </div>
+
+          <form [formGroup]="editUserForm" (ngSubmit)="editUser()">
+
+            <div class="form-group row">
+              <label class="col-md-4 col-form-label text-md-right" for="userName">Username</label>
+              <div class="col-md-6">
+                <input formControlName="userName" type="text" class="form-control underlined" id="userName"
+                       placeholder="name">
+                <span class="form-help-text" *ngIf="editUserForm.get('userName').invalid && editUserForm.get('userName').dirty">
+                  <span *ngIf="editUserForm.get('userName')['errors']['required']">Field can`t be empty.<br /></span>
+                  <span *ngIf="editUserForm.get('userName')['errors']['minlength']">Enter more 3 character.</span>
+                  <span *ngIf="editUserForm.get('userName')['errors']['pattern']">The field contains forbidden characters.</span>
+                </span>
+              </div>
+            </div>
+
+              <div class="form-group row mb-0">
+                <div class="col-md-6 offset-md-4">
+                  <button type="submit" class="btn btn-primary"
+                          [disabled]="editUserForm.invalid">
+                    Submit
+                    <span class="ti-user"></span>
+                  </button>
+                </div>
+              </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

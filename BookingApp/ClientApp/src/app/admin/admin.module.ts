@@ -8,15 +8,22 @@ import { UserComponent } from './user/user.component';
 import { AdminComponent } from './admin.component';
 import { ResourceEditComponent } from './resource/resource-edit.component';
 import { FolderEditComponent } from './folder/folder-edit.component';
-import { RulesComponent } from './rules/rules.component'
+import { RulesComponent } from './rules/rules.component';
  import { RuleComponent } from './rules/rule/rule.component';
 import { RuleListComponent } from './rules/rule-list/rule-list.component';
 import { UserNamePipe, RuleActivityPipe } from './rule.pipe';
 import { AdminBookingComponent } from './bookings/bookings.admin.component';
 import { BookingsModule } from '../site/bookings/bookings.module';
 import { MaterialModule } from '../material/material.module';
-import { UserReadComponent } from './user/user-read.component';
+import { UserCPComponent } from './user/user-read.component';
 import { UserCreateComponent } from './user/user-create.cpmponent';
+import { UserListComponent } from './user/user-list.component';
+import { UserRenameComponent } from './user/user-edit.component';
+import { StatsBookingComponent } from './stats/stats-bookings.component';
+import { StatsResourcesComponent } from './stats/stats-resources.component';
+import { StatsResourceComponent } from './stats/stats-resource.component';
+import { StatsUsersComponent } from './stats/stats-users.component';
+import { UserDetailsComponent } from './user/user-details.component';
 
 
 @NgModule({
@@ -40,8 +47,15 @@ import { UserCreateComponent } from './user/user-create.cpmponent';
       RuleActivityPipe,
       AdminBookingComponent,
       RuleListComponent,
-      UserReadComponent,
-      UserCreateComponent
+      UserCPComponent,
+    UserCreateComponent,
+    UserListComponent,
+    UserRenameComponent,
+      StatsBookingComponent,
+      StatsResourcesComponent,
+      StatsResourceComponent,
+    StatsUsersComponent,
+    UserDetailsComponent
   ],
     entryComponents: [RuleComponent] 
 })
