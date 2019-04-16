@@ -75,7 +75,7 @@
           <mat-checkbox formControlName="isActive" >Active Rule</mat-checkbox>
         </div>
         <div class="button-row">
-          <button mat-raised-button (click)="onCreate()" [disabled]="form.invalid"  *ngIf="!isUpdate && !isReadonly" class="button-row-create">Create</button>
+          <button mat-raised-button (click)="onCreate()" [disabled]="form.invalid"  *ngIf="!isUpdate && !isReadonly" class="button-row-create btn-primary">Create</button>
           <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid" *ngIf="isUpdate">Submit</button>
           <button mat-raised-button color="warn" (click)="onReset()" *ngIf="!isReadonly">Reset</button>
         </div>
