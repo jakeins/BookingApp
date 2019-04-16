@@ -15,6 +15,7 @@ import { UserNewPassword } from '../models/user-new-password';
 import { AdminRegister } from '../models/admin-register';
 import { DatePipe } from '@angular/common';
 import { UserRoles } from '../models/user-roles';
+import { Logger } from './logger.service';
 
 
 @Injectable()
@@ -23,6 +24,9 @@ export class UserService {
   private basePath: string;
   private basePathS: string;
   private userRegister: UserRegister;
+
+  public UserCache = Object.create(null);
+
   //private tokenservice: AccessTokenService;
 
   headers: HttpHeaders = new HttpHeaders({
@@ -59,32 +63,70 @@ export class UserService {
     return this.http.delete(this.basePathS + userId);
   }
 
+
+
+
   getUserById(userId: string): Observable<User> {
-    return this.http.get<User>(this.basePathS + userId);
+    const path = this.basePathS + userId;
+    const obs = this.http.get<User>(path);
+    obs.subscribe(result => this.updateUserCache(result));
+    return obs;
   }
 
   getUserByUserName(userName: string): Observable<User> {
-    return this.http.get<User>(this.basePathS + 'user-name/' + userName);
+    const path = this.basePathS + 'user-name/' + userName;
+    const obs = this.http.get<User>(path);
+    obs.subscribe(result => this.updateUserCache(result));
+    return obs;
   }
 
-  getUserRoleById(userId: string): Observable<string[]> {
-    return this.http.get<string[]>(this.basePathS + userId + '/roles');
-  }
 
   getUserByEmail(userEmail: string): Observable<User> {
-    return this.http.get<User>(this.basePathS + 'email/' + userEmail);
+    const path = this.basePathS + 'email/' + userEmail;
+    const obs = this.http.get<User>(path);
+    obs.subscribe(result => this.updateUserCache(result));
+    return obs;
   }
 
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.basePath + 's');
+    const path = this.basePath + 's';
+    const obs = this.http.get<User[]>(path);
+    obs.subscribe(result => {
+      for (let user of result) {
+        this.updateUserCache(user);
+      }      
+    });
+    return obs;
   }
 
   getUsersById(usersId: string[]): Observable<User[]> {
-    return this.http.post<User[]>(this.basePathS + 'users-by-id', usersId, { headers: this.headers });
+    const obs = this.http.post<User[]>(this.basePathS + 'users-by-id', usersId, { headers: this.headers });
+    obs.subscribe(result => {
+      for (let user of result) {
+        this.updateUserCache(user);
+      }
+    });
+    return obs;
   }
 
   getUsersPage(page: number, pageSize: number): Observable<UserPage> {
-    return this.http.get<UserPage>(this.basePathS + 'page' + '?' + 'PageNumber=' + page + '&' + 'PageSize=' + pageSize);
+    const obs = this.http.get<UserPage>(this.basePathS + 'page' + '?' + 'PageNumber=' + page + '&' + 'PageSize=' + pageSize);
+    obs.subscribe(result => {
+      for (let user of result.items) {
+        this.updateUserCache(user);
+      }
+    });
+    return obs;
+  }
+
+
+
+
+
+
+
+  getUserRoleById(userId: string): Observable<string[]> {
+    return this.http.get<string[]>(this.basePathS + userId + '/roles');
   }
 
   getBookings(userId: string, startTime?: Date, endTime?: Date): Observable<any> {
@@ -115,8 +157,26 @@ export class UserService {
   changePassword(userId: string, userPass: UserNewPassword): Observable<Object> {
     return this.http.put(this.basePathS + userId + '/change-password', userPass, { headers: this.headers });
   }
-  
-  getUserName(): any {
-    return this.userInfoService.username;
+
+
+
+  updateUserCache(user: User): void {
+    this.UserCache[user.id] = user;
+    Logger.log(`User cache for ${user.email} updated.`);
   }
+
+  getUserCache(userId: string) : User {
+    return this.UserCache[userId];
+  }
+
+  getUsersCache(userIds: string[]): User[] {
+    let result: User[] = [];
+
+    for (let userID of userIds) {
+      result.push(this.updateUserCache[userID]);
+    }
+
+    return result;
+  }
+
 }
