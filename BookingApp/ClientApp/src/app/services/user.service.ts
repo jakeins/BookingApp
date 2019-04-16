@@ -67,7 +67,7 @@ export class UserService {
 
 
   getUserById(userId: string): Observable<User> {
-    if (userId == undefined || userId.length < 1) {
+    if (userId == undefined || userId.length != 36) {
       Logger.error(`User Id [${userId}] is illegal.`);
       return null;
     }
@@ -79,6 +79,11 @@ export class UserService {
   }
 
   getUserByUserName(userName: string): Observable<User> {
+    if (userName == undefined || userName.length < 3) {
+      Logger.error(`User name [${userName}] is illegal.`);
+      return null;
+    }
+
     const path = this.basePathS + 'user-name/' + userName;
     const obs = this.http.get<User>(path);
     obs.subscribe(result => this.updateUserCache(result));
@@ -87,6 +92,11 @@ export class UserService {
 
 
   getUserByEmail(userEmail: string): Observable<User> {
+    if (userEmail == undefined || userEmail.length < 3) {
+      Logger.error(`User email [${userEmail}] is illegal.`);
+      return null;
+    }
+
     const path = this.basePathS + 'email/' + userEmail;
     const obs = this.http.get<User>(path);
     obs.subscribe(result => this.updateUserCache(result));

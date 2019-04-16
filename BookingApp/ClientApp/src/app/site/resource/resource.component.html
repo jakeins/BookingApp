@@ -21,16 +21,11 @@
     <span class="d-inline-block text-left" style="width: 95%">Booking rules for this resource</span>
   </button>
 
-  <div id="collapseOne" class="collapse p-2" aria-labelledby="headingOne" data-parent="#accordionRule">
+  <div id="collapseOne" class="show p-2" aria-labelledby="headingOne" data-parent="#accordionRule">
     <div *ngIf="resource">
-      <a *ngIf="authService.isAdmin" title="Edit resource" [routerLink]="['/admin/rules', resource.ruleId, 'edit']"
-         class="btn btn-primary d-inline-block float-right">
-        Edit rule
-      </a>
-      <a *ngIf="authService.isAdmin" title="Edit resource" [routerLink]="['/admin/rules', resource.ruleId ]"
-          class="btn btn-primary d-inline-block float-right">
-        Details
-      </a>
+      <div *ngIf="authService.isAdmin" class="float-right">
+        <a [routerLink]="['/admin/rules', resource.ruleId ]" class="btn btn-primary">Details</a>
+      </div>
       <app-rule [ruleId]="resource.ruleId" class="pt-2"></app-rule>
     </div>
   </div>

@@ -24,6 +24,7 @@ import { StatsResourcesComponent } from './stats/stats-resources.component';
 import { StatsResourceComponent } from './stats/stats-resource.component';
 import { StatsUsersComponent } from './stats/stats-users.component';
 import { UserDetailsComponent } from './user/user-details.component';
+import { TheirsBookingsComponent } from './bookings/theirs-bookings.admin.component';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import { UserDetailsComponent } from './user/user-details.component';
     UserCreateComponent,
     UserListComponent,
     UserRenameComponent,
+    TheirsBookingsComponent,
       StatsBookingComponent,
       StatsResourcesComponent,
       StatsResourceComponent,
