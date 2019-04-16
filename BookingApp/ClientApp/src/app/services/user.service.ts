@@ -14,7 +14,7 @@ import { UserInfoService } from './user-info.service';
 import { UserNewPassword } from '../models/user-new-password';
 import { AdminRegister } from '../models/admin-register';
 import { DatePipe } from '@angular/common';
-import { UserRoles } from '../models/user-roles';
+import { UserRole } from '../models/user-roles';
 import { Logger } from './logger.service';
 
 
@@ -67,15 +67,15 @@ export class UserService {
 
 
   getUserById(userId: string): Observable<User> {
-    const path = this.basePathS + userId;
-    const obs = this.http.get<User>(path);
-    obs.subscribe(result => this.updateUserCache(result));
-    return obs;
     if (userId == undefined || userId.length < 1) {
       Logger.error(`User Id [${userId}] is illegal.`);
       return null;
     }
-    return this.http.get<User>(this.basePathS + userId);
+
+    const path = this.basePathS + userId;
+    const obs = this.http.get<User>(path);
+    obs.subscribe(result => this.updateUserCache(result));
+    return obs;
   }
 
   getUserByUserName(userName: string): Observable<User> {
