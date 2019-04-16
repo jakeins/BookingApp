@@ -7,24 +7,26 @@ import { DatePipe } from '@angular/common'
 
 import { BookingComponent } from './booking/booking.component';
 import { BookingsComponent } from './bookings/bookings.component';
+import { NotificationService } from '../../services/notification.service';
+import { UserNamePipe } from '../../admin/rule.pipe';
 
 @NgModule({
   declarations: [
     BookingComponent,
-    BookingsComponent
+    BookingsComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    MaterialModule,
+    MaterialModule
   ],
   exports: [
     BookingComponent,
     BookingsComponent
   ],
-  providers: [DatePipe],
+  providers: [DatePipe, NotificationService],
   bootstrap: []
 })
 

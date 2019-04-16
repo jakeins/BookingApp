@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import * as Material from '@angular/material';
 import { MatDatepickerModule } from '@angular/material';
 import { MccTimerPickerModule } from 'material-community-components';
+import { UserNamePipe } from '../admin/rule.pipe';
 
 
 @NgModule({
@@ -41,8 +42,12 @@ import { MccTimerPickerModule } from 'material-community-components';
     Material.MatSliderModule,
     Material.MatDatepickerModule,
     Material.MatNativeDateModule,
-    MccTimerPickerModule
+    Material.MatTable,
+    MccTimerPickerModule,
+    UserNamePipe
   ],
-  declarations: []
+  declarations: [
+    UserNamePipe
+  ]
 })
 export class MaterialModule { }

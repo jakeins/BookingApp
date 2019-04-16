@@ -106,7 +106,7 @@ namespace BookingApp.Repositories
                 };
 
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC @retVal = [Booking.Create] {model.Id}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.CreatedUserId}', '{model.Note}'",
+                    $"EXEC @retVal = [Booking.Create] {model.ResourceId}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.CreatedUserId}', '{model.Note}'",
                     param);
 
                 model.Id = param.Value as int? ?? -1;
@@ -165,7 +165,7 @@ namespace BookingApp.Repositories
             try
             {
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC [Booking.Edit] {model.Id}, {model.StartTime}, {model.EndTime}, {model.UpdatedUserId}, {model.Note}"
+                    $"EXEC [Booking.Edit] {model.Id}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', {model.UpdatedUserId}, {model.Note}"
                     );
             }
             catch (SqlException ex)
@@ -272,9 +272,24 @@ namespace BookingApp.Repositories
         {
             try
             {
+                string StartTime = "null";
+                if(startTime.HasValue)
+                {
+                    StartTime = startTime.Value.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    StartTime = $"'{StartTime}'";
+                }
+                string EndTime = "null";
+                if (endTime.HasValue)
+                {
+                    EndTime = endTime.Value.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    EndTime = $"'{EndTime}'";
+                }
+                string cmd = $"EXEC [Booking.Edit] {id}, {StartTime}, {EndTime}, '{editUser}', '{note}'";
+#pragma warning disable EF1000 // Possible SQL injection vulnerability.
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC [Booking.Edit] {id}, {startTime}, {endTime}, {editUser}, {note}"
+                    cmd
                     );
+#pragma warning restore EF1000 // Possible SQL injection vulnerability.
             }
             catch (SqlException ex)
             {

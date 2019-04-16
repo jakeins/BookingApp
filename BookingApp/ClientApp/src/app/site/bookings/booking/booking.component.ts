@@ -11,6 +11,7 @@ import { ResourceService } from '../../../services/resource.service';
 import { RuleService } from '../../../services/rule.service';
 import { Resource } from '../../../models/resource';
 import { rule } from '../../../models/rule';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
     selector: 'app-booking',
@@ -24,6 +25,7 @@ export class BookingComponent implements OnInit {
 
   mode: string;
   id: number;
+  
   startDateTime: Date;
   endDateTime: Date;
   startTimeField: Date;
@@ -46,6 +48,7 @@ export class BookingComponent implements OnInit {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<BookingComponent>,
     public datepipe: DatePipe,
+    public notificationService:NotificationService,
     @Inject(MAT_DIALOG_DATA) public args: any,
   ) {
     this.mode = args.mode;
@@ -61,7 +64,7 @@ export class BookingComponent implements OnInit {
       startDate: [0, Validators.compose([Validators.required])],
       startTime: [0, Validators.compose([Validators.required])],
       current: [0, Validators.compose([Validators.required])],
-      description: ['', Validators.compose([Validators.required, Validators.minLength(4), Validators.maxLength(512), Validators.pattern("\w*")])]
+      description: ['', Validators.compose([Validators.required, Validators.minLength(4), Validators.maxLength(512)])]
     });
     this.resetData();
     this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => this.resetData());
@@ -104,17 +107,18 @@ export class BookingComponent implements OnInit {
       this.startTimeField = new Date(this.booking.startTime);
       this.form.setValue({
         startDate: this.booking.startTime,
-        startTime: this.startTimeField,
+        startTime: this.datepipe.transform(this.startTimeField, "shortTime"),
         description: this.booking.note,
-        current: Math.round(((new Date(this.booking.endTime)).getTime()) / 1000)
+        current: Math.round((((new Date(this.booking.endTime)).getTime()) - new Date(this.booking.startTime).getTime()) / (1000 * 60))
       });
     } else
       if (this.mode == "create") {
         this.startTimeField = new Date(this.startDateTime);
         this.form.setValue({
           startDate: this.startDateTime,
-          startTime: this.startTimeField,
-          current: this.min
+          startTime: this.datepipe.transform(this.startTimeField, "shortTime"),
+          current: this.min,
+          description: ""
         });
       }
   }
@@ -130,6 +134,7 @@ export class BookingComponent implements OnInit {
   convertToDateTime(date: Date, time: Date) {
     let res: Date;
     res = new Date(date);
+    res.setHours(0, 0, 0, 0);
     let timeDate = this.parseTime(time);
     res = new Date(res.getTime() + timeDate.getHours() * 60 * 60 * 1000 + timeDate.getMinutes() * 60 * 1000);
     return res;
@@ -142,13 +147,13 @@ export class BookingComponent implements OnInit {
         newValue = new Booking();
         newValue.id = this.booking.id;
         newValue.startTime = this.convertToDateTime(this.startDate().value, this.startTime().value);
-        newValue.endTime = new Date(newValue.startTime.getTime() + this.current().value * 1000);
+        newValue.endTime = new Date(newValue.startTime.getTime() + this.current().value * 60 * 1000);
         newValue.note = this.description().value;
           
         this.bookingService.updateBooking(newValue).subscribe(
           () => {
             this.onClose();
-            //this.notificationService.submit('Submitted successfully!');
+            this.notificationService.submit('Edited successfully!');
           },
           err => {
             this.error = err.status + ': ' + err.error.Message + '.';
@@ -162,13 +167,13 @@ export class BookingComponent implements OnInit {
         newValue = new Booking();
         newValue.resourceId = this.id;
         newValue.startTime = this.convertToDateTime(this.startDate().value, this.startTime().value);
-        newValue.endTime = new Date(newValue.startTime.getTime() + this.current().value * 1000);
+        newValue.endTime = new Date(newValue.startTime.getTime() + this.current().value * 60 * 1000);
         newValue.note = this.description().value;
 
         this.bookingService.createBooking(newValue).subscribe(
           () => {
             this.onClose();
-            //this.notificationService.submit('Submitted successfully!');
+            this.notificationService.success('Created successfully!');
           },
           err => {
             this.error = err.status + ': ' + err.error.Message + '.';
@@ -194,10 +199,10 @@ export class BookingComponent implements OnInit {
   onReset() {
     this.form.reset();
     this.initializeForm();
-    Object.keys(this.form.controls).forEach(key => {                //reset form validation errors
-      this.form.controls[key].setErrors(null)
-    });
-    this.form.clearValidators();
+    //Object.keys(this.form.controls).forEach(key => {                //reset form validation errors
+    //  this.form.controls[key].setErrors(null)
+    //});
+    //this.form.clearValidators();
   }
 
   //field getters

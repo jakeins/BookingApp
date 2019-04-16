@@ -44,7 +44,6 @@ import { TheirsBookingsComponent } from './bookings/theirs-bookings.admin.compon
       FolderEditComponent,
       RulesComponent,
       RuleComponent,
-      UserNamePipe,
       RuleActivityPipe,
       AdminBookingComponent,
       RuleListComponent,

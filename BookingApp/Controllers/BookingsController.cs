@@ -25,7 +25,7 @@ namespace BookingApp.Controllers
 
             dtoMapper = new Mapper(new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Booking, BookingMinimalDTO>();
+                cfg.CreateMap<Booking, BookingMinimalDTO>().ReverseMap();
                 cfg.CreateMap<Booking, BookingOwnerDTO>().ReverseMap();
                 cfg.CreateMap<Booking, BookingAdminDTO>().ReverseMap();
             }
@@ -55,6 +55,7 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
 
             Booking model = dtoMapper.Map<Booking>(item);
+            model.CreatedUserId = UserId;
 
             await bookingService.CreateAsync(model);
 
@@ -127,7 +128,7 @@ namespace BookingApp.Controllers
             if (IsAdmin || bookingData.CreatedUserId == UserId)
             {
                 await bookingService.Update(bookingId, item.StartTime, item.EndTime, UserId, item.Note);
-                return Ok("Booking data updated succefully");
+                return new OkResult();
             }
             else
             {
@@ -157,7 +158,7 @@ namespace BookingApp.Controllers
             if (IsAdmin || bookingData.CreatedUserId == UserId)
             {
                 await bookingService.Delete(bookingId);
-                return Ok("Booking delete succefully");
+                return new OkResult();
             }
             else
             {

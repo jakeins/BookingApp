@@ -12,6 +12,8 @@ import { TreeComponent } from './site/tree/tree.component';
 import { CabinetModule } from './cabinet/cabinet.module';
 import { AdminModule } from './admin/admin.module';
 import { TosComponent } from './site/tos/tos.component';
+import { BookingsComponent } from './site/bookings/bookings/bookings.component';
+import { BookingComponent } from './site/bookings/booking/booking.component';
 
 
 const routes: Routes = [
@@ -23,6 +25,8 @@ const routes: Routes = [
   { path: 'forget', component: ForgetComponent, data: { breadcrumbLabel: 'Restore Password' } },
   { path: 'reset', component: ResetComponent, data: { breadcrumbLabel: 'Change Password' } },
   { path: 'resources/:id', component: ResourceComponent, data: { breadcrumbLabel: 'Resource Details' } },
+  { path: 'booking', component: BookingComponent },
+  { path: 'bookings', component: BookingsComponent },
   {
     path: 'cabinet',
     loadChildren: () => CabinetModule,
