@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as Material from '@angular/material';
 import { MatDatepickerModule } from '@angular/material';
+import { MccTimerPickerModule } from 'material-community-components';
+
 
 @NgModule({
   imports: [
@@ -21,7 +23,7 @@ import { MatDatepickerModule } from '@angular/material';
     Material.MatSliderModule,
     Material.MatDatepickerModule,
     Material.MatNativeDateModule,
-    MatDatepickerModule
+    MccTimerPickerModule
   ],
   exports: [
     Material.MatToolbarModule,
@@ -39,7 +41,7 @@ import { MatDatepickerModule } from '@angular/material';
     Material.MatSliderModule,
     Material.MatDatepickerModule,
     Material.MatNativeDateModule,
-    MatDatepickerModule
+    MccTimerPickerModule
   ],
   declarations: []
 })

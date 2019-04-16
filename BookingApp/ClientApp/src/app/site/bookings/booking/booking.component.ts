@@ -24,7 +24,9 @@ export class BookingComponent implements OnInit {
 
   mode: string;
   id: number;
-  time: Date;
+  startDateTime: Date;
+  endDateTime: Date;
+  startTimeField: Date;
 
   //Error controling
   error: any;
@@ -33,7 +35,6 @@ export class BookingComponent implements OnInit {
   min: number;
   max: number;
   step: number;
-  current: number;
 
   constructor(
     private bookingService: BookingService,
@@ -49,15 +50,18 @@ export class BookingComponent implements OnInit {
   ) {
     this.mode = args.mode;
     this.id = args.id;
-    this.time = args.startTime;
+    this.startDateTime = args.startTime;
+    this.endDateTime = args.endTime;
   }
 
   authChangedSubscription: any;
 
   ngOnInit() {
     this.form = this.fb.group({
+      startDate: [0, Validators.compose([Validators.required])],
       startTime: [0, Validators.compose([Validators.required])],
-      description: ['', Validators.compose([Validators.required, Validators.minLength(4), Validators.maxLength(64), Validators.pattern("[a-zA-Z0-9 ]*")])]
+      current: [0, Validators.compose([Validators.required])],
+      description: ['', Validators.compose([Validators.required, Validators.minLength(4), Validators.maxLength(512), Validators.pattern("\w*")])]
     });
     this.resetData();
     this.authChangedSubscription = this.authService.AuthChanged.subscribe(() => this.resetData());
@@ -97,18 +101,38 @@ export class BookingComponent implements OnInit {
 
   initializeForm() {
     if (this.mode == "edit") {
+      this.startTimeField = new Date(this.booking.startTime);
       this.form.setValue({
-        startTime: this.datepipe.transform(this.booking.startTime, 'yyyy-MM-ddThh:mm'),
-        description: this.booking.note
+        startDate: this.booking.startTime,
+        startTime: this.startTimeField,
+        description: this.booking.note,
+        current: Math.round(((new Date(this.booking.endTime)).getTime()) / 1000)
       });
-      this.current = Math.round(((new Date(this.booking.endTime)).getTime() - (new Date(this.booking.startTime)).getTime()) / 1000);
     } else
       if (this.mode == "create") {
-        this.current = this.min;
+        this.startTimeField = new Date(this.startDateTime);
         this.form.setValue({
-          startTime: this.datepipe.transform(this.time, 'yyyy-MM-ddThh:mm')
+          startDate: this.startDateTime,
+          startTime: this.startTimeField,
+          current: this.min
         });
       }
+  }
+
+  parseTime(t: any) {
+    let d = new Date();
+    let time = t.match(/(\d+)(?::(\d\d))?\s*(p?)/);
+    d.setHours(parseInt(time[1]) + (time[3] ? 12 : 0));
+    d.setMinutes(parseInt(time[2]) || 0);
+    return d;
+  }
+
+  convertToDateTime(date: Date, time: Date) {
+    let res: Date;
+    res = new Date(date);
+    let timeDate = this.parseTime(time);
+    res = new Date(res.getTime() + timeDate.getHours() * 60 * 60 * 1000 + timeDate.getMinutes() * 60 * 1000);
+    return res;
   }
 
   onSubmit() {
@@ -117,10 +141,10 @@ export class BookingComponent implements OnInit {
         let newValue: Booking;
         newValue = new Booking();
         newValue.id = this.booking.id;
-        newValue.startTime = new Date(this.startTime().value);
-        newValue.endTime = new Date(newValue.startTime.getTime() + this.current * 1000);
+        newValue.startTime = this.convertToDateTime(this.startDate().value, this.startTime().value);
+        newValue.endTime = new Date(newValue.startTime.getTime() + this.current().value * 1000);
         newValue.note = this.description().value;
-
+          
         this.bookingService.updateBooking(newValue).subscribe(
           () => {
             this.onClose();
@@ -137,8 +161,8 @@ export class BookingComponent implements OnInit {
         let newValue: Booking;
         newValue = new Booking();
         newValue.resourceId = this.id;
-        newValue.startTime = new Date(this.startTime().value);
-        newValue.endTime = new Date(newValue.startTime.getTime() + this.current * 1000);
+        newValue.startTime = this.convertToDateTime(this.startDate().value, this.startTime().value);
+        newValue.endTime = new Date(newValue.startTime.getTime() + this.current().value * 1000);
         newValue.note = this.description().value;
 
         this.bookingService.createBooking(newValue).subscribe(
@@ -181,7 +205,15 @@ export class BookingComponent implements OnInit {
     return this.form.get('description');
   }
 
+  startDate() {
+    return this.form.get('startDate');
+  }
+
   startTime() {
     return this.form.get('startTime');
+  }
+
+  current() {
+    return this.form.get('current');
   }
 }

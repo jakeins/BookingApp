@@ -84,6 +84,8 @@ export class BookingsComponent implements OnInit {
         }, error => { this.router.navigate(['/error']); });
         break;
       case "res":
+        //TODO: bug or fueture
+        this.endTime = undefined;
         this.bookingService.getBookingOfResource(this.resourceId, this.startTime, this.endTime).subscribe((responseBookings: Booking[]) => {
           this.resourceService.getResource(this.resourceId).subscribe((response: Resource) => {
             this.ruleService.getRule(response.ruleId).subscribe((response: rule) => {
@@ -97,7 +99,6 @@ export class BookingsComponent implements OnInit {
             }, error => { this.router.navigate(['/error']); });
           }, error => { this.router.navigate(['/error']); });
         }, error => { this.router.navigate(['/error']); });
-        Logger.log("BookingsComponentMode " + this.mode);
         break;
       default:
         //Never reach
@@ -127,36 +128,32 @@ export class BookingsComponent implements OnInit {
 
         var freeTimeWindow = new ResourceTimeWindow;
         freeTimeWindow.type = ResourceTimeWindowType.Free;
+        let freeTimeWindowSize = 0;
+        if (this.serviceTime != 0) {
+          freeTimeWindow.startTime = new Date(serviceTimeWindow.endTime);
+        }
+        else {
+          freeTimeWindow.startTime = new Date(this.bookings[i].endTime);
+        }
         if (i == this.bookings.length - 1) {
-          let freeTimeWindowSize = this.endTime.getTime();
-          if (this.serviceTime != 0) {
-            freeTimeWindow.startTime = new Date(serviceTimeWindow.endTime);
-            freeTimeWindowSize -= serviceTimeWindow.endTime.getTime();
-          }
-          else {
-            freeTimeWindow.startTime = new Date(this.bookings[i].endTime);
-            freeTimeWindowSize -= this.endTime.getTime() - - this.bookings[i].endTime.getTime();
-          }
+          freeTimeWindowSize = this.endTime.getTime();
+        }
+        else {
+          freeTimeWindowSize = new Date(this.bookings[i + 1].startTime).getTime();
+        }
+        freeTimeWindowSize -= freeTimeWindow.startTime.getTime();
+        if (i == this.bookings.length - 1) {
           if (freeTimeWindowSize > 0) {
-
             freeTimeWindow.endTime = new Date(this.endTime);
             this.resourceTimeWindows.push(freeTimeWindow);
           }
         } else {
-          let freeTimeWindowSize = new Date(this.bookings[i + 1].startTime).getTime();
-          if (this.serviceTime != 0) {
-            freeTimeWindow.startTime = new Date(serviceTimeWindow.endTime);
-            freeTimeWindowSize -= serviceTimeWindow.endTime.getTime();
-          }
-          else {
-            freeTimeWindow.startTime = new Date(this.bookings[i].endTime);
-            freeTimeWindowSize -= this.bookings[i].endTime.getTime();
-          }
           if (freeTimeWindowSize > 0) {
             freeTimeWindow.endTime = new Date(this.bookings[i + 1].startTime);
             this.resourceTimeWindows.push(freeTimeWindow);
           }
         }
+       
       }
     }
     else {
