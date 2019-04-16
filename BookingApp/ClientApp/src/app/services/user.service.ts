@@ -14,7 +14,7 @@ import { UserInfoService } from './user-info.service';
 import { UserNewPassword } from '../models/user-new-password';
 import { AdminRegister } from '../models/admin-register';
 import { DatePipe } from '@angular/common';
-import { UserRoles } from '../models/user-roles';
+import { UserRole } from '../models/user-roles';
 import { Logger } from './logger.service';
 
 
@@ -51,11 +51,11 @@ export class UserService {
     return this.http.put(this.basePathS + userId, user, { headers: this.headers });
   }
 
-  addRole(userId: string, role: UserRoles): Observable<any> {
+  addRole(userId: string, role: UserRole): Observable<any> {
     return this.http.put(this.basePath + "/" + userId + "/add-role", role, { headers: this.headers });
   }
 
-  removeRole(userId: string, role: UserRoles): Observable<any> {
+  removeRole(userId: string, role: UserRole): Observable<any> {
     return this.http.put(this.basePath + "/" + userId + "/remove-role", role, { headers: this.headers });
   }
 
@@ -67,6 +67,11 @@ export class UserService {
 
 
   getUserById(userId: string): Observable<User> {
+    if (userId == undefined || userId.length < 1) {
+      Logger.error(`User Id [${userId}] is illegal.`);
+      return null;
+    }
+
     const path = this.basePathS + userId;
     const obs = this.http.get<User>(path);
     obs.subscribe(result => this.updateUserCache(result));
