@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-12">
       <div class="card">
-        <div class="card-header">Update user</div>
+        <div class="card-header">User Rename</div>
         <div class="card-body">
           <div *ngIf="successMessage != ''" class="alert alert-success" role="alert">
             {{ successMessage }}
@@ -14,7 +14,7 @@
           <form [formGroup]="editUserForm" (ngSubmit)="editUser()">
 
             <div class="form-group row">
-              <label class="col-md-4 col-form-label text-md-right">Username</label>
+              <label class="col-md-4 col-form-label text-md-right" for="userName">Username</label>
               <div class="col-md-6">
                 <input formControlName="userName" type="text" class="form-control underlined" id="userName"
                        placeholder="name">
@@ -26,18 +26,11 @@
               </div>
             </div>
 
-            <div class="form-group col-md-6 offset-md-4">
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" formControlName="isAdmin">
-                <label class="form-check-label" for="inlineCheckbox2">Administrator Privileges</label>
-              </div>
-            </div>
-
               <div class="form-group row mb-0">
                 <div class="col-md-6 offset-md-4">
                   <button type="submit" class="btn btn-primary"
                           [disabled]="editUserForm.invalid">
-                    Update
+                    Submit
                     <span class="ti-user"></span>
                   </button>
                 </div>
