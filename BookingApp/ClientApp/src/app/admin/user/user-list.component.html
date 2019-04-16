@@ -6,22 +6,27 @@
         <th style="width:33%">Email</th>
         <th>Admin</th>
         <th>Info</th>
-        <th style="width:33%">Id</th>
+        <th>Id</th>
+        <th>Bookings</th>
       </tr>
     </thead>
     <tbody>
-      <tr class="user-item" *ngFor="let user of userPage.items; let i = index" style="transform: rotate(0);">
+      <tr class="user-item" *ngFor="let user of userPage.items; let i = index" >
 
-        <td class="text-muted">{{user.email}}</td>
+        <td class="text-muted" style="transform: rotate(0);">
+          {{user.email}}
+          <a [routerLink]="['/admin/users', user.id]" class="stretched-link"></a>
+        </td>
 
-        <td>
+        <td style="transform: rotate(0);">
           <div [hidden]="rolesMap[user.id]" class="spinner-border spinner-border-sm text-warning" role="status">
             <span class="sr-only">Loading...</span>
           </div>
           <i *ngIf="rolesMap[user.id] == 'Admin'" class="fas fa-star" style="color:goldenrod" title="Administrator"></i>
+          <a [routerLink]="['/admin/users', user.id]" class="stretched-link"></a>
         </td>
 
-        <td class="d-flex justify-content-start">
+        <td class="d-flex justify-content-start" style="transform: rotate(0);">
 
           <a [routerLink]="['/admin/users', user.id]" class="stretched-link mr-2">{{user.userName}}</a>
 
@@ -31,7 +36,17 @@
 
         </td>
 
-        <td class="text-muted text-nowrap">{{user.id}}</td>
+        <td class="text-muted text-nowrap" style="transform: rotate(0);">
+          {{user.id}}
+          <a [routerLink]="['/admin/users', user.id]" class="stretched-link"></a>
+        </td>
+
+        <td style="transform: rotate(0);">
+          <a class="stretched-link" title="User's bookings" [routerLink]="['/admin', 'users', user.id, 'bookings']">
+            <i class="far fa-calendar-alt fa-lg"></i>
+          </a>
+        </td>
+
       </tr>
     </tbody>
   </table>

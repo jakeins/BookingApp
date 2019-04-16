@@ -2,16 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { User } from '../../models/user';
+import { UserRole } from '../../models/user-roles';
+import { Logger } from '../../services/logger.service';
 
 
 @Component({
   selector: 'app-admin-user-read',
   templateUrl: './user-read.component.html'
 })
-export class UserReadComponent implements OnInit {
+export class UserCPComponent implements OnInit {
 
   user: User;
   private userId: string;
+  private isAdmin: boolean;
   private apiError: string = "";
   private successMessage = "";
 
@@ -23,6 +26,10 @@ export class UserReadComponent implements OnInit {
     this.userService.getUserById(this.userId).subscribe((user: User) => {
       this.user = user;
     }, err => this.handleError(err));
+
+    this.userService.getUserRoleById(this.userId).subscribe((res: string[]) => {
+      this.isAdmin = res.some(role => role == "Admin");
+    }, error => this.handleError(error));
   }
 
   blockedUser(isBlocked: boolean) {
@@ -47,8 +54,20 @@ export class UserReadComponent implements OnInit {
     }, err => this.handleError(err));
   }
 
+  setAdminPrivileges(admin: boolean) {
+    let userRole = new UserRole();
+    userRole.Role = "Admin";
+
+    let obs = admin ? this.userService.addRole(this.userId, userRole) : this.userService.removeRole(this.userId, userRole);
+    obs.subscribe(() => {
+      this.successMessage = "Role succesfully changed!";
+      this.apiError = "";
+      this.isAdmin = admin;
+    }, error => this.handleError(error));
+  }
+
   private handleError(error: any) {
-    console.log(error);
+    Logger.log(error);
     this.apiError = error.error.Message;
     this.successMessage = "";
   }
