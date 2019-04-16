@@ -21,7 +21,7 @@ namespace BookingApp.Data.Models
         /// Short designation of the rule. Required.
         /// </summary>
         [Required]
-        [MaxLength(64)]
+        [MaxLength(64, ErrorMessage ="Max length of title is 64"), MinLength(4, ErrorMessage ="Min Length of title is 4")]
         public string Title { get; set; }
 
         /// <summary>
