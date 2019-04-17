@@ -19,7 +19,6 @@ import { NotificationService } from '../../../services/notification.service';
   styleUrls: ['./booking.component.css']
 })
 export class BookingComponent implements OnInit {
-
   form: FormGroup;
   booking: Booking;
 

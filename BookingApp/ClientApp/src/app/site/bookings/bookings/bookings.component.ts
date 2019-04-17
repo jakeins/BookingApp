@@ -30,18 +30,19 @@ export class BookingsComponent implements OnInit {
   @Input() mode: string;
   @Input() resourceId: number;
   @Input() userId: string;
-  dataSource: MatTableDataSource<Booking>;
+  //Table data and paginator
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  dataSource: MatTableDataSource<Booking>;
 
   //For resource mode
   public ResourceTimeWindowT = ResourceTimeWindowType;
   resourceTimeWindows: ResourceTimeWindow[];
   resourceTimeWindowsdataSource: MatTableDataSource<ResourceTimeWindow>;
-
+  //is range selector intilized
   isConfiguredSelector: boolean;
 
   serviceTime: number;
-
+  //error storage
   error: any;
 
   //Bookings list
@@ -53,7 +54,7 @@ export class BookingsComponent implements OnInit {
 
   //For table
   displayedColumns: any;
-
+ 
   currentTime: Date;
 
   constructor(
@@ -62,7 +63,6 @@ export class BookingsComponent implements OnInit {
     private userService: UserService,
     private userInfoService: UserInfoService,
     private ruleService: RuleService,
-    private actRoute: ActivatedRoute,
     private authService: AuthService,
     private dialog: MatDialog,
     private router: Router,
@@ -187,8 +187,6 @@ export class BookingsComponent implements OnInit {
         });
         break;
       case "res":
-        ////TODO: bug or feture
-        //this.endTimeValue = undefined;
         this.bookingService.getBookingOfResource(this.resourceId, this.startTimeValue, this.endTimeValue).subscribe((responseBookings: Booking[]) => {
           this.resourceService.getResource(this.resourceId).subscribe((response: Resource) => {
             this.ruleService.getRule(response.ruleId).subscribe((response: rule) => {
@@ -318,7 +316,6 @@ export class BookingsComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = "60%";
-    //dialogConfig.height = "60%";
     dialogConfig.data = { mode: "create", id: this.resourceId, startTime: startTime };
     const dialogRef = this.dialog.open(BookingComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(res => {
@@ -331,7 +328,6 @@ export class BookingsComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = "60%";
-    //dialogConfig.height = "60%";
     dialogConfig.data = { id: id, mode: "edit" };
     const dialogRef = this.dialog.open(BookingComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(res => {

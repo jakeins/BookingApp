@@ -15,31 +15,17 @@
 }
 
 .resource-time-window-msg {
-  /*float: left;*/
   display: inline-block;
   vertical-align: middle;
 }
-/*.resource-time-window-msg::after{
-  content:"";
-  clear:both;
-  display: block;
-}
-
-.rightBtns::after {
-  content: "";
-  clear: both;
-  display: block;
-}*/
 
 .resource-time-window {
-  /*overflow: hidden;*/
   display: flex !important;
   justify-content: space-between;
   align-items: center;
 }
 
 .rightBtns {
-  /*float: right;*/
 }
 
 .dateContainer {
