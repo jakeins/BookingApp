@@ -174,7 +174,6 @@ namespace BookingApp.Services
 
         private List<ResourceStats> GetResourceStatsCollectionOrderedByBookingsCount(IEnumerable<Resource> resources)
         {
-            // better be done in db!
             return GetResourceStatsCollection(resources).OrderByDescending(c => c.BookingsCount).ToList();
         }
 
@@ -223,6 +222,11 @@ namespace BookingApp.Services
 
         private int GetIntervalsNumber(DateTime start, DateTime end, string interval)
         {
+            if(end<start)
+            {
+                throw new ApplicationException("End date and time cannot be earlier than start date and time!");
+            }
+
             int number = 0;
 
             switch (interval)

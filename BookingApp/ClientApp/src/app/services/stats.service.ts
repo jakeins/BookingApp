@@ -18,11 +18,11 @@ export class StatsService {
 
   // temp
   getBookingStats(type: string, start: Date, end: Date, interval: string): Observable<BookingStats> {
-    let startString = start.toString();
+    let startString = start.toDateString();
     let startDay = startString.substr(8, 2);
     let startMonth = startString.substr(4, 3);
     let startYear = startString.substr(11, 4);
-    let endString = end.toString();
+    let endString = end.toDateString();
     let endDay = endString.substr(8, 2);
     let endMonth = endString.substr(4, 3);
     let endYear = endString.substr(11, 4);
@@ -38,7 +38,7 @@ export class StatsService {
   }
 
   getUsersStats(): Observable<UsersStats> {
-    return this.http.get<UsersStats>(this.url + `/users`)
+    return this.http.get<UsersStats>(this.url + `/users`);
   }
 
 }
