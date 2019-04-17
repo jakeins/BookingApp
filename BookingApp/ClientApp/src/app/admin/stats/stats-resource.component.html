@@ -1,3 +1,7 @@
 <div *ngIf="shown==true">
-  <p>{{resourceStats.title}} has {{resourceStats.cancellationRate}} cancellation rate!</p>
+  <p class="m-2">{{stringToTime(resourceStats.averageTime)}} is average timespan of single booking.</p>
+  <p class="m-2">{{stringToTime(resourceStats.minTime)}} is minimal timespan of single booking.</p>
+  <p class="m-2">{{stringToTime(resourceStats.maxTime)}} is maximum timespan of single booking.</p>
+  <p class="m-2">{{resourceStats.cancellationRate.toFixed(2)}} % of bookings for this resource were cancelled.</p>
+  <p class="m-2">{{resourceStats.averageUsageRate.toFixed(2)}} % of available time for this resource (as set in it's rule) was used in average (for single booking).</p>
 </div>
