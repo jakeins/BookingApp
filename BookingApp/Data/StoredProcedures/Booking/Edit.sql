@@ -48,7 +48,7 @@ BEGIN
 				Throw 50001, 'Invalid BookingID',  12;
 			--verify that booking not terminated
 			If (Select Bookings.TerminationTime From Bookings Where Bookings.Id = @BookingID) Is Not Null
-				Throw 50001, 'Can not edit termunated booking',  13;
+				Throw 50001, 'Can not edit terminated booking',  13;
 			-- set new Note, change UpdateTime to current time stamp and UserID to @EditUserID
 			Update Bookings
 			Set Bookings.Note = @Note, Bookings.UpdatedUserId = @EditUseID, Bookings.UpdatedTime = @BookingTimeStamp
@@ -76,7 +76,7 @@ BEGIN
 	Begin Transaction @TransactioName
 	Begin
 		-- verify that booking not terminated
-		If (Select Bookings.TerminationTime From Bookings Where Bookings.Id = @BookingID) Is Not Null
+		If (Select Bookings.TerminationTime From Bookings Where Bookings.Id = @BookingID) Is Null
 			Throw 50001, 'Can not edit termіnated booking',  13;
 		-- verify that booking not ended
 		If (Select Bookings.EndTime From Bookings Where Bookings.Id = @BookingID) <= @BookingTimeStamp

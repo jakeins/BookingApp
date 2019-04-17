@@ -196,7 +196,7 @@
             </span>
             <span *ngIf="booking.type == ResourceTimeWindowT.Free">
               <span class="btn button-row-create" *ngIf="this.userInfoService.isUser || this.userInfoService.uAdmin">
-                <button mat-icon-button (click)="onCreate(booking.booking.startTime)"><mat-icon>add_circle</mat-icon></button>
+                <button mat-icon-button (click)="onCreate(booking.startTime)"><mat-icon>add_circle</mat-icon></button>
               </span>
             </span>
           </mat-cell>

@@ -24,6 +24,7 @@ import { UserNamePipe } from '../admin/rule.pipe';
     Material.MatSliderModule,
     Material.MatDatepickerModule,
     Material.MatNativeDateModule,
+    Material.MatSelectModule,
     MccTimerPickerModule
   ],
   exports: [
@@ -43,6 +44,7 @@ import { UserNamePipe } from '../admin/rule.pipe';
     Material.MatDatepickerModule,
     Material.MatNativeDateModule,
     Material.MatTable,
+    Material.MatSelectModule,
     MccTimerPickerModule,
     UserNamePipe
   ],

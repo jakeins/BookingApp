@@ -223,7 +223,10 @@ export class BookingsComponent implements OnInit {
                 if (this.isConfiguredSelector)
                   this.configureRangeSelector();
                 this.genResourceTimeWindows();
-                this.displayedColumns = ['startTimeT', 'endTimeT'];
+                if(this.userInfoService.isUser)
+                  this.displayedColumns = ['startTimeT', 'endTimeT', 'terminationTimeT', 'btns'];
+                else
+                  this.displayedColumns = ['startTimeT', 'endTimeT', 'terminationTimeT'];
                 this.resourceTimeWindowsdataSource = new MatTableDataSource<ResourceTimeWindow>(this.resourceTimeWindows);
                 this.resourceTimeWindowsdataSource.paginator = this.paginator;
               }
@@ -336,9 +339,9 @@ export class BookingsComponent implements OnInit {
   }
 
   onDelete(rowId: number) {
-    if (confirm('Are u sure to delete rule')) {
+    if (confirm('Are u sure to cancel booking')) {
       this.bookingService.terminateBooking(rowId).subscribe(res => {
-        this.notificationService.delete('Deleted successfully!');
+        this.notificationService.delete('Canceled successfully!');
         this.resetData();
       }, err => {
         this.error = err.status + ': ' + err.error.Message + '.';

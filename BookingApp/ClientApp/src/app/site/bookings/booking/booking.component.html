@@ -9,6 +9,14 @@
       <mat-grid-list cols="1" colspan="1" layout="column" rowHeight="300px" class="example-full-width">
         <mat-grid-tile class="example-full-width">
           <div class="controles-container example-full-width" layout="column">
+            <div *ngIf="userInfoService.isAdmin && mode == 'create'">
+              <mat-label>User</mat-label>
+              <mat-select [(ngModel)]="selectedUserId" [ngModelOptions]="{standalone: true}" name="users">
+                <mat-option *ngFor="let user of users" [value]="user.id">
+                  {{user.userName}}
+                </mat-option>
+              </mat-select>
+            </div>
             <div>
               <mat-form-field class="example-full-width">
                 <textarea formControlName="description" matInput placeholder="Title" autocomplete="off"></textarea>

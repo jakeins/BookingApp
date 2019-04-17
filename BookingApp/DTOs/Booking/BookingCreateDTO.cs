@@ -6,5 +6,7 @@ namespace BookingApp.DTOs
     {
         [MaxLength(512, ErrorMessage = "Description is too long.")]
         public string Note { get; set; }
+
+        public string CreatedUserId { get; set; }
     }
 }

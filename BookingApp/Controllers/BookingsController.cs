@@ -55,7 +55,10 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
 
             Booking model = dtoMapper.Map<Booking>(item);
-            model.CreatedUserId = UserId;
+            if (!IsAdmin)
+                model.CreatedUserId = UserId;
+            else
+                model.CreatedUserId = item.CreatedUserId;
 
             await bookingService.CreateAsync(model);
 

@@ -12,6 +12,9 @@ import { RuleService } from '../../../services/rule.service';
 import { Resource } from '../../../models/resource';
 import { rule } from '../../../models/rule';
 import { NotificationService } from '../../../services/notification.service';
+import { UserInfoService } from '../../../services/user-info.service';
+import { UserService } from '../../../services/user.service';
+import { User } from '../../../models/user';
 
 @Component({
     selector: 'app-booking',
@@ -37,6 +40,9 @@ export class BookingComponent implements OnInit {
   max: number;
   step: number;
 
+  users: Array<User>;
+  selectedUserId: string;
+
   constructor(
     private bookingService: BookingService,
     private resourceService: ResourceService,
@@ -45,6 +51,8 @@ export class BookingComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private fb: FormBuilder,
+    private userInfoService: UserInfoService,
+    private userService: UserService,
     public dialogRef: MatDialogRef<BookingComponent>,
     public datepipe: DatePipe,
     public notificationService:NotificationService,
@@ -78,13 +86,12 @@ export class BookingComponent implements OnInit {
       this.bookingService.getBooking(this.id).subscribe((response: Booking) => {
         this.resourceService.getResource(response.resourceId).subscribe((resource: Resource) => {
           this.ruleService.getRule(resource.ruleId).subscribe((thisRule: rule) => {
-            console.log(response);
-            this.booking = response;
-            this.min = thisRule.minTime;
-            this.max = thisRule.maxTime;
-            this.step = thisRule.stepTime;
+              this.booking = response;
+              this.min = thisRule.minTime;
+              this.max = thisRule.maxTime;
+              this.step = thisRule.stepTime;
 
-            this.initializeForm();
+              this.initializeForm();
           }, error => { this.router.navigate(['/error']); });
         }, error => { this.router.navigate(['/error']); });
       }, error => { this.router.navigate(['/error']); });
@@ -93,11 +100,23 @@ export class BookingComponent implements OnInit {
       if (this.mode == "create") {
         this.resourceService.getResource(this.id).subscribe((resource: Resource) => {
           this.ruleService.getRule(resource.ruleId).subscribe((thisRule: rule) => {
-            this.min = thisRule.minTime;
-            this.max = thisRule.maxTime;
-            this.step = thisRule.stepTime;
-
-            this.initializeForm();
+            if (this.userInfoService.isAdmin) {
+              this.userService.getUsers().subscribe((users: User[]) => {
+                this.users = users;
+                this.min = thisRule.minTime;
+                this.max = thisRule.maxTime;
+                this.step = thisRule.stepTime;
+                
+                this.selectedUserId = this.userInfoService.userId;
+                this.initializeForm();
+              }, error => { this.router.navigate(['/error']); });
+            }
+            else {
+              this.min = thisRule.minTime;
+              this.max = thisRule.maxTime;
+              this.step = thisRule.stepTime;
+              this.initializeForm();
+            }
           }, error => { this.router.navigate(['/error']); });
         }, error => { this.router.navigate(['/error']); });
       }
@@ -170,7 +189,8 @@ export class BookingComponent implements OnInit {
         newValue.startTime = this.convertToDateTime(this.startDate().value, this.startTime().value);
         newValue.endTime = new Date(newValue.startTime.getTime() + this.current().value * 60 * 1000);
         newValue.note = this.description().value;
-
+        if (this.userInfoService.isAdmin)
+          newValue.createdUserId = this.selectedUserId;
         this.bookingService.createBooking(newValue).subscribe(
           () => {
             this.onClose();
@@ -200,10 +220,10 @@ export class BookingComponent implements OnInit {
   onReset() {
     this.form.reset();
     this.initializeForm();
-    //Object.keys(this.form.controls).forEach(key => {                //reset form validation errors
-    //  this.form.controls[key].setErrors(null)
-    //});
-    //this.form.clearValidators();
+    Object.keys(this.form.controls).forEach(key => {                //reset form validation errors
+      this.form.controls[key].setErrors(null)
+    });
+    this.form.clearValidators();
   }
 
   //field getters
