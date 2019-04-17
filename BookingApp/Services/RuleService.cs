@@ -58,24 +58,9 @@ namespace BookingApp.Services
             var max = rule.MaxTime;
             var step = rule.StepTime;
             var service = rule.ServiceTime;
-            var reuse = rule.ReuseTimeout;
-            var preorder = rule.PreOrderTimeLimit;
-            var title = rule.Title;
             string errorMessage = null;
 
             while (errorMessage == null) {
-
-                if (min <= 0 || max <= 0 || step < 0 || service < 0 || reuse < 0 || preorder < 0)  //check for correct values
-                {
-                    errorMessage = "Time value can't be lower than 0, min and max time can't equal zero";
-                    break;
-                }
-
-                if (min >= mV || max >= mV || step >= mV || service >= mV || reuse >= mV || preorder >= mV)  //check for correct values
-                {
-                    errorMessage = "Time value can't equal or be greater than 14400";
-                    break;
-                }
 
                 if (min >= max)                                                          //min time can't > max time
                 {
@@ -89,18 +74,13 @@ namespace BookingApp.Services
                     break;
                 }
 
-                if (title.Length < 4 || title.Length > 64)                              //check title length
-                {
-                    errorMessage = "Title length should not be lower than 4 and greater than 64";
-                    break;
-                }
 
                 break;
            }
 
             if (errorMessage != null)                         
             {
-                throw new FieldValueException(errorMessage);
+                throw new FieldValueTimeInvalidException(errorMessage);
             }
 
         }
