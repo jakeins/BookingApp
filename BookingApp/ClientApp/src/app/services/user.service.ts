@@ -188,7 +188,7 @@ export class UserService {
     let result: User[] = [];
 
     for (let userID of userIds) {
-      result.push(this.updateUserCache[userID]);
+      result.push(this.UserCache[userID]);
     }
 
     return result;
