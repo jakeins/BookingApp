@@ -10,15 +10,12 @@ import { Logger } from './logger.service';
 
 @Injectable()
 export class ResourceService {
-  path : string; 
+  path: string;
+  public ResourceCache = Object.create(null);
 
 constructor(private http: HttpClient) {
   this.path = BASE_API_URL + '/resources';
 }
-
-  getResources(): Observable<Resource[]> {
-    return this.http.get<Resource[]>(this.path);
-  }
 
   resetOccupancies(entries: TreeEntry[]) {
     this.http.get<number[]>(this.path + '/occupancy').subscribe((occupancies: number[]) => {
@@ -54,9 +51,7 @@ constructor(private http: HttpClient) {
     });
   }
 
-  getResource(id: number): Observable<Resource> {
-    return this.http.get<Resource>(this.path + '/' + id);
-  }
+
 
 
   createResource(resource: Resource): Observable<any> {
@@ -70,5 +65,55 @@ constructor(private http: HttpClient) {
   deleteResource(id: number): Observable<any> {
     return this.http.delete(this.path + '/' + id);
   }
+
+
+
+  getResource(resourceID: number): Observable<Resource> {
+
+    if (resourceID == undefined || resourceID < 1) {
+      Logger.error(`Resource ID [${resourceID}] is illegal.`);
+      return null;
+    }
+
+    const obs = this.http.get<Resource>(this.path + '/' + resourceID);
+    obs.subscribe(result => this.updateResourceCache(result));
+    return obs;
+  }
+
+  getResources(): Observable<Resource[]> {
+
+    const obs = this.http.get<Resource[]>(this.path);
+    obs.subscribe(result => {
+      for (let resource of result) {
+        this.updateResourceCache(resource);
+      }
+    });
+    return obs;
+  }
+
+
+
+
+
+
+  updateResourceCache(resource: Resource): void {
+    this.ResourceCache[resource.id] = resource;
+    Logger.log(`Resource cache for [${resource.title}] updated.`);
+  }
+
+  getResourceCache(resourceId: string): Resource {
+    return this.ResourceCache[resourceId];
+  }
+
+  getResourcesCache(resourceIds: string[]): Resource[] {
+    let result: Resource[] = [];
+
+    for (let resourceID of resourceIds) {
+      result.push(this.ResourceCache[resourceID]);
+    }
+
+    return result;
+  }
+
 
 }
