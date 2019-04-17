@@ -1,7 +1,7 @@
 import { Booking } from "./booking";
 
 export enum ResourceTimeWindowType {
-  Booked, ServiceTime, Free
+  My, Booked, ServiceTime, Free
 }
 
 export class ResourceTimeWindow {

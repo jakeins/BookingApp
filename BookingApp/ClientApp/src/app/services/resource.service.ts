@@ -101,11 +101,11 @@ constructor(private http: HttpClient) {
     Logger.log(`Resource cache for [${resource.title}] updated.`);
   }
 
-  getResourceCache(resourceId: string): Resource {
+  getResourceCache(resourceId: number): Resource {
     return this.ResourceCache[resourceId];
   }
 
-  getResourcesCache(resourceIds: string[]): Resource[] {
+  getResourcesCache(resourceIds: number[]): Resource[] {
     let result: Resource[] = [];
 
     for (let resourceID of resourceIds) {

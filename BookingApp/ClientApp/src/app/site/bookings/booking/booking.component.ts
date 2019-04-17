@@ -97,6 +97,8 @@ export class BookingComponent implements OnInit {
             this.min = thisRule.minTime;
             this.max = thisRule.maxTime;
             this.step = thisRule.stepTime;
+
+            this.initializeForm();
           }, error => { this.router.navigate(['/error']); });
         }, error => { this.router.navigate(['/error']); });
       }

@@ -62,8 +62,8 @@
       </ng-container>
 
       <ng-container matColumnDef="resourceIdT">
-        <mat-header-cell mat-header-cell *matHeaderCellDef> Resource Id </mat-header-cell>
-        <mat-cell mat-cell *matCellDef="let booking"> {{booking.resourceId}} </mat-cell>
+        <mat-header-cell mat-header-cell *matHeaderCellDef> Resource </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let booking"> <a [routerLink]="['/resources/' + booking.resourceId]"> {{getResourceNameById(booking.resourceId)}} </a> </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="noteT">
@@ -129,8 +129,8 @@
         </ng-container>
 
         <ng-container matColumnDef="resourceIdT">
-          <mat-header-cell mat-header-cell *matHeaderCellDef> Resource Id </mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let booking"> {{booking.resourceId}} </mat-cell>
+          <mat-header-cell mat-header-cell *matHeaderCellDef> Resource </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let booking"> <a [routerLink]="['/resources/' + booking.resourceId]"> {{getResourceNameById(booking.resourceId)}} </a> </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="noteT">
@@ -150,7 +150,7 @@
 
             <i *ngIf="isBefore(booking.endTime) && !isTerminated(booking.terminationTime)" class="fas fa-check-double" title="Finished Successfully" style="color:forestgreen"></i>
 
-            <i *ngIf="isTerminated(booking.terminationTime)" class="fas fa-ban" title="Terminated at {{ xxx }}" style="color:maroon"></i>
+            <i *ngIf="isTerminated(booking.terminationTime)" class="fas fa-ban" title="Terminated at {{ booking.booking.terminationTime | date:'short' }}" style="color:maroon"></i>
 
           </mat-cell>
         </ng-container>
@@ -236,40 +236,60 @@
           <mat-cell mat-cell *matCellDef="let booking"> {{booking.endTime | date:'short'}} </mat-cell>
         </ng-container>
 
-        <!--<ng-container matColumnDef="resourceIdT">
-          <mat-header-cell mat-header-cell *matHeaderCellDef> Resource Id </mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let booking"> {{booking.resourceId}} </mat-cell>
+        <ng-container matColumnDef="userT">
+          <mat-header-cell mat-header-cell *matHeaderCellDef> User </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let booking"><span *ngIf="booking.booking!=null"><a [routerLink]="['/admin/users/' + booking.booking.createdUserId]">{{getUserName(booking.booking.createdUserId)}}</a></span> </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="noteT">
           <mat-header-cell mat-header-cell *matHeaderCellDef> Note </mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let booking"> {{booking.note}} </mat-cell>
-        </ng-container>-->
+          <mat-cell mat-cell *matCellDef="let booking"> <span *ngIf="booking.booking!=null"> {{booking.booking.note}} </span></mat-cell>
+        </ng-container>
 
-        <!--<ng-container matColumnDef="terminationTimeT">
+        <ng-container matColumnDef="terminationTimeT">
           <mat-header-cell mat-header-cell *matHeaderCellDef> State </mat-header-cell>
           <mat-cell mat-cell *matCellDef="let booking">
-            <i *ngIf="isAfter(booking.startTime) && !isTerminated(booking.terminationTime)" class="far fa-clock" title="Awaiting" style="color:darkgoldenrod"></i>
+            <!--<span *ngIf="booking.booking!=null">
+        <i *ngIf="isAfter(booking.startTime) && !isTerminated(booking.terminationTime)" class="far fa-clock" title="Awaiting" style="color:darkgoldenrod"></i>
 
-            <span *ngIf="isInRange(booking.startTime, booking.endTime) && !isTerminated(booking.terminationTime)" class="fa-stack" title="In Progress" style="font-size: 0.7em;">
-              <i class="fa fa-spinner fa-stack-2x fa-spin" style="color:gainsboro"></i>
-              <i class="fa fa-check fa-stack-1x" style="font-size: 1.3em;color:rgba(34,139,34,0.6)"></i>
-            </span>
+        <span *ngIf="isInRange(booking.startTime, booking.endTime) && !isTerminated(booking.terminationTime)" class="fa-stack" title="In Progress" style="font-size: 0.7em;">
+          <i class="fa fa-spinner fa-stack-2x fa-spin" style="color:gainsboro"></i>
+          <i class="fa fa-check fa-stack-1x" style="font-size: 1.3em;color:rgba(34,139,34,0.6)"></i>
+        </span>
 
-            <i *ngIf="isBefore(booking.endTime) && !isTerminated(booking.terminationTime)" class="fas fa-check-double" title="Finished Successfully" style="color:forestgreen"></i>
+        <i *ngIf="isBefore(booking.endTime) && !isTerminated(booking.terminationTime)" class="fas fa-check-double" title="Finished Successfully" style="color:forestgreen"></i>
 
-            <i *ngIf="isTerminated(booking.terminationTime)" class="fas fa-ban" title="Terminated at {{ xxx }}" style="color:maroon"></i>
-
+        <i *ngIf="isTerminated(booking.terminationTime)" class="fas fa-ban" title="Terminated at {{ booking.booking.terminationTime | | date:'short' }}" style="color:maroon"></i>
+      </span>-->
+            <span *ngIf="booking.type == ResourceTimeWindowT.Free">Free</span>
+            <span *ngIf="booking.type == ResourceTimeWindowT.ServiceTime">Service</span>
+            <span *ngIf="booking.type == ResourceTimeWindowT.Booked">Booked</span>
+            <span *ngIf="booking.type == ResourceTimeWindowT.My">My booking</span>
           </mat-cell>
-        </ng-container>-->
+        </ng-container>
 
         <!--<ng-container matColumnDef="btns">
+    <mat-header-cell mat-header-cell *matHeaderCellDef> Control </mat-header-cell>
+    <mat-cell mat-cell *matCellDef="let booking">
+      <button mat-icon-button (click)="onEdit(booking.id)"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button (click)="onDelete(booking.id)" color="warn"><mat-icon>delete_outline</mat-icon></button>
+    </mat-cell>
+  </ng-container>-->
+
+        <ng-container matColumnDef="btns">
           <mat-header-cell mat-header-cell *matHeaderCellDef> Control </mat-header-cell>
           <mat-cell mat-cell *matCellDef="let booking">
-            <button mat-icon-button (click)="onEdit(booking.id)"><mat-icon>edit</mat-icon></button>
-            <button mat-icon-button (click)="onDelete(booking.id)" color="warn"><mat-icon>delete_outline</mat-icon></button>
+            <span *ngIf="booking.booking != null">
+              <button mat-icon-button (click)="onEdit(booking.booking.id)"><mat-icon>edit</mat-icon></button>
+              <button mat-icon-button (click)="onDelete(booking.booking.id)" color="warn"><mat-icon>delete_outline</mat-icon></button>
+            </span>
+            <span *ngIf="booking.type == ResourceTimeWindowT.Free">
+              <span class="btn button-row-create" *ngIf="this.userInfoService.isUser || this.userInfoService.uAdmin">
+                <button mat-icon-button (click)="onCreate(booking.booking.startTime)"><mat-icon>add_circle</mat-icon></button>
+              </span>
+            </span>
           </mat-cell>
-        </ng-container>-->
+        </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"

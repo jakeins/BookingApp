@@ -135,15 +135,19 @@ export class BookingsComponent implements OnInit {
               if(!userIds.includes(bookingsRaw[i].createdUserId))
                 userIds.push(bookingsRaw[i].createdUserId);
             }
-            this.userService.getUsersById(userIds).subscribe((users: User[]) => {
-              this.bookings = bookingsRaw;
-              this.displayedColumns = ['idT', 'startTimeT', 'endTimeT', 'resourceIdT', 'noteT', 'userNameT', 'terminationTimeT', 'btns']
-              this.dataSource = new MatTableDataSource<Booking>(this.bookings);
-              this.dataSource.paginator = this.paginator;
-              this.startTimeValue = new Date(Math.min.apply(Math, bookingsRaw.map(b => { return b.startTime })));
-              this.endTimeValue = new Date(Math.max.apply(Math, bookingsRaw.map(b => { return b.endTime })));
-              if (this.isConfiguredSelector)
-                this.configureRangeSelector();
+            this.resourceService.getResources().subscribe((resources: Resource[]) => {
+              this.userService.getUsersById(userIds).subscribe((users: User[]) => {
+                this.bookings = bookingsRaw;
+                this.displayedColumns = ['idT', 'startTimeT', 'endTimeT', 'resourceIdT', 'noteT', 'userNameT', 'terminationTimeT', 'btns']
+                this.dataSource = new MatTableDataSource<Booking>(this.bookings);
+                this.dataSource.paginator = this.paginator;
+                this.startTimeValue = new Date(Math.min.apply(Math, bookingsRaw.map(b => { return b.startTime })));
+                this.endTimeValue = new Date(Math.max.apply(Math, bookingsRaw.map(b => { return b.endTime })));
+                if (this.isConfiguredSelector)
+                  this.configureRangeSelector();
+              }, err => {
+                this.error = err.status + ': ' + err.error.Message + '.';
+              });
             }, err => {
               this.error = err.status + ': ' + err.error.Message + '.';
             });
@@ -160,42 +164,71 @@ export class BookingsComponent implements OnInit {
         break;
       case "user":
         this.userService.getBookings(this.userId, this.startTimeValue, this.endTimeValue).subscribe((response: Booking[]) => {
-          this.bookings = response;
-          this.displayedColumns = ['startTimeT', 'endTimeT', 'resourceIdT', 'noteT', 'terminationTimeT', 'btns']
-          this.dataSource = new MatTableDataSource<Booking>(this.bookings);
-          this.dataSource.paginator = this.paginator;
-          if (this.bookings.length != 0) {
-            this.startTimeValue = new Date(Math.min.apply(Math, response.map(b => { return b.startTime })));
-            this.endTimeValue = new Date(Math.max.apply(Math, response.map(b => { return b.endTime })));
-          }
-          else {
-            this.startTimeValue = new Date();
-            this.endTimeValue = new Date();
-          }
-          if (this.isConfiguredSelector)
-            this.configureRangeSelector();
+          this.resourceService.getResources().subscribe((resources: Resource[]) => {
+            this.bookings = response;
+            this.displayedColumns = ['startTimeT', 'endTimeT', 'resourceIdT', 'noteT', 'terminationTimeT', 'btns']
+            this.dataSource = new MatTableDataSource<Booking>(this.bookings);
+            this.dataSource.paginator = this.paginator;
+            if (this.bookings.length != 0) {
+              this.startTimeValue = new Date(Math.min.apply(Math, response.map(b => { return b.startTime })));
+              this.endTimeValue = new Date(Math.max.apply(Math, response.map(b => { return b.endTime })));
+            }
+            else {
+              this.startTimeValue = new Date();
+              this.endTimeValue = new Date();
+            }
+            if (this.isConfiguredSelector)
+              this.configureRangeSelector();
+          }, err => {
+            this.error = err.status + ': ' + err.error.Message + '.';
+          });
         }, err => {
           this.error = err.status + ': ' + err.error.Message + '.';
         });
         break;
       case "res":
-        //TODO: bug or feture
-        this.endTimeValue = undefined;
+        ////TODO: bug or feture
+        //this.endTimeValue = undefined;
         this.bookingService.getBookingOfResource(this.resourceId, this.startTimeValue, this.endTimeValue).subscribe((responseBookings: Booking[]) => {
           this.resourceService.getResource(this.resourceId).subscribe((response: Resource) => {
             this.ruleService.getRule(response.ruleId).subscribe((response: rule) => {
-              this.serviceTime = response.serviceTime;
-              this.endTimeValue = new Date(Date.now());
-              this.endTimeValue.setTime(this.endTimeValue.getTime() + response.preOrderTimeLimit * 60 * 1000);
-              this.bookings = responseBookings.sort((a, b) => {
-                return a.startTime > b.startTime ? 1 : -1;
-              });
-              if (this.isConfiguredSelector)
-                this.configureRangeSelector();
-              this.genResourceTimeWindows();
-              this.displayedColumns = ['startTimeT', 'endTimeT'];
-              this.resourceTimeWindowsdataSource = new MatTableDataSource<ResourceTimeWindow>(this.resourceTimeWindows);
-              this.resourceTimeWindowsdataSource.paginator = this.paginator;
+              let userIds = new Array();
+              for (let i = 0; i < responseBookings.length; i++) {
+                if (!userIds.includes(responseBookings[i].createdUserId))
+                  userIds.push(responseBookings[i].createdUserId);
+              }
+              if (this.userInfoService.isAdmin) {
+                this.userService.getUsersById(userIds).subscribe((users: User[]) => {
+                  this.serviceTime = response.serviceTime;
+                  this.endTimeValue = new Date(Date.now());
+                  this.endTimeValue.setTime(this.endTimeValue.getTime() + response.preOrderTimeLimit * 60 * 1000);
+                  this.bookings = responseBookings.sort((a, b) => {
+                    return a.startTime > b.startTime ? 1 : -1;
+                  });
+                  if (this.isConfiguredSelector)
+                    this.configureRangeSelector();
+                  this.genResourceTimeWindows();
+                  this.displayedColumns = ['startTimeT', 'endTimeT', 'terminationTimeT', 'userT', 'noteT', 'btns'];
+                  this.resourceTimeWindowsdataSource = new MatTableDataSource<ResourceTimeWindow>(this.resourceTimeWindows);
+                  this.resourceTimeWindowsdataSource.paginator = this.paginator;
+                }, err => {
+                  this.error = err.status + ': ' + err.error.Message + '.';
+                });
+              }
+              else {
+                this.serviceTime = response.serviceTime;
+                this.endTimeValue = new Date(Date.now());
+                this.endTimeValue.setTime(this.endTimeValue.getTime() + response.preOrderTimeLimit * 60 * 1000);
+                this.bookings = responseBookings.sort((a, b) => {
+                  return a.startTime > b.startTime ? 1 : -1;
+                });
+                if (this.isConfiguredSelector)
+                  this.configureRangeSelector();
+                this.genResourceTimeWindows();
+                this.displayedColumns = ['startTimeT', 'endTimeT'];
+                this.resourceTimeWindowsdataSource = new MatTableDataSource<ResourceTimeWindow>(this.resourceTimeWindows);
+                this.resourceTimeWindowsdataSource.paginator = this.paginator;
+              }
             }, err => {
               this.error = err.status + ': ' + err.error.Message + '.';
             });
@@ -215,13 +248,22 @@ export class BookingsComponent implements OnInit {
   genResourceTimeWindows() {
     this.resourceTimeWindows = new Array();
     if (this.bookings.length != 0) {
-      for (var i = 0; i < this.bookings.length; i++) {
-        var bookingTimeWindow = new ResourceTimeWindow;
-        var serviceTimeWindow = new ResourceTimeWindow;
-        bookingTimeWindow.type = ResourceTimeWindowType.Booked;
+      for (let i = 0; i < this.bookings.length; i++) {
+        let bookingTimeWindow = new ResourceTimeWindow;
+        let serviceTimeWindow = new ResourceTimeWindow;
+        if (this.userInfoService.isUser && this.bookings[i].createdUserId == this.userInfoService.userId) {
+          bookingTimeWindow.type = ResourceTimeWindowType.My;
+        } else {
+          bookingTimeWindow.type = ResourceTimeWindowType.Booked;
+        }
         bookingTimeWindow.startTime = new Date(this.bookings[i].startTime);
         bookingTimeWindow.endTime = new Date(this.bookings[i].endTime);
-        bookingTimeWindow.booking = this.bookings[i];
+        if (this.userInfoService.isUser && this.bookings[i].createdUserId == this.userInfoService.userId || this.userInfoService.isAdmin) {
+          bookingTimeWindow.booking = this.bookings[i];
+        }
+        else {
+          bookingTimeWindow.booking = null;
+        }
         this.resourceTimeWindows.push(bookingTimeWindow);
 
         if (this.serviceTime != 0) {
@@ -349,25 +391,29 @@ export class BookingsComponent implements OnInit {
     return userId;
   }
 
-  //getResourceName(id: number): string {
-  //  return this.resourceService.getResource(id).subscribe((response: Resource) => {
-  //    return response.title;
-  //  });
-  //}
+  getResourceNameById(id: number) {
+    if (this.resourceService.getResourceCache(id) != undefined)
+      return this.resourceService.getResourceCache(id).title;
+    return id;
+  }
 
   getBgColorForResourceRow(row: ResourceTimeWindow) {
     switch (row.type) {
       case this.ResourceTimeWindowT.Booked:
         {
-          return "#F44336";
+          return "lightcoral";
         }
       case this.ResourceTimeWindowT.ServiceTime:
         {
-          return "#42A5F5";
+          return "gainsboro";
         }
       case this.ResourceTimeWindowT.Free:
         {
-          return "#00C853";
+          return "palegreen";
+        }
+      case this.ResourceTimeWindowT.My:
+        {
+          return "lightblue";
         }
     }
     return "";
