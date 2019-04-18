@@ -43,15 +43,16 @@ export class BookingService {
   }
 
   getBookingOfResource(resourceId: number, startTime?: Date, endTime?: Date): Observable<Booking[]> {
+    let datePipe = new DatePipe("en-Us");
     let query: String;
     query = "";
-    if (!(startTime == undefined || startTime == null)) query = "?startTime=" + startTime;
+    if (!(startTime == undefined || startTime == null)) query = "?startTime=" + datePipe.transform(startTime, 'short');
     if (!(endTime == undefined || endTime == null)) {
       if (query == null) query = "?";
       else query += "&"
-      query += "endTime=" + endTime;
+      query += "endTime=" + datePipe.transform(endTime, 'short');
     }
-    return this.http.get(BASE_API_URL + "/resources/" + resourceId + "/bookings", 
+    return this.http.get(BASE_API_URL + "/resources/" + resourceId + "/bookings" + query, 
       {
         headers: this.headers
       }).map((response: Response) => response)
@@ -65,11 +66,24 @@ export class BookingService {
 
 
   createBooking(booking: Booking): Observable<any> {
-    return this.http.post(this.path, booking);
+    let datePipe = new DatePipe("en-Us");
+    return this.http.post(this.path,
+      {
+        startTime: datePipe.transform(booking.startTime, 'short'),
+        endTime: datePipe.transform(booking.endTime, 'short'),
+        note: booking.note,
+        ResourceId: booking.resourceId,
+        CreatedUserId: booking.createdUserId
+      });
   }
 
   updateBooking(booking: Booking): Observable<any> {
-    return this.http.put(this.path + '/' + booking.id, booking);
+    let datePipe = new DatePipe("en-Us");
+    return this.http.put(this.path + '/' + booking.id, {
+      startTime: datePipe.transform(booking.startTime, 'short'),
+      endTime: datePipe.transform(booking.endTime, 'short'),
+      note: booking.note,
+    });
   }
 
   deleteBooking(id: number): Observable<any> {

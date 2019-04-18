@@ -1,2 +1,3 @@
 <h2>User's Bookings</h2>
-<app-bookings></app-bookings>
+<app-bookings mode="user" [userId]="this.actRoute.parent.snapshot.params['id']"></app-bookings>
+

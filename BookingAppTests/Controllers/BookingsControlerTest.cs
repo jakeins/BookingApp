@@ -78,7 +78,7 @@ namespace BookingAppTests.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsType<BookingMinimalDTO>(okResult.Value);
 
-            Assert.Equal(booking.ResourceId, model.ResourceID);
+            Assert.Equal(booking.ResourceId, model.ResourceId);
         }
 
         #endregion Booking details

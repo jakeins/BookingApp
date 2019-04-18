@@ -13,7 +13,7 @@ import { RulesComponent } from './rules/rules.component';
 import { RuleListComponent } from './rules/rule-list/rule-list.component';
 import { UserNamePipe, RuleActivityPipe } from './rule.pipe';
 import { AdminBookingComponent } from './bookings/bookings.admin.component';
-import { BookingsModule } from '../bookings/bookings.module';
+import { BookingsModule } from '../site/bookings/bookings.module';
 import { MaterialModule } from '../material/material.module';
 import { UserCPComponent } from './user/user-read.component';
 import { UserCreateComponent } from './user/user-create.cpmponent';
@@ -44,7 +44,6 @@ import { TheirsBookingsComponent } from './bookings/theirs-bookings.admin.compon
       FolderEditComponent,
       RulesComponent,
       RuleComponent,
-      UserNamePipe,
       RuleActivityPipe,
       AdminBookingComponent,
       RuleListComponent,

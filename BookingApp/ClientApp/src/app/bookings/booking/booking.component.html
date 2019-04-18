@@ -1,9 +1,0 @@
-<h2>BookingData</h2>
-<div *ngIf="booking">
-  <p *ngIf="authService.isAdmin">Id = {{booking.id}}</p>
-  <p *ngIf="authService.isAdmin">ResourceId = {{booking.resourceId}}</p>
-  <p>StartTime = {{booking.startTime}}</p>
-  <p>EndTime = {{booking.endTime}}</p>
-  <p>Note = {{booking.note}}</p>
-  <p *ngIf="authService.isAdmin && booking.terminationTime!= null">TerminationTime = {{booking.terminationTime}}</p>
-</div>

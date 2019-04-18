@@ -13,7 +13,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^5.2.0",
+    "@angular/animations": "^5.2.11",
     "@angular/cdk": "^5.2.4",
     "@angular/common": "^5.2.0",
     "@angular/compiler": "^5.2.0",
@@ -29,8 +29,11 @@
     "aspnet-prerendering": "^3.0.1",
     "bootstrap": "^4.3.1",
     "core-js": "^2.4.1",
+    "hammerjs": "^2.0.8",
     "jquery": "^3.3.1",
     "jwt-decode": "^2.2.0",
+    "material-community-components": "^3.4.0",
+    "material-time-control": "github:SteveDunlap13/MaterialTimeControl",
     "popper.js": "^1.15.0",
     "rxjs": "^5.5.6",
     "zone.js": "^0.8.19"

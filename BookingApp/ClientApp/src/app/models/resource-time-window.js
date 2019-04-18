@@ -2,9 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var ResourceTimeWindowType;
 (function (ResourceTimeWindowType) {
-    ResourceTimeWindowType[ResourceTimeWindowType["Booked"] = 0] = "Booked";
-    ResourceTimeWindowType[ResourceTimeWindowType["ServiceTime"] = 1] = "ServiceTime";
-    ResourceTimeWindowType[ResourceTimeWindowType["Free"] = 2] = "Free";
+    ResourceTimeWindowType[ResourceTimeWindowType["My"] = 0] = "My";
+    ResourceTimeWindowType[ResourceTimeWindowType["Booked"] = 1] = "Booked";
+    ResourceTimeWindowType[ResourceTimeWindowType["ServiceTime"] = 2] = "ServiceTime";
+    ResourceTimeWindowType[ResourceTimeWindowType["Lost"] = 3] = "Lost";
+    ResourceTimeWindowType[ResourceTimeWindowType["Free"] = 4] = "Free";
 })(ResourceTimeWindowType = exports.ResourceTimeWindowType || (exports.ResourceTimeWindowType = {}));
 var ResourceTimeWindow = /** @class */ (function () {
     function ResourceTimeWindow() {

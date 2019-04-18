@@ -48,7 +48,7 @@ BEGIN
 				Throw 50001, 'Invalid BookingID',  12;
 			--verify that booking not terminated
 			If (Select Bookings.TerminationTime From Bookings Where Bookings.Id = @BookingID) Is Not Null
-				Throw 50001, 'Can not edit termunated booking',  13;
+				Throw 50001, 'Can not edit terminated booking',  13;
 			-- set new Note, change UpdateTime to current time stamp and UserID to @EditUserID
 			Update Bookings
 			Set Bookings.Note = @Note, Bookings.UpdatedUserId = @EditUseID, Bookings.UpdatedTime = @BookingTimeStamp
@@ -139,7 +139,7 @@ BEGIN
 			Select Rules.MaxTime, Rules.MinTime, Rules.StepTime, Rules.ServiceTime, Rules.ReuseTimeout, Rules.PreOrderTimeLimit
 				From Rules Where Rules.IsActive = 1 AND Rules.Id = 
 					(Select Resources.RuleID From Resources 
-						Where Resources.IsActive = 1 AND Resources.Id = (Select Top 1 ID From @BookingData));
+						Where Resources.IsActive = 1 AND Resources.Id = (Select Top 1 ResourceId From @BookingData));
 
 		-- verify that rule is active
 		If Not Exists (Select 1 From @Rule)
@@ -165,17 +165,17 @@ BEGIN
 		Set @Duration = DATEDIFF(minute, @NewStartTime, @NewEndTime);
 		-- verify that duration more then minimal time and less then max time valid for booking this resource
 		if @Duration < @MinValidTime
-			Throw 50000, 'Booking duration less than min valid for this resource', 7;
+			Throw 50001, 'Booking duration less than min valid for this resource', 7;
 		if @Duration > @MaxValidTime
-			Throw 50000, 'Booking duration more than max valid for this resource', 8;
+			Throw 50001, 'Booking duration more than max valid for this resource', 8;
 
 		-- verify that duration is multiple by step of the booking this resource
 		if @Duration % @ValidStepTime != 0
-			Throw 50000, 'The duration of the reservation must be a multiple step of the booking for this resource', 9;
+			Throw 50001, 'The duration of the reservation must be a multiple step of the booking for this resource', 9;
 
 		-- verify that resource not being booked too early
-		if DATEADD(minute, @PreOrderTimeLimit, @BookingTimeStamp) < @NewStartTime
-			Throw 50000, 'Booking time is too early', 10;
+		if DATEADD(minute, @PreOrderTimeLimit, @BookingTimeStamp) > @NewStartTime
+			Throw 50001, 'Booking time is too early', 10;
 
 		-- declare counter
 		Declare @CountBooksInSameTime int;

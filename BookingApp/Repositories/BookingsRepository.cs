@@ -47,19 +47,14 @@ namespace BookingApp.Repositories
         /// <returns>List of <see cref="Booking"/></returns>
         Task<IEnumerable<Booking>> GetAllBookings(DateTime startTime, DateTime endTime);
         #endregion
-        /// <summary>
-        /// Get <see cref="Booking"></see> of specified <see cref="Resource"></see> and active now or in future
-        /// </summary>
-        /// <param name="resource">Booking <see cref="Resource"></see></param>
-        /// <returns>List of active <see cref="Booking"></see></returns>
-        Task<IEnumerable<Booking>> GetActiveBookingsOfResourceFromCurrentTime(int resourceId);
-
+        #region Get bookings of resource
         /// <summary>
         /// Get all <see cref="Booking"></see> of specific <see cref="Resource"></see>
         /// </summary>
         /// <param name="resource">Exist <see cref="Resource.Id"></see></param>
         /// <returns>List of all <see cref="Booking"></see> of specific <see cref="Resource"></see></returns>
-        Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId);
+        Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId, DateTime startTime, DateTime endTime);
+        #endregion
 
         /// <summary>
         /// Terminate specific <see cref="Booking"></see>
@@ -111,7 +106,7 @@ namespace BookingApp.Repositories
                 };
 
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC @retVal = [Booking.Create] {model.Id}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.CreatedUserId}', '{model.Note}'",
+                    $"EXEC @retVal = [Booking.Create] {model.ResourceId}, '{model.StartTime.ToString("yyyy.MM.dd HH:mm")}', '{model.EndTime.ToString("yyyy.MM.dd HH:mm")}', '{model.CreatedUserId}', '{model.Note}'",
                     param);
 
                 model.Id = param.Value as int? ?? -1;
@@ -170,7 +165,7 @@ namespace BookingApp.Repositories
             try
             {
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC [Booking.Edit] {model.Id}, {model.StartTime}, {model.EndTime}, {model.UpdatedUserId}, {model.Note}"
+                    $"EXEC [Booking.Edit] {model.Id}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', {model.UpdatedUserId}, {model.Note}"
                     );
             }
             catch (SqlException ex)
@@ -277,9 +272,24 @@ namespace BookingApp.Repositories
         {
             try
             {
+                string StartTime = "null";
+                if(startTime.HasValue)
+                {
+                    StartTime = startTime.Value.ToString("yyyy-MM-dd HH:mm");
+                    StartTime = $"'{StartTime}'";
+                }
+                string EndTime = "null";
+                if (endTime.HasValue)
+                {
+                    EndTime = endTime.Value.ToString("yyyy-MM-dd HH:mm");
+                    EndTime = $"'{EndTime}'";
+                }
+                string cmd = $"EXEC [Booking.Edit] {id}, {StartTime}, {EndTime}, '{editUser}', '{note}'";
+#pragma warning disable EF1000 // Possible SQL injection vulnerability.
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC [Booking.Edit] {id}, {startTime}, {endTime}, {editUser}, {note}"
+                    cmd
                     );
+#pragma warning restore EF1000 // Possible SQL injection vulnerability.
             }
             catch (SqlException ex)
             {
@@ -288,21 +298,12 @@ namespace BookingApp.Repositories
         }
 
         /// <summary>
-        /// Get <see cref="Booking"></see> of specified <see cref="Resource"></see> and active now or in future
-        /// </summary>
-        /// <param name="resource">Booking <see cref="Resource"></see></param>
-        /// <returns>List of active <see cref="Booking"></see></returns>
-        public async Task<IEnumerable<Booking>> GetActiveBookingsOfResourceFromCurrentTime(int resourceId) => await ActualBookings
-            .Where(b => b.ResourceId == resourceId && (b.TerminationTime ?? b.EndTime) < DateTime.Now)
-            .ToListAsync();
-
-        /// <summary>
         /// Get all <see cref="Booking"></see> of specific <see cref="Resource"></see>
         /// </summary>
         /// <param name="resource">Exist <see cref="Resource.Id"></see></param>
         /// <returns>List of all <see cref="Booking"></see> of specific <see cref="Resource"></see></returns>
-        public async Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId) => await Bookings
-            .Where(b => b.ResourceId == resourceId)
+        public async Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId, DateTime startTime, DateTime endTime) => await ActualBookings
+            .Where(b => ((b.ResourceId == resourceId) && ((b.TerminationTime ?? b.EndTime) <= endTime && b.StartTime >= startTime)))
             .ToListAsync();
 
         /// <summary>
@@ -320,7 +321,7 @@ namespace BookingApp.Repositories
                     await dbContext.Database.ExecuteSqlCommandAsync(
                         $"EXEC [Booking.Terminate] {id}, {userId}"
                         );
-                }
+                }   
                 catch (SqlException ex)
                 {
                     Helpers.SqlExceptionTranslator.ReThrow(ex, "on terminate booking");
@@ -352,7 +353,7 @@ namespace BookingApp.Repositories
         /// <param name="endTime">End time of bookings</param>
         /// <returns>List of <see cref="Booking"/></returns>
         public async Task<IEnumerable<Booking>> GetAllBookings(DateTime startTime, DateTime endTime) => await Bookings
-            .Where(b => (b.TerminationTime ?? b.EndTime) < startTime && b.StartTime < endTime)
+            .Where(b => ((b.TerminationTime ?? b.EndTime) <= endTime && b.StartTime >= startTime))
             .ToListAsync();
         #endregion
 

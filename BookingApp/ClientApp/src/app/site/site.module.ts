@@ -14,7 +14,7 @@ import { SiteRuleComponent } from './rule/rule.component';
 import { AppHeaderComponent } from './header/header.component';
 import { BreadcrumbsComponent } from './breadcrumbs/breadcrumbs.component';
 import { AppFooterComponent } from './footer/footer.component';
-import { BookingsModule } from '../bookings/bookings.module';
+import { BookingsModule } from './bookings/bookings.module';
 import { TosComponent } from './tos/tos.component';
 
 @NgModule({

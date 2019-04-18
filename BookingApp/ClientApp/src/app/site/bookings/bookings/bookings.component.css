@@ -1,0 +1,59 @@
+.mcc-timer-picker-overlay {
+  background: #00796b;
+}
+
+.bookedWindow{
+  background-color: red;
+}
+
+.serviceWindow{
+  background-color: yellow;
+}
+
+.freeWindow{
+  background-color: lightgreen;
+}
+
+.fill-remaining-space {
+  flex: 1 1 auto;
+}
+
+.resource-time-window-msg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.resource-time-window {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rightBtns {
+}
+
+.dateContainer {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.startTimeDate {
+}
+
+.endTimeDate{
+
+}
+
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 500px;
+  min-width: 300px;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 500px;
+}

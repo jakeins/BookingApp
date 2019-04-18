@@ -38,7 +38,7 @@ BEGIN
 	-- verify that resource active
 	if not exists (Select Resources.RuleID From Resources 
 					Where Resources.Id = @ResourceID AND Resources.IsActive = 1)
-		Throw 50002, 'Resorce is disable and can not book', 5;
+		Throw 50001, 'Resorce is disable and can not book', 5;
 
 	-- get resource book rule
 	Declare @Rule Table(MaxTime int, MinTime int, StepTime int, ServiceTime int, ReuseTimeout int, PreOrderTimeLimit int);
@@ -72,17 +72,17 @@ BEGIN
 	Set @Duration = DATEDIFF(minute, @StartTime, @EndTime);
 	-- verify that duration more then minimal time and less then max time valid for booking this resource
 	if @Duration < @MinValidTime
-		Throw 50000, 'Booking duration less than min valid for this resource', 7;
+		Throw 50001, 'Booking duration less than min valid for this resource', 7;
 	if @Duration > @MaxValidTime
-		Throw 50000, 'Booking duration more than max valid for this resource', 8;
+		Throw 50001, 'Booking duration more than max valid for this resource', 8;
 
 	-- verify that duration is multiple by step of the booking this resource
 	if @Duration % @ValidStepTime != 0
-		Throw 50000, 'The duration of the reservation must be a multiple step of the booking for this resource', 9;
+		Throw 50001, 'The duration of the reservation must be a multiple step of the booking for this resource', 9;
 
 	-- verify that resource not being booked too early
-	if DATEADD(minute, @PreOrderTimeLimit, @BookingTimeStamp) < @StartTime
-		Throw 50000, 'Booking time is too early', 10;
+	if DATEADD(minute, @PreOrderTimeLimit, @BookingTimeStamp) > @StartTime
+		Throw 50001, 'Booking time is too early', 10;
 
 	-- declare variable for storing newly created bookin id
 	Declare @BookingID int;

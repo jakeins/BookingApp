@@ -1,0 +1,68 @@
+<h2>BookingData</h2>
+<div *ngIf='mode != "view"'>
+  <div class="alert alert-danger alert-dismissable example-full-width" *ngIf="error!= null" role="alert">
+    <p>{{error}}</p>
+    <button (click)="onClear()" class="btn btn-md btn-danger b-clear">Got It</button>
+  </div>
+  <form [formGroup]="form" class="example-full-width">
+    <div class="controles-container example-full-width">
+      <mat-grid-list cols="1" colspan="1" layout="column" rowHeight="300px" class="example-full-width">
+        <mat-grid-tile class="example-full-width">
+          <div class="controles-container example-full-width" layout="column">
+            <div *ngIf="userInfoService.isAdmin && mode == 'create'">
+              <mat-label>User</mat-label>
+              <mat-select [(ngModel)]="selectedUserId" [ngModelOptions]="{standalone: true}" name="users">
+                <mat-option *ngFor="let user of users" [value]="user.id">
+                  {{user.userName}}
+                </mat-option>
+              </mat-select>
+            </div>
+            <div>
+              <mat-form-field class="example-full-width">
+                <textarea formControlName="description" matInput placeholder="Title" autocomplete="off"></textarea>
+                <mat-error *ngIf="description.errors?.required && title.touched">Title is required</mat-error>
+                <mat-error *ngIf="description.errors?.minlength">Minimum 4 characters needed</mat-error>
+                <mat-error *ngIf="description.errors?.maxlength">Maximum 512 characters</mat-error>
+                <mat-error *ngIf="description.errors?.pattern">Incorrect title name</mat-error>
+              </mat-form-field>
+            </div>
+            <div>
+              <table class="example-full-width" cellspacing="0">
+                <tr>
+                  <td>
+                    <mat-form-field class="example-full-width">
+                      <input formControlName="startDate" matInput [matDatepicker]="myDatepicker" placeholder="Choose a date">
+                      <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                      <mat-datepicker #myDatepicker></mat-datepicker>
+                      <mat-error *ngIf="startDate.errors?.required && startDate.touched">Min time is required</mat-error>
+                    </mat-form-field>
+                  </td>
+                  <td>
+                    <mat-form-field class="example-full-width">
+                      <mcc-timer-picker mccConnectedTimerPicker [mccConnectedTimerPickerOrigin]="inputTrigger"></mcc-timer-picker>
+                      <input formControlName="startTime" matInput mccTimerPickerOrigin #inputTrigger="mccTimerPickerOrigin" placeholder="Timer" />
+                    </mat-form-field>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div>
+              <mat-slider formControlName="current" thumbLabel [tick-interval]="1" [max]="max" [min]="min" [step]="step" style="min-width: 100%; width: 100% !important" class="example-full-width"></mat-slider>
+            </div>
+            <div>
+              <button mat-raised-button (click)="onSubmit()" [disabled]="form.invalid" *ngIf="mode=='create'" class="button-row-create">Create</button>
+              <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid" *ngIf="mode=='edit'">Submit</button>
+              <button mat-raised-button color="warn" (click)="onReset()">Reset</button>
+              <button mat-raised-button color="pimary" (click)="onCancel()">Cancel</button>
+            </div>
+          </div>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+  </form>
+</div>
+<div *ngIf='mode == "view"'>
+  <p><label>StartTime = {{booking.startTime}}</label></p>
+  <p><label>EndTime = {{booking.endTime}}</label></p>
+  <p><label>Description = {{booking.note}}</label></p>
+</div>

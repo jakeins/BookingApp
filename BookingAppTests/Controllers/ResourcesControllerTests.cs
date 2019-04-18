@@ -251,7 +251,7 @@ namespace BookingAppTests.Controllers
             // Arrange
             bool isAdmin = true;
 
-            var resServiceMock = new Mock<IResourcesService>();            
+            var resServiceMock = new Mock<IResourcesService>();
 
             var bookServiceMock = new Mock<IBookingsService>();
             resServiceMock.Setup(service => service.GetOccupancies()).ReturnsAsync(new Dictionary<int, double?>());
@@ -347,7 +347,7 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(isActive);
 
             var bookServiceMock = new Mock<IBookingsService>();
-            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(BookingUtils.TestSet);
+            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(BookingUtils.TestSet);
 
             var mappServiceMock = new Mock<IMapperService>();
 
@@ -359,12 +359,12 @@ namespace BookingAppTests.Controllers
             var fakeResController = resControllerMock.Object;
 
             // Act
-            var actionResult = await fakeResController.ListRelatedBookings(It.IsAny<int>());
+            var actionResult = await fakeResController.ListRelatedBookings(It.IsAny<int>(), null, null);
 
             //Assert 
             var okResult = Assert.IsType<OkObjectResult>(actionResult);
             var dtos = Assert.IsAssignableFrom<IEnumerable<BookingMinimalDTO>>(okResult.Value);
-            bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>()), Times.Once());
+            bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
         }
 
         [Theory]
@@ -379,7 +379,7 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(isActive);
 
             var bookServiceMock = new Mock<IBookingsService>();
-            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(BookingUtils.TestSet);
+            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(BookingUtils.TestSet);
 
             var mappServiceMock = new Mock<IMapperService>();
             mappServiceMock.Setup(service => service.Map<IEnumerable<BookingAdminDTO>>(It.IsAny<object>())).Returns(new List<BookingAdminDTO>());
@@ -395,12 +395,12 @@ namespace BookingAppTests.Controllers
             var fakeResController = resControllerMock.Object;
 
             // Act
-            var actionResult = await fakeResController.ListRelatedBookings(It.IsAny<int>());
+            var actionResult = await fakeResController.ListRelatedBookings(It.IsAny<int>(), null, null);
 
             //Assert 
             var okResult = Assert.IsType<OkObjectResult>(actionResult);
             var dtos = Assert.IsAssignableFrom<IEnumerable<BookingAdminDTO>>(okResult.Value);
-            bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>()), Times.Once());
+            bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
         }
 
         [Fact]
@@ -411,7 +411,7 @@ namespace BookingAppTests.Controllers
             resServiceMock.Setup(service => service.IsActive(It.IsAny<int>())).ReturnsAsync(true);
 
             var bookServiceMock = new Mock<IBookingsService>();
-            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(BookingUtils.TestSet);
+            bookServiceMock.Setup(service => service.ListBookingOfResource(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(BookingUtils.TestSet);
 
             var mappServiceMock = new Mock<IMapperService>();
 
@@ -423,14 +423,14 @@ namespace BookingAppTests.Controllers
             var fakeResController = resControllerMock.Object;
 
             // Act
-            var actionResult = await fakeResController.ListRelatedBookings(It.IsAny<int>());
+            var actionResult = await fakeResController.ListRelatedBookings(It.IsAny<int>(), null, null);
 
             //Assert 
             var okResult = Assert.IsType<OkObjectResult>(actionResult);
             var minimalDtos = Assert.IsAssignableFrom<IEnumerable<BookingMinimalDTO>>(okResult.Value);
             var dtos = Assert.IsAssignableFrom<IEnumerable<BookingOwnerDTO>>(minimalDtos.Cast<BookingOwnerDTO>());
             Assert.NotEmpty(dtos);
-            bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<bool>()), Times.Once());
+            bookServiceMock.Verify(mock => mock.ListBookingOfResource(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once());
         }
         #endregion
 

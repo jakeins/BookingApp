@@ -36,52 +36,27 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
-    <Compile Remove="ClientApp\src\app\site\bookings\**" />
+    <Compile Remove="ClientApp\src\app\models\form-tests\**" />
+    <Compile Remove="ClientApp\src\app\services\service-tests\**" />
     <Compile Remove="ClientApp\src\app\site\booking\**" />
+    <Compile Remove="Migrations\**" />
     <Content Remove="$(SpaRoot)**" />
-    <Content Remove="ClientApp\src\app\site\bookings\**" />
+    <Content Remove="ClientApp\src\app\models\form-tests\**" />
+    <Content Remove="ClientApp\src\app\services\service-tests\**" />
     <Content Remove="ClientApp\src\app\site\booking\**" />
+    <Content Remove="Migrations\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Remove="ClientApp\src\app\site\bookings\**" />
+    <EmbeddedResource Remove="ClientApp\src\app\models\form-tests\**" />
+    <EmbeddedResource Remove="ClientApp\src\app\services\service-tests\**" />
     <EmbeddedResource Remove="ClientApp\src\app\site\booking\**" />
-    <None Remove="ClientApp\src\app\site\bookings\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="ClientApp\src\app\models\form-tests\**" />
+    <None Remove="ClientApp\src\app\services\service-tests\**" />
     <None Remove="ClientApp\src\app\site\booking\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Migrations\20190124174210_Initial.cs" />
-    <Compile Remove="Migrations\20190124174210_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20190124180246_Initial.cs" />
-    <Compile Remove="Migrations\20190124180246_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20190124182656_Initial.cs" />
-    <Compile Remove="Migrations\20190124182656_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20190124183050_Initial.cs" />
-    <Compile Remove="Migrations\20190124183050_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20190124183800_Initial.cs" />
-    <Compile Remove="Migrations\20190124183800_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20190124184711_Initial.cs" />
-    <Compile Remove="Migrations\20190124184711_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20190124185239_Initial.cs" />
-    <Compile Remove="Migrations\20190124185239_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20190124190117_Initial.cs" />
-    <Compile Remove="Migrations\20190124190117_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20190124191542_Initial.cs" />
-    <Compile Remove="Migrations\20190124191542_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20190124192340_Initial.cs" />
-    <Compile Remove="Migrations\20190124192340_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20190204190030_ModelsDate2TimeRefinement.cs" />
-    <Compile Remove="Migrations\20190204190030_ModelsDate2TimeRefinement.Designer.cs" />
-    <Compile Remove="Migrations\20190208084114_Init.cs" />
-    <Compile Remove="Migrations\20190208084114_Init.Designer.cs" />
-    <Compile Remove="Migrations\20190213115953_init.cs" />
-    <Compile Remove="Migrations\20190213115953_init.Designer.cs" />
-    <Compile Remove="Migrations\20190214124643_ini.cs" />
-    <Compile Remove="Migrations\20190214124643_ini.Designer.cs" />
-    <Compile Remove="Migrations\20190214124924_ini.cs" />
-    <Compile Remove="Migrations\20190214124924_ini.Designer.cs" />
+    <None Remove="Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -107,7 +82,6 @@
     <None Remove="ClientApp\src\app\models\page.ts" />
     <None Remove="ClientApp\src\app\models\jwt-token.ts" />
     <None Remove="ClientApp\src\app\models\resource-time-window.ts" />
-	<None Remove="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <None Remove="ClientApp\src\app\models\resource.ts" />
     <None Remove="ClientApp\src\app\models\rule.ts" />
     <None Remove="ClientApp\src\app\models\stats-booking.ts" />
@@ -124,14 +98,12 @@
     <None Remove="ClientApp\src\app\models\user-register.ts" />
     <None Remove="ClientApp\src\app\models\user-roles.ts" />
     <None Remove="ClientApp\src\app\models\user-update.ts" />
-    <None Remove="ClientApp\src\app\services\bookings-component-mode.service.ts" />
     <None Remove="ClientApp\src\app\services\development.service.ts" />
     <None Remove="ClientApp\src\app\services\folder.service.ts" />
     <None Remove="ClientApp\src\app\services\logger.service.ts" />
     <None Remove="ClientApp\src\app\services\refresh.service.ts" />
     <None Remove="ClientApp\src\app\services\resource.service.ts" />
     <None Remove="ClientApp\src\app\services\rule.service.ts" />
-    <None Remove="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
     <None Remove="ClientApp\src\app\services\stats.service.ts" />
     <None Remove="ClientApp\src\app\services\token.interceptor.ts" />
     <None Remove="ClientApp\src\app\site\breadcrumbs\breadcrumbs.component.ts" />
@@ -156,7 +128,6 @@
 
   <ItemGroup>
     <Folder Include="ClientApp\src\app\tests\components\" />
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -195,7 +166,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\user-register.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user-update.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\services\bookings-component-mode.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\stats.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\resource.service.ts" />
@@ -203,8 +173,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\logger.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\development.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\rule.service.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\services\service-tests\folder.service.spec.ts" />
-	<TypeScriptCompile Include="ClientApp\src\app\models\form-tests\folder.form.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\token.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\site\breadcrumbs\breadcrumbs.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\site\header\header.component.ts" />

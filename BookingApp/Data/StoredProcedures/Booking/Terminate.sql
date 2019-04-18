@@ -5,7 +5,7 @@
 -- ==========================================================
 CREATE PROCEDURE [dbo].[Booking.Terminate]
 	@BookingID int,
-	@UseID nvarchar(450)
+	@UserID nvarchar(450)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -18,8 +18,8 @@ BEGIN
 	-- get current date and time
 	Set @BookingTimeStamp = CURRENT_TIMESTAMP;
 
-	-- verify that user exist
-	if not exists (Select AspNetUsers.Id From AspNetUsers Where AspNetUsers.Id = @UseID)
+	---- verify that user exist
+	if not exists (Select AspNetUsers.Id From AspNetUsers Where AspNetUsers.Id = @UserID)
 		Throw 50001, 'Invalid user id', 2;
 
 	-- declare variable for transaction name
@@ -35,7 +35,7 @@ BEGIN
 
 		--verify that booking not terminated
 		If (Select Bookings.TerminationTime From Bookings Where Bookings.Id = @BookingID) Is Not Null
-			Throw 50001, 'Can not terminate termіnated booking',  13;
+			Throw 50001, 'Alredy terminated',  13;
 
 		-- verify that booking not ended
 		If (Select Bookings.EndTime From Bookings Where Bookings.Id = @BookingID) <= @BookingTimeStamp
@@ -44,7 +44,7 @@ BEGIN
 		-- set terminate time for booking
 		UPDATE Bookings
 		Set Bookings.TerminationTime = @BookingTimeStamp,
-			Bookings.UpdatedUserId = @UseID
+			Bookings.UpdatedUserId = @UserID
 		Where Bookings.Id = @BookingID;
 	End;
 	-- commit transaction
