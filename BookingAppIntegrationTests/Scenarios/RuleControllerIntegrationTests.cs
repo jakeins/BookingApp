@@ -250,7 +250,7 @@ namespace BookingAppIntegrationTests.Scenarios
                 Title = "Library Rule",
                 MinTime = 10,
                 MaxTime = 100,
-                StepTime = 0,
+                StepTime = 1,
                 ServiceTime = 0,
                 PreOrderTimeLimit = 0,
                 ReuseTimeout = 0,

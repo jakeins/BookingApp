@@ -30,13 +30,13 @@ export class SiteRuleComponent implements OnInit {
   }
 
   showTime(a:number):string{
-    if(a > 2)
+    if(a > 1)
       if(a < 60)
         return `${a} minutes`;
       else
        {
-         let hours:number = Math.floor(a/60);
-         let minutes:number = a - (hours* 60);
+         let hours = Math.floor(a/60);
+         let minutes = a - (hours* 60);
          let str = `${hours} hours`;
           if(minutes > 0)
             if( minutes > 2)

@@ -4,12 +4,12 @@
 </div>
 <div class="search-div">
   <mat-form-field class="search-field">
-      <input matInput [(ngModel)]="searchKey" placeholder="Search" (keyup)="applyFilter()" autocomplete="off">
+      <input matInput [(ngModel)]="searchKey" placeholder="Filter" class="font-italic"  (keyup)="applyFilter()" autocomplete="off">
       <span class="fill-remaining-place"></span>
       <button mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey" (click)="onSearchReset()"><mat-icon>close</mat-icon></button>
     </mat-form-field>
     <div class="buttons-row">
-      <button mat-stroked-button class="search-div-create" (click)="onCreate()">
+      <button mat-stroked-button class="search-div-create btn-primary" (click)="onCreate()">
       <span>Create</span></button>
     </div>
 </div>

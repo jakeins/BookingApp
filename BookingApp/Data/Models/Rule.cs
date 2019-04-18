@@ -21,37 +21,43 @@ namespace BookingApp.Data.Models
         /// Short designation of the rule. Required.
         /// </summary>
         [Required]
-        [MaxLength(64)]
+        [MaxLength(64, ErrorMessage ="Max length of title is 64"), MinLength(4, ErrorMessage ="Min Length of title is 4")]
         public string Title { get; set; }
 
         /// <summary>
         /// Minimal usage time of a resource (minutes). Default 1m at the persistent storage.
         /// </summary>
+        [Range(0, 14400, ErrorMessage = "Min time can't be lower than  0 and and greater 14400" )]
         public int? MinTime { get; set; }
 
         /// <summary>
         /// Maximum usage time of a resource (minutes). Default 24h at the persistent storage.
         /// </summary>
+        [Range(0, 14400, ErrorMessage = "Max time can't be lower than  0 and and greater 14400" )]
         public int? MaxTime { get; set; }
 
         /// <summary>
         /// Minimal step of booking time (minutes). Default 1m at the persistent storage.
         /// </summary>
+        [Range(1, 14400, ErrorMessage = "Step time can't be lower than  0 and and greater 14400")]
         public int? StepTime { get; set; }
 
         /// <summary>
         /// Time after the end of resource usage (minutes), during which the specific resource is not available for booking by anyone; "Recharge time". Default 0 at the persistent storage.
         /// </summary>
+        [Range(0, 14400, ErrorMessage = "Service time can't be lower than  0 and and greater 14400")]
         public int? ServiceTime { get; set; }
 
         /// <summary>
         /// Time from the usage start (minutes), during which booking of this resource is prohibited for the current user; "Speculation timeout". Default 0 at the persistent storage.
         /// </summary>
+        [Range(0, 14400, ErrorMessage = "Reuse timeout time can't be lower than  0 and and greater 14400")]
         public int? ReuseTimeout { get; set; }
 
         /// <summary>
         /// Time range (minutes) used to determine how early can user book a resource, relative to the start of its usage; "Pre-Order countdown". Default 24h at the persistent storage.
         /// </summary>
+        [Range(0, 14400, ErrorMessage = "Pre order time limit can't be lower than  0 and and greater 14400")]
         public int? PreOrderTimeLimit { get; set; }
 
         /// <summary>

@@ -139,7 +139,7 @@ export class RuleComponent implements OnInit {
           this.notificationService.success('Created successfully!');
         },
         err => { 
-          this.error = err.status + ': ' + err.error.Message + '.';
+          this.error =  'Error ' + err.status + ': ' + err.error.Message + '.';
         });
     }
   }
@@ -152,7 +152,7 @@ export class RuleComponent implements OnInit {
           this.notificationService.submit('Submitted successfully!');
         },
         err => { 
-          this.error = err.status + ': ' + err.error.Message + '.';
+          this.error =  'Error ' + err.status + ': ' + err.error.Message + '.';
         });
      }
   }

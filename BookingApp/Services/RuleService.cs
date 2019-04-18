@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace BookingApp.Services
 {
-
     public class RuleService : IRuleService
     {
         readonly IRuleRepository _rulesRepository;
@@ -50,58 +49,38 @@ namespace BookingApp.Services
 
         public async Task<IEnumerable<Rule>> GetActiveList() => await _rulesRepository.ListActiveAsync();
 
+        delegate bool Verify(Rule rule);
 
         public void CheckIfCorrect(Rule rule)
         {
-            bool isCorrect = true;
-            var mC = 14400;                  // max allowed value
-            var min = rule.MinTime;
-            var max = rule.MaxTime;
-            var step = rule.StepTime;
-            var service = rule.ServiceTime;
-            var reuse = rule.ReuseTimeout;
-            var preorder = rule.PreOrderTimeLimit;
-            string errorMessage = null;
 
-            while (isCorrect == true) {
-
-                if (min <= 0 || max <= 0 || step < 0 || service < 0 || reuse < 0 || preorder < 0)  //check for correct values
-                {                               
-                    isCorrect = false;
-                    errorMessage = "Time value can't be lower than 0, min and max time can't equal zero";
-                    break;
-                }
-
-                if (min >= mC || max >= mC || step >= mC || service >= mC || reuse >= mC || preorder >= mC)
-                {
-                    errorMessage = "Time value can't equal or be greater than 14400";
-                    isCorrect = false;
-                    break;
-                }
-
-                if(min >= max)
-                {
-                    errorMessage = "Min time can't equal or be greater than max time";
-                    isCorrect = false;
-                    break;
-                }
-
-                if( min > (mC - max - step - service))
-                {
-                    errorMessage = "Min time can't be greater than 14400 - (max time + service time + step time)";
-                    isCorrect = false;
-                    break;
-                }
-
-                break;
-           }
-
-            if (errorMessage != null)
+            bool checkLogic1(Rule a)
             {
-                throw new FieldValueTimeInvalidException(errorMessage);
+                if (a.MinTime >= a.MaxTime)        //min time can't > max time
+                    return false;
+                return true;
             }
 
+            bool checkLogic2(Rule a)
+            {
+                var mV = 14400;                  //time of resource usage + service time + step time can't be greater than 14400
+                if (a.MinTime > (mV - a.StepTime - a.ServiceTime) || a.MaxTime > (mV - a.StepTime - a.ServiceTime))  
+                    return false;
+                return true;
+            }
+
+            Dictionary<string, Verify> Verifications = new Dictionary<string, Verify>
+            {
+                { "Min time can't equal or be greater than max time", new Verify(checkLogic1) },
+                { "Sum of resource usage time, step time and service time can't be greater than 14400", new Verify(checkLogic2) }
+            };
+
+            foreach (var key in Verifications)
+            {
+                if (key.Value(rule) == false)
+                    throw new FieldValueTimeInvalidException(key.Key);
+            }
         }
+
     }
-        
 }
