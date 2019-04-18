@@ -51,11 +51,13 @@ export class BookingsComponent implements OnInit {
   rangeselector: FormGroup;
   startTimeValue: Date;
   endTimeValue: Date;
+  preOrderTime: Date;
+  currentTime: Date;
+  minBookingTimeInMinutes: number;
 
   //For table
   displayedColumns: any;
- 
-  currentTime: Date;
+
 
   constructor(
     private bookingService: BookingService,
@@ -82,6 +84,7 @@ export class BookingsComponent implements OnInit {
       endDate: [0, Validators.compose([Validators.required])],
       endTime: [0, Validators.compose([Validators.required])],
     });
+    this.isConfiguredSelector = false;
     this.startTimeValue = new Date(Date.now());
     this.endTimeValue = null;
     this.resetData();
@@ -110,135 +113,150 @@ export class BookingsComponent implements OnInit {
   }
 
   configureRangeSelector() {
-    this.isConfiguredSelector = false;
+    this.isConfiguredSelector = true;
     this.rangeselector.setValue({
       startDate: this.startTimeValue,
       startTime: this.datepipe.transform(this.startTimeValue, "shortTime"),
       endDate: this.endTimeValue,
       endTime: this.datepipe.transform(this.endTimeValue, "shortTime"),
     });
-    this.rangeselector.valueChanges.subscribe(val => {
-      this.startTimeValue = this.convertToDateTime(this.startDate().value, this.startTime().value);
-      this.endTimeValue = this.convertToDateTime(this.endDate().value, this.endTime().value);
+    this.rangeselector.valueChanges.subscribe(() => {
       this.resetData();
+    });
+  }
+
+  resetDataAdmin() {
+    this.bookingService.getBookings(this.startTimeValue, this.endTimeValue).subscribe((bookingsRaw: Booking[]) => {
+      if (bookingsRaw.length != 0) {
+        let userIds = new Array();
+        for (let i = 0; i < bookingsRaw.length; i++) {
+          if (!userIds.includes(bookingsRaw[i].createdUserId))
+            userIds.push(bookingsRaw[i].createdUserId);
+        }
+        this.resourceService.getResources().subscribe((resources: Resource[]) => {
+          this.userService.getUsersById(userIds).subscribe((users: User[]) => {
+            this.bookings = bookingsRaw;
+            this.displayedColumns = ['idT', 'startTimeT', 'endTimeT', 'resourceIdT', 'noteT', 'userNameT', 'terminationTimeT', 'btns']
+            this.dataSource = new MatTableDataSource<Booking>(this.bookings);
+            this.dataSource.paginator = this.paginator;
+            this.startTimeValue = new Date(Math.min.apply(Math, bookingsRaw.map(b => { return b.startTime })));
+            this.endTimeValue = new Date(Math.max.apply(Math, bookingsRaw.map(b => { return b.endTime })));
+            if (this.isConfiguredSelector)
+              this.configureRangeSelector();
+          }, err => {
+            this.error = err.status + ': ' + err.error.Message + '.';
+          });
+        }, err => {
+          this.error = err.status + ': ' + err.error.Message + '.';
+        });
+      } else {
+        this.bookings = bookingsRaw;
+        this.startTimeValue = new Date();
+        this.endTimeValue = new Date();
+        if (this.isConfiguredSelector)
+          this.configureRangeSelector();
+      }
+    }, err => {
+      this.error = err.status + ': ' + err.error.Message + '.';
+    });
+  }
+
+  resetDataUser() {
+    this.userService.getBookings(this.userId, this.startTimeValue, this.endTimeValue).subscribe((response: Booking[]) => {
+      this.resourceService.getResources().subscribe((resources: Resource[]) => {
+        this.bookings = response;
+        this.displayedColumns = ['startTimeT', 'endTimeT', 'resourceIdT', 'noteT', 'terminationTimeT', 'btns']
+        this.dataSource = new MatTableDataSource<Booking>(this.bookings);
+        this.dataSource.paginator = this.paginator;
+        if (this.bookings.length != 0) {
+          this.startTimeValue = new Date(Math.min.apply(Math, response.map(b => { return b.startTime })));
+          this.endTimeValue = new Date(Math.max.apply(Math, response.map(b => { return b.endTime })));
+        }
+        else {
+          this.startTimeValue = new Date();
+          this.endTimeValue = new Date();
+        }
+        if (this.isConfiguredSelector)
+          this.configureRangeSelector();
+      }, err => {
+        this.error = err.status + ': ' + err.error.Message + '.';
+      });
+    }, err => {
+      this.error = err.status + ': ' + err.error.Message + '.';
+    });
+  }
+
+  resetDataResourcesProcessing(responseBookings: Booking[]) {
+    this.bookings = responseBookings
+      .filter((booking: Booking) => { return booking.terminationTime == null || (new Date(booking.terminationTime) > new Date(booking.startTime)) })
+      .sort((a, b) => { return a.startTime > b.startTime ? 1 : -1; });
+    if (!this.isConfiguredSelector) {
+      this.endTimeValue = new Date(new Date(this.bookings[this.bookings.length - 1].endTime).getTime() + this.preOrderTime.getTime());
+      this.configureRangeSelector();
+    }
+    this.genResourceTimeWindows();
+    this.resourceTimeWindowsdataSource = new MatTableDataSource<ResourceTimeWindow>(this.resourceTimeWindows);
+    this.resourceTimeWindowsdataSource.paginator = this.paginator;
+  }
+
+  resetDataResources() {
+    this.resourceService.getResource(this.resourceId).subscribe((response: Resource) => {
+      this.ruleService.getRule(response.ruleId).subscribe((ruleData: rule) => {
+        this.preOrderTime = new Date(new Date().getTime() + (ruleData.preOrderTimeLimit + 4) * 60 * 1000);
+        if (!this.isConfiguredSelector) {
+          this.currentTime = new Date();
+          this.startTimeValue = this.currentTime;
+          this.serviceTime = ruleData.serviceTime;
+          this.endTimeValue = null;
+          this.minBookingTimeInMinutes = ruleData.minTime;
+        }
+        this.bookingService.getBookingOfResource(this.resourceId, this.startTimeValue, this.endTimeValue).subscribe((responseBookings: Booking[]) => {
+          if (this.userInfoService.isAdmin) {
+            let userIds = new Array();
+            for (let i = 0; i < responseBookings.length; i++) {
+              if (!userIds.includes(responseBookings[i].createdUserId))
+                userIds.push(responseBookings[i].createdUserId);
+            }
+            this.userService.getUsersById(userIds).subscribe((users: User[]) => {
+              this.displayedColumns = ['startTimeT', 'endTimeT', 'terminationTimeT', 'userT', 'noteT', 'btns'];
+              this.resetDataResourcesProcessing(responseBookings);
+            }, err => {
+              this.error = err.status + ': ' + err.error.Message + '.';
+            });
+          }
+          else {
+            this.resetDataResourcesProcessing(responseBookings);
+            if (this.userInfoService.isUser)
+              this.displayedColumns = ['startTimeT', 'endTimeT', 'terminationTimeT', 'btns'];
+            else
+              this.displayedColumns = ['startTimeT', 'endTimeT', 'terminationTimeT'];
+          }
+        }, err => {
+          this.error = err.status + ': ' + err.error.Message + '.';
+        });
+      }, err => {
+        this.error = err.status + ': ' + err.error.Message + '.';
+      });
+    }, err => {
+      this.error = err.status + ': ' + err.error.Message + '.';
     });
   }
 
   resetData() {
     this.currentTime = new Date();
+    if (this.isConfiguredSelector) {
+      this.startTimeValue = this.convertToDateTime(this.startDate().value, this.startTime().value);
+      this.endTimeValue = this.convertToDateTime(this.endDate().value, this.endTime().value);
+    }
     switch (this.mode) {
       case "admin":
-        this.bookingService.getBookings(this.startTimeValue, this.endTimeValue).subscribe((bookingsRaw: Booking[]) => {
-          if (bookingsRaw.length != 0) {
-            let userIds = new Array();
-            for (let i = 0; i < bookingsRaw.length; i++) {
-              if(!userIds.includes(bookingsRaw[i].createdUserId))
-                userIds.push(bookingsRaw[i].createdUserId);
-            }
-            this.resourceService.getResources().subscribe((resources: Resource[]) => {
-              this.userService.getUsersById(userIds).subscribe((users: User[]) => {
-                this.bookings = bookingsRaw;
-                this.displayedColumns = ['idT', 'startTimeT', 'endTimeT', 'resourceIdT', 'noteT', 'userNameT', 'terminationTimeT', 'btns']
-                this.dataSource = new MatTableDataSource<Booking>(this.bookings);
-                this.dataSource.paginator = this.paginator;
-                this.startTimeValue = new Date(Math.min.apply(Math, bookingsRaw.map(b => { return b.startTime })));
-                this.endTimeValue = new Date(Math.max.apply(Math, bookingsRaw.map(b => { return b.endTime })));
-                if (this.isConfiguredSelector)
-                  this.configureRangeSelector();
-              }, err => {
-                this.error = err.status + ': ' + err.error.Message + '.';
-              });
-            }, err => {
-              this.error = err.status + ': ' + err.error.Message + '.';
-            });
-          } else {
-            this.bookings = bookingsRaw;
-            this.startTimeValue = new Date();
-            this.endTimeValue = new Date();
-            if (this.isConfiguredSelector)
-              this.configureRangeSelector();
-          }
-        }, err => {
-          this.error = err.status + ': ' + err.error.Message + '.';
-        });
+        this.resetDataAdmin();
         break;
       case "user":
-        this.userService.getBookings(this.userId, this.startTimeValue, this.endTimeValue).subscribe((response: Booking[]) => {
-          this.resourceService.getResources().subscribe((resources: Resource[]) => {
-            this.bookings = response;
-            this.displayedColumns = ['startTimeT', 'endTimeT', 'resourceIdT', 'noteT', 'terminationTimeT', 'btns']
-            this.dataSource = new MatTableDataSource<Booking>(this.bookings);
-            this.dataSource.paginator = this.paginator;
-            if (this.bookings.length != 0) {
-              this.startTimeValue = new Date(Math.min.apply(Math, response.map(b => { return b.startTime })));
-              this.endTimeValue = new Date(Math.max.apply(Math, response.map(b => { return b.endTime })));
-            }
-            else {
-              this.startTimeValue = new Date();
-              this.endTimeValue = new Date();
-            }
-            if (this.isConfiguredSelector)
-              this.configureRangeSelector();
-          }, err => {
-            this.error = err.status + ': ' + err.error.Message + '.';
-          });
-        }, err => {
-          this.error = err.status + ': ' + err.error.Message + '.';
-        });
+        this.resetDataUser();
         break;
       case "res":
-        this.bookingService.getBookingOfResource(this.resourceId, this.startTimeValue, this.endTimeValue).subscribe((responseBookings: Booking[]) => {
-          this.resourceService.getResource(this.resourceId).subscribe((response: Resource) => {
-            this.ruleService.getRule(response.ruleId).subscribe((response: rule) => {
-              let userIds = new Array();
-              for (let i = 0; i < responseBookings.length; i++) {
-                if (!userIds.includes(responseBookings[i].createdUserId))
-                  userIds.push(responseBookings[i].createdUserId);
-              }
-              if (this.userInfoService.isAdmin) {
-                this.userService.getUsersById(userIds).subscribe((users: User[]) => {
-                  this.serviceTime = response.serviceTime;
-                  this.endTimeValue = new Date(Date.now());
-                  this.endTimeValue.setTime(this.endTimeValue.getTime() + response.preOrderTimeLimit * 60 * 1000);
-                  this.bookings = responseBookings.sort((a, b) => {
-                    return a.startTime > b.startTime ? 1 : -1;
-                  });
-                  if (this.isConfiguredSelector)
-                    this.configureRangeSelector();
-                  this.genResourceTimeWindows();
-                  this.displayedColumns = ['startTimeT', 'endTimeT', 'terminationTimeT', 'userT', 'noteT', 'btns'];
-                  this.resourceTimeWindowsdataSource = new MatTableDataSource<ResourceTimeWindow>(this.resourceTimeWindows);
-                  this.resourceTimeWindowsdataSource.paginator = this.paginator;
-                }, err => {
-                  this.error = err.status + ': ' + err.error.Message + '.';
-                });
-              }
-              else {
-                this.serviceTime = response.serviceTime;
-                this.endTimeValue = new Date(Date.now());
-                this.endTimeValue.setTime(this.endTimeValue.getTime() + response.preOrderTimeLimit * 60 * 1000);
-                this.bookings = responseBookings.sort((a, b) => {
-                  return a.startTime > b.startTime ? 1 : -1;
-                });
-                if (this.isConfiguredSelector)
-                  this.configureRangeSelector();
-                this.genResourceTimeWindows();
-                if(this.userInfoService.isUser)
-                  this.displayedColumns = ['startTimeT', 'endTimeT', 'terminationTimeT', 'btns'];
-                else
-                  this.displayedColumns = ['startTimeT', 'endTimeT', 'terminationTimeT'];
-                this.resourceTimeWindowsdataSource = new MatTableDataSource<ResourceTimeWindow>(this.resourceTimeWindows);
-                this.resourceTimeWindowsdataSource.paginator = this.paginator;
-              }
-            }, err => {
-              this.error = err.status + ': ' + err.error.Message + '.';
-            });
-          }, err => {
-            this.error = err.status + ': ' + err.error.Message + '.';
-          });
-        }, err => {
-          this.error = err.status + ': ' + err.error.Message + '.';
-        });
+        this.resetDataResources();
         break;
       default:
         //Never reach
@@ -246,80 +264,108 @@ export class BookingsComponent implements OnInit {
     }
   };
 
+  genFreeResourceTimeWindow(startTime: Date, endTime: Date) {
+    if (this.userInfoService.isAdmin && endTime.getTime() < this.preOrderTime.getTime()) {
+      if (endTime.getTime() - startTime.getTime() > 1 * 60 * 1000) {
+        let lost: ResourceTimeWindow; lost = new ResourceTimeWindow; lost.type = ResourceTimeWindowType.Lost;
+        lost.startTime = new Date(startTime);
+        lost.endTime = new Date(endTime);
+        this.resourceTimeWindows.push(lost);
+      }
+    } else
+      if (this.preOrderTime.getTime() < startTime.getTime()) {
+        if (endTime.getTime() - startTime.getTime() > this.minBookingTimeInMinutes * 60 * 1000) {
+          let free: ResourceTimeWindow; free = new ResourceTimeWindow; free.type = ResourceTimeWindowType.Free;
+          free.startTime = new Date(startTime);
+          free.endTime = new Date(endTime);
+          this.resourceTimeWindows.push(free);
+        }
+      }
+      else {
+        let lost: ResourceTimeWindow; lost = new ResourceTimeWindow; lost.type = ResourceTimeWindowType.Lost;
+        let free: ResourceTimeWindow; free = new ResourceTimeWindow; free.type = ResourceTimeWindowType.Free;
+        if (this.preOrderTime.getTime() - startTime.getTime() > 1 * 60 * 1000) {
+          lost.startTime = new Date(startTime);
+          lost.endTime = new Date(this.preOrderTime);
+          if (this.userInfoService.isAdmin)
+            this.resourceTimeWindows.push(lost);
+        }
+        free.startTime = new Date(lost.endTime.getTime() + 1 * 60 * 100);
+        if (endTime.getTime() - free.startTime.getTime() > this.minBookingTimeInMinutes * 60 * 1000) {
+          free.endTime = new Date(endTime);
+          this.resourceTimeWindows.push(free);
+        }
+      }
+  }
+
+  genBookedResourceTimeWindows(i: number) {
+    let bookingTimeWindow = new ResourceTimeWindow;
+
+    if (this.userInfoService.isUser && this.bookings[i].createdUserId == this.userInfoService.userId) {
+      bookingTimeWindow.type = ResourceTimeWindowType.My;
+    } else {
+      bookingTimeWindow.type = ResourceTimeWindowType.Booked;
+    }
+    bookingTimeWindow.startTime = new Date(this.bookings[i].startTime);
+
+    if (this.bookings[i].terminationTime != null) {
+      bookingTimeWindow.endTime == new Date(this.bookings[i].terminationTime);
+    }
+    else
+      bookingTimeWindow.endTime = new Date(this.bookings[i].endTime);
+
+    if (this.userInfoService.isUser && this.bookings[i].createdUserId == this.userInfoService.userId || this.userInfoService.isAdmin) {
+      bookingTimeWindow.booking = this.bookings[i];
+    }
+    else {
+      bookingTimeWindow.booking = null;
+    }
+    this.resourceTimeWindows.push(bookingTimeWindow);
+  }
+
+  genServiceResourceTimeWindow(i : number) : Date {
+    let serviceTimeWindow = new ResourceTimeWindow;
+    let endServiceTimeWindowDate: Date;
+    if (this.serviceTime != 0) {
+      serviceTimeWindow.type = ResourceTimeWindowType.ServiceTime;
+      serviceTimeWindow.startTime = new Date(this.bookings[i].endTime);
+      serviceTimeWindow.endTime = new Date(serviceTimeWindow.startTime.getTime() + this.serviceTime * 60 * 1000);
+      endServiceTimeWindowDate = new Date(serviceTimeWindow.endTime.getTime() + 1 * 60 * 1000);
+      this.resourceTimeWindows.push(serviceTimeWindow);
+    } else {
+      endServiceTimeWindowDate = new Date(new Date(this.bookings[i].endTime).getTime() + 1 * 60 * 1000);
+    }
+    return endServiceTimeWindowDate;
+  }
+
   genResourceTimeWindows() {
-    this.resourceTimeWindows = new Array();
+    this.resourceTimeWindows = new Array<ResourceTimeWindow>();
     if (this.bookings.length != 0) {
       for (let i = 0; i < this.bookings.length; i++) {
-        let bookingTimeWindow = new ResourceTimeWindow;
-        let serviceTimeWindow = new ResourceTimeWindow;
-        if (this.userInfoService.isUser && this.bookings[i].createdUserId == this.userInfoService.userId) {
-          bookingTimeWindow.type = ResourceTimeWindowType.My;
-        } else {
-          bookingTimeWindow.type = ResourceTimeWindowType.Booked;
-        }
-        bookingTimeWindow.startTime = new Date(this.bookings[i].startTime);
-        bookingTimeWindow.endTime = new Date(this.bookings[i].endTime);
-        if (this.userInfoService.isUser && this.bookings[i].createdUserId == this.userInfoService.userId || this.userInfoService.isAdmin) {
-          bookingTimeWindow.booking = this.bookings[i];
-        }
-        else {
-          bookingTimeWindow.booking = null;
-        }
-        this.resourceTimeWindows.push(bookingTimeWindow);
-
-        if (this.serviceTime != 0) {
-          serviceTimeWindow.type = ResourceTimeWindowType.ServiceTime;
-          serviceTimeWindow.startTime = new Date(this.bookings[i].endTime);
-          serviceTimeWindow.endTime = new Date(this.bookings[i].endTime);
-          serviceTimeWindow.endTime.setTime(serviceTimeWindow.endTime.getTime() + this.serviceTime * 60 * 1000);
-          this.resourceTimeWindows.push(serviceTimeWindow);
-        }
-
-        var freeTimeWindow = new ResourceTimeWindow;
-        freeTimeWindow.type = ResourceTimeWindowType.Free;
-        let freeTimeWindowSize = 0;
-        if (this.serviceTime != 0) {
-          freeTimeWindow.startTime = new Date(serviceTimeWindow.endTime);
-        }
-        else {
-          freeTimeWindow.startTime = new Date(this.bookings[i].endTime);
-        }
-        if (i == this.bookings.length - 1) {
-          freeTimeWindowSize = this.endTimeValue.getTime();
-        }
-        else {
-          freeTimeWindowSize = new Date(this.bookings[i + 1].startTime).getTime();
-        }
-        freeTimeWindowSize -= freeTimeWindow.startTime.getTime();
-        if (i == this.bookings.length - 1) {
-          if (freeTimeWindowSize > 0) {
-            freeTimeWindow.endTime = new Date(this.endTimeValue);
-            this.resourceTimeWindows.push(freeTimeWindow);
-          }
-        } else {
-          if (freeTimeWindowSize > 0) {
-            freeTimeWindow.endTime = new Date(this.bookings[i + 1].startTime);
-            this.resourceTimeWindows.push(freeTimeWindow);
-          }
-        }
-
+        this.genBookedResourceTimeWindows(i);
+        let endServiceTime = this.genServiceResourceTimeWindow(i);
+        if (i != this.bookings.length - 1)
+          this.genFreeResourceTimeWindow(endServiceTime, new Date(new Date(this.bookings[i + 1].startTime).getTime() + 1 * 60 * 1000));
+        else
+          this.genFreeResourceTimeWindow(endServiceTime, this.endTimeValue);
       }
     }
     else {
-      var freeTimeWindow = new ResourceTimeWindow;
-      freeTimeWindow.type = ResourceTimeWindowType.Free;
-      freeTimeWindow.startTime = this.startTimeValue;
-      freeTimeWindow.endTime = this.endTimeValue;
-      this.resourceTimeWindows.push(freeTimeWindow);
+      this.genFreeResourceTimeWindow(this.startTimeValue, this.endTimeValue);
     }
   };
 
-  onCreate(startTime: Date) {
+  onCreate(startTime: Date, endTime: Date) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = "60%";
-    dialogConfig.data = { mode: "create", id: this.resourceId, startTime: startTime };
+    dialogConfig.data = {
+      mode: "create",
+      id: this.resourceId,
+      startTime: startTime,
+      availableMinutes: Math.ceil((new Date(endTime).getTime() - new Date(startTime).getTime()) / (60 * 1000))
+    };
     const dialogRef = this.dialog.open(BookingComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(res => {
       this.resetData();
@@ -368,16 +414,16 @@ export class BookingsComponent implements OnInit {
 
   //Helpers
   isInRange(startTime: Date, endTime: Date): boolean {
-    return ((new Date(startTime)).getTime() < this.currentTime.getTime()) &&
-      ((new Date(endTime)).getTime() > this.currentTime.getTime());
+    return ((new Date(startTime)).getTime() < this.preOrderTime.getTime()) &&
+      ((new Date(endTime)).getTime() > this.preOrderTime.getTime());
   }
 
   isBefore(endTime: Date): boolean {
-    return ((new Date(endTime)).getTime() < this.currentTime.getTime());
+    return ((new Date(endTime)).getTime() < this.preOrderTime.getTime());
   }
 
   isAfter(startTime: Date): boolean {
-    return ((new Date(startTime)).getTime() > this.currentTime.getTime());
+    return ((new Date(startTime)).getTime() > this.preOrderTime.getTime());
   }
 
   isTerminated(terminationTime: Date): boolean {
@@ -399,21 +445,15 @@ export class BookingsComponent implements OnInit {
   getBgColorForResourceRow(row: ResourceTimeWindow) {
     switch (row.type) {
       case this.ResourceTimeWindowT.Booked:
-        {
-          return "lightcoral";
-        }
+        return "lightcoral";
       case this.ResourceTimeWindowT.ServiceTime:
-        {
-          return "gainsboro";
-        }
+        return "gainsboro";
       case this.ResourceTimeWindowT.Free:
-        {
-          return "palegreen";
-        }
+        return "palegreen";
       case this.ResourceTimeWindowT.My:
-        {
-          return "lightblue";
-        }
+        return "lightblue";
+      case this.ResourceTimeWindowT.Lost:
+        return "gray";
     }
     return "";
   }

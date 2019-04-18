@@ -71,7 +71,7 @@ export class BookingService {
       {
         startTime: datePipe.transform(booking.startTime, 'short'),
         endTime: datePipe.transform(booking.endTime, 'short'),
-        Note: booking.note,
+        note: booking.note,
         ResourceId: booking.resourceId,
         CreatedUserId: booking.createdUserId
       });

@@ -55,6 +55,7 @@ namespace BookingApp.Controllers
                 return BadRequest(ModelState);
 
             Booking model = dtoMapper.Map<Booking>(item);
+            model.Note = item.Note;
             if (!IsAdmin)
                 model.CreatedUserId = UserId;
             else
@@ -226,7 +227,7 @@ namespace BookingApp.Controllers
             if (IsAdmin || bookingData.CreatedUserId == UserId)
             {
                 await bookingService.Terminate(bookingId, UserId);
-                return Ok("Booking delete succefully");
+                return new OkResult();
             }
             else
             {

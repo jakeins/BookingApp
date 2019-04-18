@@ -81,7 +81,7 @@ BEGIN
 		Throw 50001, 'The duration of the reservation must be a multiple step of the booking for this resource', 9;
 
 	-- verify that resource not being booked too early
-	if DATEADD(minute, @PreOrderTimeLimit, @BookingTimeStamp) < @StartTime
+	if DATEADD(minute, @PreOrderTimeLimit, @BookingTimeStamp) > @StartTime
 		Throw 50001, 'Booking time is too early', 10;
 
 	-- declare variable for storing newly created bookin id

@@ -4,7 +4,8 @@ import * as Material from '@angular/material';
 import { MatDatepickerModule } from '@angular/material';
 import { MccTimerPickerModule } from 'material-community-components';
 import { UserNamePipe } from '../admin/rule.pipe';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
@@ -25,7 +26,14 @@ import { UserNamePipe } from '../admin/rule.pipe';
     Material.MatDatepickerModule,
     Material.MatNativeDateModule,
     Material.MatSelectModule,
-    MccTimerPickerModule
+    ReactiveFormsModule,
+    Material.MatCardModule,
+    Material.MatInputModule,
+    Material.MatFormFieldModule,
+    Material.MatIconModule,
+    Material.MatTabsModule,
+    MccTimerPickerModule,
+    BrowserAnimationsModule
   ],
   exports: [
     Material.MatToolbarModule,
@@ -45,8 +53,15 @@ import { UserNamePipe } from '../admin/rule.pipe';
     Material.MatNativeDateModule,
     Material.MatTable,
     Material.MatSelectModule,
+    UserNamePipe,
+    ReactiveFormsModule,
+    Material.MatCardModule,
+    Material.MatInputModule,
+    Material.MatFormFieldModule,
+    Material.MatIconModule,
+    Material.MatTabsModule,
     MccTimerPickerModule,
-    UserNamePipe
+    BrowserAnimationsModule
   ],
   declarations: [
     UserNamePipe

@@ -106,7 +106,7 @@ namespace BookingApp.Repositories
                 };
 
                 await dbContext.Database.ExecuteSqlCommandAsync(
-                    $"EXEC @retVal = [Booking.Create] {model.ResourceId}, '{model.StartTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.EndTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', '{model.CreatedUserId}', '{model.Note}'",
+                    $"EXEC @retVal = [Booking.Create] {model.ResourceId}, '{model.StartTime.ToString("yyyy.MM.dd HH:mm")}', '{model.EndTime.ToString("yyyy.MM.dd HH:mm")}', '{model.CreatedUserId}', '{model.Note}'",
                     param);
 
                 model.Id = param.Value as int? ?? -1;
@@ -302,7 +302,7 @@ namespace BookingApp.Repositories
         /// </summary>
         /// <param name="resource">Exist <see cref="Resource.Id"></see></param>
         /// <returns>List of all <see cref="Booking"></see> of specific <see cref="Resource"></see></returns>
-        public async Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId, DateTime startTime, DateTime endTime) => await Bookings
+        public async Task<IEnumerable<Booking>> GetBookingsOfResource(int resourceId, DateTime startTime, DateTime endTime) => await ActualBookings
             .Where(b => ((b.ResourceId == resourceId) && ((b.TerminationTime ?? b.EndTime) <= endTime && b.StartTime >= startTime)))
             .ToListAsync();
 
@@ -321,7 +321,7 @@ namespace BookingApp.Repositories
                     await dbContext.Database.ExecuteSqlCommandAsync(
                         $"EXEC [Booking.Terminate] {id}, {userId}"
                         );
-                }
+                }   
                 catch (SqlException ex)
                 {
                     Helpers.SqlExceptionTranslator.ReThrow(ex, "on terminate booking");
