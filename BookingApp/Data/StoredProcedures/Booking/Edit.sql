@@ -76,7 +76,7 @@ BEGIN
 	Begin Transaction @TransactioName
 	Begin
 		-- verify that booking not terminated
-		If (Select Bookings.TerminationTime From Bookings Where Bookings.Id = @BookingID) Is Null
+		If (Select Bookings.TerminationTime From Bookings Where Bookings.Id = @BookingID) Is Not Null
 			Throw 50001, 'Can not edit termіnated booking',  13;
 		-- verify that booking not ended
 		If (Select Bookings.EndTime From Bookings Where Bookings.Id = @BookingID) <= @BookingTimeStamp

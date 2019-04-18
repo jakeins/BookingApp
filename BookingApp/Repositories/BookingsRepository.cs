@@ -275,13 +275,13 @@ namespace BookingApp.Repositories
                 string StartTime = "null";
                 if(startTime.HasValue)
                 {
-                    StartTime = startTime.Value.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    StartTime = startTime.Value.ToString("yyyy-MM-dd HH:mm");
                     StartTime = $"'{StartTime}'";
                 }
                 string EndTime = "null";
                 if (endTime.HasValue)
                 {
-                    EndTime = endTime.Value.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    EndTime = endTime.Value.ToString("yyyy-MM-dd HH:mm");
                     EndTime = $"'{EndTime}'";
                 }
                 string cmd = $"EXEC [Booking.Edit] {id}, {StartTime}, {EndTime}, '{editUser}', '{note}'";

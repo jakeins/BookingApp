@@ -78,7 +78,12 @@ export class BookingService {
   }
 
   updateBooking(booking: Booking): Observable<any> {
-    return this.http.put(this.path + '/' + booking.id, booking);
+    let datePipe = new DatePipe("en-Us");
+    return this.http.put(this.path + '/' + booking.id, {
+      startTime: datePipe.transform(booking.startTime, 'short'),
+      endTime: datePipe.transform(booking.endTime, 'short'),
+      note: booking.note,
+    });
   }
 
   deleteBooking(id: number): Observable<any> {

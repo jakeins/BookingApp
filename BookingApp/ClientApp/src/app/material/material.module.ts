@@ -32,8 +32,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     Material.MatFormFieldModule,
     Material.MatIconModule,
     Material.MatTabsModule,
-    MccTimerPickerModule,
-    BrowserAnimationsModule
+    MccTimerPickerModule
   ],
   exports: [
     Material.MatToolbarModule,
@@ -60,8 +59,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     Material.MatFormFieldModule,
     Material.MatIconModule,
     Material.MatTabsModule,
-    MccTimerPickerModule,
-    BrowserAnimationsModule
+    MccTimerPickerModule
   ],
   declarations: [
     UserNamePipe
